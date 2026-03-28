@@ -1,0 +1,147 @@
+{
+  "name": "EmergencyCallout",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Specific unit affected (optional)"
+    },
+    "caller_name": {
+      "type": "string",
+      "description": "Name of person reporting emergency"
+    },
+    "caller_phone": {
+      "type": "string",
+      "description": "Contact number"
+    },
+    "call_received_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when call was received"
+    },
+    "call_type": {
+      "type": "string",
+      "enum": [
+        "water_leak",
+        "gas_smell",
+        "electrical_fault",
+        "fire_alarm",
+        "security_breach",
+        "heating_failure",
+        "structural_damage",
+        "other"
+      ],
+      "description": "Type of emergency"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "high",
+      "description": "Severity level"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the emergency"
+    },
+    "response_time_minutes": {
+      "type": "number",
+      "description": "Minutes between call received and response/contractor arrival"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "logged",
+        "escalated",
+        "contractor_assigned",
+        "in_progress",
+        "resolved",
+        "cancelled"
+      ],
+      "default": "logged",
+      "description": "Current status of the callout"
+    },
+    "assigned_contractor_id": {
+      "type": "string",
+      "description": "Reference to assigned Contact (contractor)"
+    },
+    "assigned_contractor_name": {
+      "type": "string"
+    },
+    "assigned_contractor_phone": {
+      "type": "string"
+    },
+    "assigned_contractor_email": {
+      "type": "string"
+    },
+    "escalation_method": {
+      "type": "string",
+      "enum": [
+        "phone",
+        "sms",
+        "email",
+        "multiple"
+      ],
+      "description": "How contractor was notified"
+    },
+    "escalation_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When contractor was contacted"
+    },
+    "estimated_arrival_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Contractor's estimated arrival time"
+    },
+    "actual_arrival_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When contractor actually arrived"
+    },
+    "resolution_notes": {
+      "type": "string",
+      "description": "How the issue was resolved"
+    },
+    "resolved_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the issue was resolved"
+    },
+    "follow_up_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether follow-up inspection/repair needed"
+    },
+    "follow_up_notes": {
+      "type": "string"
+    },
+    "cost_estimate": {
+      "type": "number",
+      "description": "Estimated cost of repairs"
+    },
+    "cost_actual": {
+      "type": "number",
+      "description": "Actual cost incurred"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "caller_name",
+    "caller_phone",
+    "call_received_date",
+    "call_type",
+    "description"
+  ]
+}

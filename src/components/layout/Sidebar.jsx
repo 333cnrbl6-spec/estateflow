@@ -26,7 +26,8 @@ import {
   Scale,
   Zap,
   FileText,
-  Shield
+  Shield,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +61,7 @@ const navGroups = [
     label: 'Operations',
     items: [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
+      { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
        { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
        { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
