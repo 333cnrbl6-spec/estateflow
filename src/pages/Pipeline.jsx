@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { differenceInDays, parseISO, format, addDays, addMonths, addYears } from 'date-fns';
+import { Link } from 'react-router-dom';
 import {
   Plus, ChevronRight, AlertTriangle, CheckCircle2, Clock, MapPin, User, 
   FileText, Shield, Home, Key, ClipboardList, Calendar, RotateCcw, LogOut,
@@ -104,6 +105,22 @@ export default function Pipeline() {
           <Plus className="w-4 h-4" /> New Application
         </Button>
       </PageHeader>
+
+      {/* S21 Alert */}
+      {(() => {
+        const s21Days = differenceInDays(parseISO('2026-05-01'), new Date());
+        if (s21Days > 0 && s21Days <= 60) return (
+          <div className="mb-4 flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <span className="text-sm text-red-800 font-semibold">Renters' Rights Act: S21 abolished in {s21Days} days (1 May 2026). </span>
+              <span className="text-xs text-red-700">All ASTs become periodic. Use S8 grounds for possession. Last valid S21: 30 April 2026.</span>
+            </div>
+            <Link to="/regulatory-hub" className="shrink-0 text-xs font-medium text-red-700 hover:underline whitespace-nowrap">Learn more →</Link>
+          </div>
+        );
+        return null;
+      })()}
 
       {/* Alert bar */}
       {urgentCount > 0 && (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { differenceInDays, parseISO, format, isAfter, isBefore, addDays } from 'date-fns';
-import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck, Filter } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck, Filter, Scale } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -109,12 +110,32 @@ export default function Compliance() {
   const warning = enriched.filter(c => c.worst_severity === 'warning').length;
   const ok = enriched.filter(c => c.worst_severity === 'ok').length;
 
+  const s21Days = differenceInDays(parseISO('2026-05-01'), today);
+
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
       <PageHeader
         title="Compliance Dashboard"
         subtitle="Companies House filing deadlines — accounts & confirmation statements"
       />
+
+      {/* Renters' Rights Act S21 Alert */}
+      {s21Days > 0 && s21Days <= 60 && (
+        <div className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-5 py-4">
+          <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-red-800">
+              Renters' Rights Act: Section 21 abolished in {s21Days} days — 1 May 2026
+            </p>
+            <p className="text-xs text-red-700 mt-0.5">
+              Last day to serve a valid S21 notice: <strong>30 April 2026</strong>. After that, all ASTs convert to periodic tenancies. Possession via Section 8 grounds only. Civil penalty up to £7,000 for invalid S21.
+            </p>
+          </div>
+          <Link to="/regulatory-hub" className="shrink-0 text-xs font-medium text-red-700 hover:underline whitespace-nowrap">
+            View Regulatory Hub →
+          </Link>
+        </div>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

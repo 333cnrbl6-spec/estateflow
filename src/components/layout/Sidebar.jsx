@@ -21,7 +21,8 @@ import {
   Receipt,
   MessageSquare,
   Settings,
-  Plug
+  Plug,
+  Scale
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -54,6 +55,7 @@ const navGroups = [
     items: [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+      { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
     ]
