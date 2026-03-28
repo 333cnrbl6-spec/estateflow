@@ -1,0 +1,288 @@
+{
+  "name": "TenancyPipeline",
+  "type": "object",
+  "properties": {
+    "reference": {
+      "type": "string",
+      "description": "Internal reference e.g. TP-2026-001"
+    },
+    "property_address": {
+      "type": "string",
+      "description": "Full property address"
+    },
+    "unit_reference": {
+      "type": "string",
+      "description": "Flat/unit number"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": [
+        "england",
+        "wales"
+      ],
+      "description": "Determines which legislation applies"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "applicant",
+        "referencing",
+        "offer_agreed",
+        "pre_tenancy_certs",
+        "tenancy_signed",
+        "handover",
+        "occupied",
+        "periodic_check",
+        "notice_served",
+        "vacating",
+        "void",
+        "archived"
+      ],
+      "default": "applicant"
+    },
+    "applicant_name": {
+      "type": "string"
+    },
+    "applicant_email": {
+      "type": "string"
+    },
+    "applicant_phone": {
+      "type": "string"
+    },
+    "monthly_rent": {
+      "type": "number"
+    },
+    "deposit_amount": {
+      "type": "number"
+    },
+    "deposit_scheme": {
+      "type": "string",
+      "enum": [
+        "dps",
+        "mydeposits",
+        "tds",
+        "none"
+      ]
+    },
+    "deposit_registered_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Must be within 30 days of tenancy start"
+    },
+    "tenancy_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "tenancy_end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "handover_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "vacate_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "epc_rating": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "description": "Min E for England lettings (MEES 2018), min E for Wales"
+    },
+    "epc_expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "EPC valid 10 years"
+    },
+    "epc_provided_to_tenant": {
+      "type": "boolean",
+      "default": false
+    },
+    "gas_safety_cert_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Annual CP12 - must be provided before occupation"
+    },
+    "gas_safety_expiry_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "gas_safety_provided_to_tenant": {
+      "type": "boolean",
+      "default": false
+    },
+    "eicr_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Electrical Installation Condition Report - every 5 years (England mandatory since 2020, Wales best practice)"
+    },
+    "eicr_expiry_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "eicr_outcome": {
+      "type": "string",
+      "enum": [
+        "satisfactory",
+        "unsatisfactory",
+        "pending"
+      ]
+    },
+    "eicr_provided_to_tenant": {
+      "type": "boolean",
+      "default": false
+    },
+    "smoke_alarms_tested": {
+      "type": "boolean",
+      "default": false,
+      "description": "Tested on day 1 of tenancy (England SI 2015/1693, Wales)"
+    },
+    "co_alarms_fitted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Required in rooms with solid fuel / gas appliances"
+    },
+    "legionella_risk_assessed": {
+      "type": "boolean",
+      "default": false
+    },
+    "how_to_rent_provided": {
+      "type": "boolean",
+      "default": false,
+      "description": "England only - MHCLG How to Rent guide provided at tenancy start"
+    },
+    "rent_smart_wales_landlord_registered": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wales only - Rent Smart Wales landlord registration required"
+    },
+    "rent_smart_wales_licence_number": {
+      "type": "string",
+      "description": "Wales only - RSW licence number for the agent/landlord"
+    },
+    "renting_homes_written_statement_provided": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wales only - Renting Homes (Wales) Act 2016: written statement of occupation contract must be provided within 14 days"
+    },
+    "renting_homes_fitness_for_habitation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wales only - FFHH standard compliance confirmed"
+    },
+    "right_to_rent_checked": {
+      "type": "boolean",
+      "default": false,
+      "description": "England only - Immigration Act 2014 right to rent check"
+    },
+    "right_to_rent_check_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "inventory_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "inventory_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "inventory_signed_by_tenant": {
+      "type": "boolean",
+      "default": false
+    },
+    "check_in_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "check_in_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_periodic_inspection_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Recommended every 3-6 months"
+    },
+    "next_periodic_inspection_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "periodic_inspection_notes": {
+      "type": "string"
+    },
+    "notice_type": {
+      "type": "string",
+      "enum": [
+        "section_21",
+        "section_8",
+        "occupation_contract_notice_wales",
+        "mutual_surrender",
+        "none"
+      ],
+      "description": "Section 21 (England no-fault), Section 8 (fault), Wales occupation contract notice"
+    },
+    "notice_served_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notice_expiry_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "check_out_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "check_out_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "deposit_dispute": {
+      "type": "boolean",
+      "default": false
+    },
+    "deposit_returned_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Must be within 10 days of agreement (DPS/TDS)"
+    },
+    "hmo_licensed": {
+      "type": "boolean",
+      "default": false,
+      "description": "HMO licence required if 5+ occupants forming 2+ households"
+    },
+    "hmo_licence_number": {
+      "type": "string"
+    },
+    "hmo_licence_expiry": {
+      "type": "string",
+      "format": "date"
+    },
+    "selective_licensing_area": {
+      "type": "boolean",
+      "default": false,
+      "description": "Some councils require selective licensing for all private lets"
+    },
+    "selective_licence_number": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_address",
+    "stage",
+    "jurisdiction"
+  ]
+}

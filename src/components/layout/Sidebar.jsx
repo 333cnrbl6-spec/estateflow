@@ -10,6 +10,7 @@ import {
   Wrench,
   BookUser,
   ShieldCheck,
+  GitBranch,
   ChevronLeft,
   ChevronRight,
   Crown
@@ -26,6 +27,7 @@ const navItems = [
   { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
   { label: 'Contacts', icon: BookUser, path: '/contacts' },
   { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+  { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
 ];
 
 export default function Sidebar() {

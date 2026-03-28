@@ -16,6 +16,7 @@ import Financials from './pages/Financials';
 import Maintenance from './pages/Maintenance';
 import Contacts from './pages/Contacts';
 import Compliance from './pages/Compliance';
+import Pipeline from './pages/Pipeline';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/compliance" element={<Compliance />} />
+        <Route path="/pipeline" element={<Pipeline />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
