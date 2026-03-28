@@ -1,0 +1,123 @@
+{
+  "name": "Workflow",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow name e.g. Gas Safety Cert Reminder"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "gas_safety_expiry",
+        "epc_expiry",
+        "electrical_expiry",
+        "rent_overdue",
+        "deposit_not_registered",
+        "custom"
+      ],
+      "description": "Event that triggers this workflow"
+    },
+    "days_before": {
+      "type": "number",
+      "description": "How many days before the date to trigger (e.g. 30 for reminder 30 days before expiry)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this workflow is enabled"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "send_email",
+              "create_maintenance_order",
+              "create_crm_interaction",
+              "draft_section8_notice"
+            ],
+            "description": "Type of action to perform"
+          },
+          "email_subject": {
+            "type": "string",
+            "description": "For send_email action"
+          },
+          "email_body_template": {
+            "type": "string",
+            "description": "Email template with placeholders like {{property_name}}, {{tenant_name}}"
+          },
+          "maintenance_category": {
+            "type": "string",
+            "description": "For create_maintenance_order action"
+          },
+          "maintenance_priority": {
+            "type": "string",
+            "enum": [
+              "emergency",
+              "urgent",
+              "standard",
+              "low"
+            ],
+            "default": "standard"
+          },
+          "maintenance_title_template": {
+            "type": "string",
+            "description": "Title template for maintenance order"
+          },
+          "crm_subject_template": {
+            "type": "string",
+            "description": "For create_crm_interaction action"
+          },
+          "crm_body_template": {
+            "type": "string",
+            "description": "CRM note template"
+          },
+          "document_type": {
+            "type": "string",
+            "description": "For draft_section8_notice: section8_notice, reminder, other"
+          }
+        },
+        "required": [
+          "action_type"
+        ]
+      },
+      "description": "Actions to execute when workflow triggers"
+    },
+    "apply_to_properties": {
+      "type": "string",
+      "enum": [
+        "all",
+        "specific_regions",
+        "specific_properties"
+      ],
+      "default": "all",
+      "description": "Which properties this workflow applies to"
+    },
+    "property_regions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "If apply_to_properties is specific_regions"
+    },
+    "property_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "If apply_to_properties is specific_properties"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type",
+    "actions"
+  ]
+}

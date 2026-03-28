@@ -26,6 +26,7 @@ import CRM from './pages/CRM';
 import LandRegistry from './pages/LandRegistry';
 import Setup from './pages/Setup';
 import RegulatoryHub from './pages/RegulatoryHub';
+import Workflows from './pages/Workflows';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
         <Route path="/land-registry" element={<LandRegistry />} />
         <Route path="/setup" element={<Setup />} />
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
+        <Route path="/workflows" element={<Workflows />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

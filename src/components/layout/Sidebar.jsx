@@ -22,7 +22,8 @@ import {
   MessageSquare,
   Settings,
   Plug,
-  Scale
+  Scale,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +57,7 @@ const navGroups = [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
       { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
+      { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
     ]

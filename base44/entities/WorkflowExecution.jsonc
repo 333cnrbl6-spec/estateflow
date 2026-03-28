@@ -1,0 +1,112 @@
+{
+  "name": "WorkflowExecution",
+  "type": "object",
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "description": "ID of the Workflow that triggered this"
+    },
+    "workflow_name": {
+      "type": "string"
+    },
+    "trigger_type": {
+      "type": "string",
+      "description": "e.g. gas_safety_expiry"
+    },
+    "property_id": {
+      "type": "string"
+    },
+    "property_address": {
+      "type": "string"
+    },
+    "unit_id": {
+      "type": "string"
+    },
+    "pipeline_id": {
+      "type": "string",
+      "description": "If triggered by TenancyPipeline record"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "tenant_name": {
+      "type": "string"
+    },
+    "trigger_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The actual date that triggered this (e.g. expiry date)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "executed",
+        "rejected",
+        "skipped"
+      ],
+      "default": "pending",
+      "description": "Current status of this action"
+    },
+    "actions_to_execute": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "send_email",
+              "create_maintenance_order",
+              "create_crm_interaction",
+              "draft_section8_notice"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "executed",
+              "failed"
+            ],
+            "default": "pending"
+          },
+          "details": {
+            "type": "object",
+            "description": "Action-specific details (email subject, maintenance title, etc)"
+          },
+          "error_message": {
+            "type": "string",
+            "description": "If status is failed"
+          },
+          "result_id": {
+            "type": "string",
+            "description": "ID of created record (maintenance order, CRM interaction, etc)"
+          }
+        }
+      }
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Email of user who approved this"
+    },
+    "approved_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "executed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "workflow_id",
+    "workflow_name",
+    "trigger_type",
+    "status"
+  ]
+}
