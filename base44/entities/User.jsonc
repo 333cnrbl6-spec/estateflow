@@ -1,0 +1,23 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "business_name": {
+      "type": "string",
+      "description": "User's business name for subscription"
+    },
+    "is_subscribed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has an active subscription"
+    }
+  }
+}

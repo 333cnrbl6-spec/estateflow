@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
 import {
   LayoutDashboard,
   Building2,
@@ -87,6 +88,7 @@ export default function Sidebar({ onCollapsedChange }) {
     location = { pathname: '/' };
   }
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
 
   const handleCollapse = (newState) => {
     setCollapsed(newState);
@@ -108,10 +110,10 @@ export default function Sidebar({ onCollapsedChange }) {
         {!collapsed && (
           <div className="overflow-hidden">
             <h1 className="font-serif text-base font-semibold tracking-tight text-sidebar-foreground truncate">
-              Powell & Co
+              EstateFlow
             </h1>
             <p className="text-[10px] uppercase tracking-[0.15em] text-sidebar-foreground/50">
-              Property Group
+              {user?.business_name ? user.business_name : 'Property Group'}
             </p>
           </div>
         )}
