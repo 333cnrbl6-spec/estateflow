@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import PhoneNumberMatcher from './PhoneNumberMatcher';
 
 export default function CallValidationDialog({ open, onOpenChange, onValidationComplete, onCancel }) {
   const [step, setStep] = useState(1); // 1: caller info, 2: property match, 3: gdpr consent
@@ -34,6 +35,7 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
   const [matchedCompany, setMatchedCompany] = useState(null);
   const [serviceGap, setServiceGap] = useState(null);
   const [error, setError] = useState('');
+  const [showPhoneMatcher, setShowPhoneMatcher] = useState(false);
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-validation', postcode, town, region, landlordName],
@@ -188,6 +190,7 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -234,12 +237,21 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
 
               <div>
                 <Label className="text-sm font-medium">Phone Number *</Label>
-                <Input
-                  placeholder="07xxx xxxxxx"
-                  value={callerPhone}
-                  onChange={(e) => setCallerPhone(e.target.value)}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    placeholder="07xxx xxxxxx"
+                    value={callerPhone}
+                    onChange={(e) => setCallerPhone(e.target.value)}
+                  />
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowPhoneMatcher(true)}
+                    disabled={!callerPhone}
+                  >
+                    Search
+                  </Button>
+                </div>
               </div>
 
               <div>
@@ -487,5 +499,27 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {showPhoneMatcher && (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-background rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <PhoneNumberMatcher 
+              phone={callerPhone}
+              onMatchFound={(match) => {
+                setCallerName(match.data.full_name);
+                if (match.property) {
+                  setPostcode(match.property.postcode || '');
+                  setMatchedProperty(match.property);
+                }
+                setShowPhoneMatcher(false);
+              }}
+              onCancel={() => setShowPhoneMatcher(false)}
+            />
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

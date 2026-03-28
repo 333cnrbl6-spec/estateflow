@@ -54,6 +54,7 @@ import DeveloperDemoSwitcher from './pages/DeveloperDemoSwitcher';
 import CertificateCompliance from './pages/CertificateCompliance';
 import MaintenanceWorkflow from './pages/MaintenanceWorkflow';
 import OutOfHoursCallCenter from './pages/OutOfHoursCallCenter';
+import CallCenterConfig from './pages/CallCenterConfig';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -125,6 +126,7 @@ const AuthenticatedApp = () => {
         <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
         <Route path="/certificate-compliance" element={<CertificateCompliance />} />
         <Route path="/out-of-hours" element={<OutOfHoursCallCenter />} />
+        <Route path="/call-center-config" element={<CallCenterConfig />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
