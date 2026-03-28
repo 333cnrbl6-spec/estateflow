@@ -380,11 +380,18 @@ Deno.serve(async (req) => {
       notes: 'RBM proactive compliance reminder - Ensures all properties maintain current certifications.',
     });
 
+    // Store demo company in user metadata for filtering
+    await base44.auth.updateMe({ 
+      current_demo_company_id: rbmCompany.id,
+      current_demo_name: 'RBM (North West)',
+    });
+
     return Response.json({
       success: true,
       message: 'RBM demo user profile created successfully',
       data: {
         company: rbmCompany.name,
+        company_id: rbmCompany.id,
         properties: [property1.name, property2.name, property3.name],
         units_created: units1.length,
         tenants_created: tenants.length,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp } from 'lucide-react';
@@ -14,12 +14,88 @@ import { Link } from 'react-router-dom';
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 export default function Dashboard() {
-  const { data: companies = [] } = useQuery({ queryKey: ['companies'], queryFn: () => base44.entities.Company.list() });
-  const { data: properties = [] } = useQuery({ queryKey: ['properties'], queryFn: () => base44.entities.Property.list() });
-  const { data: units = [] } = useQuery({ queryKey: ['units'], queryFn: () => base44.entities.Unit.list() });
-  const { data: tenants = [] } = useQuery({ queryKey: ['tenants'], queryFn: () => base44.entities.Tenant.list() });
-  const { data: transactions = [] } = useQuery({ queryKey: ['transactions'], queryFn: () => base44.entities.FinancialTransaction.list() });
-  const { data: maintenance = [] } = useQuery({ queryKey: ['maintenance'], queryFn: () => base44.entities.MaintenanceOrder.list() });
+  const [demoCompanyId, setDemoCompanyId] = useState(null);
+  
+  // Load current demo company from user metadata
+  useEffect(() => {
+    base44.auth.me().then(user => {
+      if (user?.current_demo_company_id) {
+        setDemoCompanyId(user.current_demo_company_id);
+      }
+    });
+  }, []);
+
+  const { data: companies = [] } = useQuery({ 
+    queryKey: ['companies', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        return [await base44.entities.Company.get(demoCompanyId)];
+      }
+      return base44.entities.Company.list();
+    }
+  });
+  
+  const { data: properties = [] } = useQuery({ 
+    queryKey: ['properties', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        return await base44.entities.Property.filter({ owning_company: demoCompanyId });
+      }
+      return base44.entities.Property.list();
+    }
+  });
+  
+  const { data: units = [] } = useQuery({ 
+    queryKey: ['units', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
+        const propIds = props.map(p => p.id);
+        const allUnits = await base44.entities.Unit.list();
+        return allUnits.filter(u => propIds.includes(u.property_id));
+      }
+      return base44.entities.Unit.list();
+    }
+  });
+  
+  const { data: tenants = [] } = useQuery({ 
+    queryKey: ['tenants', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
+        const propIds = props.map(p => p.id);
+        const allTenants = await base44.entities.Tenant.list();
+        return allTenants.filter(t => propIds.includes(t.property_id));
+      }
+      return base44.entities.Tenant.list();
+    }
+  });
+  
+  const { data: transactions = [] } = useQuery({ 
+    queryKey: ['transactions', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
+        const propIds = props.map(p => p.id);
+        const allTx = await base44.entities.FinancialTransaction.list();
+        return allTx.filter(t => propIds.includes(t.property_id));
+      }
+      return base44.entities.FinancialTransaction.list();
+    }
+  });
+  
+  const { data: maintenance = [] } = useQuery({ 
+    queryKey: ['maintenance', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
+        const propIds = props.map(p => p.id);
+        const allMaint = await base44.entities.MaintenanceOrder.list();
+        return allMaint.filter(m => propIds.includes(m.property_id));
+      }
+      return base44.entities.MaintenanceOrder.list();
+    }
+  });
 
   const totalIncome = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
   const totalExpenses = transactions.filter(t => t.direction === 'expense' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
@@ -55,7 +131,7 @@ export default function Dashboard() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-4xl font-serif font-bold text-foreground mb-1">Dashboard</h1>
-              <p className="text-base text-muted-foreground">EstateFlow Property Group — Portfolio Overview</p>
+              <p className="text-base text-muted-foreground">{demoCompanyId ? companies[0]?.name || 'Demo' : 'EstateFlow Property Group'} — Portfolio Overview</p>
             </div>
             <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-card rounded-lg border border-border">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
