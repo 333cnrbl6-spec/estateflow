@@ -60,6 +60,7 @@ import OutOfHoursOnboarding from './pages/OutOfHoursOnboarding';
 import OutOfHoursServicePipeline from './pages/OutOfHoursServicePipeline';
 import OutOfHoursReporting from './pages/OutOfHoursReporting';
 import ContractorMobilePortal from './pages/ContractorMobilePortal';
+import BillingManagement from './pages/BillingManagement';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -137,6 +138,7 @@ const AuthenticatedApp = () => {
         <Route path="/out-of-hours-pipeline" element={<OutOfHoursServicePipeline />} />
         <Route path="/out-of-hours-reporting" element={<OutOfHoursReporting />} />
         <Route path="/contractor-portal" element={<ContractorMobilePortal />} />
+        <Route path="/billing" element={<BillingManagement />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
