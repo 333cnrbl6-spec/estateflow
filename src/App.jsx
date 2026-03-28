@@ -24,6 +24,7 @@ import Banking from './pages/Banking';
 import Expenses from './pages/Expenses';
 import CRM from './pages/CRM';
 import LandRegistry from './pages/LandRegistry';
+import Setup from './pages/Setup';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
         <Route path="/expenses" element={<Expenses />} />
         <Route path="/crm" element={<CRM />} />
         <Route path="/land-registry" element={<LandRegistry />} />
+        <Route path="/setup" element={<Setup />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

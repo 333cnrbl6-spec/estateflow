@@ -19,7 +19,9 @@ import {
   MapPin,
   Landmark,
   Receipt,
-  MessageSquare
+  MessageSquare,
+  Settings,
+  Plug
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -53,6 +55,12 @@ const navGroups = [
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
       { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
+    ]
+  },
+  {
+    label: 'Platform',
+    items: [
+      { label: 'Setup & Integrations', icon: Plug, path: '/setup' },
     ]
   }
 ];
