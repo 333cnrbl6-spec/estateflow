@@ -1,7 +1,8 @@
 import React from 'react';
-import { AlertTriangle, ChevronRight, Scale } from 'lucide-react';
+import { AlertTriangle, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays } from 'date-fns';
+import S21Banner from '@/components/shared/S21Banner';
 
 const DEADLINES = [
   { company: 'Powell & Co Assets Ltd', type: 'Accounts', due: '2026-03-31' },
@@ -14,30 +15,10 @@ export default function ComplianceAlert() {
   const urgent = DEADLINES.filter(d => differenceInDays(new Date(d.due), today) <= 30)
     .sort((a, b) => new Date(a.due) - new Date(b.due));
 
-  const s21Days = differenceInDays(parseISO('2026-05-01'), today);
-  const showS21 = s21Days > 0 && s21Days <= 60;
-
   return (
     <>
       {/* S21 / Renters' Rights Act Banner */}
-      {showS21 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Scale className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-red-900">
-                Renters' Rights Act — S21 abolished in {s21Days} days
-              </p>
-              <p className="text-xs text-red-700 mt-0.5">
-                Last valid S21: <strong>30 April 2026</strong> · All ASTs become periodic · Use S8 grounds for possession · Tenant info sheet required by 31 May 2026
-              </p>
-            </div>
-          </div>
-          <Link to="/regulatory-hub" className="text-xs text-red-700 hover:underline flex items-center gap-1 shrink-0">
-            Regulatory Hub <ChevronRight className="w-3 h-3" />
-          </Link>
-        </div>
-      )}
+      <div className="mb-4"><S21Banner compact /></div>
 
       {/* Companies House Deadlines */}
       {urgent.length > 0 && (
