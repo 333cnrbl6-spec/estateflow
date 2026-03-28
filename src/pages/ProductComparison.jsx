@@ -230,23 +230,23 @@ export default function ProductComparison() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="pt-6">
-              <p className="text-sm text-slate-600 mb-2">Competitor Set</p>
-              <p className="text-2xl font-bold text-slate-900">6 Platforms</p>
-              <p className="text-xs text-slate-500 mt-2">Goodlord, AppFolio, Keogh, Yardi, Rent Manager</p>
+              <p className="text-sm text-slate-600 mb-2">Powell & Co Demo Portfolio</p>
+              <p className="text-2xl font-bold text-slate-900">38 Companies</p>
+              <p className="text-xs text-slate-500 mt-2">13 Properties | 120+ Units | 60+ Tenants</p>
             </CardContent>
           </Card>
           <Card className="bg-green-50 border-green-200">
             <CardContent className="pt-6">
-              <p className="text-sm text-slate-600 mb-2">Feature Categories</p>
-              <p className="text-2xl font-bold text-slate-900">6 Domains</p>
-              <p className="text-xs text-slate-500 mt-2">Portfolio, Finance, Compliance, Tenant, Ops, Integration</p>
+              <p className="text-sm text-slate-600 mb-2">Compliance Checkpoints</p>
+              <p className="text-2xl font-bold text-slate-900">18+</p>
+              <p className="text-xs text-slate-500 mt-2">Gas Safety, EPC, EICR, Deposits, CRB, MEES</p>
             </CardContent>
           </Card>
           <Card className="bg-amber-50 border-amber-200">
             <CardContent className="pt-6">
-              <p className="text-sm text-slate-600 mb-2">Data Source</p>
-              <p className="text-2xl font-bold text-slate-900">Public</p>
-              <p className="text-xs text-slate-500 mt-2">Provider websites & verified pricing (March 2026)</p>
+              <p className="text-sm text-slate-600 mb-2">Active Transactions</p>
+              <p className="text-2xl font-bold text-slate-900">200+</p>
+              <p className="text-xs text-slate-500 mt-2">Rent, Service Charges, Expenses, Maintenance</p>
             </CardContent>
           </Card>
         </div>

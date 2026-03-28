@@ -86,7 +86,7 @@ export default function MarketingCollateral() {
             </div>
             <h2 className="text-5xl font-serif font-bold text-slate-900">EstateFlow</h2>
             <p className="text-2xl text-slate-600">Enterprise Property Management Platform</p>
-            <p className="text-lg text-slate-500">Unified solution for modern portfolio management</p>
+            <p className="text-lg text-slate-500">Powered by Powell & Co Demo: 38 Companies | 13 Properties | 120+ Units</p>
           </div>
 
           {/* Six Feature Sections */}
@@ -95,38 +95,38 @@ export default function MarketingCollateral() {
               {
                 icon: '🏢',
                 title: 'Portfolio Management',
-                description: 'Manage 250+ properties, 1000+ units across multiple companies and regions with real-time visibility.',
-                features: ['Multi-company groups', 'Company House integration', 'Automated compliance tracking'],
+                description: 'Powell & Co operates 13 major properties across 6 UK regions with 120+ units and 38 company entities.',
+                features: ['Multi-company hierarchy', 'Companies House integration', 'Property region tracking'],
               },
               {
                 icon: '💰',
                 title: 'Financial Management',
-                description: 'Complete accounting integration with real-time P&L, 12-month trends, and collection analytics.',
-                features: ['QuickBooks & Xero sync', 'Automated reconciliation', 'Advanced reporting'],
+                description: 'Powell & Co processes 200+ transactions monthly: rent, service charges, maintenance, and operating expenses.',
+                features: ['Multi-transaction tracking', '92% collection rate', 'Monthly analytics'],
               },
               {
                 icon: '⚖️',
                 title: 'Compliance & Audit',
-                description: 'Full regulatory compliance with Gas Safety, EPC, MEES, deposit protection, and audit trails.',
-                features: ['Bulk document generation', 'Automated expiry alerts', 'Jurisdiction support (England/Wales)'],
+                description: 'Powell & Co tracks 18+ compliance areas across 38 companies: Gas Safety, EPC, EICR, deposits, CRB checks.',
+                features: ['Full audit trail', 'Deadline tracking', 'Multi-jurisdiction support'],
               },
               {
                 icon: '👥',
                 title: 'Tenant Experience',
-                description: 'White-label tenant portal with secure document access, payment history, and maintenance requests.',
-                features: ['Mobile-friendly portal', 'Secure notifications', 'Document management'],
+                description: 'Powell & Co manages 60+ active tenants across 120+ units with secure access to documents and history.',
+                features: ['Payment tracking', 'Document access', 'Maintenance requests'],
               },
               {
                 icon: '🔧',
                 title: 'Operations Hub',
-                description: 'Streamlined maintenance tracking with priority scheduling and contractor management.',
-                features: ['Workflow automation', 'Priority-based routing', 'CRM integration'],
+                description: 'Powell & Co manages 40+ maintenance orders across multiple contractors and 7 service categories.',
+                features: ['Priority scheduling', 'Contractor mgmt', 'Cost tracking'],
               },
               {
                 icon: '🔗',
                 title: 'API & Integrations',
-                description: 'Extensible platform with webhooks, custom API, and third-party service connectors.',
-                features: ['Webhook support', 'Auto-sync scheduling', 'Service connectors'],
+                description: 'Powell & Co integrates with QuickBooks, Xero, and custom APIs for seamless data synchronization.',
+                features: ['Webhook support', 'Auto-sync', 'Custom APIs'],
               },
             ].map((section, idx) => (
               <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
@@ -149,14 +149,14 @@ export default function MarketingCollateral() {
             <h3 className="text-2xl font-bold mb-6">Platform Capabilities</h3>
             <div className="grid grid-cols-4 gap-4">
               {[
-                { label: 'Properties', value: '250+' },
-                { label: 'Units', value: '1000+' },
-                { label: 'Companies', value: '35+' },
-                { label: 'Compliance Checks', value: '50+' },
-                { label: 'Integration Points', value: '12+' },
-                { label: 'Audit Events', value: '10K+' },
-                { label: 'Documents Generated', value: '8000+' },
-                { label: 'Tenant Accounts', value: '2400+' },
+                 { label: 'Properties', value: '13' },
+                 { label: 'Units', value: '120+' },
+                 { label: 'Companies', value: '38' },
+                 { label: 'Compliance Areas', value: '18+' },
+                 { label: 'Transactions', value: '200+' },
+                 { label: 'Maintenance Orders', value: '40+' },
+                 { label: 'Active Tenants', value: '60+' },
+                 { label: 'UK Regions', value: '6' },
               ].map((metric, idx) => (
                 <div key={idx} className="text-center">
                   <p className="text-3xl font-bold text-blue-300">{metric.value}</p>
@@ -192,50 +192,50 @@ export default function MarketingCollateral() {
             {[
               {
                 title: 'Dashboard',
-                subtitle: 'Portfolio Overview & Key Metrics',
-                metrics: ['35 Companies', '250 Properties', '92% Occupancy', '£2.4M Income'],
-                features: ['Real-time analytics', 'Compliance alerts', 'Maintenance tracking'],
+                subtitle: 'Powell & Co Overview',
+                metrics: ['38 Companies', '13 Properties', '120+ Units', '91% Occupancy'],
+                features: ['Real-time analytics', 'Compliance tracking', 'Financial summary'],
               },
               {
                 title: 'Companies',
-                subtitle: 'Corporate Structure Management',
-                metrics: ['35 Companies', '33 Active', '8 Accounts Due'],
-                features: ['Company House integration', 'Director tracking', 'Filing deadlines'],
+                subtitle: 'Group Structure Management',
+                metrics: ['38 Companies', '36 Active', '50+ Directors'],
+                features: ['Companies House integration', 'Filing deadlines', 'Company hierarchy'],
               },
               {
                 title: 'Properties & Units',
                 subtitle: 'Portfolio Holdings',
-                metrics: ['250 Properties', '1000+ Units', '92% Occupancy'],
-                features: ['Unit tracking', 'Lease management', 'Rent ledgers'],
+                metrics: ['13 Properties', '120+ Units', '91% Occupancy'],
+                features: ['Unit tracking', 'Lease management', 'Regional distribution'],
               },
               {
                 title: 'Financial Reporting',
-                subtitle: 'Advanced Analytics & Trends',
-                metrics: ['£2.4M Income', '92% Collection', '38% Cost Ratio'],
-                features: ['12-month trends', 'Occupancy analysis', 'Forecasting'],
+                subtitle: 'Powell & Co Analytics',
+                metrics: ['200+ Transactions', '92% Collection', '£2,100 Avg Rent'],
+                features: ['Multi-transaction tracking', 'Collection analytics', 'Cost analysis'],
               },
               {
                 title: 'Compliance Audit',
-                subtitle: 'Regulatory Tracking',
-                metrics: ['18 Active Audits', '1,240 Logs', '8,450 Documents'],
-                features: ['Audit trails', 'Bulk document generation', 'Deadline tracking'],
+                subtitle: 'Multi-Company Tracking',
+                metrics: ['18+ Checkpoints', '38 Companies', 'Gas/EPC/EICR'],
+                features: ['Full audit trails', 'Deadline tracking', 'Multi-jurisdiction'],
               },
               {
                 title: 'Tenant Portal',
-                subtitle: 'White-Label Self-Service',
-                metrics: ['2,400 Accounts', '87% Login Rate', '280 Requests/mo'],
-                features: ['Secure access', 'Payment history', 'Maintenance requests'],
+                subtitle: 'Powell & Co Tenants',
+                metrics: ['60+ Active Tenants', '120+ Units', '13 Properties'],
+                features: ['Secure access', 'Payment history', 'Maintenance tracking'],
               },
               {
                 title: 'API Integration Hub',
-                subtitle: 'Third-Party Connectors',
-                metrics: ['12 Services', '1.2K Events/day', '99.8% Success'],
-                features: ['Webhook support', 'Auto-sync', 'Service integrations'],
+                subtitle: 'Powell & Co Integrations',
+                metrics: ['QuickBooks', 'Xero', 'Custom APIs'],
+                features: ['Webhook support', 'Auto-sync', 'Service connectors'],
               },
               {
                 title: 'Maintenance Orders',
-                subtitle: 'Operations Management',
-                metrics: ['850 Orders/yr', '92% Completion', '3 Day Avg Response'],
+                subtitle: 'Powell & Co Operations',
+                metrics: ['40+ Orders', '7+ Contractors', '7 Categories'],
                 features: ['Priority routing', 'Contractor mgmt', 'Cost tracking'],
               },
             ].map((page, idx) => (

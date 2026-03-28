@@ -26,7 +26,7 @@ export default function ProductBrochure() {
         'Multi-property search and filtering',
         'Property history and documentation',
       ],
-      data: '250+ Properties | 1,200+ Units | 95% Occupancy',
+      data: '13 Properties | 120+ Units | 91% Occupancy (Powell & Co Demo)',
     },
     {
       title: 'Financial Intelligence',
@@ -38,7 +38,7 @@ export default function ProductBrochure() {
         'Monthly income vs. expense analysis',
         'Tenant arrears management and alerts',
       ],
-      data: '£2.4M Annual Income | 92% Collection Rate | 12-Month Trend Analysis',
+      data: '£250K+ Annual Income | 92% Collection Rate | 200+ Transactions (Powell & Co)',
     },
     {
       title: 'Compliance & Audit',
@@ -50,7 +50,7 @@ export default function ProductBrochure() {
         'Companies House deadline tracking',
         'Tenancy lifecycle management (England/Wales)',
       ],
-      data: '18 Compliance Checkpoints | 100% Audit Coverage | Zero Manual Tracking',
+      data: '38 Companies | 18 Compliance Checks | Full Audit Trail (Powell & Co)',
     },
     {
       title: 'Tenant Portal',
@@ -62,7 +62,7 @@ export default function ProductBrochure() {
         'Document downloads',
         'Maintenance request tracking',
       ],
-      data: '2,400 Active Tenant Accounts | 87% Monthly Login Rate',
+      data: '60+ Active Tenants | Multi-Region Coverage (Powell & Co)',
     },
     {
       title: 'Operations Hub',
@@ -74,7 +74,7 @@ export default function ProductBrochure() {
         'CRM interaction logging',
         'Contractor management',
       ],
-      data: '850 Maintenance Orders/Year | 92% Completion Rate | 3-Day Avg Response',
+      data: '40+ Maintenance Orders | Multiple Contractors | Full Tracking (Powell & Co)',
     },
     {
       title: 'API Integration Network',
@@ -86,7 +86,7 @@ export default function ProductBrochure() {
         'Auto-sync scheduling',
         'Third-party API connectors',
       ],
-      data: '12 Active Integrations | Real-time Webhooks | 99.8% Uptime',
+      data: 'QuickBooks | Xero | Custom APIs | Webhook Support (Powell & Co)',
     },
   ];
 
@@ -185,25 +185,25 @@ export default function ProductBrochure() {
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-xs text-muted-foreground">Total Income</p>
-                  <p className="text-2xl font-bold text-primary">£2.4M</p>
-                  <p className="text-xs text-muted-foreground mt-1">Last 12 months</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-xs text-muted-foreground">Collection Rate</p>
-                  <p className="text-2xl font-bold text-green-600">92%</p>
-                  <p className="text-xs text-muted-foreground mt-1">Month-to-date</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-xs text-muted-foreground">Arrears Outstanding</p>
-                  <p className="text-2xl font-bold text-amber-600">£186K</p>
-                  <p className="text-xs text-muted-foreground mt-1">35 Tenant accounts</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-xs text-muted-foreground">Avg Income/Unit</p>
-                  <p className="text-2xl font-bold">£2,100</p>
-                  <p className="text-xs text-muted-foreground mt-1">Monthly</p>
-                </div>
+                   <p className="text-xs text-muted-foreground">Total Properties</p>
+                   <p className="text-2xl font-bold text-primary">13</p>
+                   <p className="text-xs text-muted-foreground mt-1">Powell & Co Portfolio</p>
+                 </div>
+                 <div className="bg-muted p-4 rounded-lg">
+                   <p className="text-xs text-muted-foreground">Units</p>
+                   <p className="text-2xl font-bold text-green-600">120+</p>
+                   <p className="text-xs text-muted-foreground mt-1">Across UK regions</p>
+                 </div>
+                 <div className="bg-muted p-4 rounded-lg">
+                   <p className="text-xs text-muted-foreground">Companies</p>
+                   <p className="text-2xl font-bold text-amber-600">38</p>
+                   <p className="text-xs text-muted-foreground mt-1">Group structure</p>
+                 </div>
+                 <div className="bg-muted p-4 rounded-lg">
+                   <p className="text-xs text-muted-foreground">Active Tenants</p>
+                   <p className="text-2xl font-bold">60+</p>
+                   <p className="text-xs text-muted-foreground mt-1">Multi-region</p>
+                 </div>
               </div>
               <div className="bg-slate-900 text-white p-6 rounded-lg">
                 <p className="text-sm font-mono text-slate-400 mb-2">Accounting Integration Status</p>
