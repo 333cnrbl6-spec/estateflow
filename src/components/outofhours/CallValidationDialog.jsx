@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { AlertCircle, CheckCircle2, Search } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Search, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,6 +28,8 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
   const [callDescription, setCallDescription] = useState('');
   const [gdprConsent, setGdprConsent] = useState(false);
   const [matchedProperty, setMatchedProperty] = useState(null);
+  const [matchedCompany, setMatchedCompany] = useState(null);
+  const [serviceGap, setServiceGap] = useState(null);
   const [error, setError] = useState('');
 
   const { data: properties = [] } = useQuery({
@@ -39,6 +41,47 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
     },
     enabled: step === 2 && postcode.length > 2
   });
+
+  const { data: companies = [] } = useQuery({
+    queryKey: ['companies-for-property', matchedProperty?.id],
+    queryFn: async () => {
+      if (!matchedProperty?.owning_company) return [];
+      const company = await base44.entities.Company.get(matchedProperty.owning_company);
+      return [company];
+    },
+    enabled: !!matchedProperty?.owning_company
+  });
+
+  const { data: service } = useQuery({
+    queryKey: ['service-for-company', matchedCompany?.id],
+    queryFn: async () => {
+      if (!matchedCompany?.id) return null;
+      const services = await base44.entities.OutOfHoursService.list();
+      return services.find(s => s.company_id === matchedCompany.id);
+    },
+    enabled: !!matchedCompany?.id
+  });
+
+  const checkServiceCoverage = (issueType) => {
+    if (!service) return { covered: false, gap: 'no_subscription' };
+    
+    const coverageMap = {
+      emergency: 'emergency_response',
+      heating_failure: 'maintenance_order_creation',
+      water_leak: 'emergency_response',
+      security_breach: 'emergency_response',
+      maintenance: 'maintenance_order_creation',
+      contractor_dispatch: 'contractor_dispatch'
+    };
+
+    const requiredOption = coverageMap[issueType];
+    const isCovered = service.call_handling_options?.includes(requiredOption);
+    
+    return {
+      covered: isCovered,
+      gap: isCovered ? null : requiredOption
+    };
+  };
 
   const handleNext = () => {
     if (step === 1) {
@@ -53,6 +96,23 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
         setError('Please select a property or try different search terms');
         return;
       }
+      if (!callType || !callDescription) {
+        setError('Please specify the issue type and description');
+        return;
+      }
+      
+      // Set company and check service coverage
+      if (companies.length > 0) {
+        setMatchedCompany(companies[0]);
+        const coverage = checkServiceCoverage(callType);
+        if (!coverage.covered) {
+          setServiceGap(coverage.gap);
+          setError('');
+          setStep(4); // Service redirect step
+          return;
+        }
+      }
+      
       setError('');
       setStep(3);
     }
@@ -72,6 +132,7 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
       caller_type: callerType,
       property_postcode: postcode,
       matched_property_id: matchedProperty?.id,
+      matched_company_id: matchedCompany?.id,
       call_type: callType,
       call_description: callDescription,
       validation_status: 'validated',
@@ -250,6 +311,55 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
             </div>
           )}
 
+          {/* Step 3: Service Gap Redirect */}
+          {step === 4 && (
+            <div className="space-y-4">
+              <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+                <div className="flex gap-3">
+                  <AlertTriangle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-orange-900 mb-1">Service Not Covered</p>
+                    <p className="text-sm text-orange-800">
+                      {callType?.replace(/_/g, ' ').toUpperCase()} is not included in the current subscription.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4 text-sm space-y-2">
+                  <p className="font-medium text-blue-900">Recommended Action:</p>
+                  <ul className="text-blue-800 space-y-1 list-disc list-inside">
+                    {callType?.includes('heating') && (
+                      <>
+                        <li>Gas Safe Engineer (£50-150 emergency call-out)</li>
+                        <li>Local plumber/heating specialist</li>
+                      </>
+                    )}
+                    {callType?.includes('water') && (
+                      <>
+                        <li>Licensed plumber for emergency repairs</li>
+                        <li>Water authority emergency line</li>
+                      </>
+                    )}
+                    {callType?.includes('gas') && (
+                      <li>Gas Safe Register - 0800 408 5500</li>
+                    )}
+                    {!callType?.match(/heating|water|gas/) && (
+                      <li>Local contractor specialising in {callType?.replace(/_/g, ' ')}</li>
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs text-muted-foreground">
+                  📧 Confirmation email with alternative provider recommendations will be sent to account holder.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Step 3: GDPR Consent */}
           {step === 3 && (
             <div className="space-y-4">
@@ -299,7 +409,11 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
           }}>
             {step === 1 ? 'Cancel' : 'Back'}
           </Button>
-          {step < 3 ? (
+          {step === 4 ? (
+            <Button onClick={handleValidate} className="bg-orange-600 hover:bg-orange-700">
+              Log & Redirect Call
+            </Button>
+          ) : step < 3 ? (
             <Button onClick={handleNext}>Next</Button>
           ) : (
             <Button onClick={handleValidate} className="bg-green-600 hover:bg-green-700">
