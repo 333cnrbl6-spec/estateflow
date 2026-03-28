@@ -36,6 +36,7 @@ import ComplianceAudit from './pages/ComplianceAudit';
 import APIIntegrationHub from './pages/APIIntegrationHub';
 import ProductBrochure from './pages/ProductBrochure';
 import PlatformTour from './pages/PlatformTour';
+import ProductComparison from './pages/ProductComparison';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -92,6 +93,7 @@ const AuthenticatedApp = () => {
         <Route path="/api-integrations" element={<APIIntegrationHub />} />
         <Route path="/brochure" element={<ProductBrochure />} />
         <Route path="/tour" element={<PlatformTour />} />
+        <Route path="/comparison" element={<ProductComparison />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
