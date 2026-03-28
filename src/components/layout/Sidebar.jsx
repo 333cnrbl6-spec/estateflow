@@ -27,7 +27,8 @@ import {
   Zap,
   FileText,
   Shield,
-  AlertCircle
+  AlertCircle,
+  Code2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -90,6 +91,7 @@ const navGroups = [
       { label: 'API Hub', icon: Zap, path: '/api-integrations' },
       { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
       { label: 'Leaseholder Portal', icon: Users, path: '/leaseholder-portal' },
+      { label: 'Dev: Demo Switcher', icon: Code2, path: '/dev-demo-switcher' },
     ]
   }
 ];

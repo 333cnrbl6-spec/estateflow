@@ -49,6 +49,7 @@ import BlockManagementComplianceDashboard from './pages/BlockManagementComplianc
 import DocumentAutomationEngine from './pages/DocumentAutomationEngine';
 import LeaseholderPortalView from './pages/LeaseholderPortalView';
 import EmergencyCalloutManager from './pages/EmergencyCalloutManager';
+import DeveloperDemoSwitcher from './pages/DeveloperDemoSwitcher';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -117,6 +118,7 @@ const AuthenticatedApp = () => {
         <Route path="/document-automation" element={<DocumentAutomationEngine />} />
         <Route path="/leaseholder-portal" element={<LeaseholderPortalView />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
+        <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
