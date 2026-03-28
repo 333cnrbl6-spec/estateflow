@@ -66,6 +66,7 @@ const navGroups = [
     label: 'Platform',
     items: [
       { label: 'Setup & Integrations', icon: Plug, path: '/setup' },
+      { label: 'Integrations', icon: Settings, path: '/integrations' },
     ]
   }
 ];
