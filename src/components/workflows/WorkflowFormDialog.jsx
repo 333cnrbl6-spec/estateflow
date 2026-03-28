@@ -79,8 +79,9 @@ export default function WorkflowFormDialog({ onClose, onSuccess }) {
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Create Workflow</DialogTitle>
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="text-2xl font-serif">Create Workflow</DialogTitle>
+          <p className="text-sm text-muted-foreground mt-1">Set up automated actions for property events</p>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -127,22 +128,22 @@ export default function WorkflowFormDialog({ onClose, onSuccess }) {
 
           {/* Actions */}
           <div className="border-t pt-4">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium">Actions to Execute</label>
-              <Button size="sm" variant="outline" onClick={handleAddAction} className="gap-1">
-                <Plus className="w-3 h-3" /> Add Action
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-sm font-semibold text-foreground">Actions to Execute</label>
+              <Button size="sm" variant="outline" onClick={handleAddAction} className="gap-1 font-medium">
+                <Plus className="w-4 h-4" /> Add Action
               </Button>
             </div>
 
             <div className="space-y-3">
               {formData.actions.map((action, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border rounded-lg p-4 space-y-3 bg-card hover:shadow-sm transition-shadow">
                   <div className="flex items-center justify-between">
                     <Select 
                       value={action.action_type} 
                       onValueChange={(val) => handleActionChange(i, 'action_type', val)}
                     >
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="w-48 font-medium">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -154,7 +155,7 @@ export default function WorkflowFormDialog({ onClose, onSuccess }) {
                     <Button 
                       size="icon" 
                       variant="ghost" 
-                      className="text-destructive"
+                      className="text-destructive hover:bg-destructive/10"
                       onClick={() => handleRemoveAction(i)}
                     >
                       <X className="w-4 h-4" />
@@ -220,13 +221,13 @@ export default function WorkflowFormDialog({ onClose, onSuccess }) {
           </div>
 
           {/* Submit */}
-          <div className="flex gap-2 pt-4 border-t">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+          <div className="flex gap-2 pt-6 border-t">
+            <Button variant="outline" onClick={onClose} className="flex-1 font-semibold">
               Cancel
             </Button>
             <Button 
               onClick={handleSubmit} 
-              className="flex-1"
+              className="flex-1 font-semibold"
               disabled={createWorkflowMutation.isPending}
             >
               {createWorkflowMutation.isPending ? 'Creating...' : 'Create Workflow'}

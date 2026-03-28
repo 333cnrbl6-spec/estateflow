@@ -48,10 +48,23 @@ export default function Dashboard() {
   const recentMaintenance = [...maintenance].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5);
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto">
-      <PageHeader title="Dashboard" subtitle="Powell & Co Property Group — Portfolio Overview" />
+    <div className="min-h-screen bg-gradient-to-b from-background to-background">
+      <div className="p-8 max-w-[1400px] mx-auto">
+        {/* Hero Section */}
+        <div className="mb-8 border-b border-border pb-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-serif font-bold text-foreground mb-1">Dashboard</h1>
+              <p className="text-base text-muted-foreground">Powell & Co Property Group — Portfolio Overview</p>
+            </div>
+            <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-card rounded-lg border border-border">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs font-medium text-foreground">System Live</span>
+            </div>
+          </div>
+        </div>
 
-      <ComplianceAlert />
+        <ComplianceAlert />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -107,36 +120,37 @@ export default function Dashboard() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-0">
         <div className="lg:col-span-2">
-      {/* Recent Maintenance */}
-      <div className="bg-card rounded-xl border border-border p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Recent Maintenance Orders</h3>
-          <Link to="/maintenance" className="text-xs text-primary hover:underline">View all</Link>
-        </div>
-        {recentMaintenance.length > 0 ? (
-          <div className="divide-y divide-border">
-            {recentMaintenance.map(m => (
-              <div key={m.id} className="flex items-center justify-between py-3">
-                <div>
-                  <p className="text-sm font-medium">{m.title}</p>
-                  <p className="text-xs text-muted-foreground">{m.category?.replace(/_/g, ' ')} · {format(new Date(m.created_date), 'dd MMM yyyy')}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <StatusBadge status={m.priority} />
-                  <StatusBadge status={m.status} />
-                </div>
+          {/* Recent Maintenance */}
+          <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Recent Maintenance Orders</h3>
+              <Link to="/maintenance" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors">View all →</Link>
+            </div>
+            {recentMaintenance.length > 0 ? (
+              <div className="divide-y divide-border">
+                {recentMaintenance.map(m => (
+                  <div key={m.id} className="flex items-center justify-between py-3 hover:bg-muted/30 px-2 -mx-2 rounded transition-colors">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{m.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{m.category?.replace(/_/g, ' ')} · {format(new Date(m.created_date), 'dd MMM yyyy')}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <StatusBadge status={m.priority} />
+                      <StatusBadge status={m.status} />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <p className="text-sm text-muted-foreground py-8 text-center">No maintenance orders yet</p>
+            )}
           </div>
-        ) : (
-          <p className="text-sm text-muted-foreground py-8 text-center">No maintenance orders yet</p>
-        )}
-      </div>
         </div>
         <div>
           <SetupProgressCard />
         </div>
       </div>
-    </div>
-  );
+      </div>
+      </div>
+      );
 }

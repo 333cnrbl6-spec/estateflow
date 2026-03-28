@@ -70,9 +70,14 @@ const navGroups = [
   }
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onCollapsedChange }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleCollapse = (newState) => {
+    setCollapsed(newState);
+    onCollapsedChange?.(newState);
+  }
 
   return (
     <aside
@@ -134,7 +139,7 @@ export default function Sidebar() {
 
       {/* Collapse Toggle */}
       <button
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={() => handleCollapse(!collapsed)}
         className="flex items-center justify-center h-12 border-t border-sidebar-border text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
       >
         {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
