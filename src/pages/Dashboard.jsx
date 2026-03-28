@@ -6,6 +6,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import PageHeader from '@/components/shared/PageHeader';
 import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
+import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
+import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 
@@ -49,6 +51,8 @@ export default function Dashboard() {
     <div className="p-8 max-w-[1400px] mx-auto">
       <PageHeader title="Dashboard" subtitle="Powell & Co Property Group — Portfolio Overview" />
 
+      <ComplianceAlert />
+
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard title="Companies" value={companies.length} icon={Building2} subtitle={`${companies.filter(c => c.status === 'active').length} active`} />
@@ -58,8 +62,8 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} />
-        <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} />
+        <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="sample data — import actuals" />
+        <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="sample data — import actuals" />
         <StatCard title="Overdue Items" value={overdueCount} icon={AlertTriangle} />
         <StatCard title="Open Maintenance" value={activeMaintenance} icon={Wrench} />
       </div>
@@ -100,6 +104,9 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-0">
+        <div className="lg:col-span-2">
       {/* Recent Maintenance */}
       <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-center justify-between mb-4">
@@ -124,6 +131,11 @@ export default function Dashboard() {
         ) : (
           <p className="text-sm text-muted-foreground py-8 text-center">No maintenance orders yet</p>
         )}
+      </div>
+        </div>
+        <div>
+          <SetupProgressCard />
+        </div>
       </div>
     </div>
   );

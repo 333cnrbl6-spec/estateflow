@@ -35,6 +35,7 @@ const navGroups = [
       { label: 'Units & Leases', icon: DoorOpen, path: '/units' },
       { label: 'Tenants', icon: Users, path: '/tenants' },
       { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
+      { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
     ]
   },
   {
@@ -45,6 +46,7 @@ const navGroups = [
       { label: 'Ground Rent', icon: MapPin, path: '/ground-rent' },
       { label: 'Banking', icon: Landmark, path: '/banking' },
       { label: 'Expenses', icon: Receipt, path: '/expenses' },
+      { label: 'Financials', icon: PoundSterling, path: '/financials' },
     ]
   },
   {
@@ -54,7 +56,6 @@ const navGroups = [
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
-      { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
     ]
   },
   {
