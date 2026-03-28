@@ -40,6 +40,10 @@ import ProductComparison from './pages/ProductComparison';
 import MarketingCollateral from './pages/MarketingCollateral';
 import DeveloperMarketing from './pages/DeveloperMarketing';
 import BlockManagementPitch from './pages/BlockManagementPitch';
+import BlockManagement from './pages/BlockManagement';
+import ServiceChargeManagement from './pages/ServiceChargeManagement';
+import RTMManagementPage from './pages/RTMManagementPage';
+import BuildingSafetyRegister from './pages/BuildingSafetyRegister';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -100,6 +104,10 @@ const AuthenticatedApp = () => {
         <Route path="/comparison" element={<ProductComparison />} />
         <Route path="/marketing" element={<MarketingCollateral />} />
         <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
+        <Route path="/block-management" element={<BlockManagement />} />
+        <Route path="/service-charges-management" element={<ServiceChargeManagement />} />
+        <Route path="/rtm-management" element={<RTMManagementPage />} />
+        <Route path="/building-safety-register" element={<BuildingSafetyRegister />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

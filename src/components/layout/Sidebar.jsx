@@ -25,7 +25,8 @@ import {
   Plug,
   Scale,
   Zap,
-  FileText
+  FileText,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -66,6 +67,15 @@ const navGroups = [
        { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
+    ]
+  },
+  {
+    label: 'Block Management',
+    items: [
+      { label: 'Overview', icon: Building2, path: '/block-management' },
+      { label: 'Service Charges', icon: PoundSterling, path: '/service-charges-management' },
+      { label: 'RTM Management', icon: Users, path: '/rtm-management' },
+      { label: 'Building Safety', icon: Shield, path: '/building-safety-register' },
     ]
   },
   {
