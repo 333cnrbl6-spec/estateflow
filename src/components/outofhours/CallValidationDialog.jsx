@@ -57,16 +57,6 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
     enabled: step === 2
   });
 
-  const { data: allCompanies = [] } = useQuery({
-    queryKey: ['companies-landlord', landlordName],
-    queryFn: async () => {
-      if (!landlordName || landlordName.length < 2) return [];
-      const all = await base44.entities.Company.list();
-      return all.filter(c => c.name?.toUpperCase().includes(landlordName.toUpperCase()));
-    },
-    enabled: step === 2 && landlordName.length > 1
-  });
-
   const { data: companies = [] } = useQuery({
     queryKey: ['companies-for-property', matchedProperty?.id],
     queryFn: async () => {
