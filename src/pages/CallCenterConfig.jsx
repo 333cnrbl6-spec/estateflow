@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/components/shared/PageHeader';
 import ServiceConfiguration from '@/components/outofhours/ServiceConfiguration';
+import ServiceTierPricing from '@/components/outofhours/ServiceTierPricing';
 
 export default function CallCenterConfig() {
   const { user } = useAuth();
@@ -50,11 +51,16 @@ export default function CallCenterConfig() {
         <Settings className="w-5 h-5 text-muted-foreground" />
       </PageHeader>
 
-      <Tabs defaultValue="services" className="w-full">
+      <Tabs defaultValue="pricing" className="w-full">
         <TabsList>
-          <TabsTrigger value="services">Service Tiers</TabsTrigger>
-          <TabsTrigger value="company-settings">Company Settings</TabsTrigger>
+          <TabsTrigger value="pricing">Service Pricing</TabsTrigger>
+          <TabsTrigger value="services">Service Configuration</TabsTrigger>
+          <TabsTrigger value="company-settings">Settings</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="pricing" className="space-y-6">
+          <ServiceTierPricing />
+        </TabsContent>
 
         <TabsContent value="services" className="space-y-6">
           <Card>
