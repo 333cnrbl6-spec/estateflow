@@ -38,6 +38,7 @@ import ProductBrochure from './pages/ProductBrochure';
 import PlatformTour from './pages/PlatformTour';
 import ProductComparison from './pages/ProductComparison';
 import MarketingCollateral from './pages/MarketingCollateral';
+import DeveloperMarketing from './pages/DeveloperMarketing';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -92,6 +93,7 @@ const AuthenticatedApp = () => {
         <Route path="/tenant-portal" element={<TenantPortal />} />
         <Route path="/compliance-audit" element={<ComplianceAudit />} />
         <Route path="/api-integrations" element={<APIIntegrationHub />} />
+        <Route path="/developer-marketing" element={<DeveloperMarketing />} />
         <Route path="/brochure" element={<ProductBrochure />} />
         <Route path="/tour" element={<PlatformTour />} />
         <Route path="/comparison" element={<ProductComparison />} />
