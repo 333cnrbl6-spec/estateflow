@@ -1,0 +1,92 @@
+{
+  "name": "ServiceCharge",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string"
+    },
+    "property_name": {
+      "type": "string"
+    },
+    "unit_id": {
+      "type": "string"
+    },
+    "leaseholder_name": {
+      "type": "string"
+    },
+    "charge_type": {
+      "type": "string",
+      "enum": [
+        "annual_budget",
+        "half_year_demand",
+        "interim_demand",
+        "reserve_fund",
+        "major_works",
+        "insurance",
+        "admin_charge",
+        "payment_received",
+        "credit"
+      ],
+      "default": "half_year_demand"
+    },
+    "period_label": {
+      "type": "string",
+      "description": "e.g. 2025/26 H1"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "amount_demanded": {
+      "type": "number"
+    },
+    "amount_received": {
+      "type": "number",
+      "default": 0
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "paid_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "budgeted",
+        "demanded",
+        "paid",
+        "partial",
+        "overdue",
+        "disputed"
+      ],
+      "default": "demanded"
+    },
+    "s20_consultation_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Works over \u00a3250 per leaseholder require S20 consultation"
+    },
+    "s20_notice_served_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "bank_reference": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_name",
+    "charge_type",
+    "amount_demanded"
+  ]
+}

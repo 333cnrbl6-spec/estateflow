@@ -1,0 +1,92 @@
+{
+  "name": "RentLedger",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant record ID"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Unit record ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property record ID"
+    },
+    "tenant_name": {
+      "type": "string"
+    },
+    "property_address": {
+      "type": "string"
+    },
+    "transaction_type": {
+      "type": "string",
+      "enum": [
+        "rent_charge",
+        "payment_received",
+        "credit",
+        "debit_adjustment",
+        "deposit_charge",
+        "late_fee"
+      ],
+      "default": "rent_charge"
+    },
+    "description": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "paid_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "charged",
+        "paid",
+        "partial",
+        "overdue",
+        "waived"
+      ],
+      "default": "charged"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "bank_transfer",
+        "standing_order",
+        "cash",
+        "cheque",
+        "direct_debit",
+        "other"
+      ]
+    },
+    "bank_reference": {
+      "type": "string",
+      "description": "Bank transaction reference for reconciliation"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_name",
+    "transaction_type",
+    "amount"
+  ]
+}

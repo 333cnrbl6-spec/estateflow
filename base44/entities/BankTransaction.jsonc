@@ -1,0 +1,110 @@
+{
+  "name": "BankTransaction",
+  "type": "object",
+  "properties": {
+    "bank_name": {
+      "type": "string",
+      "enum": [
+        "lloyds",
+        "barclays",
+        "hsbc",
+        "natwest",
+        "monzo",
+        "starling",
+        "other"
+      ],
+      "default": "lloyds"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "e.g. Powell & Co Main Account"
+    },
+    "account_number_last4": {
+      "type": "string"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "description": {
+      "type": "string"
+    },
+    "reference": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Positive = credit, negative = debit"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "credit",
+        "debit"
+      ],
+      "default": "credit"
+    },
+    "balance_after": {
+      "type": "number"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "rent_receipt",
+        "service_charge_receipt",
+        "ground_rent_receipt",
+        "maintenance_payment",
+        "contractor_payment",
+        "management_fee",
+        "insurance",
+        "utilities",
+        "legal_fee",
+        "bank_charge",
+        "fuel",
+        "business_expense",
+        "transfer",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "reconciled": {
+      "type": "boolean",
+      "default": false
+    },
+    "reconciled_to": {
+      "type": "string",
+      "description": "ID of matched RentLedger / ServiceCharge / Expense record"
+    },
+    "reconciled_to_type": {
+      "type": "string",
+      "enum": [
+        "rent_ledger",
+        "service_charge",
+        "ground_rent",
+        "expense",
+        "maintenance",
+        "other"
+      ]
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Which company bank account"
+    },
+    "freeagent_id": {
+      "type": "string",
+      "description": "FreeAgent transaction ID if synced"
+    },
+    "import_batch": {
+      "type": "string",
+      "description": "CSV import batch reference"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "transaction_date",
+    "description",
+    "amount"
+  ]
+}

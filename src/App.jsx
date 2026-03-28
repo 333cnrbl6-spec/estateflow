@@ -17,6 +17,12 @@ import Maintenance from './pages/Maintenance';
 import Contacts from './pages/Contacts';
 import Compliance from './pages/Compliance';
 import Pipeline from './pages/Pipeline';
+import RentLedger from './pages/RentLedger';
+import ServiceCharges from './pages/ServiceCharges';
+import GroundRent from './pages/GroundRent';
+import Banking from './pages/Banking';
+import Expenses from './pages/Expenses';
+import CRM from './pages/CRM';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -54,6 +60,12 @@ const AuthenticatedApp = () => {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/pipeline" element={<Pipeline />} />
+        <Route path="/rent-ledger" element={<RentLedger />} />
+        <Route path="/service-charges" element={<ServiceCharges />} />
+        <Route path="/ground-rent" element={<GroundRent />} />
+        <Route path="/banking" element={<Banking />} />
+        <Route path="/expenses" element={<Expenses />} />
+        <Route path="/crm" element={<CRM />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

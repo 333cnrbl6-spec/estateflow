@@ -13,21 +13,47 @@ import {
   GitBranch,
   ChevronLeft,
   ChevronRight,
-  Crown
+  Crown,
+  BookOpen,
+  Layers,
+  MapPin,
+  Landmark,
+  Receipt,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'Companies', icon: Building2, path: '/companies' },
-  { label: 'Properties', icon: Home, path: '/properties' },
-  { label: 'Units & Leases', icon: DoorOpen, path: '/units' },
-  { label: 'Tenants', icon: Users, path: '/tenants' },
-  { label: 'Financials', icon: PoundSterling, path: '/financials' },
-  { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
-  { label: 'Contacts', icon: BookUser, path: '/contacts' },
-  { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
-  { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
+const navGroups = [
+  {
+    label: 'Portfolio',
+    items: [
+      { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
+      { label: 'Companies', icon: Building2, path: '/companies' },
+      { label: 'Properties', icon: Home, path: '/properties' },
+      { label: 'Units & Leases', icon: DoorOpen, path: '/units' },
+      { label: 'Tenants', icon: Users, path: '/tenants' },
+      { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
+    ]
+  },
+  {
+    label: 'Finance',
+    items: [
+      { label: 'Rent Ledger', icon: BookOpen, path: '/rent-ledger' },
+      { label: 'Service Charges', icon: Layers, path: '/service-charges' },
+      { label: 'Ground Rent', icon: MapPin, path: '/ground-rent' },
+      { label: 'Banking', icon: Landmark, path: '/banking' },
+      { label: 'Expenses', icon: Receipt, path: '/expenses' },
+    ]
+  },
+  {
+    label: 'Operations',
+    items: [
+      { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
+      { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+      { label: 'CRM', icon: MessageSquare, path: '/crm' },
+      { label: 'Contacts', icon: BookUser, path: '/contacts' },
+    ]
+  }
 ];
 
 export default function Sidebar() {
@@ -59,26 +85,37 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path || 
-            (item.path !== '/' && location.pathname.startsWith(item.path));
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-primary"
-                  : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-              )}
-            >
-              <item.icon className={cn("w-[18px] h-[18px] shrink-0", isActive && "text-sidebar-primary")} />
-              {!collapsed && <span className="truncate">{item.label}</span>}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 py-3 px-3 overflow-y-auto space-y-4">
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            {!collapsed && (
+              <div className="px-3 mb-1 text-[10px] uppercase tracking-[0.12em] font-semibold text-sidebar-foreground/30">
+                {group.label}
+              </div>
+            )}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const isActive = location.pathname === item.path ||
+                  (item.path !== '/' && location.pathname.startsWith(item.path));
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      isActive
+                        ? "bg-sidebar-accent text-sidebar-primary"
+                        : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    )}
+                  >
+                    <item.icon className={cn("w-[18px] h-[18px] shrink-0", isActive && "text-sidebar-primary")} />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Collapse Toggle */}

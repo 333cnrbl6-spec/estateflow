@@ -1,0 +1,81 @@
+{
+  "name": "GroundRent",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string"
+    },
+    "property_name": {
+      "type": "string"
+    },
+    "unit_id": {
+      "type": "string"
+    },
+    "leaseholder_name": {
+      "type": "string"
+    },
+    "annual_amount": {
+      "type": "number",
+      "description": "Annual ground rent amount"
+    },
+    "review_clause": {
+      "type": "string",
+      "description": "e.g. doubles every 25 years, RPI, fixed"
+    },
+    "next_review_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "demand_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date demand notice issued (required 30-60 days before due)"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "paid_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "amount_demanded": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "demanded",
+        "paid",
+        "overdue",
+        "peppercorn",
+        "disputed"
+      ],
+      "default": "scheduled"
+    },
+    "lease_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "lease_term_years": {
+      "type": "number"
+    },
+    "ground_rent_act_2022": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if lease post-Leasehold Reform Act 2022 (peppercorn only)"
+    },
+    "bank_reference": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_name",
+    "leaseholder_name",
+    "annual_amount"
+  ]
+}

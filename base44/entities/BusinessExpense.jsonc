@@ -1,0 +1,112 @@
+{
+  "name": "BusinessExpense",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "fuel",
+        "mileage",
+        "vehicle",
+        "office_supplies",
+        "software",
+        "professional_fees",
+        "legal",
+        "insurance",
+        "travel",
+        "accommodation",
+        "subsistence",
+        "telephone",
+        "postage",
+        "maintenance_materials",
+        "tools",
+        "advertising",
+        "bank_charges",
+        "accountancy",
+        "other"
+      ],
+      "default": "other"
+    },
+    "amount_net": {
+      "type": "number"
+    },
+    "vat_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "amount_gross": {
+      "type": "number"
+    },
+    "vat_reclaimable": {
+      "type": "boolean",
+      "default": true
+    },
+    "supplier": {
+      "type": "string"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "company_card",
+        "personal_card",
+        "bank_transfer",
+        "cash",
+        "direct_debit"
+      ],
+      "default": "company_card"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Which company this expense belongs to"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "If attributable to a specific property"
+    },
+    "receipt_url": {
+      "type": "string",
+      "description": "Uploaded receipt image URL"
+    },
+    "mileage_miles": {
+      "type": "number",
+      "description": "If fuel/mileage category"
+    },
+    "mileage_rate": {
+      "type": "number",
+      "description": "HMRC rate e.g. 0.45 per mile"
+    },
+    "bank_transaction_id": {
+      "type": "string",
+      "description": "Matched bank transaction"
+    },
+    "freeagent_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "approved",
+        "reimbursed",
+        "rejected"
+      ],
+      "default": "draft"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date",
+    "description",
+    "amount_gross"
+  ]
+}
