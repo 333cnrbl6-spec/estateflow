@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp } from 'lucide-react';
@@ -10,20 +10,12 @@ import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 export default function Dashboard() {
-  const [demoCompanyId, setDemoCompanyId] = useState(null);
-  
-  // Load current demo company from user metadata
-  useEffect(() => {
-    base44.auth.me().then(user => {
-      if (user?.current_demo_company_id) {
-        setDemoCompanyId(user.current_demo_company_id);
-      }
-    });
-  }, []);
+  const { demoCompanyId, propertyIds } = useDemoFilter();
 
   const { data: companies = [] } = useQuery({ 
     queryKey: ['companies', demoCompanyId], 
@@ -46,52 +38,44 @@ export default function Dashboard() {
   });
   
   const { data: units = [] } = useQuery({ 
-    queryKey: ['units', demoCompanyId], 
+    queryKey: ['units', propertyIds], 
     queryFn: async () => {
-      if (demoCompanyId) {
-        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
-        const propIds = props.map(p => p.id);
+      if (propertyIds) {
         const allUnits = await base44.entities.Unit.list();
-        return allUnits.filter(u => propIds.includes(u.property_id));
+        return allUnits.filter(u => propertyIds.includes(u.property_id));
       }
       return base44.entities.Unit.list();
     }
   });
   
   const { data: tenants = [] } = useQuery({ 
-    queryKey: ['tenants', demoCompanyId], 
+    queryKey: ['tenants', propertyIds], 
     queryFn: async () => {
-      if (demoCompanyId) {
-        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
-        const propIds = props.map(p => p.id);
+      if (propertyIds) {
         const allTenants = await base44.entities.Tenant.list();
-        return allTenants.filter(t => propIds.includes(t.property_id));
+        return allTenants.filter(t => propertyIds.includes(t.property_id));
       }
       return base44.entities.Tenant.list();
     }
   });
   
   const { data: transactions = [] } = useQuery({ 
-    queryKey: ['transactions', demoCompanyId], 
+    queryKey: ['transactions', propertyIds], 
     queryFn: async () => {
-      if (demoCompanyId) {
-        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
-        const propIds = props.map(p => p.id);
+      if (propertyIds) {
         const allTx = await base44.entities.FinancialTransaction.list();
-        return allTx.filter(t => propIds.includes(t.property_id));
+        return allTx.filter(t => propertyIds.includes(t.property_id));
       }
       return base44.entities.FinancialTransaction.list();
     }
   });
   
   const { data: maintenance = [] } = useQuery({ 
-    queryKey: ['maintenance', demoCompanyId], 
+    queryKey: ['maintenance', propertyIds], 
     queryFn: async () => {
-      if (demoCompanyId) {
-        const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
-        const propIds = props.map(p => p.id);
+      if (propertyIds) {
         const allMaint = await base44.entities.MaintenanceOrder.list();
-        return allMaint.filter(m => propIds.includes(m.property_id));
+        return allMaint.filter(m => propertyIds.includes(m.property_id));
       }
       return base44.entities.MaintenanceOrder.list();
     }

@@ -11,6 +11,7 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { Link } from 'react-router-dom';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const PROPERTY_FIELDS = [
   { name: 'name', type: 'string', label: 'Property Name' },
@@ -33,9 +34,16 @@ export default function Properties() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId } = useDemoFilter();
 
   const { data: properties = [] } = useQuery({
-    queryKey: ['properties'], queryFn: () => base44.entities.Property.list('-created_date'),
+    queryKey: ['properties', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        return await base44.entities.Property.filter({ owning_company: demoCompanyId });
+      }
+      return base44.entities.Property.list('-created_date');
+    }
   });
 
   const createMutation = useMutation({

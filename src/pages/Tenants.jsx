@@ -11,6 +11,7 @@ import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const TENANT_FIELDS = [
   { name: 'full_name', type: 'string' },
@@ -33,8 +34,18 @@ export default function Tenants() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { propertyIds } = useDemoFilter();
 
-  const { data: tenants = [] } = useQuery({ queryKey: ['tenants'], queryFn: () => base44.entities.Tenant.list('-created_date') });
+  const { data: tenants = [] } = useQuery({ 
+    queryKey: ['tenants', propertyIds], 
+    queryFn: async () => {
+      if (propertyIds) {
+        const allTenants = await base44.entities.Tenant.list('-created_date');
+        return allTenants.filter(t => propertyIds.includes(t.property_id));
+      }
+      return base44.entities.Tenant.list('-created_date');
+    }
+  });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Tenant.create(data),

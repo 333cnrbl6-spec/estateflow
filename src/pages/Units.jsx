@@ -12,6 +12,7 @@ import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const UNIT_FIELDS = [
   { name: 'unit_reference', type: 'string', label: 'Unit Reference' },
@@ -37,9 +38,28 @@ export default function Units() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId, propertyIds } = useDemoFilter();
 
-  const { data: units = [] } = useQuery({ queryKey: ['units'], queryFn: () => base44.entities.Unit.list('-created_date') });
-  const { data: properties = [] } = useQuery({ queryKey: ['properties'], queryFn: () => base44.entities.Property.list() });
+  const { data: units = [] } = useQuery({ 
+    queryKey: ['units', propertyIds], 
+    queryFn: async () => {
+      if (propertyIds) {
+        const allUnits = await base44.entities.Unit.list('-created_date');
+        return allUnits.filter(u => propertyIds.includes(u.property_id));
+      }
+      return base44.entities.Unit.list('-created_date');
+    }
+  });
+  
+  const { data: properties = [] } = useQuery({ 
+    queryKey: ['properties', demoCompanyId], 
+    queryFn: async () => {
+      if (demoCompanyId) {
+        return await base44.entities.Property.filter({ owning_company: demoCompanyId });
+      }
+      return base44.entities.Property.list();
+    }
+  });
 
   const propMap = properties.reduce((m, p) => { m[p.id] = p.name; return m; }, {});
 

@@ -10,6 +10,7 @@ import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const COMPANY_FIELDS = [
   { name: 'name', type: 'string', label: 'Company Name' },
@@ -33,10 +34,16 @@ export default function Companies() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId } = useDemoFilter();
 
   const { data: companies = [], isLoading } = useQuery({
-    queryKey: ['companies'],
-    queryFn: () => base44.entities.Company.list('-created_date'),
+    queryKey: ['companies', demoCompanyId],
+    queryFn: async () => {
+      if (demoCompanyId) {
+        return [await base44.entities.Company.get(demoCompanyId)];
+      }
+      return base44.entities.Company.list('-created_date');
+    }
   });
 
   const createMutation = useMutation({
