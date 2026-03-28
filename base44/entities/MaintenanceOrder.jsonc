@@ -31,9 +31,7 @@
       "type": "string",
       "enum": [
         "reported",
-        "assessed",
-        "quoted",
-        "approved",
+        "assigned",
         "in_progress",
         "completed",
         "cancelled"
@@ -57,11 +55,29 @@
         "other"
       ]
     },
-    "contractor_name": {
+    "assigned_contractor_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (contractor)"
+    },
+    "assigned_contractor_name": {
+      "type": "string",
+      "description": "Name of assigned contractor"
+    },
+    "assigned_contractor_phone": {
       "type": "string"
     },
-    "contractor_phone": {
+    "assigned_contractor_email": {
       "type": "string"
+    },
+    "assigned_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When contractor was assigned"
+    },
+    "started_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When work started"
     },
     "estimated_cost": {
       "type": "number"

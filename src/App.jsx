@@ -51,6 +51,7 @@ import LeaseholderPortalView from './pages/LeaseholderPortalView';
 import EmergencyCalloutManager from './pages/EmergencyCalloutManager';
 import DeveloperDemoSwitcher from './pages/DeveloperDemoSwitcher';
 import CertificateCompliance from './pages/CertificateCompliance';
+import MaintenanceWorkflow from './pages/MaintenanceWorkflow';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -84,7 +85,7 @@ const AuthenticatedApp = () => {
         <Route path="/units" element={<Units />} />
         <Route path="/tenants" element={<Tenants />} />
         <Route path="/financials" element={<Financials />} />
-        <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/maintenance" element={<MaintenanceWorkflow />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/pipeline" element={<Pipeline />} />
