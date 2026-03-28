@@ -68,7 +68,7 @@ export default function AccountingIntegrations() {
 
   const syncMutation = useMutation({
     mutationFn: (integrationId) =>
-      base44.functions.invoke('syncAccounting', { integration_id: integrationId }),
+      base44.functions.invoke('quickbooksSync', { integration_id: integrationId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accountingSyncs'] });
     },
@@ -81,17 +81,24 @@ export default function AccountingIntegrations() {
     },
   });
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     if (!selectedCompany) {
       alert('Please select a company');
       return;
     }
 
-    createIntegrationMutation.mutate({
+    const integration = await createIntegrationMutation.mutateAsync({
       provider,
       company_id: selectedCompany,
       ...syncSettings,
     });
+
+    // Auto-sync on connection for demo
+    if (integration) {
+      setTimeout(() => {
+        syncMutation.mutate(integration.id);
+      }, 500);
+    }
   };
 
   const getLatestSync = (integrationId) => {
@@ -115,13 +122,23 @@ export default function AccountingIntegrations() {
     <div className="p-8">
       <PageHeader
         title="Accounting Integrations"
-        subtitle="Sync your property management data with QuickBooks or Xero"
+        subtitle="Sync rent ledgers, expenses, and service charges with QuickBooks (Demo: Using Sandbox)"
       >
         <Button onClick={() => setShowDialog(true)} className="gap-2">
           <Plug className="w-4 h-4" />
           Connect Account
         </Button>
       </PageHeader>
+
+      {integrations.length === 0 && (
+        <Card className="mb-6 border-blue-200 bg-blue-50">
+          <CardContent className="pt-6">
+            <p className="text-sm text-blue-900">
+              <strong>Demo Mode:</strong> This integration uses QuickBooks Sandbox credentials to demonstrate syncing rent ledgers, business expenses, and service charges. No real data is affected.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="space-y-4">
         {integrations.length === 0 ? (
