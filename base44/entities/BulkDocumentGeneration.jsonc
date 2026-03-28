@@ -1,0 +1,67 @@
+{
+  "name": "BulkDocumentGeneration",
+  "type": "object",
+  "properties": {
+    "batch_name": {
+      "type": "string"
+    },
+    "document_type": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "property_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "total_documents": {
+      "type": "number"
+    },
+    "generated_count": {
+      "type": "number",
+      "default": 0
+    },
+    "failed_count": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "started_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "export_url": {
+      "type": "string"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "batch_name",
+    "document_type",
+    "total_documents"
+  ]
+}

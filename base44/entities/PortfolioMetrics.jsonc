@@ -1,0 +1,58 @@
+{
+  "name": "PortfolioMetrics",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string"
+    },
+    "period_month": {
+      "type": "string"
+    },
+    "total_units": {
+      "type": "number"
+    },
+    "occupied_units": {
+      "type": "number"
+    },
+    "vacant_units": {
+      "type": "number"
+    },
+    "total_monthly_income": {
+      "type": "number"
+    },
+    "rent_collected": {
+      "type": "number"
+    },
+    "service_charges_collected": {
+      "type": "number"
+    },
+    "void_loss": {
+      "type": "number"
+    },
+    "maintenance_costs": {
+      "type": "number"
+    },
+    "management_costs": {
+      "type": "number"
+    },
+    "arrears_outstanding": {
+      "type": "number"
+    },
+    "arrears_count": {
+      "type": "number"
+    },
+    "average_rent_per_unit": {
+      "type": "number"
+    },
+    "yield_percentage": {
+      "type": "number"
+    },
+    "collected_percentage": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "company_id",
+    "period_month"
+  ]
+}

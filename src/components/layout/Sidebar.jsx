@@ -50,6 +50,7 @@ const navGroups = [
       { label: 'Banking', icon: Landmark, path: '/banking' },
       { label: 'Expenses', icon: Receipt, path: '/expenses' },
       { label: 'Financials', icon: PoundSterling, path: '/financials' },
+      { label: 'Financial Reports', icon: FileText, path: '/financial-reporting' },
       { label: 'Accounting', icon: Settings, path: '/accounting' },
     ]
   },
@@ -58,6 +59,7 @@ const navGroups = [
     items: [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+       { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
        { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
        { label: 'Documents', icon: FileText, path: '/document-templates' },
        { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
@@ -70,6 +72,8 @@ const navGroups = [
     items: [
       { label: 'Setup & Integrations', icon: Plug, path: '/setup' },
       { label: 'Integrations', icon: Settings, path: '/integrations' },
+      { label: 'API Hub', icon: Zap, path: '/api-integrations' },
+      { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
     ]
   }
 ];

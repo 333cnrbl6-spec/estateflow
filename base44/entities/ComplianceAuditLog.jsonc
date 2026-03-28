@@ -1,0 +1,46 @@
+{
+  "name": "ComplianceAuditLog",
+  "type": "object",
+  "properties": {
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "document_created",
+        "submission_sent",
+        "expiry_alert",
+        "deadline_met",
+        "deadline_missed",
+        "correction_made"
+      ]
+    },
+    "entity_type": {
+      "type": "string"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "performed_by": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reference_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "action_type",
+    "timestamp"
+  ]
+}

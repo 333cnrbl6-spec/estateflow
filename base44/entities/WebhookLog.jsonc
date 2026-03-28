@@ -1,0 +1,47 @@
+{
+  "name": "WebhookLog",
+  "type": "object",
+  "properties": {
+    "integration_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "received",
+        "processing",
+        "success",
+        "failed"
+      ],
+      "default": "received"
+    },
+    "status_code": {
+      "type": "number"
+    },
+    "error_message": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "retry_count": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "integration_id",
+    "event_type",
+    "timestamp"
+  ]
+}

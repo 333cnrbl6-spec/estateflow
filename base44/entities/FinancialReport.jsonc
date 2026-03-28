@@ -1,0 +1,66 @@
+{
+  "name": "FinancialReport",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "profit_loss",
+        "cash_flow",
+        "balance_sheet",
+        "portfolio_summary"
+      ]
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_income": {
+      "type": "number"
+    },
+    "total_expenses": {
+      "type": "number"
+    },
+    "net_profit": {
+      "type": "number"
+    },
+    "cash_position": {
+      "type": "number"
+    },
+    "property_count": {
+      "type": "number"
+    },
+    "occupancy_rate": {
+      "type": "number"
+    },
+    "arrears_amount": {
+      "type": "number"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "generated_by": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "company_id",
+    "report_type",
+    "period_start",
+    "period_end"
+  ]
+}

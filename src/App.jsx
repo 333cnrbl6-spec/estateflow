@@ -30,6 +30,10 @@ import Workflows from './pages/Workflows';
 import Integrations from './pages/Integrations';
 import DocumentTemplates from './pages/DocumentTemplates';
 import AccountingIntegrations from './pages/AccountingIntegrations';
+import FinancialReporting from './pages/FinancialReporting';
+import TenantPortal from './pages/TenantPortal';
+import ComplianceAudit from './pages/ComplianceAudit';
+import APIIntegrationHub from './pages/APIIntegrationHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -80,6 +84,10 @@ const AuthenticatedApp = () => {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/document-templates" element={<DocumentTemplates />} />
         <Route path="/accounting" element={<AccountingIntegrations />} />
+        <Route path="/financial-reporting" element={<FinancialReporting />} />
+        <Route path="/tenant-portal" element={<TenantPortal />} />
+        <Route path="/compliance-audit" element={<ComplianceAudit />} />
+        <Route path="/api-integrations" element={<APIIntegrationHub />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

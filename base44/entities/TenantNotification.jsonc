@@ -1,0 +1,49 @@
+{
+  "name": "TenantNotification",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "notification_type": {
+      "type": "string",
+      "enum": [
+        "rent_due",
+        "maintenance_update",
+        "document",
+        "notice",
+        "general"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "action_url": {
+      "type": "string"
+    },
+    "sent_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "read_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "notification_type",
+    "title",
+    "message"
+  ]
+}
