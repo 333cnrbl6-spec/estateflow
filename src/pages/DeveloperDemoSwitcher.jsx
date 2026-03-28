@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Code2, Zap, Play, Check, AlertCircle } from 'lucide-react';
+import { Code2, Zap, Play, Check, AlertCircle, Loader } from 'lucide-react';
 
 const DEMO_PROFILES = [
   {
@@ -34,9 +35,11 @@ const DEMO_PROFILES = [
 ];
 
 export default function DeveloperDemoSwitcher() {
+  const navigate = useNavigate();
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [loading, setLoading] = useState({});
   const [messages, setMessages] = useState({});
+  const [reloading, setReloading] = useState(false);
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
@@ -81,6 +84,12 @@ export default function DeveloperDemoSwitcher() {
           [profile.id]: `✓ ${profile.name} demo created successfully`,
         }));
         setSelectedProfile(profile.id);
+        
+        // Auto-reload after 2 seconds to load new data
+        setTimeout(() => {
+          setReloading(true);
+          window.location.href = '/';
+        }, 2000);
       } else {
         setMessages(prev => ({
           ...prev,
@@ -96,6 +105,18 @@ export default function DeveloperDemoSwitcher() {
       setLoading(prev => ({ ...prev, [profile.id]: false }));
     }
   };
+
+  if (reloading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Loading Demo Data...</h2>
+          <p className="text-gray-300">Redirecting to dashboard with new profile</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
