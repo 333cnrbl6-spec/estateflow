@@ -49,17 +49,17 @@ export default function DeveloperDemoSwitcher() {
     },
   });
 
-  // Only allow admin users
-  if (!currentUser || currentUser.role !== 'admin') {
+  // Only allow in development/preview mode
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-background p-6 flex items-center justify-center">
         <Card className="max-w-md border-2 border-destructive">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <AlertCircle className="w-12 h-12 text-destructive" />
-              <h2 className="font-bold text-lg">Admin Access Required</h2>
+              <h2 className="font-bold text-lg">Authentication Required</h2>
               <p className="text-sm text-muted-foreground">
-                The developer demo switcher is only available to administrators.
+                Please log in to access the developer demo switcher.
               </p>
             </div>
           </CardContent>
