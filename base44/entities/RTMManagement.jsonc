@@ -1,0 +1,284 @@
+{
+  "name": "RTMManagement",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "rtm_company_id": {
+      "type": "string",
+      "description": "Reference to Company entity (RTM company structure)"
+    },
+    "rtm_status": {
+      "type": "string",
+      "enum": [
+        "traditional_management",
+        "rtm_claim_initiated",
+        "notice_served",
+        "dispute_period",
+        "rtm_acquired",
+        "rtm_to_landlord_transition"
+      ],
+      "default": "traditional_management",
+      "description": "RTM status per Commonhold & Leasehold Reform Act 2002"
+    },
+    "management_type": {
+      "type": "string",
+      "enum": [
+        "landlord_managed",
+        "managing_agent",
+        "rtm_company"
+      ],
+      "description": "Current management structure"
+    },
+    "current_managing_agent": {
+      "type": "string",
+      "description": "Contact/company managing the building (if agent-managed)"
+    },
+    "leaseholder_eligibility": {
+      "type": "object",
+      "properties": {
+        "total_leaseholders": {
+          "type": "number"
+        },
+        "long_leaseholders": {
+          "type": "number",
+          "description": "Leaseholders with 4+ years remaining on lease"
+        },
+        "eligible_to_participate": {
+          "type": "number",
+          "description": "Leaseholders meeting 75% threshold for RTM"
+        },
+        "eligible_percentage": {
+          "type": "number",
+          "description": "Percentage of leaseholders eligible (75% required)"
+        },
+        "claim_threshold_met": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rtm_company_details": {
+      "type": "object",
+      "properties": {
+        "company_number": {
+          "type": "string",
+          "description": "Companies House registration"
+        },
+        "formed_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "directors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "appointed_date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "registered_office": {
+          "type": "string"
+        },
+        "accounts_due_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "rtm_claim_process": {
+      "type": "object",
+      "properties": {
+        "claim_notice_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "notice_issued_to": {
+          "type": "string",
+          "description": "Recipient (freeholder/landlord)"
+        },
+        "statutory_dispute_period": {
+          "type": "object",
+          "properties": {
+            "start_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "end_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "dispute_filed": {
+              "type": "boolean"
+            },
+            "dispute_outcome": {
+              "type": "string",
+              "enum": [
+                "none",
+                "rtm_claim_upheld",
+                "claim_rejected"
+              ],
+              "description": "Result of any First-Tier Tribunal claim"
+            }
+          }
+        },
+        "acquisition_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date RTM company acquired management (90 days after notice if no dispute)"
+        }
+      }
+    },
+    "handover_process": {
+      "type": "object",
+      "properties": {
+        "handover_checklist_completed": {
+          "type": "boolean"
+        },
+        "documents_transferred": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "insurance_details",
+              "service_charge_accounts",
+              "lease_copies",
+              "maintenance_contracts",
+              "complaints_log",
+              "fire_safety_docs",
+              "bank_accounts",
+              "utilities_accounts",
+              "contractor_details",
+              "leaseholder_directory"
+            ]
+          }
+        },
+        "asset_schedule": {
+          "type": "object",
+          "properties": {
+            "service_charge_reserve_balance": {
+              "type": "number"
+            },
+            "deposits_held": {
+              "type": "number"
+            },
+            "key_contracts_transferred": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "outstanding_issues": {
+              "type": "string",
+              "description": "Any unresolved maintenance/arrears at handover"
+            }
+          }
+        },
+        "handover_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "rtm_company_responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "service_charges",
+          "repairs_maintenance",
+          "insurance",
+          "health_safety",
+          "leaseholder_consultation",
+          "complaint_handling",
+          "accounts_filing",
+          "statutory_notices",
+          "reserve_fund_management"
+        ]
+      },
+      "description": "Duties transferred to RTM company"
+    },
+    "transition_to_landlord": {
+      "type": "object",
+      "properties": {
+        "transition_initiated": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "landlord_acquisition",
+            "voluntary_surrender",
+            "company_dissolution",
+            "other"
+          ]
+        },
+        "notice_served_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "transition_effective_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "final_accounts_prepared": {
+          "type": "boolean"
+        },
+        "reserve_fund_disposition": {
+          "type": "string",
+          "description": "How remaining reserves are handled on transition"
+        }
+      }
+    },
+    "leaseholder_communications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date_sent": {
+            "type": "string",
+            "format": "date"
+          },
+          "communication_type": {
+            "type": "string",
+            "enum": [
+              "rtm_invitation",
+              "claim_notice",
+              "notice_to_freeholder",
+              "acquisition_confirmation",
+              "handover_notice",
+              "annual_statement"
+            ]
+          },
+          "recipients_count": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "drafted",
+              "sent",
+              "acknowledged"
+            ]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "rtm_status",
+    "management_type"
+  ]
+}

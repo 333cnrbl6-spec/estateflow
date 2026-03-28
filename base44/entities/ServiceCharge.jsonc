@@ -3,35 +3,12 @@
   "type": "object",
   "properties": {
     "property_id": {
-      "type": "string"
-    },
-    "property_name": {
-      "type": "string"
-    },
-    "unit_id": {
-      "type": "string"
-    },
-    "leaseholder_name": {
-      "type": "string"
-    },
-    "charge_type": {
       "type": "string",
-      "enum": [
-        "annual_budget",
-        "half_year_demand",
-        "interim_demand",
-        "reserve_fund",
-        "major_works",
-        "insurance",
-        "admin_charge",
-        "payment_received",
-        "credit"
-      ],
-      "default": "half_year_demand"
+      "description": "Reference to Property entity"
     },
-    "period_label": {
-      "type": "string",
-      "description": "e.g. 2025/26 H1"
+    "year": {
+      "type": "number",
+      "description": "Financial year (e.g. 2025)"
     },
     "period_start": {
       "type": "string",
@@ -41,52 +18,238 @@
       "type": "string",
       "format": "date"
     },
-    "amount_demanded": {
-      "type": "number"
-    },
-    "amount_received": {
-      "type": "number",
-      "default": 0
-    },
-    "due_date": {
-      "type": "string",
-      "format": "date"
-    },
-    "paid_date": {
-      "type": "string",
-      "format": "date"
-    },
     "status": {
       "type": "string",
       "enum": [
-        "budgeted",
-        "demanded",
-        "paid",
-        "partial",
-        "overdue",
+        "draft",
+        "estimated",
+        "final_approved",
         "disputed"
       ],
-      "default": "demanded"
+      "default": "draft",
+      "description": "Service charge account status (Landlord & Tenant Act 1985 s.20)"
     },
-    "s20_consultation_required": {
+    "total_estimated_cost": {
+      "type": "number",
+      "description": "Total estimated service charge cost for period"
+    },
+    "actual_cost": {
+      "type": "number",
+      "description": "Final audited cost"
+    },
+    "leaseholder_count": {
+      "type": "number",
+      "description": "Number of units paying service charge"
+    },
+    "cost_allocation_method": {
+      "type": "string",
+      "enum": [
+        "per_unit",
+        "per_floor",
+        "percentage_based",
+        "floor_area",
+        "mixed"
+      ],
+      "description": "How costs are divided among units"
+    },
+    "cost_breakdown": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "repairs_maintenance",
+              "insurance",
+              "management_fee",
+              "cleaning",
+              "utilities_common",
+              "lift_maintenance",
+              "fire_safety",
+              "asbestos_management",
+              "legionella",
+              "security",
+              "lighting",
+              "drainage",
+              "structural_reserve",
+              "contingency",
+              "other"
+            ]
+          },
+          "budgeted_cost": {
+            "type": "number"
+          },
+          "actual_cost": {
+            "type": "number"
+          },
+          "variance": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "budgeted_cost"
+        ]
+      },
+      "description": "Itemized cost breakdown (transparency requirement)"
+    },
+    "per_unit_charges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "unit_id": {
+            "type": "string"
+          },
+          "estimated_charge": {
+            "type": "number"
+          },
+          "final_charge": {
+            "type": "number"
+          },
+          "paid_amount": {
+            "type": "number"
+          },
+          "arrears": {
+            "type": "number"
+          },
+          "payment_status": {
+            "type": "string",
+            "enum": [
+              "unpaid",
+              "paid",
+              "partially_paid",
+              "disputed"
+            ]
+          }
+        },
+        "required": [
+          "unit_id",
+          "estimated_charge"
+        ]
+      }
+    },
+    "reserve_fund": {
+      "type": "object",
+      "properties": {
+        "contribution_per_unit": {
+          "type": "number"
+        },
+        "total_reserve_held": {
+          "type": "number"
+        },
+        "reserve_purpose": {
+          "type": "string",
+          "enum": [
+            "major_works",
+            "structural_repairs",
+            "building_safety",
+            "contingency"
+          ]
+        },
+        "reserve_audit_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "section_20_consultation_required": {
       "type": "boolean",
       "default": false,
-      "description": "Works over \u00a3250 per leaseholder require S20 consultation"
+      "description": "Triggers s.20 Landlord & Tenant Act 1985 consultation (costs > \u00a3250 per unit)"
     },
-    "s20_notice_served_date": {
+    "section_20_status": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "notice_issued",
+        "consultation_period",
+        "leaseholder_consent_obtained",
+        "dispute_filed"
+      ],
+      "description": "Progress of s.20 consultation process"
+    },
+    "section_20_notice_date": {
       "type": "string",
       "format": "date"
     },
-    "bank_reference": {
-      "type": "string"
+    "section_20_deadline": {
+      "type": "string",
+      "format": "date"
+    },
+    "disputed_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "unit_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "amount_disputed": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "filed_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "resolution_status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "under_review",
+              "resolved",
+              "escalated_to_ombudsman"
+            ]
+          }
+        }
+      }
+    },
+    "audit_certificate": {
+      "type": "object",
+      "properties": {
+        "auditor_name": {
+          "type": "string"
+        },
+        "audit_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "audit_file_url": {
+          "type": "string"
+        },
+        "qualified_opinion": {
+          "type": "boolean"
+        }
+      }
+    },
+    "leaseholder_statement_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether annual statement has been issued (statutory requirement)"
+    },
+    "statement_sent_date": {
+      "type": "string",
+      "format": "date"
     },
     "notes": {
       "type": "string"
     }
   },
   "required": [
-    "property_name",
-    "charge_type",
-    "amount_demanded"
+    "property_id",
+    "year",
+    "period_start",
+    "period_end",
+    "cost_breakdown"
   ]
 }

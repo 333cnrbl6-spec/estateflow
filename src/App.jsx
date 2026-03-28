@@ -39,6 +39,7 @@ import PlatformTour from './pages/PlatformTour';
 import ProductComparison from './pages/ProductComparison';
 import MarketingCollateral from './pages/MarketingCollateral';
 import DeveloperMarketing from './pages/DeveloperMarketing';
+import BlockManagementPitch from './pages/BlockManagementPitch';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -98,6 +99,7 @@ const AuthenticatedApp = () => {
         <Route path="/tour" element={<PlatformTour />} />
         <Route path="/comparison" element={<ProductComparison />} />
         <Route path="/marketing" element={<MarketingCollateral />} />
+        <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

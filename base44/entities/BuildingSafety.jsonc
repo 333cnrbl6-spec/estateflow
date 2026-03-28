@@ -1,0 +1,529 @@
+{
+  "name": "BuildingSafety",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "building_classification": {
+      "type": "object",
+      "properties": {
+        "height_metres": {
+          "type": "number"
+        },
+        "storeys": {
+          "type": "number"
+        },
+        "units_count": {
+          "type": "number"
+        },
+        "is_high_rise_residential_building": {
+          "type": "boolean",
+          "description": "HRRB = 7+ storeys with 2+ households (Building Safety Act 2023)"
+        },
+        "in_scope_building_safety_act": {
+          "type": "boolean",
+          "description": "Subject to Building Safety Act 2023 regime"
+        }
+      }
+    },
+    "accountable_person": {
+      "type": "object",
+      "properties": {
+        "appointed": {
+          "type": "boolean",
+          "default": false
+        },
+        "name": {
+          "type": "string"
+        },
+        "organisation": {
+          "type": "string"
+        },
+        "contact_email": {
+          "type": "string"
+        },
+        "contact_phone": {
+          "type": "string"
+        },
+        "appointment_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "structural_safety",
+              "fire_safety",
+              "regulatory_compliance",
+              "resident_communication",
+              "defect_remediation"
+            ]
+          }
+        }
+      },
+      "description": "Accountable person for structural safety under Building Safety Act 2023"
+    },
+    "responsible_person": {
+      "type": "object",
+      "properties": {
+        "appointed": {
+          "type": "boolean",
+          "default": false
+        },
+        "name": {
+          "type": "string"
+        },
+        "organisation": {
+          "type": "string"
+        },
+        "contact_details": {
+          "type": "string"
+        },
+        "appointed_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "fire_safety_duties": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "fire_risk_assessment",
+              "emergency_procedures",
+              "staff_training",
+              "equipment_maintenance",
+              "resident_information"
+            ]
+          }
+        }
+      },
+      "description": "Responsible Person under Regulatory Reform Act 2005 (fire safety)"
+    },
+    "fire_safety": {
+      "type": "object",
+      "properties": {
+        "fire_risk_assessment": {
+          "type": "object",
+          "properties": {
+            "last_assessment_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_assessment_due": {
+              "type": "string",
+              "format": "date"
+            },
+            "assessment_frequency_months": {
+              "type": "number",
+              "enum": [
+                12,
+                24
+              ],
+              "description": "Annual for high-risk, biennial for others"
+            },
+            "assessor_qualified": {
+              "type": "boolean"
+            },
+            "fire_safety_report_url": {
+              "type": "string"
+            },
+            "key_findings": {
+              "type": "string"
+            },
+            "recommendations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "critical",
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  },
+                  "completion_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "completed": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "alarm_systems": {
+          "type": "object",
+          "properties": {
+            "fire_alarms_fitted": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ionisation",
+                "optical",
+                "heat",
+                "combined"
+              ]
+            },
+            "last_tested_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_test_due": {
+              "type": "string",
+              "format": "date"
+            },
+            "maintenance_contract": {
+              "type": "string"
+            }
+          }
+        },
+        "emergency_lighting": {
+          "type": "object",
+          "properties": {
+            "fitted": {
+              "type": "boolean"
+            },
+            "last_tested": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_due": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "fire_extinguishers": {
+          "type": "object",
+          "properties": {
+            "fitted": {
+              "type": "boolean"
+            },
+            "count": {
+              "type": "number"
+            },
+            "last_serviced": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_service_due": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "fire_safety_plan": {
+          "type": "object",
+          "properties": {
+            "plan_exists": {
+              "type": "boolean"
+            },
+            "distributed_to_residents": {
+              "type": "boolean"
+            },
+            "distribution_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "evacuation_procedures_documented": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "structural_safety": {
+      "type": "object",
+      "properties": {
+        "structural_defect_register": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "defect_id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "identified_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "remediation_plan": {
+                "type": "string"
+              },
+              "estimated_cost": {
+                "type": "number"
+              },
+              "completion_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "completed": {
+                "type": "boolean"
+              },
+              "funding_source": {
+                "type": "string",
+                "enum": [
+                  "service_charge",
+                  "landlord_funded",
+                  "developer_funded",
+                  "building_safety_fund"
+                ]
+              },
+              "resident_safety_impact": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "description",
+              "location",
+              "severity",
+              "identified_date"
+            ]
+          }
+        },
+        "safety_case_audit": {
+          "type": "object",
+          "properties": {
+            "audit_required": {
+              "type": "boolean",
+              "description": "If HRRB"
+            },
+            "last_audit_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_audit_due": {
+              "type": "string",
+              "format": "date"
+            },
+            "audit_findings": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "health_safety_hazards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hazard_type": {
+            "type": "string",
+            "enum": [
+              "asbestos",
+              "legionella",
+              "lead_pipes",
+              "radon",
+              "damp_mould",
+              "electrical",
+              "lift_safety",
+              "slips_trips",
+              "other"
+            ]
+          },
+          "identified_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "assessment_status": {
+            "type": "string",
+            "enum": [
+              "identified",
+              "assessed",
+              "risk_managed",
+              "remediated"
+            ]
+          },
+          "action_plan": {
+            "type": "string"
+          },
+          "completion_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "asbestos_management": {
+      "type": "object",
+      "properties": {
+        "asbestos_survey_required": {
+          "type": "boolean"
+        },
+        "survey_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_survey_due": {
+          "type": "string",
+          "format": "date"
+        },
+        "asbestos_register": {
+          "type": "object",
+          "properties": {
+            "register_exists": {
+              "type": "boolean"
+            },
+            "accessible_to_contractors": {
+              "type": "boolean"
+            },
+            "materials_identified": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "condition": {
+                    "type": "string",
+                    "enum": [
+                      "good",
+                      "deteriorated",
+                      "damaged"
+                    ]
+                  },
+                  "management_action": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "legionella_risk_assessment": {
+      "type": "object",
+      "properties": {
+        "assessment_required": {
+          "type": "boolean",
+          "description": "If water systems present"
+        },
+        "assessment_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_assessment_due": {
+          "type": "string",
+          "format": "date"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "control_measures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "temperature_monitoring": {
+          "type": "boolean"
+        }
+      }
+    },
+    "electrical_safety_eicr": {
+      "type": "object",
+      "properties": {
+        "eicr_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Electrical Installation Condition Report"
+        },
+        "next_eicr_due": {
+          "type": "string",
+          "format": "date",
+          "description": "5-year cycle"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "satisfactory",
+            "unsatisfactory",
+            "further_investigation_required"
+          ]
+        },
+        "remedial_works_required": {
+          "type": "string"
+        },
+        "remedial_completion_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "resident_communication": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "topic": {
+            "type": "string",
+            "enum": [
+              "fire_safety_plan",
+              "emergency_procedures",
+              "defect_remediation",
+              "safety_concerns",
+              "regulatory_update"
+            ]
+          },
+          "communication_method": {
+            "type": "string"
+          },
+          "residents_informed_count": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "building_classification"
+  ]
+}

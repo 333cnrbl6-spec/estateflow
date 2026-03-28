@@ -1,0 +1,356 @@
+{
+  "name": "LeaseholderRights",
+  "type": "object",
+  "properties": {
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "property_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant/Leaseholder entity"
+    },
+    "lease_details": {
+      "type": "object",
+      "properties": {
+        "lease_start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "lease_end_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "original_term_years": {
+          "type": "number"
+        },
+        "remaining_years": {
+          "type": "number"
+        },
+        "years_expiry_warning": {
+          "type": "number",
+          "default": 80,
+          "description": "Alert if falling below 80 years (affects mortgageability)"
+        },
+        "is_long_leaseholder": {
+          "type": "boolean",
+          "description": "4+ years remaining = eligible for RTM"
+        },
+        "lease_document_url": {
+          "type": "string"
+        }
+      }
+    },
+    "lease_variation": {
+      "type": "object",
+      "properties": {
+        "variation_requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "request_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "extend_lease",
+                  "modify_covenant",
+                  "remove_restriction",
+                  "other"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "submitted",
+                  "agreed",
+                  "legal_draft",
+                  "executed",
+                  "rejected"
+                ]
+              },
+              "completion_date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "last_variation_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "lease_extension": {
+      "type": "object",
+      "properties": {
+        "eligibility_from_date": {
+          "type": "string",
+          "format": "date",
+          "description": "2+ years of ownership required (Leasehold Reform Act 1993)"
+        },
+        "eligible_for_extension": {
+          "type": "boolean"
+        },
+        "extension_claimed": {
+          "type": "boolean"
+        },
+        "notice_served_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "premium_negotiated": {
+          "type": "number",
+          "description": "Lease extension premium paid"
+        },
+        "new_lease_term_years": {
+          "type": "number"
+        },
+        "completion_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "legal_costs": {
+          "type": "number"
+        }
+      }
+    },
+    "collective_enfranchisement": {
+      "type": "object",
+      "properties": {
+        "property_eligible": {
+          "type": "boolean",
+          "description": "2/3+ leaseholders required (Leasehold Reform Act 1993)"
+        },
+        "group_formed": {
+          "type": "boolean"
+        },
+        "participating_leaseholders": {
+          "type": "number"
+        },
+        "notice_served_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "acquisition_status": {
+          "type": "string",
+          "enum": [
+            "not_initiated",
+            "notice_served",
+            "negotiation",
+            "tribunal",
+            "freehold_acquired"
+          ]
+        },
+        "freehold_purchase_price": {
+          "type": "number"
+        },
+        "completion_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "statutory_rights": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "right_to_information",
+          "right_to_manage",
+          "lease_extension",
+          "collective_enfranchisement",
+          "covenant_modification",
+          "forfeiture_protection",
+          "repair_covenant_enforcement"
+        ]
+      },
+      "description": "Statutory rights available to leaseholder"
+    },
+    "prescribed_information": {
+      "type": "object",
+      "properties": {
+        "notice_provided": {
+          "type": "boolean",
+          "description": "Housing Act 2004 s.213 prescribed information notice"
+        },
+        "notice_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "managing_agent_name": {
+          "type": "string"
+        },
+        "managing_agent_address": {
+          "type": "string"
+        },
+        "managing_agent_contact": {
+          "type": "string"
+        },
+        "dispute_body_name": {
+          "type": "string",
+          "enum": [
+            "The Property Ombudsman",
+            "LETTINGREDRESS"
+          ]
+        },
+        "dispute_body_contact": {
+          "type": "string"
+        }
+      },
+      "description": "Required prescribed information for all leaseholders"
+    },
+    "service_charge_transparency": {
+      "type": "object",
+      "properties": {
+        "annual_statement_received": {
+          "type": "boolean"
+        },
+        "statement_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "service_charge_amount": {
+          "type": "number"
+        },
+        "arrears_amount": {
+          "type": "number"
+        },
+        "arrears_status": {
+          "type": "string",
+          "enum": [
+            "no_arrears",
+            "current",
+            "overdue",
+            "disputed",
+            "payment_plan"
+          ]
+        },
+        "payment_plan": {
+          "type": "object",
+          "properties": {
+            "start_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "monthly_payment": {
+              "type": "number"
+            },
+            "completion_date": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "disputes_filed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": "number"
+              },
+              "amount_disputed": {
+                "type": "number"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "resolution_date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        }
+      }
+    },
+    "complaint_handling": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "complaint_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "subject": {
+            "type": "string",
+            "enum": [
+              "service_quality",
+              "service_charges",
+              "repairs",
+              "maintenance",
+              "communication",
+              "statutory_breach"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "submitted",
+              "acknowledged",
+              "under_investigation",
+              "resolved",
+              "escalated_to_ombudsman"
+            ]
+          },
+          "resolution_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "resolution": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "management_company_accountability": {
+      "type": "object",
+      "properties": {
+        "managing_agent_cmp_scheme": {
+          "type": "string",
+          "description": "Client Money Protection scheme membership (required in England)"
+        },
+        "managing_agent_professional_body": {
+          "type": "string",
+          "enum": [
+            "ARLA Propertymark",
+            "NAEA",
+            "RICS",
+            "other"
+          ]
+        },
+        "complaints_to_ombudsman": {
+          "type": "number"
+        },
+        "regulatory_breaches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "unit_id",
+    "property_id"
+  ]
+}
