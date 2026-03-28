@@ -8,6 +8,7 @@ import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
 import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
+import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -125,6 +126,11 @@ export default function Dashboard() {
         </div>
 
         <ComplianceAlert />
+
+        {/* Executive Dashboard */}
+        <div className="mb-8">
+          <ExecutiveDashboard properties={properties} units={units} transactions={transactions} tenants={tenants} />
+        </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
