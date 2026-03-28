@@ -1,0 +1,71 @@
+{
+  "name": "SafetyCertificate",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "certificate_type": {
+      "type": "string",
+      "enum": [
+        "gas_safety",
+        "eicr",
+        "fire_safety",
+        "asbestos",
+        "legionella",
+        "pat_testing",
+        "boiler_service",
+        "lift_safety",
+        "other"
+      ],
+      "description": "Type of safety certificate"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When certificate was issued"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When certificate expires"
+    },
+    "certificate_number": {
+      "type": "string",
+      "description": "Unique reference number on certificate"
+    },
+    "issuing_body": {
+      "type": "string",
+      "description": "Organization that issued certificate"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "expiring_soon",
+        "expired",
+        "pending"
+      ],
+      "default": "valid",
+      "description": "Current status based on expiry date"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to uploaded certificate document"
+    },
+    "alert_days": {
+      "type": "number",
+      "default": 30,
+      "description": "Days before expiry to trigger alert"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "certificate_type",
+    "expiry_date"
+  ]
+}

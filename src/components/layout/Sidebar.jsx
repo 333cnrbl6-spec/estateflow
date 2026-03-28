@@ -62,9 +62,10 @@ const navGroups = [
     label: 'Operations',
     items: [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
-      { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
-      { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
-       { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
+       { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
+       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+       { label: 'Certificates', icon: FileText, path: '/certificate-compliance' },
+        { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
        { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
        { label: 'Documents', icon: FileText, path: '/document-templates' },
        { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
