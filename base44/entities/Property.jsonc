@@ -4,7 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Property/building name e.g. Admiral Point, Old Bakery Kettering"
+      "description": "Property/building name e.g. Admiral Point, Reed Close"
     },
     "address_line_1": {
       "type": "string"
@@ -29,6 +29,9 @@
         "kettering",
         "north_wales",
         "lancashire",
+        "morecambe",
+        "bolton",
+        "colne",
         "other"
       ]
     },
