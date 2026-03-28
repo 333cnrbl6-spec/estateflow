@@ -9,6 +9,7 @@ import {
   PoundSterling,
   Wrench,
   BookUser,
+  ShieldCheck,
   ChevronLeft,
   ChevronRight,
   Crown
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Financials', icon: PoundSterling, path: '/financials' },
   { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
   { label: 'Contacts', icon: BookUser, path: '/contacts' },
+  { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
 ];
 
 export default function Sidebar() {
