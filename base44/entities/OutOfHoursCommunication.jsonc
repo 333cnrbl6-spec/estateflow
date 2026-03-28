@@ -1,0 +1,118 @@
+{
+  "name": "OutOfHoursCommunication",
+  "type": "object",
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "description": "Reference to OutOfHoursCall entity"
+    },
+    "communication_type": {
+      "type": "string",
+      "enum": [
+        "email",
+        "sms",
+        "phone_note",
+        "internal_note"
+      ],
+      "description": "Type of communication"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "inbound",
+        "outbound"
+      ],
+      "description": "Direction of communication"
+    },
+    "from_type": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "property_manager",
+        "contractor",
+        "system"
+      ],
+      "description": "Who sent the message"
+    },
+    "from_name": {
+      "type": "string",
+      "description": "Name of sender"
+    },
+    "from_contact": {
+      "type": "string",
+      "description": "Email or phone of sender"
+    },
+    "to_type": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "property_manager",
+        "contractor"
+      ],
+      "description": "Who received the message"
+    },
+    "to_name": {
+      "type": "string",
+      "description": "Name of recipient"
+    },
+    "to_contact": {
+      "type": "string",
+      "description": "Email or phone of recipient"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject or message title"
+    },
+    "body": {
+      "type": "string",
+      "description": "Full message content"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "delivered",
+        "read",
+        "failed",
+        "pending"
+      ],
+      "default": "sent",
+      "description": "Delivery status"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When message was sent/received"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "file_url": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Any attached files"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "call_id",
+    "communication_type",
+    "direction",
+    "from_type",
+    "from_name",
+    "body",
+    "timestamp"
+  ]
+}
