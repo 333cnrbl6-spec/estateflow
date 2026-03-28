@@ -55,6 +55,7 @@ import CertificateCompliance from './pages/CertificateCompliance';
 import MaintenanceWorkflow from './pages/MaintenanceWorkflow';
 import OutOfHoursCallCenter from './pages/OutOfHoursCallCenter';
 import CallCenterConfig from './pages/CallCenterConfig';
+import OutOfHoursPricingComparison from './pages/OutOfHoursPricingComparison';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -127,6 +128,7 @@ const AuthenticatedApp = () => {
         <Route path="/certificate-compliance" element={<CertificateCompliance />} />
         <Route path="/out-of-hours" element={<OutOfHoursCallCenter />} />
         <Route path="/call-center-config" element={<CallCenterConfig />} />
+        <Route path="/out-of-hours-pricing" element={<OutOfHoursPricingComparison />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
