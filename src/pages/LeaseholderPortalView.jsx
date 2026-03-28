@@ -512,20 +512,20 @@ export default function LeaseholderPortalView() {
                       </Button>
                     </div>
 
-                    {userServiceCharge.audit_certificate && (
-                      <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-                        <div>
-                          <p className="font-semibold text-sm">Audit Certificate</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(userServiceCharge.audit_certificate.audit_date).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <Button variant="outline" size="sm" className="gap-2">
-                          <Download className="w-4 h-4" />
-                          Download
-                        </Button>
-                      </div>
-                    )}
+                    {userServiceCharge.audit_certificate && userServiceCharge.audit_certificate.audit_date && (
+                       <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
+                         <div>
+                           <p className="font-semibold text-sm">Audit Certificate</p>
+                           <p className="text-xs text-muted-foreground">
+                             {new Date(userServiceCharge.audit_certificate.audit_date).toLocaleDateString()}
+                           </p>
+                         </div>
+                         <Button variant="outline" size="sm" className="gap-2">
+                           <Download className="w-4 h-4" />
+                           Download
+                         </Button>
+                       </div>
+                     )}
                   </>
                 )}
 
