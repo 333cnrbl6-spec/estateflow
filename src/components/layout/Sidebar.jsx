@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -71,7 +71,13 @@ const navGroups = [
 ];
 
 export default function Sidebar({ onCollapsedChange }) {
-  const location = useLocation();
+  let location;
+  try {
+    location = useLocation();
+  } catch {
+    // useLocation() called outside Router context - provide fallback
+    location = { pathname: '/' };
+  }
   const [collapsed, setCollapsed] = useState(false);
 
   const handleCollapse = (newState) => {
