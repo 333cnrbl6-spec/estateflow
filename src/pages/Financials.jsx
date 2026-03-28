@@ -14,6 +14,9 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
+import MonthlyStatement from '@/components/financials/MonthlyStatement';
+import ServiceChargeReport from '@/components/financials/ServiceChargeReport';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const TRANSACTION_FIELDS = [
   { name: 'description', type: 'string' },
@@ -34,9 +37,26 @@ export default function Financials() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { propertyIds } = useDemoFilter();
 
   const { data: transactions = [] } = useQuery({
-    queryKey: ['transactions'], queryFn: () => base44.entities.FinancialTransaction.list('-created_date'),
+    queryKey: ['transactions', propertyIds],
+    queryFn: async () => {
+      const all = await base44.entities.FinancialTransaction.list('-created_date');
+      if (propertyIds) return all.filter(t => propertyIds.includes(t.property_id));
+      return all;
+    }
+  });
+
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties', propertyIds],
+    queryFn: async () => {
+      if (propertyIds) {
+        const allProps = await base44.entities.Property.list();
+        return allProps.filter(p => propertyIds.includes(p.id));
+      }
+      return base44.entities.Property.list();
+    }
   });
 
   const createMutation = useMutation({
@@ -77,6 +97,11 @@ export default function Financials() {
       </PageHeader>
 
       <SampleDataBanner entity="financial transactions" />
+
+      <div className="space-y-6 mb-8">
+        <MonthlyStatement transactions={transactions} />
+        <ServiceChargeReport transactions={transactions} properties={properties} />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard title="Total Income" value={`£${totalIncome.toLocaleString()}`} icon={PoundSterling} />
