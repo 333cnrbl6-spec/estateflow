@@ -97,7 +97,7 @@ export default function ProductBrochure() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-serif font-bold text-foreground">
-              Powell & Co Property Management Platform
+              EstateFlow Property Management Platform
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               Comprehensive SaaS Solution for Enterprise Property Groups
@@ -116,7 +116,7 @@ export default function ProductBrochure() {
           <h2 className="text-3xl font-serif font-bold mb-6">Executive Overview</h2>
           <div className="space-y-4">
             <p className="text-lg text-foreground leading-relaxed">
-              The Powell & Co Platform is a comprehensive property management solution built on public domain legislation and industry best practices. It integrates real-time financial analytics, automated compliance tracking, tenant-facing portals, and flexible API integrations into a single, unified system.
+              The EstateFlow Platform is a comprehensive property management solution built on public domain legislation and industry best practices. It integrates real-time financial analytics, automated compliance tracking, tenant-facing portals, and flexible API integrations into a single, unified system.
             </p>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-900">
@@ -408,10 +408,10 @@ export default function ProductBrochure() {
               <li>Deposit Protection & Tenancy Reference Schemes</li>
             </ul>
             <p className="mt-4">
-              <strong>Fictitious Data:</strong> All numerical metrics, tenant accounts, transaction amounts, and property counts are representative fictitious data demonstrating platform capabilities at enterprise scale. These figures are not based on actual Powell & Co operations but illustrate the system's ability to manage large-scale property portfolios.
+              <strong>Fictitious Data:</strong> All numerical metrics, tenant accounts, transaction amounts, and property counts are representative fictitious data demonstrating platform capabilities at enterprise scale. These figures are not based on actual EstateFlow operations but illustrate the system's ability to manage large-scale property portfolios.
             </p>
             <p className="mt-4 bg-amber-50 border border-amber-200 rounded p-3">
-              <strong>Document Purpose:</strong> This brochure is intended for demonstration and educational purposes, showcasing the comprehensive capabilities of the Powell & Co Property Management Platform. Any resemblance to actual figures is coincidental.
+              <strong>Document Purpose:</strong> This brochure is intended for demonstration and educational purposes, showcasing the comprehensive capabilities of the EstateFlow Property Management Platform. Any resemblance to actual figures is coincidental.
             </p>
           </div>
         </section>
@@ -420,7 +420,7 @@ export default function ProductBrochure() {
         <section className="text-center py-12">
           <h2 className="text-3xl font-serif font-bold mb-4">Ready to Transform Your Property Management?</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            The Powell & Co Platform provides enterprise-grade property management with financial analytics, compliance automation, and tenant engagement—all in one unified system.
+            The EstateFlow Platform provides enterprise-grade property management with financial analytics, compliance automation, and tenant engagement—all in one unified system.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button size="lg" className="gap-2">

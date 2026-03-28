@@ -9,7 +9,7 @@ export default function ProductComparison() {
 
   const competitors = [
     {
-      name: 'Powell & Co Platform',
+      name: 'EstateFlow Platform',
       logo: '🏢',
       type: 'Proprietary SaaS',
       pricing: 'Custom (per 250 units)',
@@ -123,7 +123,7 @@ export default function ProductComparison() {
 
   const pricingDetails = [
     {
-      product: 'Powell & Co',
+      product: 'EstateFlow',
       model: 'Custom Enterprise',
       basePrice: '£2,000-5,000/mo',
       perUnit: 'Included',
@@ -222,7 +222,7 @@ export default function ProductComparison() {
             <Crown className="w-6 h-6 text-amber-500" />
           </div>
           <p className="text-lg text-slate-600">
-            Powell & Co vs. Market-Leading Property Management Solutions
+            EstateFlow vs. Market-Leading Property Management Solutions
           </p>
         </div>
 
@@ -274,7 +274,7 @@ export default function ProductComparison() {
                       <thead>
                         <tr className="border-b border-slate-200">
                           <th className="text-left font-semibold py-3 px-4 bg-slate-50">Feature</th>
-                          <th className="text-center font-semibold py-3 px-3 bg-blue-50">Powell & Co</th>
+                          <th className="text-center font-semibold py-3 px-3 bg-blue-50">EstateFlow</th>
                           <th className="text-center font-semibold py-3 px-3">Goodlord</th>
                           <th className="text-center font-semibold py-3 px-3">AppFolio</th>
                           <th className="text-center font-semibold py-3 px-3">Keogh</th>
@@ -350,13 +350,13 @@ export default function ProductComparison() {
                 <div
                   key={idx}
                   className={`border-2 rounded-lg p-6 ${
-                    pricing.product === 'Powell & Co'
+                    pricing.product === 'EstateFlow'
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-slate-200 bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    {pricing.product === 'Powell & Co' && (
+                    {pricing.product === 'EstateFlow' && (
                       <Crown className="w-5 h-5 text-amber-500" />
                     )}
                     <h3 className="font-bold text-lg">{pricing.product}</h3>
@@ -417,7 +417,7 @@ export default function ProductComparison() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white rounded-lg p-4 border border-amber-200">
-                  <p className="text-sm text-slate-600">Powell & Co</p>
+                  <p className="text-sm text-slate-600">EstateFlow</p>
                   <p className="text-3xl font-bold text-slate-900">£36,000</p>
                   <p className="text-xs text-slate-500 mt-2">£3,000/mo + support</p>
                 </div>
@@ -435,7 +435,7 @@ export default function ProductComparison() {
               <div className="bg-white rounded-lg p-4 border border-amber-300">
                 <p className="text-sm font-semibold text-slate-900 mb-2">📊 TCO Note:</p>
                 <p className="text-sm text-slate-700">
-                  Powell & Co pricing is all-inclusive (no per-unit fees, no module add-ons). AppFolio and Yardi require additional modules (up to £8,000+/mo). Goodlord is lettings-focused; full portfolio management requires additional tools.
+                  EstateFlow pricing is all-inclusive (no per-unit fees, no module add-ons). AppFolio and Yardi require additional modules (up to £8,000+/mo). Goodlord is lettings-focused; full portfolio management requires additional tools.
                 </p>
               </div>
             </div>
@@ -445,13 +445,13 @@ export default function ProductComparison() {
         {/* Key Differences */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Key Differentiators: Powell & Co</CardTitle>
+            <CardTitle className="text-2xl">Key Differentiators: EstateFlow</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {keyDifferences.map((diff, idx) => (
                 <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
-                  <p className="font-semibold text-slate-900 text-sm mb-1">Powell & Co:</p>
+                  <p className="font-semibold text-slate-900 text-sm mb-1">EstateFlow:</p>
                   <p className="text-sm text-slate-700 mb-2">{diff.powell}</p>
                   <p className="font-semibold text-slate-900 text-sm mb-1">Competitors:</p>
                   <p className="text-sm text-slate-600">{diff.others}</p>
@@ -468,7 +468,7 @@ export default function ProductComparison() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-semibold mb-2">When to Choose Powell & Co:</h4>
+              <h4 className="font-semibold mb-2">When to Choose EstateFlow:</h4>
               <ul className="space-y-1 text-sm">
                 <li>✓ Large, complex multi-company portfolios (250+ units)</li>
                 <li>✓ Require full regulatory compliance (MEES, Companies House, Wales legislation)</li>
@@ -494,7 +494,7 @@ export default function ProductComparison() {
         <div className="bg-slate-100 border border-slate-300 rounded-lg p-6 text-sm text-slate-700 space-y-2">
           <p className="font-semibold">Data Disclaimer:</p>
           <p>
-            This comparison is based on publicly available information from competitor websites, press releases, and verified pricing (as of March 2026). Powell & Co Platform is a demonstrative property management system combining public domain regulatory frameworks with representative enterprise metrics. Feature and pricing data for competitors has been sourced from official provider websites and should be verified directly with vendors for current accuracy.
+            This comparison is based on publicly available information from competitor websites, press releases, and verified pricing (as of March 2026). EstateFlow Platform is a demonstrative property management system combining public domain regulatory frameworks with representative enterprise metrics. Feature and pricing data for competitors has been sourced from official provider websites and should be verified directly with vendors for current accuracy.
           </p>
         </div>
       </div>

@@ -136,7 +136,7 @@ export default function PlatformTour() {
         {/* Header */}
         <div className="text-center space-y-3">
           <h1 className="text-4xl font-serif font-bold text-white">Platform Tour</h1>
-          <p className="text-slate-300">Comprehensive view of the Powell & Co management system</p>
+          <p className="text-slate-300">Comprehensive view of the EstateFlow management system</p>
           <p className="text-sm text-slate-400">
             Slide {currentSlide + 1} of {screenshots.length}
           </p>
@@ -346,7 +346,7 @@ export default function PlatformTour() {
 
         {/* Info Footer */}
         <div className="text-center text-slate-400 text-sm mt-12 pb-8">
-          <p>Explore the complete Powell & Co platform with page-by-page interface previews</p>
+          <p>Explore the complete EstateFlow platform with page-by-page interface previews</p>
         </div>
       </div>
     </div>

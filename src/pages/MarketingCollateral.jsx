@@ -52,7 +52,7 @@ export default function MarketingCollateral() {
       <div className="sticky top-0 z-50 bg-white shadow-lg border-b-2 border-blue-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-serif font-bold text-slate-900">Powell & Co Marketing Collateral</h1>
+            <h1 className="text-2xl font-serif font-bold text-slate-900">EstateFlow Marketing Collateral</h1>
             <p className="text-sm text-slate-600">Complete Sales & Feature Overview Document</p>
           </div>
           <div className="flex gap-3 print:hidden">
@@ -84,7 +84,7 @@ export default function MarketingCollateral() {
             <div className="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold">
               SECTION 1: PRODUCT BROCHURE
             </div>
-            <h2 className="text-5xl font-serif font-bold text-slate-900">Powell & Co</h2>
+            <h2 className="text-5xl font-serif font-bold text-slate-900">EstateFlow</h2>
             <p className="text-2xl text-slate-600">Enterprise Property Management Platform</p>
             <p className="text-lg text-slate-500">Unified solution for modern portfolio management</p>
           </div>
@@ -278,13 +278,13 @@ export default function MarketingCollateral() {
               SECTION 3: COMPETITIVE ANALYSIS
             </div>
             <h2 className="text-4xl font-serif font-bold text-slate-900">Market Comparison</h2>
-            <p className="text-slate-600">Powell & Co vs. Industry Leaders</p>
+            <p className="text-slate-600">EstateFlow vs. Industry Leaders</p>
           </div>
 
           {/* Competitor Overview */}
           <div className="grid grid-cols-3 gap-4">
             {[
-              { name: 'Powell & Co', price: '£2-5K/mo', focus: 'UK Enterprise', highlight: true },
+              { name: 'EstateFlow', price: '£2-5K/mo', focus: 'UK Enterprise', highlight: true },
               { name: 'AppFolio', price: '£1.5-8K/mo', focus: 'Market Leader' },
               { name: 'Goodlord', price: '£50-300/mo', focus: 'Lettings' },
               { name: 'Keogh', price: '£100-400/mo', focus: 'UK Budget' },
@@ -337,7 +337,7 @@ export default function MarketingCollateral() {
             ].map((diff, idx) => (
               <div key={idx} className="border-l-4 border-amber-600 bg-amber-50 p-4 rounded">
                 <p className="text-sm">
-                  <strong className="text-amber-900">Powell & Co:</strong> {diff.powell}
+                  <strong className="text-amber-900">EstateFlow:</strong> {diff.powell}
                 </p>
                 <p className="text-xs text-slate-600 mt-1">
                   vs. <strong>Others:</strong> {diff.others}
@@ -351,7 +351,7 @@ export default function MarketingCollateral() {
             <h3 className="text-xl font-bold text-slate-900 mb-4">Annual TCO (250-Unit Portfolio)</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded p-4 border-2 border-amber-300">
-                <p className="font-bold text-slate-900">Powell & Co</p>
+                <p className="font-bold text-slate-900">EstateFlow</p>
                 <p className="text-2xl font-bold text-amber-700">£36,000/yr</p>
                 <p className="text-xs text-slate-600 mt-2">All-inclusive, no module add-ons</p>
               </div>
@@ -371,7 +371,7 @@ export default function MarketingCollateral() {
           {/* When to Choose */}
           <div className="grid grid-cols-2 gap-6">
             <div className="bg-green-50 border-2 border-green-600 rounded-lg p-6">
-              <h4 className="font-bold text-green-900 mb-3">✓ Choose Powell & Co When:</h4>
+              <h4 className="font-bold text-green-900 mb-3">✓ Choose EstateFlow When:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li>✓ Large, complex multi-company portfolios (250+ units)</li>
                 <li>✓ Full regulatory compliance required</li>
@@ -393,7 +393,7 @@ export default function MarketingCollateral() {
 
           {/* Footer */}
           <div className="bg-slate-900 text-white rounded-lg p-6 text-center text-sm">
-            <p className="font-semibold mb-2">Powell & Co Platform</p>
+            <p className="font-semibold mb-2">EstateFlow Platform</p>
             <p>Enterprise property management built for modern portfolio management</p>
             <p className="text-slate-400 mt-3">Marketing Collateral | March 2026</p>
           </div>

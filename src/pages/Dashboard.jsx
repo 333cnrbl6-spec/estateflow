@@ -55,7 +55,7 @@ export default function Dashboard() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-4xl font-serif font-bold text-foreground mb-1">Dashboard</h1>
-              <p className="text-base text-muted-foreground">Powell & Co Property Group — Portfolio Overview</p>
+              <p className="text-base text-muted-foreground">EstateFlow Property Group — Portfolio Overview</p>
             </div>
             <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-card rounded-lg border border-border">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>

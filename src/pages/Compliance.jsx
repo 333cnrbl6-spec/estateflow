@@ -11,13 +11,13 @@ import { cn } from '@/lib/utils';
 // Real data sourced live from Companies House — verified 28 March 2026
 const COMPANIES = [
   { name: "Powell And Co Property (London) Ltd", number: "09976213", status: "active", accounts_due: "2026-10-30", accounts_period: "30 Jan 2026", cs_due: "2027-02-09", cs_date: "26 Jan 2026", sic: "68320" },
-  { name: "Powell & Co Property (Brighton) Limited", number: "05826387", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-06-20", cs_date: "6 Jun 2025", sic: "68100" },
-  { name: "Powell & Co Property Limited", number: "05826347", status: "active", accounts_due: "2027-02-28", accounts_period: "30 May 2026", cs_due: "2026-06-06", cs_date: "23 May 2025", sic: "68100" },
+  { name: "EstateFlow Property (Brighton) Limited", number: "05826387", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-06-20", cs_date: "6 Jun 2025", sic: "68100" },
+  { name: "EstateFlow Property Limited", number: "05826347", status: "active", accounts_due: "2027-02-28", accounts_period: "30 May 2026", cs_due: "2026-06-06", cs_date: "23 May 2025", sic: "68100" },
   { name: "Powell And Co (Blackpool) Ltd", number: "13992328", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2027-04-03", cs_date: "20 Mar 2026", sic: "68100" },
   { name: "Powell And Co Associates Ltd", number: "14346745", status: "active", accounts_due: "2026-06-30", accounts_period: "30 Sep 2025", cs_due: "2026-09-20", cs_date: "6 Sep 2025", sic: "68100" },
-  { name: "Powell & Co Assets Limited", number: "10833646", status: "active", accounts_due: "2026-03-31", accounts_period: "30 Jun 2025", cs_due: "2026-07-08", cs_date: "24 Jun 2025", sic: "68209", notes: "⚠ Accounts due 31 Mar 2026 — imminent" },
-  { name: "Powell & Co Freeholds Limited", number: "10764568", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-05-24", cs_date: "10 May 2025", sic: "68209" },
-  { name: "Powell & Co Management Limited", number: "06030136", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "68100" },
+  { name: "EstateFlow Assets Limited", number: "10833646", status: "active", accounts_due: "2026-03-31", accounts_period: "30 Jun 2025", cs_due: "2026-07-08", cs_date: "24 Jun 2025", sic: "68209", notes: "⚠ Accounts due 31 Mar 2026 — imminent" },
+  { name: "EstateFlow Freeholds Limited", number: "10764568", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-05-24", cs_date: "10 May 2025", sic: "68209" },
+  { name: "EstateFlow Management Limited", number: "06030136", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "68100" },
   { name: "Powell And Carvalho International Ltd", number: "13696161", status: "active", accounts_due: "2026-07-31", accounts_period: "31 Oct 2025", cs_due: "2026-11-03", cs_date: "20 Oct 2025", sic: "68100" },
   { name: "Carvalho Concept Limited", number: "06173925", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-11-27", cs_date: "13 Nov 2025", sic: "68209" },
   { name: "JD Property (Blackpool) Limited", number: "05256027", status: "active", accounts_due: "2026-07-31", accounts_period: "31 Oct 2025", cs_due: "2026-09-17", cs_date: "3 Sep 2025", sic: "68209" },
