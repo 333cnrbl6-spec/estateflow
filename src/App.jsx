@@ -45,6 +45,7 @@ import ServiceChargeManagement from './pages/ServiceChargeManagement';
 import RTMManagementPage from './pages/RTMManagementPage';
 import BuildingSafetyRegister from './pages/BuildingSafetyRegister';
 import BlockManagementComplianceDashboard from './pages/BlockManagementComplianceDashboard';
+import DocumentAutomationEngine from './pages/DocumentAutomationEngine';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -110,6 +111,7 @@ const AuthenticatedApp = () => {
         <Route path="/rtm-management" element={<RTMManagementPage />} />
         <Route path="/building-safety-register" element={<BuildingSafetyRegister />} />
         <Route path="/block-compliance-dashboard" element={<BlockManagementComplianceDashboard />} />
+        <Route path="/document-automation" element={<DocumentAutomationEngine />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
