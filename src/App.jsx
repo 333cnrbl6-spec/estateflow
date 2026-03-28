@@ -57,6 +57,7 @@ import OutOfHoursCallCenter from './pages/OutOfHoursCallCenter';
 import CallCenterConfig from './pages/CallCenterConfig';
 import OutOfHoursPricingComparison from './pages/OutOfHoursPricingComparison';
 import OutOfHoursOnboarding from './pages/OutOfHoursOnboarding';
+import OutOfHoursServicePipeline from './pages/OutOfHoursServicePipeline';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -131,6 +132,7 @@ const AuthenticatedApp = () => {
         <Route path="/call-center-config" element={<CallCenterConfig />} />
         <Route path="/out-of-hours-pricing" element={<OutOfHoursPricingComparison />} />
         <Route path="/out-of-hours-onboarding" element={<OutOfHoursOnboarding />} />
+        <Route path="/out-of-hours-pipeline" element={<OutOfHoursServicePipeline />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
