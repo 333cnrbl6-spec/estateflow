@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import RBMBrandingProvider from '@/components/RBMBrandingProvider';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 import AppLayout from './components/layout/AppLayout';
 import Dashboard from './pages/Dashboard';
@@ -151,17 +152,19 @@ const AuthenticatedApp = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <RBMBrandingProvider>
-          <Router>
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </RBMBrandingProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <RBMBrandingProvider>
+            <Router>
+              <AuthenticatedApp />
+            </Router>
+            <Toaster />
+          </RBMBrandingProvider>
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
-export default App
+export default App;

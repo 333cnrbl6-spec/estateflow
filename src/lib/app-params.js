@@ -3,8 +3,8 @@ const windowObj = isNode ? { localStorage: new Map() } : window;
 const storage = windowObj.localStorage;
 
 const toSnakeCase = (str) => {
-	return str.replace(/([A-Z])/g, '_$1').toLowerCase();
-}
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+};
 
 const getAppParamValue = (paramName, { defaultValue = undefined, removeFromUrl = false } = {}) => {
 	if (isNode) {
