@@ -6,30 +6,25 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const callId = url.searchParams.get('callId');
 
-    const body = new URLSearchParams(await req.text());
-    const callStatus = body.get('CallStatus');
-    const callDuration = body.get('CallDuration');
-    const recordingUrl = body.get('RecordingUrl');
+    // Parse RingCentral webhook payload
+    const body = await req.json();
+    const callStatus = body.status || 'unknown';
+    const callDuration = body.duration || 0;
+    const recordingUrl = body.recording?.uri || null;
+    const callerId = body.from?.phoneNumber || 'unknown';
 
     if (callId) {
       // Update call record with status and recording
       await base44.asServiceRole.entities.OutOfHoursCall.update(callId, {
-        duration_minutes: callDuration ? Math.round(parseInt(callDuration) / 60) : 0,
+        duration_minutes: callDuration ? Math.round(callDuration / 60) : 0,
         notes: recordingUrl ? `Recording: ${recordingUrl}` : '',
-        action_taken:
-          callStatus === 'completed' ? 'logged_and_email_sent' : 'logged_and_email_sent',
+        action_taken: callStatus === 'Completed' ? 'logged_and_email_sent' : 'logged_and_email_sent',
       });
     }
 
-    // Return TwiML for interactive voice response
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-      <Response>
-        <Say>Thank you for contacting our out of hours service. Your call has been logged.</Say>
-        <Hangup/>
-      </Response>`;
-
-    return new Response(twiml, {
-      headers: { 'Content-Type': 'application/xml' },
+    return Response.json({
+      success: true,
+      message: 'Call webhook processed successfully',
     });
   } catch (error) {
     console.error('Webhook error:', error);

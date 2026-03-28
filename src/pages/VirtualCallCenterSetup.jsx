@@ -12,9 +12,10 @@ import VirtualCallQueue from '@/components/callcenter/VirtualCallQueue';
 
 export default function VirtualCallCenterSetup() {
   const [showQueue, setShowQueue] = useState(false);
-  const [twilioConfig, setTwilioConfig] = useState({
-    accountSid: '',
-    authToken: '',
+  const [ringcentralConfig, setRingcentralConfig] = useState({
+    clientId: '',
+    clientSecret: '',
+    serverUrl: 'https://platform.ringcentral.com',
     phoneNumber: '',
   });
   const [testCall, setTestCall] = useState({
@@ -26,7 +27,7 @@ export default function VirtualCallCenterSetup() {
 
   const testCallMutation = useMutation({
     mutationFn: async () => {
-      const response = await base44.functions.invoke('initiateTwilioCall', testCall);
+      const response = await base44.functions.invoke('initiateRingcentralCall', testCall);
       return response.data;
     },
   });
@@ -44,7 +45,7 @@ export default function VirtualCallCenterSetup() {
     <div className="space-y-6">
       <PageHeader
         title="Virtual Call Center"
-        subtitle="Twilio-powered inbound call handling with queue management"
+        subtitle="RingCentral-powered inbound call handling with queue management"
       />
 
       {!showQueue ? (
@@ -60,64 +61,65 @@ export default function VirtualCallCenterSetup() {
                 <AlertDescription>
                   To enable virtual call center, you need to:
                   <ol className="list-decimal list-inside mt-2 space-y-2 text-sm">
-                    <li>Create a free Twilio account at <a href="https://www.twilio.com" target="_blank" className="text-blue-600 underline">twilio.com</a></li>
-                    <li>Set environment variables: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, APP_URL</li>
-                    <li>Configure your Twilio phone number to forward to your app webhook</li>
+                    <li>Create a RingCentral account at <a href="https://www.ringcentral.com" target="_blank" className="text-blue-600 underline">ringcentral.com</a></li>
+                    <li>Create an API application to get Client ID and Client Secret</li>
+                    <li>Set environment variables: RINGCENTRAL_CLIENT_ID, RINGCENTRAL_CLIENT_SECRET, RINGCENTRAL_PHONE_NUMBER, APP_URL</li>
+                    <li>Configure your RingCentral phone number to forward to your app webhook</li>
                     <li>Install USB headset and access the virtual queue interface</li>
                   </ol>
                 </AlertDescription>
               </Alert>
 
               <div className="bg-slate-100 p-4 rounded-lg space-y-3 text-sm">
-                <p><strong>Twilio Free Tier:</strong></p>
+                <p><strong>RingCentral Pricing:</strong></p>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                  <li>Free trial with $15 credits (enough for ~150 min/month)</li>
-                  <li>After trial: $0.0085/min inbound, $0.0210/min outbound</li>
-                  <li>Test phone numbers included in free tier</li>
-                  <li>Pay-as-you-go pricing - no monthly fee</li>
+                  <li>Free trial with developer sandbox environment</li>
+                  <li>Flexible business plans with included minutes</li>
+                  <li>Pay-as-you-go for additional usage beyond plan</li>
+                  <li>Better for small business call handling</li>
                 </ul>
               </div>
             </CardContent>
           </Card>
 
-          {/* Twilio Configuration */}
+          {/* RingCentral Configuration */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Twilio Configuration</CardTitle>
+              <CardTitle className="text-lg">RingCentral Configuration</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="accountSid">Account SID</Label>
+                <Label htmlFor="clientId">Client ID</Label>
                 <Input
-                  id="accountSid"
-                  placeholder="Your Twilio Account SID"
-                  value={twilioConfig.accountSid}
+                  id="clientId"
+                  placeholder="Your RingCentral Client ID"
+                  value={ringcentralConfig.clientId}
                   onChange={(e) =>
-                    setTwilioConfig({ ...twilioConfig, accountSid: e.target.value })
+                    setRingcentralConfig({ ...ringcentralConfig, clientId: e.target.value })
                   }
                   type="password"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="authToken">Auth Token</Label>
+                <Label htmlFor="clientSecret">Client Secret</Label>
                 <Input
-                  id="authToken"
-                  placeholder="Your Twilio Auth Token"
-                  value={twilioConfig.authToken}
+                  id="clientSecret"
+                  placeholder="Your RingCentral Client Secret"
+                  value={ringcentralConfig.clientSecret}
                   onChange={(e) =>
-                    setTwilioConfig({ ...twilioConfig, authToken: e.target.value })
+                    setRingcentralConfig({ ...ringcentralConfig, clientSecret: e.target.value })
                   }
                   type="password"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Twilio Phone Number</Label>
+                <Label htmlFor="phoneNumber">RingCentral Phone Number</Label>
                 <Input
                   id="phoneNumber"
                   placeholder="+1234567890"
-                  value={twilioConfig.phoneNumber}
+                  value={ringcentralConfig.phoneNumber}
                   onChange={(e) =>
-                    setTwilioConfig({ ...twilioConfig, phoneNumber: e.target.value })
+                    setRingcentralConfig({ ...ringcentralConfig, phoneNumber: e.target.value })
                   }
                 />
               </div>
