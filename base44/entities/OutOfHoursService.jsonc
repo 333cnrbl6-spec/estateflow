@@ -1,0 +1,116 @@
+{
+  "name": "OutOfHoursService",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "Company subscribed to this service"
+    },
+    "service_name": {
+      "type": "string"
+    },
+    "service_tier": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "standard",
+        "premium",
+        "enterprise"
+      ],
+      "default": "standard",
+      "description": "Service level: basic=log+email, standard=log+maintenance, premium=contractors included, enterprise=full managed"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "monthly_cost": {
+      "type": "number",
+      "description": "Service cost per month"
+    },
+    "call_handling_options": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "log_and_email",
+          "maintenance_order_creation",
+          "contractor_dispatch",
+          "emergency_response",
+          "callback_scheduling"
+        ]
+      },
+      "description": "Available call handling features for this tier"
+    },
+    "emergency_contractors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contractor_id": {
+            "type": "string"
+          },
+          "contractor_name": {
+            "type": "string"
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "heating",
+                "plumbing",
+                "electrical",
+                "general",
+                "locksmith",
+                "gas"
+              ]
+            }
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "24/7",
+              "weekends_only",
+              "scheduled"
+            ]
+          }
+        }
+      }
+    },
+    "auto_email_template": {
+      "type": "string",
+      "description": "Email template ID for call confirmation"
+    },
+    "escalation_contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "company_id",
+    "service_name",
+    "service_tier"
+  ]
+}

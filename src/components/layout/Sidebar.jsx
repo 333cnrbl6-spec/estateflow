@@ -29,7 +29,8 @@ import {
   Shield,
   AlertCircle,
   Code2,
-  TrendingUp
+  TrendingUp,
+  Phone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -64,6 +65,7 @@ const navGroups = [
     items: [
       { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
        { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
+       { label: 'Out-of-Hours Support', icon: Phone, path: '/out-of-hours' },
        { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
        { label: 'Certificates', icon: FileText, path: '/certificate-compliance' },
         { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },

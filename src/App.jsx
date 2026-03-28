@@ -53,6 +53,7 @@ import EmergencyCalloutManager from './pages/EmergencyCalloutManager';
 import DeveloperDemoSwitcher from './pages/DeveloperDemoSwitcher';
 import CertificateCompliance from './pages/CertificateCompliance';
 import MaintenanceWorkflow from './pages/MaintenanceWorkflow';
+import OutOfHoursCallCenter from './pages/OutOfHoursCallCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -123,6 +124,7 @@ const AuthenticatedApp = () => {
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
         <Route path="/certificate-compliance" element={<CertificateCompliance />} />
+        <Route path="/out-of-hours" element={<OutOfHoursCallCenter />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

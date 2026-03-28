@@ -1,0 +1,132 @@
+{
+  "name": "OutOfHoursCall",
+  "type": "object",
+  "properties": {
+    "call_date_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When call was received"
+    },
+    "caller_name": {
+      "type": "string"
+    },
+    "caller_phone": {
+      "type": "string"
+    },
+    "caller_email": {
+      "type": "string"
+    },
+    "caller_type": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "landlord",
+        "unknown"
+      ],
+      "description": "Type of caller"
+    },
+    "property_postcode": {
+      "type": "string",
+      "description": "Property postcode provided by caller"
+    },
+    "property_address": {
+      "type": "string",
+      "description": "Property address provided by caller"
+    },
+    "matched_property_id": {
+      "type": "string",
+      "description": "Property ID after validation match"
+    },
+    "matched_tenant_id": {
+      "type": "string",
+      "description": "Tenant ID after validation match"
+    },
+    "matched_company_id": {
+      "type": "string",
+      "description": "Company (billable entity) after validation"
+    },
+    "call_type": {
+      "type": "string",
+      "enum": [
+        "emergency",
+        "maintenance",
+        "general_enquiry",
+        "complaint",
+        "urgent",
+        "contractor_dispatch",
+        "heating_failure",
+        "water_leak",
+        "security_breach",
+        "access_issue"
+      ],
+      "description": "Category of call"
+    },
+    "call_description": {
+      "type": "string",
+      "description": "Details of the issue/enquiry"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "validated",
+        "unvalidated"
+      ],
+      "default": "pending",
+      "description": "GDPR validation status"
+    },
+    "gdpr_consent_recorded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Data protection consent obtained"
+    },
+    "action_taken": {
+      "type": "string",
+      "enum": [
+        "logged_and_email_sent",
+        "maintenance_order_created",
+        "contractor_dispatched",
+        "escalated_to_manager",
+        "callback_scheduled",
+        "resolved"
+      ],
+      "description": "Action taken during call"
+    },
+    "action_details": {
+      "type": "string",
+      "description": "Details of action taken (order ID, contractor details, etc.)"
+    },
+    "handler_name": {
+      "type": "string",
+      "description": "Name of support agent who handled call"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Call duration in minutes"
+    },
+    "callback_scheduled_for": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "call_date_time",
+    "caller_name",
+    "caller_phone",
+    "call_type",
+    "call_description"
+  ]
+}
