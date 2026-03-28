@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import PageHeader from '@/components/shared/PageHeader';
+import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
@@ -67,6 +68,8 @@ export default function Tenants() {
         </Button>
       </PageHeader>
 
+      <SampleDataBanner entity="tenant names, email addresses and phone numbers" />
+
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -84,7 +87,7 @@ export default function Tenants() {
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(tenant => (
-            <div key={tenant.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow group">
+            <div key={tenant.id} className="bg-card rounded-xl border border-dashed border-amber-200/70 p-5 hover:shadow-md transition-shadow group opacity-80 hover:opacity-100">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">

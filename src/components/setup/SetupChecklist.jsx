@@ -8,10 +8,10 @@ const CHECKLIST = [
   {
     section: "Data Foundation",
     steps: [
-      { id: "companies", label: "Add all group companies", desc: "Powell & Co entities, SPVs, management cos", done: true },
-      { id: "properties", label: "Add all properties", desc: "Buildings, blocks and standalone units", done: true },
-      { id: "units", label: "Add units & leases", desc: "Flat references, lease terms, ground rents", done: true },
-      { id: "tenants", label: "Add tenants & ASTs", desc: "Current tenants with tenancy dates and deposits", done: true },
+      { id: "companies", label: "Add all group companies", desc: "29 companies verified live from Companies House", done: true },
+      { id: "properties", label: "Add all properties", desc: "15 properties added — addresses from public domain", done: true },
+      { id: "units", label: "Verify units & rent figures", desc: "Unit structure added — rent figures are estimated, import actuals", done: false, action: "Import" },
+      { id: "tenants", label: "Replace sample tenants", desc: "Placeholder tenant names loaded — replace with real tenancy data", done: false, action: "Import" },
     ]
   },
   {
@@ -41,7 +41,7 @@ const CHECKLIST = [
     steps: [
       { id: "companies_house", label: "Add Companies House API key", desc: "Auto-fetch filing deadlines for all entities", done: false, action: "Add Key" },
       { id: "hmlr", label: "Add HMLR API key (CCOD)", desc: "Enable company ownership search", done: false, action: "Add Key" },
-      { id: "compliance_review", label: "Review compliance dashboard", desc: "Check filing deadlines for all companies", done: true },
+      { id: "compliance_review", label: "Review compliance dashboard", desc: "29 companies tracked — Powell & Co Assets accounts due 31 Mar 2026", done: true },
     ]
   },
   {

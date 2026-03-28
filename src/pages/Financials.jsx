@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import PageHeader from '@/components/shared/PageHeader';
+import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
@@ -75,6 +76,8 @@ export default function Financials() {
         </Button>
       </PageHeader>
 
+      <SampleDataBanner entity="financial transactions" />
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard title="Total Income" value={`£${totalIncome.toLocaleString()}`} icon={PoundSterling} />
         <StatCard title="Total Expenses" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} />
@@ -122,7 +125,7 @@ export default function Financials() {
             </TableHeader>
             <TableBody>
               {filtered.map(t => (
-                <TableRow key={t.id} className="hover:bg-muted/30">
+                <TableRow key={t.id} className="hover:bg-muted/30 opacity-80 hover:opacity-100">
                   <TableCell className="font-medium text-sm">{t.description}</TableCell>
                   <TableCell className="text-sm capitalize">{t.transaction_type?.replace(/_/g, ' ') || '—'}</TableCell>
                   <TableCell className="text-sm font-medium">£{(t.amount || 0).toLocaleString()}</TableCell>

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import PageHeader from '@/components/shared/PageHeader';
+import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
@@ -73,6 +74,8 @@ export default function Units() {
           <Plus className="w-4 h-4 mr-1.5" /> Add Unit
         </Button>
       </PageHeader>
+
+      <SampleDataBanner entity="unit rent figures, lease terms and service charge amounts — estimated from public listings" />
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">

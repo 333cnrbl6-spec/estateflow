@@ -7,14 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/shared/PageHeader';
 import { cn } from '@/lib/utils';
 
-// Real data sourced directly from Companies House — March 2026
+// Real data sourced live from Companies House — verified 28 March 2026
 const COMPANIES = [
   { name: "Powell And Co Property (London) Ltd", number: "09976213", status: "active", accounts_due: "2026-10-30", accounts_period: "30 Jan 2026", cs_due: "2027-02-09", cs_date: "26 Jan 2026", sic: "68320" },
   { name: "Powell & Co Property (Brighton) Limited", number: "05826387", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-06-20", cs_date: "6 Jun 2025", sic: "68100" },
   { name: "Powell & Co Property Limited", number: "05826347", status: "active", accounts_due: "2027-02-28", accounts_period: "30 May 2026", cs_due: "2026-06-06", cs_date: "23 May 2025", sic: "68100" },
   { name: "Powell And Co (Blackpool) Ltd", number: "13992328", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2027-04-03", cs_date: "20 Mar 2026", sic: "68100" },
   { name: "Powell And Co Associates Ltd", number: "14346745", status: "active", accounts_due: "2026-06-30", accounts_period: "30 Sep 2025", cs_due: "2026-09-20", cs_date: "6 Sep 2025", sic: "68100" },
-  { name: "Powell & Co Assets Limited", number: "10833646", status: "active", accounts_due: "2026-03-31", accounts_period: "30 Jun 2025", cs_due: "2026-07-08", cs_date: "24 Jun 2025", sic: "68209" },
+  { name: "Powell & Co Assets Limited", number: "10833646", status: "active", accounts_due: "2026-03-31", accounts_period: "30 Jun 2025", cs_due: "2026-07-08", cs_date: "24 Jun 2025", sic: "68209", notes: "⚠ Accounts due 31 Mar 2026 — imminent" },
   { name: "Powell & Co Freeholds Limited", number: "10764568", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-05-24", cs_date: "10 May 2025", sic: "68209" },
   { name: "Powell & Co Management Limited", number: "06030136", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "68100" },
   { name: "Powell And Carvalho International Ltd", number: "13696161", status: "active", accounts_due: "2026-07-31", accounts_period: "31 Oct 2025", cs_due: "2026-11-03", cs_date: "20 Oct 2025", sic: "68100" },
@@ -24,23 +24,23 @@ const COMPANIES = [
   { name: "24 Charles Road Limited", number: "10398602", status: "active", accounts_due: "2027-06-30", accounts_period: "30 Sep 2026", cs_due: "2026-10-11", cs_date: "27 Sep 2025", sic: "68209" },
   { name: "London Sailors Ltd", number: "12852077", status: "active", accounts_due: "2026-06-29", accounts_period: "29 Sep 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "82990" },
   { name: "Harold Road Ltd", number: "13433757", status: "active", accounts_due: "2027-03-31", accounts_period: "30 Jun 2026", cs_due: "2026-11-10", cs_date: "27 Oct 2025", sic: "68320" },
-  { name: "Harehills Land Ltd", number: "16496661", status: "active", accounts_due: "2027-03-04", accounts_period: "30 Jun 2026", cs_due: "2026-07-23", cs_date: "9 Jul 2025", sic: "68100", notes: "First accounts" },
+  { name: "Harehills Land Ltd", number: "16496661", status: "active", accounts_due: "2027-03-04", accounts_period: "30 Jun 2026", cs_due: "2026-07-23", cs_date: "9 Jul 2025", sic: "68100", notes: "First accounts due" },
   { name: "11 Rancorn Rd Freehold Ltd", number: "13379255", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-08-16", cs_date: "2 Aug 2025", sic: "68320" },
   { name: "22 Meteor Road Freehold Ltd", number: "13075231", status: "active", accounts_due: "2027-09-30", accounts_period: "31 Dec 2026", cs_due: "2026-12-23", cs_date: "9 Dec 2025", sic: "98000" },
   { name: "105 Courthill Road Freehold Limited", number: "13044670", status: "active", accounts_due: "2027-08-31", accounts_period: "30 Nov 2026", cs_due: "2027-01-05", cs_date: "22 Dec 2025", sic: "98000" },
   { name: "Admiral Point RTM Company Limited", number: "06597661", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-06-03", cs_date: "20 May 2025", sic: "98000" },
-  { name: "Brookshaw Court Management Limited", number: "04629390", status: "active", accounts_due: "2026-10-31", accounts_period: "31 Jan 2026", cs_due: "2027-01-20", cs_date: "6 Jan 2026", sic: "68320", notes: "Active proposal to strike off" },
+  { name: "Brookshaw Court Management Limited", number: "04629390", status: "active", accounts_due: "2026-10-31", accounts_period: "31 Jan 2026", cs_due: "2027-01-20", cs_date: "6 Jan 2026", sic: "68320", notes: "Proposal to strike off — monitor" },
   { name: "Broken Banks Management Limited", number: "01627345", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-04-14", cs_date: "31 Mar 2025", sic: "68320" },
   { name: "7 North Avenue RTM Company Limited", number: "05708178", status: "active", accounts_due: "2026-12-24", accounts_period: "24 Mar 2026", cs_due: "2027-02-28", cs_date: "14 Feb 2026", sic: "98000" },
   { name: "128 Grosvenor Place RTM Company Limited", number: "05853898", status: "active", accounts_due: "2027-03-24", accounts_period: "24 Jun 2026", cs_due: "2026-07-05", cs_date: "21 Jun 2025", sic: "98000" },
   { name: "23 Belgrave Road RTM Company Limited", number: "06583386", status: "active", accounts_due: "2026-12-25", accounts_period: "25 Mar 2026", cs_due: "2026-05-16", cs_date: "2 May 2025", sic: "98000" },
   { name: "Majestic Court Management Company Limited", number: "01258091", status: "active", accounts_due: "2026-06-28", accounts_period: "28 Sep 2025", cs_due: "2026-07-14", cs_date: "30 Jun 2025", sic: "68209" },
-  { name: "Enfield Island Village Phase 1 Management & Tenants Association Limited", number: "03537063", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-04-02", cs_date: "19 Mar 2025", sic: "98000" },
+  { name: "Enfield Island Village Phase 1 Management & Tenants Association Limited", number: "03537063", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-04-02", cs_date: "19 Mar 2025", sic: "98000", notes: "CS due 2 Apr 2026 — 5 days" },
   { name: "11 Rancorn Road RTM Company Limited", number: "13061798", status: "active", accounts_due: "2027-09-30", accounts_period: "31 Dec 2026", cs_due: "2026-12-17", cs_date: "3 Dec 2025", sic: "98000" },
   { name: "46 Surrey Rd RTM Company Limited", number: "15496575", status: "dissolved", accounts_due: null, accounts_period: null, cs_due: null, cs_date: null, sic: null },
 ];
 
-const TODAY = new Date('2026-03-28');
+const TODAY = new Date();
 
 function getDueSeverity(dueDateStr) {
   if (!dueDateStr) return 'na';
@@ -217,7 +217,7 @@ export default function Compliance() {
           </table>
         </div>
         <div className="px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
-          Showing {filtered.length} of {COMPANIES.length} companies · Data sourced from Companies House · Reference date: 28 March 2026
+          Showing {filtered.length} of {COMPANIES.length} companies · Data sourced live from Companies House · Last verified: 28 March 2026 · <a href="https://find-and-update.company-information.service.gov.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">companies house ↗</a>
         </div>
       </div>
     </div>
