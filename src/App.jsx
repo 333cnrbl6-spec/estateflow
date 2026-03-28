@@ -62,6 +62,7 @@ import OutOfHoursReporting from './pages/OutOfHoursReporting';
 import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import BillingManagement from './pages/BillingManagement';
 import OperationalMetricsDashboard from './pages/OperationalMetricsDashboard';
+import VirtualCallCenterSetup from './pages/VirtualCallCenterSetup';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -141,6 +142,7 @@ const AuthenticatedApp = () => {
         <Route path="/contractor-portal" element={<ContractorMobilePortal />} />
         <Route path="/billing" element={<BillingManagement />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
+        <Route path="/virtual-call-center" element={<VirtualCallCenterSetup />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
