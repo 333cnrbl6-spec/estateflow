@@ -28,7 +28,8 @@ import {
   FileText,
   Shield,
   AlertCircle,
-  Code2
+  Code2,
+  TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -54,7 +55,7 @@ const navGroups = [
       { label: 'Banking', icon: Landmark, path: '/banking' },
       { label: 'Expenses', icon: Receipt, path: '/expenses' },
       { label: 'Financials', icon: PoundSterling, path: '/financials' },
-      { label: 'Financial Reports', icon: FileText, path: '/financial-reporting' },
+      { label: 'Financial Dashboard', icon: TrendingUp, path: '/financial-reporting' },
       { label: 'Accounting', icon: Settings, path: '/accounting' },
     ]
   },
