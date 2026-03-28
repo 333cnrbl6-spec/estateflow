@@ -50,6 +50,7 @@ const navGroups = [
       { label: 'Banking', icon: Landmark, path: '/banking' },
       { label: 'Expenses', icon: Receipt, path: '/expenses' },
       { label: 'Financials', icon: PoundSterling, path: '/financials' },
+      { label: 'Accounting', icon: Settings, path: '/accounting' },
     ]
   },
   {

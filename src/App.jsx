@@ -29,6 +29,7 @@ import RegulatoryHub from './pages/RegulatoryHub';
 import Workflows from './pages/Workflows';
 import Integrations from './pages/Integrations';
 import DocumentTemplates from './pages/DocumentTemplates';
+import AccountingIntegrations from './pages/AccountingIntegrations';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -78,6 +79,7 @@ const AuthenticatedApp = () => {
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/document-templates" element={<DocumentTemplates />} />
+        <Route path="/accounting" element={<AccountingIntegrations />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

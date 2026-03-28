@@ -1,0 +1,69 @@
+{
+  "name": "AccountingSync",
+  "type": "object",
+  "properties": {
+    "integration_id": {
+      "type": "string",
+      "description": "Reference to AccountingIntegration"
+    },
+    "sync_type": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "automatic",
+        "scheduled"
+      ],
+      "default": "automatic"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "transactions_synced": {
+      "type": "number",
+      "default": 0
+    },
+    "expenses_synced": {
+      "type": "number",
+      "default": 0
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "integration_id",
+    "status"
+  ]
+}
