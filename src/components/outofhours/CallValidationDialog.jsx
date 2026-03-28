@@ -24,6 +24,9 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
   const [callerEmail, setCallerEmail] = useState('');
   const [callerType, setCallerType] = useState('');
   const [postcode, setPostcode] = useState('');
+  const [town, setTown] = useState('');
+  const [region, setRegion] = useState('');
+  const [landlordName, setLandlordName] = useState('');
   const [callType, setCallType] = useState('');
   const [callDescription, setCallDescription] = useState('');
   const [gdprConsent, setGdprConsent] = useState(false);
@@ -33,13 +36,35 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
   const [error, setError] = useState('');
 
   const { data: properties = [] } = useQuery({
-    queryKey: ['properties-validation', postcode],
+    queryKey: ['properties-validation', postcode, town, region, landlordName],
     queryFn: async () => {
-      if (!postcode || postcode.length < 3) return [];
+      const searchTerm = (postcode || town || region || landlordName).trim();
+      if (!searchTerm || searchTerm.length < 2) return [];
+      
       const all = await base44.entities.Property.list();
-      return all.filter(p => p.postcode?.toUpperCase() === postcode.toUpperCase());
+      const searchUpper = searchTerm.toUpperCase();
+      
+      return all.filter(p => {
+        const matchPostcode = p.postcode?.toUpperCase().includes(searchUpper);
+        const matchCity = p.city?.toUpperCase().includes(searchUpper);
+        const matchRegion = p.region?.toUpperCase().includes(searchUpper);
+        const matchAddress = (p.address_line_1 + ' ' + (p.address_line_2 || '')).toUpperCase().includes(searchUpper);
+        const matchName = p.name?.toUpperCase().includes(searchUpper);
+        
+        return matchPostcode || matchCity || matchRegion || matchAddress || matchName;
+      });
     },
-    enabled: step === 2 && postcode.length > 2
+    enabled: step === 2
+  });
+
+  const { data: allCompanies = [] } = useQuery({
+    queryKey: ['companies-landlord', landlordName],
+    queryFn: async () => {
+      if (!landlordName || landlordName.length < 2) return [];
+      const all = await base44.entities.Company.list();
+      return all.filter(c => c.name?.toUpperCase().includes(landlordName.toUpperCase()));
+    },
+    enabled: step === 2 && landlordName.length > 1
   });
 
   const { data: companies = [] } = useQuery({
@@ -85,8 +110,12 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
 
   const handleNext = () => {
     if (step === 1) {
-      if (!callerName || !callerPhone || !callerType || !postcode) {
+      if (!callerName || !callerPhone || !callerType) {
         setError('Please fill in all required fields');
+        return;
+      }
+      if (!postcode && !town && !region && !landlordName) {
+        setError('Please provide at least one property search criteria');
         return;
       }
       setError('');
@@ -151,10 +180,14 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
     setCallerEmail('');
     setCallerType('');
     setPostcode('');
+    setTown('');
+    setRegion('');
+    setLandlordName('');
     setCallType('');
     setCallDescription('');
     setGdprConsent(false);
     setMatchedProperty(null);
+    setMatchedCompany(null);
     setError('');
   };
 
@@ -230,15 +263,51 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
                 />
               </div>
 
-              <div>
-                <Label className="text-sm font-medium">Property Postcode *</Label>
-                <Input
-                  placeholder="e.g. SW1A 1AA"
-                  value={postcode}
-                  onChange={(e) => setPostcode(e.target.value.toUpperCase())}
-                  className="mt-1"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-sm font-medium">Postcode</Label>
+                  <Input
+                    placeholder="e.g. SW1A 1AA"
+                    value={postcode}
+                    onChange={(e) => setPostcode(e.target.value.toUpperCase())}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Town / City</Label>
+                  <Input
+                    placeholder="e.g. London"
+                    value={town}
+                    onChange={(e) => setTown(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-sm font-medium">Region</Label>
+                  <Input
+                    placeholder="e.g. london, brighton"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Landlord / Company</Label>
+                  <Input
+                    placeholder="Landlord name"
+                    value={landlordName}
+                    onChange={(e) => setLandlordName(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                * Use any field with wildcard search - at least one required
+              </p>
             </div>
           )}
 
@@ -247,7 +316,12 @@ export default function CallValidationDialog({ open, onOpenChange, onValidationC
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-900">
-                  <strong>Searching properties in postcode:</strong> {postcode}
+                  <strong>Search criteria:</strong> {[
+                    postcode && `Postcode: ${postcode}`,
+                    town && `Town: ${town}`,
+                    region && `Region: ${region}`,
+                    landlordName && `Landlord: ${landlordName}`
+                  ].filter(Boolean).join(' • ')}
                 </p>
               </div>
 
