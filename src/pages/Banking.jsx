@@ -9,6 +9,20 @@ import { Upload, Search, CheckCircle2, Circle, TrendingUp, TrendingDown, Landmar
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
 
+const FIELDS = [
+  { name: 'transaction_date', label: 'Date', format: 'date' },
+  { name: 'description', label: 'Description' },
+  { name: 'reference', label: 'Reference' },
+  { name: 'amount', label: 'Amount (£)', type: 'number' },
+  { name: 'direction', label: 'Direction', enumValues: ['credit','debit'] },
+  { name: 'bank_name', label: 'Bank', enumValues: ['lloyds','barclays','hsbc','natwest','monzo','starling','other'] },
+  { name: 'account_name', label: 'Account Name' },
+  { name: 'category', label: 'Category', enumValues: ['rent_receipt','service_charge_receipt','ground_rent_receipt','maintenance_payment','contractor_payment','management_fee','insurance','utilities','legal_fee','bank_charge','fuel','business_expense','transfer','unknown'] },
+  { name: 'reconciled', label: 'Reconciled', type: 'boolean' },
+  { name: 'balance_after', label: 'Balance After (£)', type: 'number' },
+  { name: 'notes', label: 'Notes' },
+];
+
 const categoryColors = {
   rent_receipt: 'bg-green-100 text-green-800',
   service_charge_receipt: 'bg-blue-100 text-blue-800',
@@ -97,8 +111,6 @@ export default function Banking() {
   const totalCredits = transactions.filter(t => t.direction === 'credit').reduce((s, t) => s + Math.abs(t.amount || 0), 0);
   const totalDebits = transactions.filter(t => t.direction === 'debit').reduce((s, t) => s + Math.abs(t.amount || 0), 0);
   const unreconciled = transactions.filter(t => !t.reconciled).length;
-
-  const schema = base44.entities.BankTransaction.schema();
 
   return (
     <div className="p-6">
@@ -207,15 +219,14 @@ export default function Banking() {
         </table>
       </div>
 
-      {editing && (
-        <EntityFormDialog
-          title="Edit Transaction"
-          schema={schema}
-          initialData={editing}
-          onSave={(d) => updateMutation.mutate({ id: editing.id, data: d })}
-          onClose={() => setEditing(null)}
-        />
-      )}
+      <EntityFormDialog
+        open={!!editing}
+        onOpenChange={(o) => { if (!o) setEditing(null); }}
+        title="Edit Transaction"
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => updateMutation.mutate({ id: editing.id, data: d })}
+      />
     </div>
   );
 }

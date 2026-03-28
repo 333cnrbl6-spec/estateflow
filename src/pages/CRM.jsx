@@ -9,6 +9,22 @@ import { Plus, Search, Mail, Phone, MessageSquare, FileText, Calendar, ArrowUpRi
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
 
+const FIELDS = [
+  { name: 'date', label: 'Date', format: 'date' },
+  { name: 'interaction_type', label: 'Type', enumValues: ['email','letter','phone_call','meeting','sms','whatsapp','legal_notice','complaint','note'] },
+  { name: 'direction', label: 'Direction', enumValues: ['inbound','outbound','internal'] },
+  { name: 'contact_name', label: 'Contact Name' },
+  { name: 'contact_type', label: 'Contact Type', enumValues: ['tenant','leaseholder','contractor','solicitor','accountant','surveyor','local_authority','tribunal','other'] },
+  { name: 'contact_email', label: 'Contact Email' },
+  { name: 'contact_phone', label: 'Contact Phone' },
+  { name: 'subject', label: 'Subject' },
+  { name: 'body', label: 'Body / Summary' },
+  { name: 'priority', label: 'Priority', enumValues: ['low','normal','high','urgent'] },
+  { name: 'status', label: 'Status', enumValues: ['open','pending_reply','resolved','closed'] },
+  { name: 'follow_up_date', label: 'Follow-up Date', format: 'date' },
+  { name: 'notes', label: 'Notes' },
+];
+
 const typeIcons = {
   email: Mail,
   letter: FileText,
@@ -75,8 +91,6 @@ export default function CRM() {
   const open = interactions.filter(i => i.status === 'open').length;
   const pendingReply = interactions.filter(i => i.status === 'pending_reply').length;
   const urgent = interactions.filter(i => i.priority === 'urgent').length;
-
-  const schema = base44.entities.CRMInteraction.schema();
 
   return (
     <div className="p-6">
@@ -177,15 +191,14 @@ export default function CRM() {
         })}
       </div>
 
-      {(showForm || editing) && (
-        <EntityFormDialog
-          title={editing ? 'Edit Interaction' : 'Log Interaction'}
-          schema={schema}
-          initialData={editing || {}}
-          onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-        />
-      )}
+      <EntityFormDialog
+        open={showForm || !!editing}
+        onOpenChange={(o) => { if (!o) { setShowForm(false); setEditing(null); } }}
+        title={editing ? 'Edit Interaction' : 'Log Interaction'}
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
+      />
     </div>
   );
 }

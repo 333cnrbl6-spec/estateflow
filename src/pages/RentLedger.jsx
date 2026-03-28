@@ -10,6 +10,22 @@ import { Plus, Search, TrendingUp, TrendingDown, AlertCircle, CheckCircle2 } fro
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
 
+const FIELDS = [
+  { name: 'tenant_name', label: 'Tenant Name' },
+  { name: 'property_address', label: 'Property Address' },
+  { name: 'transaction_type', label: 'Transaction Type', enumValues: ['rent_charge','payment_received','credit','debit_adjustment','deposit_charge','late_fee'] },
+  { name: 'description', label: 'Description' },
+  { name: 'amount', label: 'Amount (£)', type: 'number' },
+  { name: 'due_date', label: 'Due Date', format: 'date' },
+  { name: 'paid_date', label: 'Paid Date', format: 'date' },
+  { name: 'status', label: 'Status', enumValues: ['charged','paid','partial','overdue','waived'] },
+  { name: 'payment_method', label: 'Payment Method', enumValues: ['bank_transfer','standing_order','cash','cheque','direct_debit','other'] },
+  { name: 'bank_reference', label: 'Bank Reference' },
+  { name: 'period_start', label: 'Period Start', format: 'date' },
+  { name: 'period_end', label: 'Period End', format: 'date' },
+  { name: 'notes', label: 'Notes' },
+];
+
 const statusColors = {
   charged: 'bg-blue-100 text-blue-800',
   paid: 'bg-green-100 text-green-800',
@@ -61,8 +77,6 @@ export default function RentLedger() {
   const totalCharged = entries.filter(e => ['rent_charge', 'late_fee', 'deposit_charge', 'debit_adjustment'].includes(e.transaction_type)).reduce((s, e) => s + (e.amount || 0), 0);
   const totalReceived = entries.filter(e => ['payment_received', 'credit'].includes(e.transaction_type)).reduce((s, e) => s + (e.amount || 0), 0);
   const totalArrears = entries.filter(e => e.status === 'overdue').reduce((s, e) => s + (e.amount || 0), 0);
-
-  const schema = base44.entities.RentLedger.schema();
 
   return (
     <div className="p-6">
@@ -149,15 +163,14 @@ export default function RentLedger() {
         </table>
       </div>
 
-      {(showForm || editing) && (
-        <EntityFormDialog
-          title={editing ? 'Edit Ledger Entry' : 'Add Ledger Entry'}
-          schema={schema}
-          initialData={editing || {}}
-          onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-        />
-      )}
+      <EntityFormDialog
+        open={showForm || !!editing}
+        onOpenChange={(o) => { if (!o) { setShowForm(false); setEditing(null); } }}
+        title={editing ? 'Edit Ledger Entry' : 'Add Ledger Entry'}
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
+      />
     </div>
   );
 }

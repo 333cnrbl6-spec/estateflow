@@ -9,6 +9,24 @@ import { Plus, Search, AlertCircle } from 'lucide-react';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format, isAfter, addDays } from 'date-fns';
 
+const FIELDS = [
+  { name: 'property_name', label: 'Property Name' },
+  { name: 'leaseholder_name', label: 'Leaseholder Name' },
+  { name: 'annual_amount', label: 'Annual Amount (£)', type: 'number' },
+  { name: 'review_clause', label: 'Review Clause' },
+  { name: 'next_review_date', label: 'Next Review Date', format: 'date' },
+  { name: 'demand_date', label: 'Demand Notice Date', format: 'date' },
+  { name: 'due_date', label: 'Due Date', format: 'date' },
+  { name: 'amount_demanded', label: 'Amount Demanded (£)', type: 'number' },
+  { name: 'paid_date', label: 'Paid Date', format: 'date' },
+  { name: 'status', label: 'Status', enumValues: ['scheduled','demanded','paid','overdue','peppercorn','disputed'] },
+  { name: 'lease_start_date', label: 'Lease Start Date', format: 'date' },
+  { name: 'lease_term_years', label: 'Lease Term (Years)', type: 'number' },
+  { name: 'ground_rent_act_2022', label: 'Post-2022 Act (Peppercorn)', type: 'boolean' },
+  { name: 'bank_reference', label: 'Bank Reference' },
+  { name: 'notes', label: 'Notes' },
+];
+
 const statusColors = {
   scheduled: 'bg-gray-100 text-gray-700',
   demanded: 'bg-blue-100 text-blue-800',
@@ -52,8 +70,6 @@ export default function GroundRent() {
   const totalAnnual = records.filter(r => r.status !== 'peppercorn').reduce((s, r) => s + (r.annual_amount || 0), 0);
   const overdue = records.filter(r => r.status === 'overdue').length;
   const upcoming = records.filter(r => r.due_date && isAfter(new Date(r.due_date), new Date()) && !isAfter(new Date(r.due_date), addDays(new Date(), 60))).length;
-
-  const schema = base44.entities.GroundRent.schema();
 
   return (
     <div className="p-6">
@@ -140,15 +156,14 @@ export default function GroundRent() {
         </table>
       </div>
 
-      {(showForm || editing) && (
-        <EntityFormDialog
-          title={editing ? 'Edit Ground Rent' : 'Add Ground Rent Record'}
-          schema={schema}
-          initialData={editing || {}}
-          onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-        />
-      )}
+      <EntityFormDialog
+        open={showForm || !!editing}
+        onOpenChange={(o) => { if (!o) { setShowForm(false); setEditing(null); } }}
+        title={editing ? 'Edit Ground Rent' : 'Add Ground Rent Record'}
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
+      />
     </div>
   );
 }

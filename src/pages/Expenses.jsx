@@ -9,6 +9,22 @@ import { Plus, Search, Upload, Receipt, Fuel, Car } from 'lucide-react';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
 
+const FIELDS = [
+  { name: 'date', label: 'Date', format: 'date' },
+  { name: 'description', label: 'Description' },
+  { name: 'category', label: 'Category', enumValues: ['fuel','mileage','vehicle','office_supplies','software','professional_fees','legal','insurance','travel','accommodation','subsistence','telephone','postage','maintenance_materials','tools','advertising','bank_charges','accountancy','other'] },
+  { name: 'supplier', label: 'Supplier' },
+  { name: 'amount_net', label: 'Net Amount (£)', type: 'number' },
+  { name: 'vat_amount', label: 'VAT Amount (£)', type: 'number' },
+  { name: 'amount_gross', label: 'Gross Amount (£)', type: 'number' },
+  { name: 'vat_reclaimable', label: 'VAT Reclaimable', type: 'boolean' },
+  { name: 'payment_method', label: 'Payment Method', enumValues: ['company_card','personal_card','bank_transfer','cash','direct_debit'] },
+  { name: 'mileage_miles', label: 'Mileage (miles)', type: 'number' },
+  { name: 'mileage_rate', label: 'Mileage Rate (£/mi)', type: 'number' },
+  { name: 'status', label: 'Status', enumValues: ['draft','submitted','approved','reimbursed','rejected'] },
+  { name: 'notes', label: 'Notes' },
+];
+
 const categoryIcons = {
   fuel: '⛽',
   mileage: '🚗',
@@ -76,8 +92,6 @@ export default function Expenses() {
   const totalVat = expenses.reduce((s, e) => s + (e.vat_amount || 0), 0);
   const totalGross = expenses.reduce((s, e) => s + (e.amount_gross || 0), 0);
   const totalMileage = expenses.filter(e => e.category === 'mileage').reduce((s, e) => s + (e.mileage_miles || 0), 0);
-
-  const schema = base44.entities.BusinessExpense.schema();
 
   return (
     <div className="p-6">
@@ -190,15 +204,14 @@ export default function Expenses() {
         </table>
       </div>
 
-      {(showForm || editing) && (
-        <EntityFormDialog
-          title={editing ? 'Edit Expense' : 'Add Expense'}
-          schema={schema}
-          initialData={editing || {}}
-          onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-        />
-      )}
+      <EntityFormDialog
+        open={showForm || !!editing}
+        onOpenChange={(o) => { if (!o) { setShowForm(false); setEditing(null); } }}
+        title={editing ? 'Edit Expense' : 'Add Expense'}
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
+      />
     </div>
   );
 }

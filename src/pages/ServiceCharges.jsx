@@ -9,6 +9,24 @@ import { Plus, Search, AlertTriangle, Building2 } from 'lucide-react';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
 
+const FIELDS = [
+  { name: 'property_name', label: 'Property Name' },
+  { name: 'leaseholder_name', label: 'Leaseholder Name' },
+  { name: 'charge_type', label: 'Charge Type', enumValues: ['annual_budget','half_year_demand','interim_demand','reserve_fund','major_works','insurance','admin_charge','payment_received','credit'] },
+  { name: 'period_label', label: 'Period Label (e.g. 2025/26 H1)' },
+  { name: 'period_start', label: 'Period Start', format: 'date' },
+  { name: 'period_end', label: 'Period End', format: 'date' },
+  { name: 'amount_demanded', label: 'Amount Demanded (£)', type: 'number' },
+  { name: 'amount_received', label: 'Amount Received (£)', type: 'number' },
+  { name: 'due_date', label: 'Due Date', format: 'date' },
+  { name: 'paid_date', label: 'Paid Date', format: 'date' },
+  { name: 'status', label: 'Status', enumValues: ['budgeted','demanded','paid','partial','overdue','disputed'] },
+  { name: 's20_consultation_required', label: 'S20 Consultation Required', type: 'boolean' },
+  { name: 's20_notice_served_date', label: 'S20 Notice Served Date', format: 'date' },
+  { name: 'bank_reference', label: 'Bank Reference' },
+  { name: 'notes', label: 'Notes' },
+];
+
 const statusColors = {
   budgeted: 'bg-gray-100 text-gray-700',
   demanded: 'bg-blue-100 text-blue-800',
@@ -53,8 +71,6 @@ export default function ServiceCharges() {
   const totalReceived = charges.reduce((s, c) => s + (c.amount_received || 0), 0);
   const totalOutstanding = totalDemanded - totalReceived;
   const disputed = charges.filter(c => c.status === 'disputed').length;
-
-  const schema = base44.entities.ServiceCharge.schema();
 
   return (
     <div className="p-6">
@@ -145,15 +161,14 @@ export default function ServiceCharges() {
         </table>
       </div>
 
-      {(showForm || editing) && (
-        <EntityFormDialog
-          title={editing ? 'Edit Service Charge' : 'Add Service Charge'}
-          schema={schema}
-          initialData={editing || {}}
-          onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-        />
-      )}
+      <EntityFormDialog
+        open={showForm || !!editing}
+        onOpenChange={(o) => { if (!o) { setShowForm(false); setEditing(null); } }}
+        title={editing ? 'Edit Service Charge' : 'Add Service Charge'}
+        fields={FIELDS}
+        initialData={editing || {}}
+        onSave={(d) => editing ? updateMutation.mutate({ id: editing.id, data: d }) : createMutation.mutate(d)}
+      />
     </div>
   );
 }
