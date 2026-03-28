@@ -1,0 +1,76 @@
+{
+  "name": "FinancialTransaction",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "transaction_type": {
+      "type": "string",
+      "enum": [
+        "rent_payment",
+        "service_charge",
+        "ground_rent",
+        "insurance",
+        "maintenance_cost",
+        "management_fee",
+        "major_works",
+        "legal_fee",
+        "deposit",
+        "refund",
+        "other"
+      ]
+    },
+    "amount": {
+      "type": "number"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "income",
+        "expense"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "paid",
+        "pending",
+        "overdue",
+        "cancelled",
+        "partial"
+      ],
+      "default": "pending"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "paid_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "property_id": {
+      "type": "string"
+    },
+    "unit_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "reference": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "description",
+    "amount"
+  ]
+}

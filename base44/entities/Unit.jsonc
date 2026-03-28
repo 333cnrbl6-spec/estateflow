@@ -1,0 +1,84 @@
+{
+  "name": "Unit",
+  "type": "object",
+  "properties": {
+    "unit_reference": {
+      "type": "string",
+      "description": "Unit number or reference e.g. Flat 5, Apartment 30"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property this unit belongs to"
+    },
+    "floor": {
+      "type": "string"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "unit_type": {
+      "type": "string",
+      "enum": [
+        "flat",
+        "apartment",
+        "penthouse",
+        "studio",
+        "maisonette",
+        "house",
+        "commercial"
+      ]
+    },
+    "tenure": {
+      "type": "string",
+      "enum": [
+        "leasehold",
+        "freehold",
+        "assured_shorthold",
+        "assured",
+        "regulated"
+      ]
+    },
+    "current_tenant_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "occupied",
+        "vacant",
+        "under_renovation",
+        "sold"
+      ],
+      "default": "occupied"
+    },
+    "monthly_rent": {
+      "type": "number"
+    },
+    "annual_ground_rent": {
+      "type": "number"
+    },
+    "annual_service_charge": {
+      "type": "number"
+    },
+    "lease_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "lease_end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "lease_term_years": {
+      "type": "number"
+    },
+    "lease_remaining_years": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "unit_reference"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "name": "Property",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Property/building name e.g. Admiral Point"
+    },
+    "address_line_1": {
+      "type": "string"
+    },
+    "address_line_2": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "postcode": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "london",
+        "brighton",
+        "blackpool",
+        "ipswich",
+        "leeds",
+        "other"
+      ]
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "freehold_block",
+        "leasehold_block",
+        "house",
+        "mixed_use",
+        "commercial",
+        "land"
+      ]
+    },
+    "ownership_type": {
+      "type": "string",
+      "enum": [
+        "freehold",
+        "leasehold",
+        "commonhold"
+      ]
+    },
+    "owning_company": {
+      "type": "string",
+      "description": "Company ID that owns/manages this property"
+    },
+    "management_company": {
+      "type": "string",
+      "description": "Company ID of management company if different"
+    },
+    "total_units": {
+      "type": "number",
+      "default": 0
+    },
+    "year_built": {
+      "type": "number"
+    },
+    "listed_building": {
+      "type": "boolean",
+      "default": false
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

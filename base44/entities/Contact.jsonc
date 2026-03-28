@@ -1,0 +1,41 @@
+{
+  "name": "Contact",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "contact_type": {
+      "type": "string",
+      "enum": [
+        "director",
+        "contractor",
+        "solicitor",
+        "accountant",
+        "agent",
+        "surveyor",
+        "managing_agent",
+        "insurance_broker",
+        "other"
+      ]
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}

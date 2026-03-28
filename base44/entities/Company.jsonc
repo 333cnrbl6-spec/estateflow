@@ -1,0 +1,79 @@
+{
+  "name": "Company",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "company_number": {
+      "type": "string",
+      "description": "Companies House registration number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "dissolved",
+        "dormant",
+        "in_liquidation"
+      ],
+      "default": "active"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "core_property",
+        "freehold",
+        "rtm_management",
+        "service_charge_vehicle",
+        "investment",
+        "international",
+        "other"
+      ],
+      "description": "Company category within the group"
+    },
+    "registered_address": {
+      "type": "string"
+    },
+    "incorporation_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "directors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "appointed_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "london",
+        "brighton",
+        "blackpool",
+        "ipswich",
+        "leeds",
+        "other"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

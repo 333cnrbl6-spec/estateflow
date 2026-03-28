@@ -1,0 +1,76 @@
+{
+  "name": "Tenant",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "tenant_type": {
+      "type": "string",
+      "enum": [
+        "leaseholder",
+        "assured_shorthold",
+        "assured",
+        "regulated",
+        "licensee"
+      ],
+      "description": "Type of tenancy"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Current unit ID"
+    },
+    "property_id": {
+      "type": "string"
+    },
+    "tenancy_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "tenancy_end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "deposit_amount": {
+      "type": "number"
+    },
+    "deposit_scheme": {
+      "type": "string",
+      "enum": [
+        "dps",
+        "mydeposits",
+        "tds",
+        "none"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "in_arrears",
+        "notice_given",
+        "former",
+        "prospective"
+      ],
+      "default": "active"
+    },
+    "emergency_contact_name": {
+      "type": "string"
+    },
+    "emergency_contact_phone": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}
