@@ -28,6 +28,7 @@ import Setup from './pages/Setup';
 import RegulatoryHub from './pages/RegulatoryHub';
 import Workflows from './pages/Workflows';
 import Integrations from './pages/Integrations';
+import DocumentTemplates from './pages/DocumentTemplates';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -76,6 +77,7 @@ const AuthenticatedApp = () => {
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/integrations" element={<Integrations />} />
+        <Route path="/document-templates" element={<DocumentTemplates />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

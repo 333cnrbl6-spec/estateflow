@@ -1,0 +1,71 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Reference to DocumentTemplate"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "eviction_notice",
+        "tenancy_agreement",
+        "deposit_protection_notice",
+        "gas_safety_cert",
+        "epc",
+        "inventory",
+        "inspection_report",
+        "maintenance_notice",
+        "rent_increase",
+        "other"
+      ]
+    },
+    "property_id": {
+      "type": "string"
+    },
+    "unit_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "pipeline_id": {
+      "type": "string",
+      "description": "Reference to TenancyPipeline if applicable"
+    },
+    "content": {
+      "type": "string",
+      "description": "Generated document content"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generated",
+        "signed",
+        "filed",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL to PDF/document file"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "document_type"
+  ]
+}
