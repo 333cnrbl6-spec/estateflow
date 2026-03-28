@@ -72,6 +72,7 @@ const navGroups = [
   {
     label: 'Block Management',
     items: [
+      { label: 'Compliance Hub', icon: Scale, path: '/block-compliance-dashboard' },
       { label: 'Overview', icon: Building2, path: '/block-management' },
       { label: 'Service Charges', icon: PoundSterling, path: '/service-charges-management' },
       { label: 'RTM Management', icon: Users, path: '/rtm-management' },
