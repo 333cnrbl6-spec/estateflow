@@ -87,6 +87,7 @@ const navGroups = [
       { label: 'Integrations', icon: Settings, path: '/integrations' },
       { label: 'API Hub', icon: Zap, path: '/api-integrations' },
       { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
+      { label: 'Leaseholder Portal', icon: Users, path: '/leaseholder-portal' },
     ]
   }
 ];

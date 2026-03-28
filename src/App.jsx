@@ -46,6 +46,7 @@ import RTMManagementPage from './pages/RTMManagementPage';
 import BuildingSafetyRegister from './pages/BuildingSafetyRegister';
 import BlockManagementComplianceDashboard from './pages/BlockManagementComplianceDashboard';
 import DocumentAutomationEngine from './pages/DocumentAutomationEngine';
+import LeaseholderPortalView from './pages/LeaseholderPortalView';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -112,6 +113,7 @@ const AuthenticatedApp = () => {
         <Route path="/building-safety-register" element={<BuildingSafetyRegister />} />
         <Route path="/block-compliance-dashboard" element={<BlockManagementComplianceDashboard />} />
         <Route path="/document-automation" element={<DocumentAutomationEngine />} />
+        <Route path="/leaseholder-portal" element={<LeaseholderPortalView />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
