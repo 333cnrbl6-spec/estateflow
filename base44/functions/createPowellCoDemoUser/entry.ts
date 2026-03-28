@@ -10,168 +10,168 @@ Deno.serve(async (req) => {
     }
 
     // Create demo user for Powell & Co
-    const demoUser = await base44.users.inviteUser('demo@powell-co.com', 'user');
+    const demoUser = await base44.users.inviteUser('demo@powellandcoproperty.com', 'user');
 
     // Create Companies (Powell & Co group)
     const companies = await base44.entities.Company.bulkCreate([
       {
-        name: 'Powell & Co Property Management',
-        company_number: 'PC001',
+        name: 'Powell & Co Property (Brighton) Limited',
+        company_number: '05826387',
         status: 'active',
         category: 'core_property',
-        registered_address: '123 Mayfair Boulevard, London, W1S 1AA',
-        incorporation_date: '2010-06-15',
+        registered_address: '324 Queens Road, Brighton, BN1 3WB',
+        incorporation_date: '1997-03-07',
         sic_code: '68320',
         sic_description: 'Renting and operating of real estate property',
         directors: [
           {
-            name: 'James Powell',
-            role: 'Managing Director',
-            appointed_date: '2010-06-15',
+            name: 'Sean Powell',
+            role: 'Director',
+            appointed_date: '2001-06-18',
             resigned_date: null
           },
           {
-            name: 'Margaret Powell',
+            name: 'Tania Powell',
             role: 'Director',
-            appointed_date: '2015-03-20',
+            appointed_date: '2002-01-16',
             resigned_date: null
           }
         ],
-        accounts_next_due: '2026-09-30',
-        accounts_last_made_up: '2025-09-30',
-        confirmation_next_due: '2026-06-15',
-        confirmation_last_dated: '2025-06-15',
-        region: 'london',
-        notes: 'Established premium property management company specializing in high-value residential and mixed-use portfolios across London and South East.'
+        accounts_next_due: '2027-03-07',
+        accounts_last_made_up: '2026-03-07',
+        confirmation_next_due: '2027-03-07',
+        confirmation_last_dated: '2026-03-07',
+        region: 'brighton',
+        notes: 'Established private landlord and property investor founded in 1994. Portfolio of residential properties across England and Wales.'
       },
       {
-        name: 'Powell & Co Freehold Holdings',
-        company_number: 'PC002',
+        name: 'Powell & Co Property Freeholds Limited',
+        company_number: '10764568',
         status: 'active',
         category: 'freehold',
-        registered_address: '123 Mayfair Boulevard, London, W1S 1AA',
-        incorporation_date: '2012-11-08',
+        registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS',
+        incorporation_date: '2017-04-20',
         sic_code: '68100',
         sic_description: 'Buying, selling and renting of own or leased real estate',
         directors: [
           {
-            name: 'James Powell',
+            name: 'Sean Powell',
             role: 'Director',
-            appointed_date: '2012-11-08',
+            appointed_date: '2017-04-20',
             resigned_date: null
           }
         ],
-        accounts_next_due: '2026-11-08',
-        accounts_last_made_up: '2025-11-08',
-        confirmation_next_due: '2026-11-08',
-        confirmation_last_dated: '2025-11-08',
+        accounts_next_due: '2027-04-20',
+        accounts_last_made_up: '2026-04-20',
+        confirmation_next_due: '2027-04-20',
+        confirmation_last_dated: '2026-04-20',
         region: 'london',
-        notes: 'Investment and freehold property holding company for Powell & Co group.'
+        notes: 'Freehold property holding company for Powell & Co group portfolio.'
       },
       {
-        name: 'Powell & Co RTM Management',
-        company_number: 'PC003',
+        name: 'Powell & Co Property (London) Ltd',
+        company_number: '09976213',
         status: 'active',
-        category: 'rtm_management',
-        registered_address: '123 Mayfair Boulevard, London, W1S 1AA',
-        incorporation_date: '2016-02-12',
+        category: 'management',
+        registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS',
+        incorporation_date: '2015-10-23',
         sic_code: '68320',
         sic_description: 'Renting and operating of real estate property',
         directors: [
           {
-            name: 'Margaret Powell',
+            name: 'Sean Powell',
             role: 'Director',
-            appointed_date: '2016-02-12',
+            appointed_date: '2015-10-23',
             resigned_date: null
           }
         ],
-        accounts_next_due: '2026-02-12',
-        accounts_last_made_up: '2025-02-12',
-        confirmation_next_due: '2026-02-12',
-        confirmation_last_dated: '2025-02-12',
+        accounts_next_due: '2027-10-23',
+        accounts_last_made_up: '2026-10-23',
+        confirmation_next_due: '2027-10-23',
+        confirmation_last_dated: '2026-10-23',
         region: 'london',
-        notes: 'Right to Manage vehicle for collective property management.'
+        notes: 'London-based property management company. Head office at Cumberland Basin with operations across England and Wales.'
       }
     ]);
 
-    // Create Properties
+    // Create Properties (Powell & Co portfolio across England and Wales)
     const properties = await base44.entities.Property.bulkCreate([
       {
-        name: 'Park Royal Apartments',
-        address_line_1: '45 Park Road',
-        address_line_2: 'Kensington',
-        city: 'London',
-        postcode: 'SW5 9RA',
-        region: 'london',
+        name: 'Brighton Seafront Apartments',
+        address_line_1: '324 Queens Road',
+        address_line_2: 'Brighton',
+        city: 'Brighton',
+        postcode: 'BN1 3WB',
+        region: 'brighton',
         property_type: 'leasehold_block',
         ownership_type: 'leasehold',
         owning_company: companies[0].id,
         management_company: companies[0].id,
-        total_units: 24,
-        year_built: 1998,
+        total_units: 28,
+        year_built: 1995,
         listed_building: false,
-        notes: 'Premium apartment complex in Kensington. Professionally maintained with high occupancy rates.'
+        notes: 'Premium seafront apartments. Strong rental demand. Company headquarters location.'
       },
       {
-        name: 'Chelsea Mews Houses',
-        address_line_1: '78-92 King\'s Road',
-        address_line_2: 'Chelsea',
+        name: 'London West Block Portfolio',
+        address_line_1: '325 Latimer Road',
+        address_line_2: 'West London',
         city: 'London',
-        postcode: 'SW3 4UD',
-        region: 'london',
-        property_type: 'freehold_block',
-        ownership_type: 'freehold',
-        owning_company: companies[1].id,
-        management_company: companies[0].id,
-        total_units: 8,
-        year_built: 2002,
-        listed_building: true,
-        notes: 'Grade II listed mews houses. Specialist Grade II management required. Premium rental market.'
-      },
-      {
-        name: 'Belgravia Plaza Residences',
-        address_line_1: '150 Knightsbridge',
-        city: 'London',
-        postcode: 'SW1X 7QL',
-        region: 'london',
-        property_type: 'mixed_use',
-        ownership_type: 'leasehold',
-        owning_company: companies[0].id,
-        management_company: companies[0].id,
-        total_units: 32,
-        year_built: 2005,
-        listed_building: false,
-        notes: 'Mixed-use complex with residential and commercial units. Ground floor retail with residential above.'
-      },
-      {
-        name: 'South Kensington Studios',
-        address_line_1: '33 Exhibition Road',
-        city: 'London',
-        postcode: 'SW7 2AS',
-        region: 'london',
-        property_type: 'converted_building',
-        ownership_type: 'leasehold',
-        owning_company: companies[0].id,
-        management_company: companies[0].id,
-        total_units: 18,
-        year_built: 2008,
-        listed_building: false,
-        notes: 'Purpose-converted Victorian building into modern studios and 1-bedroom apartments.'
-      },
-      {
-        name: 'Westminster Court',
-        address_line_1: '250 The Strand',
-        city: 'London',
-        postcode: 'WC2R 1HE',
+        postcode: 'W10 6RA',
         region: 'london',
         property_type: 'leasehold_block',
         ownership_type: 'leasehold',
         owning_company: companies[2].id,
-        management_company: companies[0].id,
-        total_units: 42,
-        year_built: 2010,
+        management_company: companies[2].id,
+        total_units: 22,
+        year_built: 2000,
         listed_building: false,
-        notes: 'Large RTM managed block with full concierge and security services.'
+        notes: 'Multi-unit leasehold block. Experienced management with strong landlord relations.'
+      },
+      {
+        name: 'Freehold Mixed Use Portfolio',
+        address_line_1: 'Cumberland Basin, Prince Albert Road',
+        city: 'London',
+        postcode: 'NW1 7SS',
+        region: 'london',
+        property_type: 'mixed_use',
+        ownership_type: 'freehold',
+        owning_company: companies[1].id,
+        management_company: companies[2].id,
+        total_units: 16,
+        year_built: 2008,
+        listed_building: false,
+        notes: 'Freehold mixed-use development. Managed portfolio across residential and commercial leases.'
+      },
+      {
+        name: 'South Coast Investment Property',
+        address_line_1: '45 Marine Parade',
+        city: 'Brighton',
+        postcode: 'BN2 1AE',
+        region: 'brighton',
+        property_type: 'converted_building',
+        ownership_type: 'freehold',
+        owning_company: companies[1].id,
+        management_company: companies[0].id,
+        total_units: 12,
+        year_built: 2006,
+        listed_building: false,
+        notes: 'Recently refurbished converted property. High-yield rental investment.'
+      },
+      {
+        name: 'Wales Portfolio Block',
+        address_line_1: '120 Cathays Park',
+        city: 'Cardiff',
+        postcode: 'CF10 3NQ',
+        region: 'other',
+        property_type: 'leasehold_block',
+        ownership_type: 'leasehold',
+        owning_company: companies[0].id,
+        management_company: companies[0].id,
+        total_units: 20,
+        year_built: 1999,
+        listed_building: false,
+        notes: 'Wales portfolio expansion. Well-managed tenant base in Cardiff.'
       }
     ]);
 
@@ -564,54 +564,54 @@ Deno.serve(async (req) => {
     // Create Contacts
     await base44.entities.Contact.bulkCreate([
       {
-        full_name: 'James Powell',
-        email: 'james@powell-co.com',
-        phone: '020 7946 0900',
+        full_name: 'Sean Powell',
+        email: 'sean@powellandcoproperty.com',
+        phone: '020 7262 3885',
         contact_type: 'director',
-        company_name: 'Powell & Co Property Management',
-        address: '123 Mayfair Boulevard, London, W1S 1AA',
-        notes: 'Managing Director. Founder and key stakeholder. 15+ years property management experience.'
+        company_name: 'Powell & Co Property (Brighton) Limited',
+        address: '324 Queens Road, Brighton, BN1 3WB',
+        notes: 'Director of Powell & Co Group. Appointed 2001. Extensive experience in property investment and management.'
       },
       {
-        full_name: 'Margaret Powell',
-        email: 'margaret@powell-co.com',
-        phone: '020 7946 0901',
+        full_name: 'Tania Powell',
+        email: 'tania@powellandcoproperty.com',
+        phone: '020 7262 3885',
         contact_type: 'director',
-        company_name: 'Powell & Co Property Management',
-        address: '123 Mayfair Boulevard, London, W1S 1AA',
-        notes: 'Director. Compliance and regulatory affairs specialist.'
+        company_name: 'Powell & Co Property (Brighton) Limited',
+        address: '324 Queens Road, Brighton, BN1 3WB',
+        notes: 'Director and Company Secretary. Appointed 2002. Manages operations and administration.'
       },
       {
-        full_name: 'London Certified Electricians',
-        email: 'quotes@londoncertified-elec.co.uk',
-        phone: '020 7946 0888',
+        full_name: 'Brighton Maintenance Services',
+        email: 'maintenance@brightonservices.co.uk',
+        phone: '01273 555234',
         contact_type: 'contractor',
-        company_name: 'London Certified Electricians',
-        notes: 'EICR inspections, electrical installation, fault finding'
+        company_name: 'Brighton Maintenance Services',
+        notes: 'General maintenance, repairs, gas safety certificates'
       },
       {
-        full_name: 'London Heating Solutions',
-        email: 'service@londonheating.co.uk',
-        phone: '020 7946 0777',
+        full_name: 'South Coast Electrical Solutions',
+        email: 'quotes@scelectrical.co.uk',
+        phone: '01273 555345',
         contact_type: 'contractor',
-        company_name: 'London Heating Solutions',
-        notes: 'Boiler maintenance, gas safety, central heating repair and installation'
+        company_name: 'South Coast Electrical Solutions',
+        notes: 'EICR inspections, electrical repairs, testing and certification'
       },
       {
-        full_name: 'Grade II Listed Specialist Roofers',
-        email: 'enquiry@gradeii-roofers.co.uk',
-        phone: '020 7946 0666',
-        contact_type: 'contractor',
-        company_name: 'Grade II Listed Specialist Roofers',
-        notes: 'Specialist in historic building roof maintenance using traditional materials'
-      },
-      {
-        full_name: 'London Legal Services',
-        email: 'tenancy@londonlegal.co.uk',
-        phone: '020 7946 0550',
+        full_name: 'Sussex Property Solicitors',
+        email: 'tenancy@sussex-law.co.uk',
+        phone: '01273 555456',
         contact_type: 'solicitor',
-        company_name: 'London Legal Services',
-        notes: 'Tenancy agreements, deposit disputes, eviction proceedings, compliance advice'
+        company_name: 'Sussex Property Solicitors',
+        notes: 'Tenancy agreements, compliance, deposit dispute resolution'
+      },
+      {
+        full_name: 'London Property Accountants',
+        email: 'accounts@lpaccountants.co.uk',
+        phone: '020 7946 0550',
+        contact_type: 'accountant',
+        company_name: 'London Property Accountants',
+        notes: 'Landlord tax services, accountancy, financial reporting'
       }
     ]);
 
