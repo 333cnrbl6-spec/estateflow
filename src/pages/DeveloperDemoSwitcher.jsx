@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -40,6 +40,7 @@ export default function DeveloperDemoSwitcher() {
   const [loading, setLoading] = useState({});
   const [messages, setMessages] = useState({});
   const [reloading, setReloading] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
@@ -85,8 +86,9 @@ export default function DeveloperDemoSwitcher() {
         }));
         setSelectedProfile(profile.id);
         
-        // Auto-reload after 2 seconds to load new data
+        // Invalidate user cache and reload after 2 seconds to load new data
         setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['currentUser'] });
           setReloading(true);
           window.location.href = '/';
         }, 2000);
