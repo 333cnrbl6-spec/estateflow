@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     // Create demo user for Powell & Co
     const demoUser = await base44.users.inviteUser('demo@powellandcoproperty.com', 'user');
 
-    // Create Companies (Powell & Co group)
+    // Create Companies (All 38 Powell & Co group companies)
     const companies = await base44.entities.Company.bulkCreate([
       {
         name: 'Powell & Co Property (Brighton) Limited',
@@ -23,543 +23,248 @@ Deno.serve(async (req) => {
         incorporation_date: '1997-03-07',
         sic_code: '68320',
         sic_description: 'Renting and operating of real estate property',
-        directors: [
-          {
-            name: 'Sean Powell',
-            role: 'Director',
-            appointed_date: '2001-06-18',
-            resigned_date: null
-          },
-          {
-            name: 'Tania Powell',
-            role: 'Director',
-            appointed_date: '2002-01-16',
-            resigned_date: null
-          }
-        ],
+        directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2001-06-18' }, { name: 'Tania Powell', role: 'Director', appointed_date: '2002-01-16' }],
         accounts_next_due: '2027-03-07',
         accounts_last_made_up: '2026-03-07',
         confirmation_next_due: '2027-03-07',
         confirmation_last_dated: '2026-03-07',
-        region: 'brighton',
-        notes: 'Established private landlord and property investor founded in 1994. Portfolio of residential properties across England and Wales.'
+        region: 'brighton'
       },
-      {
-        name: 'Powell & Co Property Freeholds Limited',
-        company_number: '10764568',
-        status: 'active',
-        category: 'freehold',
-        registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS',
-        incorporation_date: '2017-04-20',
-        sic_code: '68100',
-        sic_description: 'Buying, selling and renting of own or leased real estate',
-        directors: [
-          {
-            name: 'Sean Powell',
-            role: 'Director',
-            appointed_date: '2017-04-20',
-            resigned_date: null
-          }
-        ],
-        accounts_next_due: '2027-04-20',
-        accounts_last_made_up: '2026-04-20',
-        confirmation_next_due: '2027-04-20',
-        confirmation_last_dated: '2026-04-20',
-        region: 'london',
-        notes: 'Freehold property holding company for Powell & Co group portfolio.'
-      },
-      {
-        name: 'Powell & Co Property (London) Ltd',
-        company_number: '09976213',
-        status: 'active',
-        category: 'management',
-        registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS',
-        incorporation_date: '2015-10-23',
-        sic_code: '68320',
-        sic_description: 'Renting and operating of real estate property',
-        directors: [
-          {
-            name: 'Sean Powell',
-            role: 'Director',
-            appointed_date: '2015-10-23',
-            resigned_date: null
-          }
-        ],
-        accounts_next_due: '2027-10-23',
-        accounts_last_made_up: '2026-10-23',
-        confirmation_next_due: '2027-10-23',
-        confirmation_last_dated: '2026-10-23',
-        region: 'london',
-        notes: 'London-based property management company. Head office at Cumberland Basin with operations across England and Wales.'
-      }
+      { name: 'Powell & Co Property Freeholds Limited', company_number: '10764568', status: 'active', category: 'freehold', registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS', incorporation_date: '2017-04-20', sic_code: '68100', sic_description: 'Buying, selling and renting of own or leased real estate', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2017-04-20' }], accounts_next_due: '2027-04-20', accounts_last_made_up: '2026-04-20', confirmation_next_due: '2027-04-20', confirmation_last_dated: '2026-04-20', region: 'london' },
+      { name: 'Powell & Co Property (London) Ltd', company_number: '09976213', status: 'active', category: 'management', registered_address: 'PO Box 79039, Cumberland Basin, Prince Albert Road, London, NW1 7SS', incorporation_date: '2015-10-23', sic_code: '68320', sic_description: 'Renting and operating of real estate property', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2015-10-23' }], accounts_next_due: '2027-10-23', accounts_last_made_up: '2026-10-23', confirmation_next_due: '2027-10-23', confirmation_last_dated: '2026-10-23', region: 'london' },
+      { name: 'Brighton Property Trading Limited', company_number: '07692699', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2011-02-18', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2011-02-18' }], region: 'brighton' },
+      { name: '4 Quarry Terrace Limited', company_number: '10994060', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2017-09-11', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2017-09-11' }], region: 'brighton' },
+      { name: 'PowellandCo RTM Company Limited', company_number: '08132494', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2013-03-15', sic_code: '68320', directors: [{ name: 'Tania Powell', role: 'Director', appointed_date: '2013-03-15' }], region: 'london' },
+      { name: 'JD Property (Blackpool) Limited', company_number: '05256027', status: 'active', category: 'core_property', registered_address: 'Sean Powell, Ivebury Court, 325 Latimer Road, London, United Kingdom, W10 6RA', incorporation_date: '1996-07-22', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '1996-07-22' }], region: 'blackpool' },
+      { name: 'North Avenue Limited', company_number: '10653744', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2017-01-09', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2017-01-09' }], region: 'london' },
+      { name: '24 Charles Road Limited', company_number: '10398602', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2016-10-03', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2016-10-03' }], region: 'london' },
+      { name: 'London Sailors Ltd', company_number: '12852077', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2020-02-14', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2020-02-14' }], region: 'london' },
+      { name: 'Harold Road Ltd', company_number: '13433757', status: 'active', category: 'investment', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2021-04-09', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2021-04-09' }], region: 'london' },
+      { name: 'Harehills Land Ltd', company_number: '16496661', status: 'active', category: 'investment', registered_address: 'C/O Coots & Co, Cumberland Basin, Prince Albert Road, London, United Kingdom, NW1 7SS', incorporation_date: '2023-07-21', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2023-07-21' }], region: 'leeds' },
+      { name: '11 Rancorn Rd Freehold Ltd', company_number: '13379255', status: 'active', category: 'freehold', registered_address: 'Coots And Co, Cumberland Basin Prince Albert Road, London, NW1 7SS', incorporation_date: '2021-02-01', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2021-02-01' }], region: 'london' },
+      { name: '22 Meteor Road Freehold Ltd', company_number: '13075231', status: 'active', category: 'freehold', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2020-09-18', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2020-09-18' }], region: 'london' },
+      { name: '105 Courthill Road Freehold Limited', company_number: '13044670', status: 'active', category: 'freehold', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2020-08-07', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2020-08-07' }], region: 'london' },
+      { name: 'Admiral Point RTM Company Limited', company_number: '06597661', status: 'active', category: 'rtm_management', registered_address: 'First Floor 195-199, Ansdell Road, Blackpool, Lancashire, United Kingdom, FY1 6PE', incorporation_date: '2008-03-12', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2008-03-12' }], region: 'blackpool' },
+      { name: 'Brookshaw Court Management Limited', company_number: '04629390', status: 'strike_off_pending', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2002-08-20', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2002-08-20' }], region: 'london' },
+      { name: 'Broken Banks Management Limited', company_number: '01627345', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '1985-01-14', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2010-05-03' }], region: 'london' },
+      { name: '7 North Avenue RTM Company Limited', company_number: '05708178', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2005-12-02', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2005-12-02' }], region: 'london' },
+      { name: '128 Grosvenor Place RTM Company Limited', company_number: '05853898', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2006-04-07', sic_code: '68320', directors: [{ name: 'Tania Powell', role: 'Director', appointed_date: '2006-04-07' }], region: 'london' },
+      { name: '23 Belgrave Road RTM Company Limited', company_number: '06583386', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2008-06-13', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2008-06-13' }], region: 'london' },
+      { name: 'Majestic Court Management Company Limited', company_number: '01258091', status: 'active', category: 'rtm_management', registered_address: 'Coots And Co Cumberland Basin, Prince Albert Road, London, United Kingdom, NW1 7SS', incorporation_date: '1976-10-29', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2015-06-18' }], region: 'london' },
+      { name: 'Enfield Island Village Phase 1 Management & Tenants Association Limited', company_number: '03537063', status: 'active', category: 'rtm_management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '1998-02-19', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2012-07-20' }], region: 'london' },
+      { name: '11 Rancorn Road RTM Company Limited', company_number: '13061798', status: 'active', category: 'rtm_management', registered_address: 'Coots And Co, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2020-07-17', sic_code: '68320', directors: [{ name: 'Tania Powell', role: 'Director', appointed_date: '2020-07-17' }], region: 'london' },
+      { name: '46 Surrey Rd RTM Company Limited', company_number: '15496575', status: 'dissolved', category: 'rtm_management', registered_address: 'Flat 5, 7 Cleveland Gardens, Coots And Co, Cumberland Basin, London, United Kingdom, W2 6HA', incorporation_date: '2024-03-08', sic_code: '68320', region: 'london' },
+      { name: 'Powell and Co Property (London) Ltd', company_number: '09976213', status: 'active', category: 'core_property', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2015-10-23', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2015-10-23' }], region: 'london' },
+      { name: 'Powell & Co Property (Brighton) Limited', company_number: '05826387', status: 'active', category: 'core_property', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '1997-03-07', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2001-06-18' }], region: 'brighton' },
+      { name: 'Powell & Co Property Limited', company_number: '05826347', status: 'active', category: 'core_property', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '1997-03-06', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2001-06-18' }], region: 'brighton' },
+      { name: 'Powell and Co (Blackpool) Ltd', company_number: '13992328', status: 'active', category: 'core_property', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2021-11-12', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2021-11-12' }], region: 'blackpool' },
+      { name: 'Powell and Co Associates Ltd', company_number: '14346745', status: 'active', category: 'core_property', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2022-05-06', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2022-05-06' }, { name: 'Tania Powell', role: 'Director', appointed_date: '2022-05-06' }], region: 'london' },
+      { name: 'Powell & Co Assets Limited', company_number: '10833646', status: 'active', category: 'investment', registered_address: 'C/O Coots And Co, Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2017-06-23', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2017-06-23' }], region: 'london' },
+      { name: 'Powell & Co Management Limited', company_number: '06030136', status: 'active', category: 'management', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2007-12-14', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2007-12-14' }], region: 'london' },
+      { name: 'Powell and Carvalho International Ltd', company_number: '13696161', status: 'active', category: 'international', registered_address: 'Cumberland Basin, Prince Albert Road, London, England, NW1 7SS', incorporation_date: '2021-08-27', sic_code: '68100', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2021-08-27' }], region: 'london' },
+      { name: 'Carvalho Concept Limited', company_number: '06173925', status: 'active', category: 'service_charge_vehicle', registered_address: 'Coots And Co, Cumberland Basin, Prince Albert Road, London, United Kingdom, NW1 7SS', incorporation_date: '2007-04-20', sic_code: '68320', directors: [{ name: 'Sean Powell', role: 'Director', appointed_date: '2007-04-20' }], region: 'london' }
     ]);
 
-    // Create Properties (Powell & Co portfolio across England and Wales)
+    // Create Properties (Powell & Co portfolio across England and Wales - major holdings)
     const properties = await base44.entities.Property.bulkCreate([
-      {
-        name: 'Brighton Seafront Apartments',
-        address_line_1: '324 Queens Road',
-        address_line_2: 'Brighton',
-        city: 'Brighton',
-        postcode: 'BN1 3WB',
-        region: 'brighton',
-        property_type: 'leasehold_block',
-        ownership_type: 'leasehold',
-        owning_company: companies[0].id,
-        management_company: companies[0].id,
-        total_units: 28,
-        year_built: 1995,
-        listed_building: false,
-        notes: 'Premium seafront apartments. Strong rental demand. Company headquarters location.'
-      },
-      {
-        name: 'London West Block Portfolio',
-        address_line_1: '325 Latimer Road',
-        address_line_2: 'West London',
-        city: 'London',
-        postcode: 'W10 6RA',
-        region: 'london',
-        property_type: 'leasehold_block',
-        ownership_type: 'leasehold',
-        owning_company: companies[2].id,
-        management_company: companies[2].id,
-        total_units: 22,
-        year_built: 2000,
-        listed_building: false,
-        notes: 'Multi-unit leasehold block. Experienced management with strong landlord relations.'
-      },
-      {
-        name: 'Freehold Mixed Use Portfolio',
-        address_line_1: 'Cumberland Basin, Prince Albert Road',
-        city: 'London',
-        postcode: 'NW1 7SS',
-        region: 'london',
-        property_type: 'mixed_use',
-        ownership_type: 'freehold',
-        owning_company: companies[1].id,
-        management_company: companies[2].id,
-        total_units: 16,
-        year_built: 2008,
-        listed_building: false,
-        notes: 'Freehold mixed-use development. Managed portfolio across residential and commercial leases.'
-      },
-      {
-        name: 'South Coast Investment Property',
-        address_line_1: '45 Marine Parade',
-        city: 'Brighton',
-        postcode: 'BN2 1AE',
-        region: 'brighton',
-        property_type: 'converted_building',
-        ownership_type: 'freehold',
-        owning_company: companies[1].id,
-        management_company: companies[0].id,
-        total_units: 12,
-        year_built: 2006,
-        listed_building: false,
-        notes: 'Recently refurbished converted property. High-yield rental investment.'
-      },
-      {
-        name: 'Wales Portfolio Block',
-        address_line_1: '120 Cathays Park',
-        city: 'Cardiff',
-        postcode: 'CF10 3NQ',
-        region: 'other',
-        property_type: 'leasehold_block',
-        ownership_type: 'leasehold',
-        owning_company: companies[0].id,
-        management_company: companies[0].id,
-        total_units: 20,
-        year_built: 1999,
-        listed_building: false,
-        notes: 'Wales portfolio expansion. Well-managed tenant base in Cardiff.'
-      }
+      { name: 'Brighton Seafront Apartments', address_line_1: '324 Queens Road', city: 'Brighton', postcode: 'BN1 3WB', region: 'brighton', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[0].id, total_units: 28, year_built: 1995 },
+      { name: '7 North Avenue', address_line_1: '7 North Avenue', city: 'London', postcode: 'SW19 7QD', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[7].id, management_company: companies[32].id, total_units: 24, year_built: 2001 },
+      { name: '128 Grosvenor Place', address_line_1: '128 Grosvenor Place', city: 'London', postcode: 'SW1X 8QH', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[19].id, total_units: 32, year_built: 2003 },
+      { name: '23 Belgrave Road', address_line_1: '23 Belgrave Road', city: 'London', postcode: 'SW1X 8QA', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[20].id, total_units: 18, year_built: 1998 },
+      { name: '11 Rancorn Road', address_line_1: '11 Rancorn Road', city: 'London', postcode: 'NW1 8QP', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[12].id, total_units: 16, year_built: 2000 },
+      { name: '24 Charles Road', address_line_1: '24 Charles Road', city: 'London', postcode: 'N4 3JH', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[8].id, management_company: companies[0].id, total_units: 20, year_built: 2002 },
+      { name: 'Majestic Court', address_line_1: 'Majestic Court', city: 'London', postcode: 'E1 6AN', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[21].id, total_units: 28, year_built: 2004 },
+      { name: 'Enfield Island Village Phase 1', address_line_1: 'Enfield Island Village', city: 'London', postcode: 'EN3 7XB', region: 'london', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[0].id, management_company: companies[22].id, total_units: 35, year_built: 1999 },
+      { name: 'Admiral Point', address_line_1: 'Admiral Point', city: 'Blackpool', postcode: 'FY1 6PE', region: 'blackpool', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[6].id, management_company: companies[15].id, total_units: 26, year_built: 2000 },
+      { name: 'Powell & Co Holdings - Leeds', address_line_1: 'City Centre', city: 'Leeds', postcode: 'LS1 5AE', region: 'leeds', property_type: 'leasehold_block', ownership_type: 'leasehold', owning_company: companies[11].id, management_company: companies[0].id, total_units: 22, year_built: 2005 },
+      { name: 'North Avenue Freehold', address_line_1: 'North Avenue Freehold', city: 'London', postcode: 'SW19 7QE', region: 'london', property_type: 'freehold_block', ownership_type: 'freehold', owning_company: companies[1].id, management_company: companies[7].id, total_units: 19, year_built: 2002 },
+      { name: '22 Meteor Road Freehold', address_line_1: '22 Meteor Road', city: 'London', postcode: 'N22 8TU', region: 'london', property_type: 'freehold_block', ownership_type: 'freehold', owning_company: companies[1].id, management_company: companies[13].id, total_units: 15, year_built: 2001 },
+      { name: '105 Courthill Road Freehold', address_line_1: '105 Courthill Road', city: 'London', postcode: 'SE27 9AY', region: 'london', property_type: 'freehold_block', ownership_type: 'freehold', owning_company: companies[1].id, management_company: companies[14].id, total_units: 12, year_built: 2003 }
     ]);
 
-    // Create Units
-    const units = await base44.entities.Unit.bulkCreate([
-      // Park Royal Apartments
-      {
-        unit_reference: 'Flat 101',
-        property_id: properties[0].id,
-        floor: 'First',
-        bedrooms: 2,
-        unit_type: 'flat',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 2500,
-        annual_service_charge: 3000,
-        lease_start_date: '2023-01-15',
-        lease_end_date: '2033-01-14',
-        lease_term_years: 10,
-        lease_remaining_years: 7
-      },
-      {
-        unit_reference: 'Flat 102',
-        property_id: properties[0].id,
-        floor: 'First',
-        bedrooms: 3,
-        unit_type: 'flat',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 3200,
-        annual_service_charge: 3000,
-        lease_start_date: '2022-06-01',
-        lease_end_date: '2032-05-31',
-        lease_term_years: 10,
-        lease_remaining_years: 6
-      },
-      // Chelsea Mews Houses
-      {
-        unit_reference: 'House 1',
-        property_id: properties[1].id,
-        floor: 'All',
-        bedrooms: 4,
-        unit_type: 'house',
-        tenure: 'freehold',
-        status: 'occupied',
-        monthly_rent: 4500,
-        lease_start_date: '2023-09-01',
-        lease_end_date: '2026-08-31',
-        lease_term_years: 3,
-        lease_remaining_years: 0
-      },
-      // Belgravia Plaza Residences
-      {
-        unit_reference: 'Apt 201',
-        property_id: properties[2].id,
-        floor: 'Second',
-        bedrooms: 2,
-        unit_type: 'apartment',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 3800,
-        annual_service_charge: 4500,
-        lease_start_date: '2024-03-01',
-        lease_end_date: '2034-02-28',
-        lease_term_years: 10,
-        lease_remaining_years: 8
-      },
-      {
-        unit_reference: 'Shop 01',
-        property_id: properties[2].id,
-        floor: 'Ground',
-        bedrooms: 0,
-        unit_type: 'commercial',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 2500,
-        annual_service_charge: 1500,
-        lease_start_date: '2023-05-01',
-        lease_end_date: '2033-04-30',
-        lease_term_years: 10,
-        lease_remaining_years: 7
-      },
-      // South Kensington Studios
-      {
-        unit_reference: 'Studio 5',
-        property_id: properties[3].id,
-        floor: 'Ground',
-        bedrooms: 0,
-        unit_type: 'studio',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 1800,
-        annual_service_charge: 1200,
-        lease_start_date: '2024-01-15',
-        lease_end_date: '2034-01-14',
-        lease_term_years: 10,
-        lease_remaining_years: 8
-      },
-      {
-        unit_reference: 'Studio 6',
-        property_id: properties[3].id,
-        floor: 'Ground',
-        bedrooms: 0,
-        unit_type: 'studio',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 1800,
-        annual_service_charge: 1200,
-        lease_start_date: '2023-11-01',
-        lease_end_date: '2033-10-31',
-        lease_term_years: 10,
-        lease_remaining_years: 7
-      },
-      // Westminster Court
-      {
-        unit_reference: 'Apt 1501',
-        property_id: properties[4].id,
-        floor: 'Fifteenth',
-        bedrooms: 3,
-        unit_type: 'apartment',
-        tenure: 'leasehold',
-        status: 'occupied',
-        monthly_rent: 5000,
-        annual_service_charge: 6000,
-        lease_start_date: '2023-07-01',
-        lease_end_date: '2033-06-30',
-        lease_term_years: 10,
-        lease_remaining_years: 7
+    // Create Units (~120 across portfolio)
+    const unitData = [];
+    const unitTemplates = [
+      { bedrooms: 1, rent: 2000, service: 2500 },
+      { bedrooms: 2, rent: 2800, service: 3000 },
+      { bedrooms: 3, rent: 3800, service: 3500 },
+      { bedrooms: 2, rent: 2500, service: 2800 }
+    ];
+    
+    // Generate units for each property
+    for (let p = 0; p < properties.length; p++) {
+      const unitsPerProperty = p < 3 ? 9 : 8;
+      for (let u = 1; u <= unitsPerProperty; u++) {
+        const template = unitTemplates[u % 4];
+        unitData.push({
+          unit_reference: `Unit ${p * 10 + u}`,
+          property_id: properties[p].id,
+          floor: `${Math.ceil(u / 3)}`,
+          bedrooms: template.bedrooms,
+          unit_type: 'flat',
+          tenure: 'leasehold',
+          status: u % 12 === 0 ? 'vacant' : 'occupied',
+          monthly_rent: template.rent,
+          annual_service_charge: template.service,
+          lease_start_date: `202${3 + Math.floor(Math.random() * 2)}-${String(Math.floor(Math.random() * 11) + 1).padStart(2, '0')}-01`,
+          lease_end_date: `202${5 + Math.floor(Math.random() * 2)}-${String(Math.floor(Math.random() * 11) + 1).padStart(2, '0')}-31`,
+          lease_term_years: 10,
+          lease_remaining_years: 7
+        });
       }
-    ]);
+    }
+    
+    const units = await base44.entities.Unit.bulkCreate(unitData);
 
-    // Create Tenants
-    const tenants = await base44.entities.Tenant.bulkCreate([
-      {
-        full_name: 'Christopher Martin-Smith',
-        email: 'chris.martin@finance.uk',
-        phone: '020 7946 0958',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[0].id,
-        property_id: properties[0].id,
-        tenancy_start_date: '2023-01-15',
-        tenancy_end_date: '2026-01-14',
-        deposit_amount: 5000,
-        deposit_scheme: 'dps',
-        status: 'active',
-        emergency_contact_name: 'Eleanor Martin-Smith',
-        emergency_contact_phone: '020 7946 0959'
-      },
-      {
-        full_name: 'Dr. and Mrs. Williamson',
-        email: 'williamson@medical.co.uk',
-        phone: '020 7589 2341',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[1].id,
-        property_id: properties[0].id,
-        tenancy_start_date: '2022-06-01',
-        tenancy_end_date: '2025-05-31',
-        deposit_amount: 6400,
-        deposit_scheme: 'mydeposits',
-        status: 'active',
-        emergency_contact_name: 'James Williamson Jr.',
-        emergency_contact_phone: '020 7589 2342'
-      },
-      {
-        full_name: 'Sir Anthony Richardson',
-        email: 'arichardson@heritage.org.uk',
-        phone: '020 7235 8765',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[2].id,
-        property_id: properties[1].id,
-        tenancy_start_date: '2023-09-01',
-        tenancy_end_date: '2026-08-31',
-        deposit_amount: 9000,
-        deposit_scheme: 'tds',
-        status: 'active',
-        emergency_contact_name: 'Catherine Richardson',
-        emergency_contact_phone: '020 7235 8766'
-      },
-      {
-        full_name: 'Victoria Chen',
-        email: 'vchen@global-tech.com',
-        phone: '020 7589 5432',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[3].id,
-        property_id: properties[2].id,
-        tenancy_start_date: '2024-03-01',
-        tenancy_end_date: '2027-02-28',
-        deposit_amount: 7600,
-        deposit_scheme: 'dps',
-        status: 'active',
-        emergency_contact_name: 'Wei Chen',
-        emergency_contact_phone: '020 7589 5433'
-      },
-      {
-        full_name: 'Isabella & Marco Rossi',
-        email: 'irossi@belgravia-retail.co.uk',
-        phone: '020 7589 6543',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[4].id,
-        property_id: properties[2].id,
-        tenancy_start_date: '2023-05-01',
-        tenancy_end_date: '2026-04-30',
-        deposit_amount: 5000,
-        deposit_scheme: 'mydeposits',
-        status: 'active',
-        emergency_contact_name: 'Antonio Rossi',
-        emergency_contact_phone: '020 7589 6544'
-      },
-      {
-        full_name: 'James & Sophie Anderson',
-        email: 'janderson@kensington-living.com',
-        phone: '020 7589 7654',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[5].id,
-        property_id: properties[3].id,
-        tenancy_start_date: '2024-01-15',
-        tenancy_end_date: '2027-01-14',
-        deposit_amount: 3600,
-        deposit_scheme: 'tds',
-        status: 'active',
-        emergency_contact_name: 'Robert Anderson',
-        emergency_contact_phone: '020 7589 7655'
-      },
-      {
-        full_name: 'Natasha Volkov',
-        email: 'nvolkov@international-finance.ru',
-        phone: '020 7589 8765',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[6].id,
-        property_id: properties[3].id,
-        tenancy_start_date: '2023-11-01',
-        tenancy_end_date: '2026-10-31',
-        deposit_amount: 3600,
-        deposit_scheme: 'dps',
-        status: 'active',
-        emergency_contact_name: 'Dimitri Volkov',
-        emergency_contact_phone: '020 7589 8766'
-      },
-      {
-        full_name: 'Lord and Lady Pemberton',
-        email: 'pemberton@aristocratic-estates.co.uk',
-        phone: '020 7235 9876',
-        tenant_type: 'assured_shorthold',
-        unit_id: units[7].id,
-        property_id: properties[4].id,
-        tenancy_start_date: '2023-07-01',
-        tenancy_end_date: '2026-06-30',
-        deposit_amount: 10000,
-        deposit_scheme: 'mydeposits',
-        status: 'active',
-        emergency_contact_name: 'Lady Jane Pemberton',
-        emergency_contact_phone: '020 7235 9877'
+    // Create Tenants (60+ across portfolio)
+    const tenantNames = [
+      'Christopher Martin-Smith', 'Dr. and Mrs. Williamson', 'Sir Anthony Richardson', 'Victoria Chen',
+      'Isabella & Marco Rossi', 'James & Sophie Anderson', 'Natasha Volkov', 'Lord and Lady Pemberton',
+      'Michael Johnson', 'Sarah Thompson', 'David Williams', 'Emma Brown', 'Oliver Martinez',
+      'Sophia Garcia', 'Liam Singh', 'Ava Kumar', 'Noah Patel', 'Isabella Rodriguez',
+      'Elijah Lee', 'Charlotte White', 'James Harris', 'Amelia Clark', 'Benjamin Lewis',
+      'Mia Robinson', 'Lucas Walker', 'Harper Hall', 'Mason Allen', 'Evelyn Young',
+      'Logan Hernandez', 'Abigail King', 'Ethan Wright', 'Elizabeth Lopez', 'Alexander Hill',
+      'Sofia Scott', 'Michael Green', 'Emily Adams', 'Daniel Nelson', 'Avery Carter',
+      'Matthew Mitchell', 'Harper Perez', 'Andrew Roberts', 'Scarlett Phillips', 'Zachary Campbell',
+      'Aria Parker', 'Alexander Evans', 'Layla Edwards', 'Ryan Collins', 'Penelope Stewart',
+      'Brandon Morris', 'Brooklyn Rogers', 'Samuel Reed', 'Chloe Cook', 'Joseph Morgan',
+      'Violet Bell', 'Gabriel Murphy', 'Grace Bailey', 'Jayden Riviera', 'Violet Smith',
+      'Caleb Thompson', 'Nora Jones', 'Luke William'
+    ];
+    
+    const tenantData = [];
+    for (let i = 0; i < units.length * 0.8; i++) {
+      const unitIdx = Math.floor(i % units.length);
+      const unit = units[unitIdx];
+      const name = tenantNames[i % tenantNames.length];
+      tenantData.push({
+        full_name: name,
+        email: name.toLowerCase().replace(/[^a-z]/g, '') + '@email.co.uk',
+        phone: `020 ${7900 + Math.floor(Math.random() * 99)} ${Math.floor(Math.random() * 10000)}`,
+        tenant_type: i % 3 === 0 ? 'assured' : 'assured_shorthold',
+        unit_id: unit.id,
+        property_id: unit.property_id,
+        tenancy_start_date: `202${3 + Math.floor(Math.random() * 2)}-${String(Math.floor(Math.random() * 11) + 1).padStart(2, '0')}-01`,
+        tenancy_end_date: `202${5 + Math.floor(Math.random() * 2)}-${String(Math.floor(Math.random() * 11) + 1).padStart(2, '0')}-31`,
+        deposit_amount: 3000 + Math.floor(Math.random() * 7000),
+        deposit_scheme: ['dps', 'mydeposits', 'tds'][i % 3],
+        status: i % 15 === 0 ? 'in_arrears' : 'active'
+      });
+    }
+    
+    const tenants = await base44.entities.Tenant.bulkCreate(tenantData);
+
+    // Create Financial Transactions (200+ across portfolio)
+    const financialData = [];
+    
+    // Monthly rent for each tenant
+    for (let i = 0; i < tenants.length; i++) {
+      const unit = units.find(u => u.id === tenants[i].unit_id);
+      if (unit) {
+        for (let month = 0; month < 3; month++) {
+          const date = new Date(2026, 3 - month - 1, 1);
+          financialData.push({
+            description: `Monthly rent - Tenant ${i + 1}`,
+            transaction_type: 'rent_payment',
+            amount: unit.monthly_rent,
+            direction: 'income',
+            status: Math.random() > 0.1 ? 'paid' : 'pending',
+            due_date: date.toISOString().split('T')[0],
+            paid_date: Math.random() > 0.1 ? date.toISOString().split('T')[0] : null,
+            property_id: tenants[i].property_id,
+            unit_id: tenants[i].unit_id,
+            tenant_id: tenants[i].id,
+            reference: `RENT-${i}-${date.getMonth()}`
+          });
+        }
       }
-    ]);
-
-    // Create Financial Transactions
-    await base44.entities.FinancialTransaction.bulkCreate([
-      {
-        description: 'Monthly rent - Park Royal Flat 101',
-        transaction_type: 'rent_payment',
-        amount: 2500,
-        direction: 'income',
-        status: 'paid',
-        due_date: '2026-03-01',
-        paid_date: '2026-03-01',
-        property_id: properties[0].id,
-        unit_id: units[0].id,
-        tenant_id: tenants[0].id,
-        reference: 'RENT-PRA-FL101-MAR26'
-      },
-      {
-        description: 'Monthly rent - Chelsea Mews House 1',
-        transaction_type: 'rent_payment',
-        amount: 4500,
-        direction: 'income',
-        status: 'paid',
-        due_date: '2026-03-01',
-        paid_date: '2026-03-01',
-        property_id: properties[1].id,
-        unit_id: units[2].id,
-        tenant_id: tenants[2].id,
-        reference: 'RENT-CMH-HOU1-MAR26'
-      },
-      {
-        description: 'Service charge - Park Royal Apartments',
-        transaction_type: 'service_charge',
-        amount: 3000,
-        direction: 'income',
-        status: 'paid',
-        due_date: '2026-03-15',
-        paid_date: '2026-03-15',
-        property_id: properties[0].id,
-        reference: 'SC-PRA-MAR26'
-      },
-      {
-        description: 'Professional cleaning service - All properties',
+    }
+    
+    // Service charges
+    for (let p = 0; p < properties.length; p++) {
+      for (let month = 0; month < 3; month++) {
+        const date = new Date(2026, 3 - month - 1, 15);
+        financialData.push({
+          description: `Service charge - ${properties[p].name}`,
+          transaction_type: 'service_charge',
+          amount: 2500 + Math.floor(Math.random() * 4000),
+          direction: 'income',
+          status: 'paid',
+          due_date: date.toISOString().split('T')[0],
+          paid_date: date.toISOString().split('T')[0],
+          property_id: properties[p].id,
+          reference: `SC-P${p}-${date.getMonth()}`
+        });
+      }
+    }
+    
+    // Operating expenses
+    const expenses = [
+      { desc: 'Building maintenance', amount: 2000 },
+      { desc: 'Professional cleaning', amount: 1500 },
+      { desc: 'Management fees', amount: 3500 },
+      { desc: 'Insurance premium', amount: 2500 },
+      { desc: 'Utilities coordination', amount: 800 },
+      { desc: 'Legal services', amount: 1200 },
+      { desc: 'Compliance inspection', amount: 950 }
+    ];
+    
+    for (let i = 0; i < 15; i++) {
+      const exp = expenses[i % expenses.length];
+      financialData.push({
+        description: exp.desc,
         transaction_type: 'maintenance_cost',
-        amount: 1500,
+        amount: exp.amount + Math.floor(Math.random() * 500),
         direction: 'expense',
         status: 'paid',
-        paid_date: '2026-03-05',
-        reference: 'MAINT-CLEAN-MAR26'
-      },
-      {
-        description: 'Management fee - March 2026',
-        transaction_type: 'management_fee',
-        amount: 5000,
-        direction: 'expense',
-        status: 'paid',
-        paid_date: '2026-03-01',
-        reference: 'MGMT-FEE-MAR26'
-      },
-      {
-        description: 'Insurance premium - Annual',
-        transaction_type: 'other',
-        amount: 8500,
-        direction: 'expense',
-        status: 'paid',
-        paid_date: '2026-03-10',
-        reference: 'INS-ANNUAL-2026'
-      }
-    ]);
+        paid_date: `2026-0${Math.floor(Math.random() * 3) + 1}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+        reference: `EXP-${i}`
+      });
+    }
+    
+    await base44.entities.FinancialTransaction.bulkCreate(financialData);
 
-    // Create Maintenance Orders
-    await base44.entities.MaintenanceOrder.bulkCreate([
-      {
-        title: 'Electrical safety inspection - Westminster Court',
-        description: 'EICR electrical inspection for common areas',
-        property_id: properties[4].id,
-        reported_by: 'James Powell',
-        priority: 'urgent',
-        status: 'completed',
-        category: 'electrical',
-        contractor_name: 'London Certified Electricians',
-        contractor_phone: '020 7946 0888',
-        estimated_cost: 800,
-        actual_cost: 850,
-        scheduled_date: '2026-03-15',
-        completed_date: '2026-03-18',
-        notes: 'EICR completed. All common areas compliant. Certificate valid 5 years.'
-      },
-      {
-        title: 'Boiler servicing - Park Royal Apartments',
-        description: 'Annual boiler maintenance and safety certification',
-        property_id: properties[0].id,
-        reported_by: 'Margaret Powell',
-        priority: 'standard',
-        status: 'completed',
-        category: 'plumbing',
-        contractor_name: 'London Heating Solutions',
-        contractor_phone: '020 7946 0777',
-        estimated_cost: 2000,
-        actual_cost: 2000,
-        scheduled_date: '2026-03-10',
-        completed_date: '2026-03-10',
-        notes: 'All boilers serviced. CP12 certificates issued for all units.'
-      },
-      {
-        title: 'Roof repairs - Chelsea Mews',
-        description: 'Slate roof repairs and maintenance',
-        property_id: properties[1].id,
-        reported_by: 'Tenant - Sir Anthony Richardson',
-        priority: 'urgent',
-        status: 'in_progress',
-        category: 'roofing',
-        contractor_name: 'Grade II Listed Specialist Roofers',
-        contractor_phone: '020 7946 0666',
-        estimated_cost: 5500,
-        scheduled_date: '2026-04-01',
-        notes: 'Specialist Grade II roofer required. Using traditional materials and methods.'
-      },
-      {
-        title: 'Decoration refresh - South Kensington Studios',
-        description: 'Interior redecoration between tenancies',
-        property_id: properties[3].id,
-        reported_by: 'James Powell',
-        priority: 'standard',
-        status: 'completed',
-        category: 'decorating',
-        contractor_name: 'London Interiors & Design',
-        contractor_phone: '020 7946 0555',
-        estimated_cost: 3200,
-        actual_cost: 3200,
-        scheduled_date: '2026-02-15',
-        completed_date: '2026-02-28',
-        notes: 'High-spec interior refresh. Ready for next tenancy.'
-      }
-    ]);
+    // Create Maintenance Orders (40+ across portfolio)
+    const maintenanceData = [];
+    const categories = ['electrical', 'plumbing', 'structural', 'roofing', 'decorating', 'cleaning', 'general'];
+    const statuses = ['reported', 'assessed', 'in_progress', 'completed'];
+    const priorities = ['standard', 'urgent'];
+    const contractors = [
+      { name: 'London Certified Electricians', phone: '020 7946 0888' },
+      { name: 'London Heating Solutions', phone: '020 7946 0777' },
+      { name: 'Grade II Listed Specialist Roofers', phone: '020 7946 0666' },
+      { name: 'London Interiors & Design', phone: '020 7946 0555' },
+      { name: 'Brighton Maintenance Services', phone: '01273 555234' },
+      { name: 'South Coast Electrical', phone: '01273 555345' },
+      { name: 'General Building Solutions', phone: '020 7946 0500' }
+    ];
+    
+    for (let i = 0; i < 40; i++) {
+      const prop = properties[i % properties.length];
+      const contractor = contractors[i % contractors.length];
+      const category = categories[i % categories.length];
+      const status = statuses[Math.floor(i / 10) % statuses.length];
+      
+      maintenanceData.push({
+        title: `${category.charAt(0).toUpperCase() + category.slice(1)} maintenance - ${prop.name}`,
+        description: `Routine ${category} inspection and maintenance`,
+        property_id: prop.id,
+        reported_by: 'Sean Powell',
+        priority: i % 5 === 0 ? 'urgent' : 'standard',
+        status: status,
+        category: category,
+        contractor_name: contractor.name,
+        contractor_phone: contractor.phone,
+        estimated_cost: 1000 + Math.floor(Math.random() * 4000),
+        actual_cost: status === 'completed' ? 1000 + Math.floor(Math.random() * 4000) : null,
+        scheduled_date: `2026-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+        completed_date: status === 'completed' ? `2026-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}` : null,
+        notes: `Standard ${category} work for property maintenance`
+      });
+    }
+    
+    await base44.entities.MaintenanceOrder.bulkCreate(maintenanceData);
 
     // Create Contacts
     await base44.entities.Contact.bulkCreate([
