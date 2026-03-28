@@ -4,7 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Property/building name e.g. Admiral Point"
+      "description": "Property/building name e.g. Admiral Point, Old Bakery Kettering"
     },
     "address_line_1": {
       "type": "string"
@@ -26,6 +26,9 @@
         "blackpool",
         "ipswich",
         "leeds",
+        "kettering",
+        "north_wales",
+        "lancashire",
         "other"
       ]
     },
@@ -37,7 +40,9 @@
         "house",
         "mixed_use",
         "commercial",
-        "land"
+        "land",
+        "converted_building",
+        "rtm_block"
       ]
     },
     "ownership_type": {

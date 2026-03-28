@@ -16,7 +16,8 @@
         "active",
         "dissolved",
         "dormant",
-        "in_liquidation"
+        "in_liquidation",
+        "strike_off_pending"
       ],
       "default": "active"
     },
@@ -24,11 +25,13 @@
       "type": "string",
       "enum": [
         "core_property",
+        "management",
         "freehold",
         "rtm_management",
         "service_charge_vehicle",
         "investment",
         "international",
+        "associates",
         "other"
       ],
       "description": "Company category within the group"
@@ -39,6 +42,14 @@
     "incorporation_date": {
       "type": "string",
       "format": "date"
+    },
+    "sic_code": {
+      "type": "string",
+      "description": "SIC code e.g. 68100, 68320, 98000"
+    },
+    "sic_description": {
+      "type": "string",
+      "description": "Human-readable SIC description"
     },
     "directors": {
       "type": "array",
@@ -54,9 +65,31 @@
           "appointed_date": {
             "type": "string",
             "format": "date"
+          },
+          "resigned_date": {
+            "type": "string",
+            "format": "date"
           }
         }
       }
+    },
+    "accounts_next_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Next accounts filing due date"
+    },
+    "accounts_last_made_up": {
+      "type": "string",
+      "format": "date"
+    },
+    "confirmation_next_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Next confirmation statement due date"
+    },
+    "confirmation_last_dated": {
+      "type": "string",
+      "format": "date"
     },
     "region": {
       "type": "string",
@@ -66,6 +99,7 @@
         "blackpool",
         "ipswich",
         "leeds",
+        "kettering",
         "other"
       ]
     },
