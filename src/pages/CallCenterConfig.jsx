@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Settings } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
+import { Settings, Lock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/components/shared/PageHeader';
 import ServiceConfiguration from '@/components/outofhours/ServiceConfiguration';
 
 export default function CallCenterConfig() {
+  const { user } = useAuth();
+
+  // Restrict access to admin users only
+  if (user?.role !== 'admin') {
+    return (
+      <div className="p-8 max-w-[1200px] mx-auto">
+        <Card className="flex flex-col items-center justify-center py-12">
+          <Lock className="w-12 h-12 text-destructive mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Call Center Configuration is a developer-only feature. Only app administrators can access this module.
+          </p>
+        </Card>
+      </div>
+    );
+  }
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   const { data: companies = [] } = useQuery({

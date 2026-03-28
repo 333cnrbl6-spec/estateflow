@@ -152,6 +152,11 @@ export default function Sidebar({ onCollapsedChange }) {
             )}
             <div className="space-y-0.5">
               {group.items.map((item) => {
+                // Hide out-of-hours features from non-admin users
+                if ((item.path === '/out-of-hours' || item.path === '/call-center-config') && user?.role !== 'admin') {
+                  return null;
+                }
+
                 const isActive = location.pathname === item.path ||
                   (item.path !== '/' && location.pathname.startsWith(item.path));
                 return (

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Phone, Clock, AlertCircle, CheckCircle, LogOut } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
+import { Phone, Clock, AlertCircle, CheckCircle, LogOut, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageHeader from '@/components/shared/PageHeader';
@@ -10,6 +11,22 @@ import CallHandlerModule from '@/components/outofhours/CallHandlerModule';
 import CallHistoryPanel from '@/components/outofhours/CallHistoryPanel';
 
 export default function OutOfHoursCallCenter() {
+  const { user } = useAuth();
+
+  // Restrict access to admin users only
+  if (user?.role !== 'admin') {
+    return (
+      <div className="p-8 max-w-[1200px] mx-auto">
+        <Card className="flex flex-col items-center justify-center py-12">
+          <Lock className="w-12 h-12 text-destructive mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Out-of-Hours Support is a developer-only feature. Only app administrators can access this module.
+          </p>
+        </Card>
+      </div>
+    );
+  }
   const [activeCall, setActiveCall] = useState(null);
   const [showValidation, setShowValidation] = useState(false);
   const [callStartTime, setCallStartTime] = useState(null);
