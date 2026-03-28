@@ -1,249 +1,156 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Upload, Trash2, FileText, Download, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import PageHeader from '@/components/shared/PageHeader';
-import { Plus, FileText, Trash2, Edit } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-
-const categories = [
-  { value: 'eviction_notice', label: 'Eviction Notice' },
-  { value: 'tenancy_agreement', label: 'Tenancy Agreement' },
-  { value: 'deposit_protection_notice', label: 'Deposit Protection Notice' },
-  { value: 'gas_safety_cert', label: 'Gas Safety Cert' },
-  { value: 'epc', label: 'EPC' },
-  { value: 'inventory', label: 'Inventory' },
-  { value: 'inspection_report', label: 'Inspection Report' },
-  { value: 'maintenance_notice', label: 'Maintenance Notice' },
-  { value: 'rent_increase', label: 'Rent Increase Notice' },
-];
-
-const jurisdictions = [
-  { value: 'england', label: 'England' },
-  { value: 'wales', label: 'Wales' },
-  { value: 'scotland', label: 'Scotland' },
-  { value: 'ni', label: 'Northern Ireland' },
-];
+import { useDemoFilter } from '@/hooks/useDemoFilter';
+import TemplateUploadDialog from '@/components/templates/TemplateUploadDialog';
+import TemplateGeneratorDialog from '@/components/templates/TemplateGeneratorDialog';
 
 export default function DocumentTemplates() {
-  const [showDialog, setShowDialog] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    jurisdiction: 'england',
-    template_content: '',
-  });
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showUpload, setShowUpload] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [showGenerator, setShowGenerator] = useState(false);
   const queryClient = useQueryClient();
+  const { companyIds } = useDemoFilter();
 
   const { data: templates = [] } = useQuery({
-    queryKey: ['documentTemplates'],
-    queryFn: () => base44.entities.DocumentTemplate.list(),
+    queryKey: ['documentTemplates', companyIds],
+    queryFn: async () => {
+      const all = await base44.entities.DocumentTemplate.list('-updated_date');
+      if (companyIds) {
+        return all.filter(t => companyIds.includes(t.company_id));
+      }
+      return all;
+    }
   });
 
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.DocumentTemplate.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documentTemplates'] });
-      resetForm();
-      setShowDialog(false);
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.DocumentTemplate.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documentTemplates'] });
-      resetForm();
-      setShowDialog(false);
-    },
-  });
-
-  const deleteMutation = useMutation({
+  const deleteTemplateMutation = useMutation({
     mutationFn: (id) => base44.entities.DocumentTemplate.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documentTemplates'] });
-    },
+    }
   });
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.category || !formData.template_content) {
-      alert('Please fill all required fields');
-      return;
-    }
-
-    if (editingId) {
-      updateMutation.mutate({ id: editingId, data: formData });
-    } else {
-      createMutation.mutate(formData);
-    }
-  };
-
-  const handleEdit = (template) => {
-    setFormData(template);
-    setEditingId(template.id);
-    setShowDialog(true);
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      category: '',
-      jurisdiction: 'england',
-      template_content: '',
-    });
-    setEditingId(null);
-  };
+  const filteredTemplates = templates.filter(t =>
+    t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.template_type?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="p-8">
-      <PageHeader
-        title="Document Templates"
-        subtitle="Create reusable templates for compliance documents"
+    <div className="p-8 max-w-[1400px] mx-auto space-y-6">
+      <PageHeader 
+        title="Document Templates" 
+        subtitle="Manage PDF/Word templates with automatic data merge"
       >
-        <Button onClick={() => setShowDialog(true)} className="gap-2">
+        <Button onClick={() => setShowUpload(true)} className="gap-2">
           <Plus className="w-4 h-4" />
-          New Template
+          Upload Template
         </Button>
       </PageHeader>
 
-      <div className="space-y-4">
-        {templates.length === 0 ? (
-          <div className="text-center py-12 border border-dashed rounded-lg">
-            <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-            <p className="text-muted-foreground">No templates yet. Create your first one.</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                className="flex items-center justify-between p-4 border rounded-lg bg-card hover:shadow-sm transition-shadow"
-              >
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">{template.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {categories.find((c) => c.value === template.category)?.label} •{' '}
-                    {jurisdictions.find((j) => j.value === template.jurisdiction)?.label}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEdit(template)}
-                    className="gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteMutation.mutate(template.id)}
-                    className="text-destructive gap-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* Search */}
+      <div>
+        <Input
+          placeholder="Search templates..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
       </div>
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editingId ? 'Edit Template' : 'Create Template'}
-            </DialogTitle>
-            <DialogDescription>
-              Build a template with placeholders like {'{{tenant_name}}'} and {'{{property_address}}'}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Template Name</label>
-              <Input
-                placeholder="e.g. Section 21 Notice"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="mt-2"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Category</label>
-                <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Jurisdiction</label>
-                <Select value={formData.jurisdiction} onValueChange={(val) => setFormData({ ...formData, jurisdiction: val })}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jurisdictions.map((j) => (
-                      <SelectItem key={j.value} value={j.value}>
-                        {j.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Template Content</label>
-              <Textarea
-                placeholder="Enter template with placeholders like {{tenant_name}}, {{property_address}}, {{due_date}}"
-                value={formData.template_content}
-                onChange={(e) => setFormData({ ...formData, template_content: e.target.value })}
-                className="mt-2 min-h-[300px]"
-              />
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowDialog(false)}>
-                Cancel
+      {/* Templates Grid */}
+      {filteredTemplates.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredTemplates.map((template) => (
+            <Card key={template.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-base truncate">{template.name}</CardTitle>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {template.template_type?.replace(/_/g, ' ').title()}
+                    </p>
+                  </div>
+                  <FileText className="w-5 h-5 text-muted-foreground shrink-0 mt-1" />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {template.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {template.description}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-1">
+                  {template.merge_fields?.map((field) => (
+                    <span key={field} className="inline-block bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
+                      {field}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 gap-1"
+                    onClick={() => {
+                      setSelectedTemplate(template);
+                      setShowGenerator(true);
+                    }}
+                  >
+                    <Download className="w-3 h-3" />
+                    Generate
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => deleteTemplateMutation.mutate(template.id)}
+                    disabled={deleteTemplateMutation.isPending}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <FileText className="w-12 h-12 text-muted-foreground mb-3" />
+            <p className="text-muted-foreground">
+              {searchTerm ? 'No templates match your search' : 'No templates uploaded yet'}
+            </p>
+            {!searchTerm && (
+              <Button onClick={() => setShowUpload(true)} variant="outline" className="mt-4 gap-2">
+                <Upload className="w-4 h-4" />
+                Upload Your First Template
               </Button>
-              <Button onClick={handleSubmit}>
-                {editingId ? 'Update' : 'Create'} Template
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Dialogs */}
+      <TemplateUploadDialog 
+        open={showUpload} 
+        onOpenChange={setShowUpload}
+      />
+      
+      {selectedTemplate && (
+        <TemplateGeneratorDialog
+          open={showGenerator}
+          onOpenChange={(open) => {
+            if (!open) setSelectedTemplate(null);
+            setShowGenerator(open);
+          }}
+          template={selectedTemplate}
+        />
+      )}
     </div>
   );
 }
