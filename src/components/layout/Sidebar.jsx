@@ -52,6 +52,7 @@ const navGroups = [
       { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
       { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
+      { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
     ]
   }
 ];
