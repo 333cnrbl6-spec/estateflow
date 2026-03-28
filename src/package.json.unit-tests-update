@@ -1,0 +1,18 @@
+Add these scripts to package.json:
+
+"test": "vitest",
+"test:ui": "vitest --ui",
+"test:coverage": "vitest --coverage",
+"test:e2e": "playwright test",
+"test:e2e:ui": "playwright test --ui",
+"test:e2e:debug": "playwright test --debug",
+"test:all": "npm run test:coverage && npm run test:e2e"
+
+And add devDependencies:
+"vitest": "^1.0.0",
+"@vitest/ui": "^1.0.0",
+"@testing-library/react": "^14.0.0",
+"@testing-library/jest-dom": "^6.0.0",
+"jsdom": "^23.0.0",
+"@vitejs/plugin-react": "^4.0.0",
+"@playwright/test": "^1.40.0"
