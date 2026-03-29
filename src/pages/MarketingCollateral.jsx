@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, Printer, ArrowRight, Check, X, Crown } from 'lucide-react';
@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 
 export default function MarketingCollateral() {
   const contentRef = useRef(null);
+  const [orientation, setOrientation] = useState('landscape');
 
   const generatePDF = async () => {
     const element = contentRef.current;
@@ -44,16 +45,14 @@ export default function MarketingCollateral() {
 
   const printContent = () => {
     document.title = 'EstateFlow-Marketing-Collateral-2026';
-    // Inject print styles dynamically for A4 + avoid-break
     const style = document.createElement('style');
     style.id = 'print-inject';
     style.textContent = `
-      @page { size: A4 portrait; margin: 15mm 12mm; }
+      @page { size: A4 ${orientation}; margin: 15mm 12mm; }
       @media print {
-        html, body { width: 210mm; margin: 0; padding: 0; }
+        html, body { margin: 0; padding: 0; }
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         .print\\:hidden { display: none !important; }
-        /* Prevent sections splitting */
         .border-2, .rounded-xl, .rounded-lg, .rounded, .p-6, .p-8,
         .bg-gradient-to-br, .bg-gradient-to-r, .bg-green-50, .bg-amber-50,
         .bg-amber-100, .bg-slate-50, .bg-slate-100, .bg-white {
@@ -61,7 +60,6 @@ export default function MarketingCollateral() {
           break-inside: avoid !important;
         }
         h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
-        /* Section dividers force page break */
         .border-b-8 { page-break-after: always !important; break-after: page !important; }
       }
     `;
@@ -79,12 +77,14 @@ export default function MarketingCollateral() {
             <h1 className="text-2xl font-serif font-bold text-slate-900">EstateFlow Marketing Collateral</h1>
             <p className="text-sm text-slate-600">Complete Sales & Feature Overview Document</p>
           </div>
-          <div className="flex gap-3 print:hidden">
-            <Button
-              onClick={printContent}
-              variant="outline"
-              className="gap-2"
+          <div className="flex gap-3 print:hidden items-center">
+            <button
+              onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')}
+              className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors"
             >
+              {orientation === 'portrait' ? '⬜ Portrait' : '▭ Landscape'} (click to toggle)
+            </button>
+            <Button onClick={printContent} variant="outline" className="gap-2">
               <Printer className="w-4 h-4" />
               Print
             </Button>
@@ -426,12 +426,14 @@ export default function MarketingCollateral() {
 
       {/* Bottom Action Bar */}
       <div className="bg-white border-t-2 border-blue-300 p-6 print:hidden">
-        <div className="max-w-7xl mx-auto flex gap-3 justify-center">
-          <Button
-            onClick={printContent}
-            variant="outline"
-            className="gap-2"
+        <div className="max-w-7xl mx-auto flex gap-3 justify-center items-center">
+          <button
+            onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')}
+            className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors"
           >
+            {orientation === 'portrait' ? '⬜ Portrait' : '▭ Landscape'} (click to toggle)
+          </button>
+          <Button onClick={printContent} variant="outline" className="gap-2">
             <Printer className="w-4 h-4" />
             Print This Document
           </Button>

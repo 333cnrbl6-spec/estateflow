@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Single A4 page - designed to print in one page, fold as a leave-behind
 export default function SalesOnePageSummary() {
+  const [orientation, setOrientation] = useState('portrait');
+
   const handlePrint = () => {
     document.title = 'EstateFlow-One-Pager-2026';
+    const style = document.createElement('style');
+    style.id = '__print_orient';
+    style.textContent = `@page { size: A4 ${orientation}; margin: 0; }`;
+    document.head.appendChild(style);
     window.print();
+    setTimeout(() => { const s = document.getElementById('__print_orient'); if (s) s.remove(); }, 1000);
   };
 
   return (
@@ -160,6 +167,13 @@ export default function SalesOnePageSummary() {
       {/* PDF Toolbar */}
       <div className="pdf-toolbar no-print">
         <span className="pdf-toolbar-label">One-Page Summary</span>
+        <button
+          className="pdf-btn"
+          style={{ background: orientation === 'portrait' ? '#334155' : '#0f172a', color: '#94a3b8', fontSize: 12, padding: '8px 14px' }}
+          onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')}
+        >
+          {orientation === 'portrait' ? '⬜ Portrait' : '▭ Landscape'}
+        </button>
         <button className="pdf-btn pdf-btn-print" onClick={handlePrint}>🖨️ Print</button>
         <button className="pdf-btn pdf-btn-pdf" onClick={handlePrint}>⬇ Save as PDF</button>
       </div>
