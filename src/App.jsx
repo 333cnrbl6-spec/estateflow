@@ -64,6 +64,8 @@ import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import BillingManagement from './pages/BillingManagement';
 import OperationalMetricsDashboard from './pages/OperationalMetricsDashboard';
 import VirtualCallCenterSetup from './pages/VirtualCallCenterSetup';
+import SalesBrochure from './pages/SalesBrochure';
+import SalesOnePageSummary from './pages/SalesOnePageSummary';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -144,6 +146,8 @@ const AuthenticatedApp = () => {
         <Route path="/billing" element={<BillingManagement />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
         <Route path="/virtual-call-center" element={<VirtualCallCenterSetup />} />
+        <Route path="/sales-brochure" element={<SalesBrochure />} />
+        <Route path="/sales-one-pager" element={<SalesOnePageSummary />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
