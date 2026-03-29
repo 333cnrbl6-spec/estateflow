@@ -12,12 +12,56 @@ export default function SalesBrochure() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        @page :first {
+          size: A4 portrait;
+          margin: 0;
+        }
         @media print {
-          body { margin: 0; padding: 0; }
+          html, body { margin: 0; padding: 0; width: 210mm; }
           .no-print { display: none !important; }
-          .page-break { page-break-before: always; }
-          .avoid-break { page-break-inside: avoid; }
+          .page-break { page-break-before: always; break-before: page; }
+          .avoid-break { page-break-inside: avoid; break-inside: avoid; }
           * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+          /* Prevent ALL major content blocks from splitting */
+          .feature-card, .pricing-card, .stat-item, .timeline-item,
+          .quote-block, .process-steps, .stats-strip, .feature-grid,
+          .pricing-grid, .compliance-table tr, .cta-contact-row,
+          .page-header, h2, h1, .section-h2, .cover-stats,
+          .cover-main, .cta-contact-box {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
+          /* Keep headings with their following content */
+          .section-eyebrow, .section-h2, .section-desc {
+            page-break-after: avoid;
+            break-after: avoid;
+          }
+
+          /* Each .page is exactly one A4 page */
+          .page, .cover, .cta-page {
+            width: 210mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            overflow: hidden;
+            box-sizing: border-box;
+            page-break-before: always;
+            break-before: page;
+          }
+
+          /* Table rows don't split */
+          .compliance-table { page-break-inside: avoid; break-inside: avoid; }
+          .compliance-table tr { page-break-inside: avoid; break-inside: avoid; }
+          .compliance-table thead { display: table-header-group; }
+          .compliance-table tbody tr { page-break-inside: avoid; break-inside: avoid; }
+
+          /* Grids stay together */
+          .feature-grid, .pricing-grid { page-break-inside: avoid; break-inside: avoid; }
         }
 
         .brochure-body {
@@ -30,7 +74,8 @@ export default function SalesBrochure() {
 
         /* COVER PAGE */
         .cover {
-          height: 100vh;
+          width: 794px;
+          height: 1123px;
           min-height: 1123px;
           background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 40%, #0f4c81 100%);
           display: flex;
@@ -74,11 +119,13 @@ export default function SalesBrochure() {
 
         /* SECTION PAGES */
         .page {
+          width: 794px;
           min-height: 1123px;
           padding: 56px;
           background: white;
           display: flex;
           flex-direction: column;
+          box-sizing: border-box;
         }
         .page-header {
           display: flex;
@@ -151,6 +198,7 @@ export default function SalesBrochure() {
 
         /* CTA PAGE */
         .cta-page {
+          width: 794px;
           min-height: 1123px;
           background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 50%, #0f4c81 100%);
           padding: 56px;

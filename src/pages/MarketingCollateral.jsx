@@ -44,7 +44,30 @@ export default function MarketingCollateral() {
 
   const printContent = () => {
     document.title = 'EstateFlow-Marketing-Collateral-2026';
+    // Inject print styles dynamically for A4 + avoid-break
+    const style = document.createElement('style');
+    style.id = 'print-inject';
+    style.textContent = `
+      @page { size: A4 portrait; margin: 15mm 12mm; }
+      @media print {
+        html, body { width: 210mm; margin: 0; padding: 0; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        .print\\:hidden { display: none !important; }
+        /* Prevent sections splitting */
+        .border-2, .rounded-xl, .rounded-lg, .rounded, .p-6, .p-8,
+        .bg-gradient-to-br, .bg-gradient-to-r, .bg-green-50, .bg-amber-50,
+        .bg-amber-100, .bg-slate-50, .bg-slate-100, .bg-white {
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+        h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
+        /* Section dividers force page break */
+        .border-b-8 { page-break-after: always !important; break-after: page !important; }
+      }
+    `;
+    document.head.appendChild(style);
     window.print();
+    setTimeout(() => { const s = document.getElementById('print-inject'); if (s) s.remove(); }, 1000);
   };
 
   return (

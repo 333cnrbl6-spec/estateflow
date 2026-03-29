@@ -12,11 +12,32 @@ export default function SalesOnePageSummary() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
         @media print {
-          body { margin: 0; padding: 0; }
+          html, body { margin: 0; padding: 0; width: 210mm; }
           .no-print { display: none !important; }
           * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .sheet { width: 794px; height: 1123px; overflow: hidden; }
+          .sheet {
+            width: 210mm;
+            height: 297mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            overflow: hidden;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          /* All content blocks stay together */
+          .content-section, .compliance-item, .pricing-row,
+          .benefit-item, .ooh-tier, .stats-row, .stat-box,
+          .cta-bar, .top-bar, .hero, .main-content,
+          .col-left, .col-right, .partner-box, .ooh-box {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
         }
 
         .sheet {
