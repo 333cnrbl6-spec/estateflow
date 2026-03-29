@@ -143,9 +143,9 @@ export default function SalesOnePageSummary() {
 
         {/* HERO */}
         <div className="hero">
-          <div className="hero-eyebrow">For Block & Estate Management Companies</div>
-          <h1 className="hero-h1">Stop Managing Property with<br /><span>Spreadsheets. Start with EstateFlow.</span></h1>
-          <p className="hero-desc">The complete UK property management platform — compliance, finance, maintenance, emergency callouts, and tenant communications in one place. Purpose-built for residential block management in England & Wales.</p>
+          <div className="hero-eyebrow">For Letting Agents, Block Managers, HMO Landlords & Property Companies</div>
+          <h1 className="hero-h1">The Complete UK Property<br /><span>Management Platform — Lettings to Blocks.</span></h1>
+          <p className="hero-desc">EstateFlow covers the full spectrum of residential property management — ASTs, HMOs, leasehold blocks, RTM companies, and multi-company groups — with built-in compliance, financials, maintenance, CRM, and a 24/7 out-of-hours call service available as a standalone add-on for any portfolio.</p>
         </div>
 
         {/* STATS ROW */}
@@ -170,18 +170,26 @@ export default function SalesOnePageSummary() {
           <div className="col-left">
             {/* Modules */}
             <div className="content-section">
-              <div className="cs-title">What's Included — All 14 Modules</div>
-              <div className="module-list">
+              <div className="cs-title">Full Platform — Lettings, Blocks & Operations</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 4 }}>
                 {[
-                  'Portfolio & Unit Management', 'Financial Control & Reporting',
-                  'Compliance Certificate Tracking', 'Maintenance Workflow',
-                  'Out-of-Hours Call Centre', 'Emergency Callout Manager',
-                  'Service Charge Management', 'Ground Rent Ledger',
-                  'Tenant Self-Service Portal', 'Document Automation',
-                  'Block & RTM Management', 'Building Safety Register',
-                  'Accounting Sync (QBO/Xero)', 'Workflow Automation',
-                ].map((m, i) => <div key={i} className="module-item">{m}</div>)}
+                  { label: 'LETTINGS', color: '#dbeafe', text: '#1e40af', items: ['Tenancy Pipeline', 'HMO Licensing', 'Right to Rent', 'Deposit Mgmt', 'S21/S8 Notices'] },
+                  { label: 'BLOCK', color: '#dcfce7', text: '#166534', items: ['Service Charges', 'Ground Rent', 'RTM Management', 'Leaseholder Portal', 'Building Safety'] },
+                  { label: 'OPERATIONS', color: '#fef3c7', text: '#92400e', items: ['Maintenance Orders', 'Out-of-Hours 24/7', 'Banking & Expenses', 'CRM & Workflows', 'Doc Automation'] },
+                ].map((col, ci) => (
+                  <div key={ci} style={{ border: `1px solid ${col.color}`, borderRadius: 7, overflow: 'hidden' }}>
+                    <div style={{ background: col.color, color: col.text, fontSize: 8, fontWeight: 700, padding: '4px 9px', letterSpacing: 1.5, textTransform: 'uppercase' }}>{col.label}</div>
+                    <div style={{ padding: '6px 9px' }}>
+                      {col.items.map((item, ii) => (
+                        <div key={ii} style={{ fontSize: 10, color: '#475569', padding: '2px 0', display: 'flex', gap: 5, alignItems: 'center', borderBottom: '1px solid #f8fafc' }}>
+                          <span style={{ color: '#0ea5e9', fontWeight: 700, fontSize: 9 }}>✓</span>{item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
+              <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>Also includes: Rent Ledger, Compliance Audit, Land Registry, API Integrations, Accounting Sync (QBO/Xero), Tenant Portal, Analytics & Reporting</div>
             </div>
 
             {/* Compliance */}
@@ -213,11 +221,11 @@ export default function SalesOnePageSummary() {
               <div className="cs-title">Why Clients Switch to EstateFlow</div>
               <div className="benefit-items">
                 {[
-                  { icon: '⏱️', text: '<strong>Save 8+ hours/week</strong> on admin through workflow automation and bulk document generation.' },
-                  { icon: '🚨', text: '<strong>Never miss a deadline</strong> — every certificate, renewal, and statutory notice is tracked and alerted automatically.' },
-                  { icon: '💰', text: '<strong>Recover lost income</strong> with real-time arrears alerts, accurate service charge billing, and financial reporting.' },
-                  { icon: '📞', text: '<strong>GDPR-compliant call handling</strong> with full audit trail for every out-of-hours call — including contractor dispatch.' },
-                  { icon: '👥', text: '<strong>Happier leaseholders</strong> through a self-service portal for documents, service charges, and maintenance updates.' },
+                  { icon: '🏠', text: '<strong>Lettings & blocks in one system</strong> — manage ASTs, HMOs, leasehold blocks and RTM companies from a single login.' },
+                  { icon: '🚨', text: '<strong>Never miss a compliance deadline</strong> — gas certs, EICRs, fire risk assessments, deposit registration and more, all auto-tracked.' },
+                  { icon: '💰', text: '<strong>Full financial control</strong> — rent ledger, arrears alerts, service charges, ground rent, banking and accounting sync.' },
+                  { icon: '📞', text: '<strong>24/7 out-of-hours service</strong> available standalone — GDPR-logged calls, contractor dispatch, and auto maintenance orders.' },
+                  { icon: '⏱️', text: '<strong>Save 8+ hours/week</strong> on admin through workflow automation, bulk document generation, and CRM tools.' },
                 ].map((b, i) => (
                   <div key={i} className="benefit-item">
                     <span className="benefit-icon">{b.icon}</span>

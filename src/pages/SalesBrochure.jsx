@@ -225,7 +225,7 @@ export default function SalesBrochure() {
               Management
             </h1>
             <p className="cover-desc">
-              Powerful, compliant, and beautifully designed — EstateFlow unifies every aspect of residential block management, from service charges and compliance tracking to emergency callouts and tenant communications.
+              Powerful, compliant, and beautifully designed — EstateFlow unifies the complete spectrum of residential property management: lettings, block management, HMOs, compliance, finance, and a standalone 24/7 out-of-hours call service. One platform. Every workflow.
             </p>
             <div className="cover-stats">
               <div>
@@ -265,9 +265,9 @@ export default function SalesBrochure() {
           </div>
 
           <div className="section-eyebrow">The Market Problem</div>
-          <h2 className="section-h2">Property Managers Are Drowning<br />in Complexity</h2>
+          <h2 className="section-h2">Property Management Has Never<br />Been More Complex</h2>
           <p className="section-desc">
-            Managing residential blocks in 2026 means juggling dozens of spreadsheets, chasing contractors by phone, manually tracking certificate expiry dates, and hoping nothing slips through the cracks. The stakes have never been higher — with Building Safety Act 2023, Leasehold & Freehold Reform Act 2024, and ever-tightening compliance obligations, the manual approach is no longer sustainable.
+            Whether you manage ASTs, HMOs, leasehold blocks, or a mixed residential portfolio, 2026 brings unprecedented regulatory pressure. The Renters' Rights Bill, Building Safety Act 2023, Leasehold & Freehold Reform Act 2024, and 24/7 tenant expectations mean the manual, spreadsheet-based approach is no longer an option — for lettings agents or block managers alike.
           </p>
 
           <div className="feature-grid avoid-break">
@@ -331,7 +331,7 @@ export default function SalesBrochure() {
           <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #dbeafe)', borderRadius: 12, padding: '28px 32px', marginTop: 8 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 2 }}>The EstateFlow Solution</div>
             <p style={{ fontSize: 15, color: '#1e3a5f', lineHeight: 1.8, margin: 0 }}>
-              EstateFlow replaces the chaos with a single, unified platform purpose-built for UK residential block management. From automatic certificate expiry alerts to a structured out-of-hours call centre with GDPR-compliant logging — every workflow is covered.
+              EstateFlow replaces the chaos with a single, unified platform covering the full spectrum of residential property management — lettings, HMOs, leasehold blocks, and RTM companies. From automatic certificate expiry alerts and tenancy lifecycle management, to a structured 24/7 out-of-hours call service that can be used standalone or fully integrated with your portfolio.
             </p>
           </div>
         </div>
@@ -344,28 +344,48 @@ export default function SalesBrochure() {
           </div>
 
           <div className="section-eyebrow">What's Included</div>
-          <h2 className="section-h2">14 Integrated Modules.<br />One Platform.</h2>
+          <h2 className="section-h2">Everything You Need.<br />One Unified Platform.</h2>
           <p className="section-desc">
-            Every module is purpose-built for UK property management legislation and connected to a single data layer — so changes in one area are immediately reflected across the whole system.
+            EstateFlow serves the full range of residential property professionals — from single letting agents managing ASTs to large multi-company groups running leasehold blocks, HMOs, and RTM companies. Every module is legislatively current for England and Wales, and connected to one shared data layer.
           </p>
 
-          <div className="feature-grid avoid-break">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 24 }}>
             {[
-              { icon: '🏢', title: 'Portfolio Management', desc: 'Properties, units, companies & ownership structures across multiple regions.' },
-              { icon: '💰', title: 'Financial Control', desc: 'Rent ledger, service charges, ground rent, banking & financial reporting.' },
-              { icon: '🔧', title: 'Maintenance Workflow', desc: 'Priority-based work orders, contractor dispatch & completion tracking.' },
-              { icon: '🛡️', title: 'Compliance Hub', desc: 'Certificate tracking, audit logs, regulatory deadlines & document management.' },
-              { icon: '📋', title: 'Tenancy Pipeline', desc: 'Full lifecycle from applicant to vacate, covering England & Wales law.' },
-              { icon: '🏗️', title: 'Block Management', desc: 'Service charges, RTM management, leaseholder rights & building safety.' },
-              { icon: '🚨', title: 'Emergency Callouts', desc: 'Structured emergency response with contractor dispatch & audit trail.' },
-              { icon: '📞', title: 'Out-of-Hours Centre', desc: 'GDPR-compliant 24/7 call logging with automatic maintenance order creation.' },
-              { icon: '👤', title: 'Tenant Portal', desc: 'Self-service access to rent history, documents & maintenance requests.' },
-              { icon: '📄', title: 'Document Automation', desc: 'Bulk generation of tenancy agreements, notices & service charge statements.' },
-              { icon: '💳', title: 'Billing & Invoicing', desc: 'Service invoices, payment tracking & Stripe integration.' },
-              { icon: '📊', title: 'Analytics & Reporting', desc: 'Real-time KPIs, occupancy trends, financial performance & operational metrics.' },
-              { icon: '🔗', title: 'CRM & Communications', desc: 'Interaction logging, email history & relationship management.' },
-              { icon: '⚙️', title: 'Workflows & Automation', desc: 'Trigger-based automations for reminders, escalations & task creation.' },
-            ].map((m, i) => (
+              { label: 'LETTINGS', color: '#dbeafe', text: '#1e40af', modules: ['Tenancy Pipeline (AST/Assured)', 'Right to Rent Checks', 'Deposit Registration & Schemes', 'How to Rent Guide (England)', 'Rent Smart Wales', 'HMO Licence Tracking', 'Section 21 / Section 8 Notices', 'Periodic Inspections'] },
+              { label: 'BLOCK & LEASEHOLD', color: '#dcfce7', text: '#166534', modules: ['Service Charge Accounts', 'Ground Rent Ledger', 'RTM Claim Management', 'Leaseholder Rights Portal', 'Building Safety Register', 'Section 20 Consultation', 'Client Money Protection', 'Companies House Tracking'] },
+              { label: 'OPERATIONS & FINANCE', color: '#fef3c7', text: '#92400e', modules: ['Maintenance Work Orders', 'Emergency Callout Manager', '24/7 Out-of-Hours Service', 'Rent Ledger & Arrears', 'Banking & Expenses', 'Accounting Sync (QBO/Xero)', 'Document Automation & Bulk Gen', 'CRM & Workflow Automation'] },
+            ].map((col, ci) => (
+              <div key={ci} style={{ border: `1px solid ${col.color}`, borderRadius: 10, overflow: 'hidden' }}>
+                <div style={{ background: col.color, color: col.text, fontSize: 10, fontWeight: 700, padding: '8px 14px', letterSpacing: 2, textTransform: 'uppercase' }}>{col.label}</div>
+                <div style={{ padding: '10px 14px' }}>
+                  {col.modules.map((m, mi) => (
+                    <div key={mi} style={{ fontSize: 11, color: '#475569', padding: '4px 0', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: 7, alignItems: 'center' }}>
+                      <span style={{ color: '#0ea5e9', fontWeight: 700, flexShrink: 0 }}>✓</span>{m}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)', borderRadius: 12, padding: '20px 28px', color: 'white', display: 'flex', gap: 32, justifyContent: 'space-around' }}>
+            {[
+              { n: 'ASTs', l: 'Assured Shorthold Tenancies' },
+              { n: 'HMOs', l: 'Houses in Multiple Occupation' },
+              { n: 'Blocks', l: 'Leasehold & Freehold' },
+              { n: 'RTM', l: 'Right to Manage Companies' },
+              { n: 'Groups', l: 'Multi-Company Portfolios' },
+            ].map((s, i) => (
+              <div key={i} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#38bdf8' }}>{s.n}</div>
+                <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, marginTop: 3 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'none' }}>
+          {/* legacy placeholder removed */}
+          {false && [].map((m, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px', borderRadius: 10, border: '1px solid #e2e8f0', background: '#fafafa' }}>
                 <div style={{ fontSize: 22, flexShrink: 0 }}>{m.icon}</div>
                 <div>
@@ -431,10 +451,10 @@ export default function SalesBrochure() {
             <div className="page-num">OUT-OF-HOURS SERVICE · 05</div>
           </div>
 
-          <div className="section-eyebrow">24/7 Emergency Management</div>
-          <h2 className="section-h2">Never Miss an Emergency.<br />Every Call Logged.</h2>
+          <div className="section-eyebrow">24/7 Emergency Management — Standalone or Integrated</div>
+          <h2 className="section-h2">A Professional Out-of-Hours<br />Service Your Clients Can Trust.</h2>
           <p className="section-desc">
-            The EstateFlow Out-of-Hours module provides a structured, GDPR-compliant call handling system with automatic maintenance order creation, contractor dispatch, and full audit trail. Available as a standalone service or integrated with your existing portfolio.
+            The EstateFlow Out-of-Hours service is available as a fully standalone product — you do not need to use any other module to offer it. Any letting agent, block manager, or landlord can subscribe to have their calls handled by a structured, GDPR-compliant system with automatic maintenance order creation, contractor dispatch, and full audit trail. For EstateFlow platform subscribers, every call is automatically linked to the matching property and tenant record.
           </p>
 
           <div className="stats-strip avoid-break">
