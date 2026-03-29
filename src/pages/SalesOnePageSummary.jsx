@@ -2,7 +2,10 @@ import React from 'react';
 
 // Single A4 page - designed to print in one page, fold as a leave-behind
 export default function SalesOnePageSummary() {
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    document.title = 'EstateFlow-One-Pager-2026';
+    window.print();
+  };
 
   return (
     <>
@@ -116,16 +119,29 @@ export default function SalesOnePageSummary() {
         .cta-contact-label { color: #64748b; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
         .cta-contact-value { color: white; font-weight: 500; margin-top: 2px; }
 
-        .print-btn {
-          position: fixed; bottom: 24px; right: 24px; z-index: 999;
-          background: #0f4c81; color: white; border: none; border-radius: 50px;
-          padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
-          box-shadow: 0 4px 16px rgba(15,76,129,0.4);
+        /* PDF TOOLBAR */
+        .pdf-toolbar {
+          position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+          z-index: 999; background: #0f172a; color: white; border: none;
+          border-radius: 50px; padding: 6px 8px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+          display: flex; align-items: center; gap: 6px;
           font-family: 'Inter', sans-serif;
         }
+        .pdf-toolbar-label { font-size: 12px; color: #94a3b8; padding: 0 10px 0 6px; font-weight: 500; white-space: nowrap; }
+        .pdf-btn { border: none; border-radius: 40px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; white-space: nowrap; }
+        .pdf-btn-print { background: #1e40af; color: white; }
+        .pdf-btn-print:hover { background: #1d4ed8; }
+        .pdf-btn-pdf { background: #0ea5e9; color: white; }
+        .pdf-btn-pdf:hover { background: #0284c7; }
       `}</style>
 
-      <button className="no-print print-btn" onClick={handlePrint}>🖨️ Print One-Pager</button>
+      {/* PDF Toolbar */}
+      <div className="pdf-toolbar no-print">
+        <span className="pdf-toolbar-label">One-Page Summary</span>
+        <button className="pdf-btn pdf-btn-print" onClick={handlePrint}>🖨️ Print</button>
+        <button className="pdf-btn pdf-btn-pdf" onClick={handlePrint}>⬇ Save as PDF</button>
+      </div>
 
       <div className="sheet">
         {/* TOP BAR */}

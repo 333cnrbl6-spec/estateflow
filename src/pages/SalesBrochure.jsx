@@ -2,7 +2,10 @@ import React from 'react';
 
 // Print-optimised full product brochure for RBM partner sales
 export default function SalesBrochure() {
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    document.title = 'EstateFlow-Sales-Brochure-2026';
+    window.print();
+  };
 
   return (
     <>
@@ -166,16 +169,29 @@ export default function SalesBrochure() {
         .cta-contact-value { font-size: 15px; font-weight: 500; color: white; }
         .cta-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #64748b; }
 
-        /* PRINT BUTTON */
-        .print-btn {
-          position: fixed; bottom: 32px; right: 32px; z-index: 999;
-          background: #0f4c81; color: white; border: none; border-radius: 50px;
-          padding: 14px 28px; font-size: 15px; font-weight: 600; cursor: pointer;
-          box-shadow: 0 8px 24px rgba(15, 76, 129, 0.4);
-          display: flex; align-items: center; gap: 8px;
+        /* PDF TOOLBAR */
+        .pdf-toolbar {
+          position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+          z-index: 999; background: #0f172a; color: white; border: none;
+          border-radius: 50px; padding: 6px 8px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+          display: flex; align-items: center; gap: 6px;
           font-family: 'Inter', sans-serif;
         }
-        .print-btn:hover { background: #1e3a5f; }
+        .pdf-toolbar-label {
+          font-size: 12px; color: #94a3b8; padding: 0 10px 0 6px;
+          font-weight: 500; white-space: nowrap;
+        }
+        .pdf-btn {
+          border: none; border-radius: 40px; padding: 10px 22px;
+          font-size: 14px; font-weight: 600; cursor: pointer;
+          display: flex; align-items: center; gap: 7px;
+          font-family: 'Inter', sans-serif; white-space: nowrap;
+        }
+        .pdf-btn-print { background: #1e40af; color: white; }
+        .pdf-btn-print:hover { background: #1d4ed8; }
+        .pdf-btn-pdf { background: #0ea5e9; color: white; }
+        .pdf-btn-pdf:hover { background: #0284c7; }
 
         /* QUOTE BLOCK */
         .quote-block { background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 24px 0; }
@@ -203,10 +219,16 @@ export default function SalesBrochure() {
         .process-sub { font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4; }
       `}</style>
 
-      {/* Print Button */}
-      <button className="print-btn no-print" onClick={handlePrint}>
-        🖨️ Print / Save PDF
-      </button>
+      {/* PDF Toolbar */}
+      <div className="pdf-toolbar no-print">
+        <span className="pdf-toolbar-label">EstateFlow Brochure</span>
+        <button className="pdf-btn pdf-btn-print" onClick={handlePrint}>
+          🖨️ Print
+        </button>
+        <button className="pdf-btn pdf-btn-pdf" onClick={handlePrint}>
+          ⬇ Save as PDF
+        </button>
+      </div>
 
       <div className="brochure-body">
 

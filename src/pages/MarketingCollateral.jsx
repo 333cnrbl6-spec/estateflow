@@ -43,6 +43,7 @@ export default function MarketingCollateral() {
   };
 
   const printContent = () => {
+    document.title = 'EstateFlow-Marketing-Collateral-2026';
     window.print();
   };
 
