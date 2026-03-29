@@ -57,6 +57,7 @@ const navGroups = [
       { label: 'Expenses', icon: Receipt, path: '/expenses' },
       { label: 'Financials', icon: PoundSterling, path: '/financials' },
       { label: 'Financial Dashboard', icon: TrendingUp, path: '/financial-reporting' },
+      { label: 'Owner Tax Summary', icon: Crown, path: '/owner-financials' },
       { label: 'Accounting', icon: Settings, path: '/accounting' },
     ]
   },
