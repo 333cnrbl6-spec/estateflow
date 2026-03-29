@@ -136,7 +136,7 @@ export default function Sidebar({ onCollapsedChange }) {
               Premiso
             </h1>
             <p className="text-[10px] uppercase tracking-[0.15em] text-sidebar-foreground/50">
-              {user?.business_name ? user.business_name : 'Property Group'}
+              {user?.business_name ? user.business_name : 'Property Software'}
             </p>
           </div>
         )}
