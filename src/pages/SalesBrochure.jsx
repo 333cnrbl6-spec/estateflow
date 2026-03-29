@@ -5,7 +5,7 @@ export default function SalesBrochure() {
   const [orientation, setOrientation] = useState('portrait');
 
   const handlePrint = () => {
-    document.title = 'EstateFlow-Sales-Brochure-2026';
+    document.title = 'Premiso-Sales-Brochure-2026';
     const style = document.createElement('style');
     style.id = '__print_orient';
     style.textContent = `@page { size: A4 ${orientation}; margin: 0; }`;
@@ -276,7 +276,7 @@ export default function SalesBrochure() {
 
       {/* PDF Toolbar */}
       <div className="pdf-toolbar no-print">
-        <span className="pdf-toolbar-label">EstateFlow Brochure</span>
+        <span className="pdf-toolbar-label">Premiso Brochure</span>
         <button
           className="pdf-btn"
           style={{ background: orientation === 'portrait' ? '#334155' : '#0f172a', color: '#94a3b8', fontSize: 12, padding: '8px 14px' }}
@@ -293,7 +293,7 @@ export default function SalesBrochure() {
         {/* ===== COVER PAGE ===== */}
         <div className="cover page-break">
           <div>
-            <div className="cover-logo">Estate<span>Flow</span></div>
+            <div className="cover-logo">Premiso</div>
             <div className="cover-tagline">Property Management Platform</div>
           </div>
 
@@ -305,7 +305,7 @@ export default function SalesBrochure() {
               Management
             </h1>
             <p className="cover-desc">
-              Powerful, compliant, and beautifully designed — EstateFlow unifies the complete spectrum of residential property management: lettings, block management, HMOs, compliance, finance, and a standalone 24/7 out-of-hours call service. One platform. Every workflow.
+              Powerful, compliant, and beautifully designed — Premiso unifies the complete spectrum of residential property management: lettings, block management, HMOs, compliance, finance, and a standalone 24/7 out-of-hours call service. One platform. Every workflow.
             </p>
             <div className="cover-stats">
               <div>
@@ -333,14 +333,14 @@ export default function SalesBrochure() {
               <div>29 Lee Lane, Horwich, Bolton, BL6 7AY</div>
               <div>01204 695919 · info@rbm-nw.co.uk</div>
             </div>
-            <div className="cover-date">© 2026 EstateFlow · Confidential</div>
+            <div className="cover-date">© 2026 Premiso · Confidential</div>
           </div>
         </div>
 
         {/* ===== PAGE 2: THE PROBLEM & OUR SOLUTION ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">THE OPPORTUNITY · 02</div>
           </div>
 
@@ -409,9 +409,9 @@ export default function SalesBrochure() {
           </div>
 
           <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #dbeafe)', borderRadius: 12, padding: '28px 32px', marginTop: 8 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 2 }}>The EstateFlow Solution</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 2 }}>The Premiso Solution</div>
             <p style={{ fontSize: 15, color: '#1e3a5f', lineHeight: 1.8, margin: 0 }}>
-              EstateFlow replaces the chaos with a single, unified platform covering the full spectrum of residential property management — lettings, HMOs, leasehold blocks, and RTM companies. From automatic certificate expiry alerts and tenancy lifecycle management, to a structured 24/7 out-of-hours call service that can be used standalone or fully integrated with your portfolio.
+              Premiso replaces the chaos with a single, unified platform covering the full spectrum of residential property management — lettings, HMOs, leasehold blocks, and RTM companies. From automatic certificate expiry alerts and tenancy lifecycle management, to a structured 24/7 out-of-hours call service that can be used standalone or fully integrated with your portfolio.
             </p>
           </div>
         </div>
@@ -419,14 +419,14 @@ export default function SalesBrochure() {
         {/* ===== PAGE 3: CORE MODULES ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">PLATFORM MODULES · 03</div>
           </div>
 
           <div className="section-eyebrow">What's Included</div>
           <h2 className="section-h2">Everything You Need.<br />One Unified Platform.</h2>
           <p className="section-desc">
-            EstateFlow serves the full range of residential property professionals — from single letting agents managing ASTs to large multi-company groups running leasehold blocks, HMOs, and RTM companies. Every module is legislatively current for England and Wales, and connected to one shared data layer.
+            Premiso serves the full range of residential property professionals — from single letting agents managing ASTs to large multi-company groups running leasehold blocks, HMOs, and RTM companies. Every module is legislatively current for England and Wales, and connected to one shared data layer.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 24 }}>
@@ -480,14 +480,14 @@ export default function SalesBrochure() {
         {/* ===== PAGE 4: COMPLIANCE & BLOCK MANAGEMENT ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">COMPLIANCE DETAIL · 04</div>
           </div>
 
           <div className="section-eyebrow">Regulatory Intelligence</div>
           <h2 className="section-h2">Built for UK Law.<br />Automatic & Audit-Ready.</h2>
           <p className="section-desc">
-            EstateFlow tracks every statutory obligation across your portfolio in real time — automatically alerting you before deadlines are missed, not after.
+            Premiso tracks every statutory obligation across your portfolio in real time — automatically alerting you before deadlines are missed, not after.
           </p>
 
           <table className="compliance-table avoid-break">
@@ -496,7 +496,7 @@ export default function SalesBrochure() {
                 <th>Compliance Area</th>
                 <th>Legislation</th>
                 <th>Frequency</th>
-                <th>EstateFlow Feature</th>
+                <th>Premiso Feature</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -519,7 +519,7 @@ export default function SalesBrochure() {
           </table>
 
           <div className="quote-block avoid-break">
-            <p className="quote-text">"For the first time, I know every certificate status across every property in one screen. Before EstateFlow, I was managing 8 different spreadsheets and still missing things."</p>
+            <p className="quote-text">"For the first time, I know every certificate status across every property in one screen. Before Premiso, I was managing 8 different spreadsheets and still missing things."</p>
             <div className="quote-attr">— Residential Block Manager, North West England</div>
           </div>
         </div>
@@ -527,14 +527,14 @@ export default function SalesBrochure() {
         {/* ===== PAGE 5: OUT-OF-HOURS & EMERGENCY ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">OUT-OF-HOURS SERVICE · 05</div>
           </div>
 
           <div className="section-eyebrow">24/7 Emergency Management — Standalone or Integrated</div>
           <h2 className="section-h2">A Professional Out-of-Hours<br />Service Your Clients Can Trust.</h2>
           <p className="section-desc">
-            The EstateFlow Out-of-Hours service is available as a fully standalone product — you do not need to use any other module to offer it. Any letting agent, block manager, or landlord can subscribe to have their calls handled by a structured, GDPR-compliant system with automatic maintenance order creation, contractor dispatch, and full audit trail. For EstateFlow platform subscribers, every call is automatically linked to the matching property and tenant record.
+            The Premiso Out-of-Hours service is available as a fully standalone product — you do not need to use any other module to offer it. Any letting agent, block manager, or landlord can subscribe to have their calls handled by a structured, GDPR-compliant system with automatic maintenance order creation, contractor dispatch, and full audit trail. For Premiso platform subscribers, every call is automatically linked to the matching property and tenant record.
           </p>
 
           <div className="stats-strip avoid-break">
@@ -638,14 +638,14 @@ export default function SalesBrochure() {
         {/* ===== PAGE 6: FINANCIAL MODULE ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">FINANCIAL MANAGEMENT · 06</div>
           </div>
 
           <div className="section-eyebrow">Financial Intelligence</div>
           <h2 className="section-h2">Complete Financial Visibility<br />Across Your Portfolio.</h2>
           <p className="section-desc">
-            From rent collection to service charge reconciliation — EstateFlow provides real-time financial data, automatic arrears alerting, and accounting integration with QuickBooks and Xero.
+            From rent collection to service charge reconciliation — Premiso provides real-time financial data, automatic arrears alerting, and accounting integration with QuickBooks and Xero.
           </p>
 
           <div className="stats-strip avoid-break">
@@ -712,7 +712,7 @@ export default function SalesBrochure() {
           </div>
 
           <div className="quote-block avoid-break">
-            <p className="quote-text">"Service charge management used to take two days every quarter. With EstateFlow, the breakdowns are automatic — I just approve and send. It's saved us at least £3,000 a year in admin."</p>
+            <p className="quote-text">"Service charge management used to take two days every quarter. With Premiso, the breakdowns are automatic — I just approve and send. It's saved us at least £3,000 a year in admin."</p>
             <div className="quote-attr">— Leasehold Portfolio Manager, Greater Manchester</div>
           </div>
         </div>
@@ -720,7 +720,7 @@ export default function SalesBrochure() {
         {/* ===== PAGE 7: PRICING & TIERS ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">PRICING & PACKAGES · 07</div>
           </div>
 
@@ -798,7 +798,7 @@ export default function SalesBrochure() {
           <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 12, padding: '20px 24px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#14532d', marginBottom: 8 }}>Partner Referral Programme</div>
             <p style={{ fontSize: 13, color: '#166534', lineHeight: 1.7, margin: 0 }}>
-              As an EstateFlow sales partner, you earn a <strong>20% recurring commission</strong> on every subscription for the lifetime of the client. There is no cap. A single Professional client = £69.80/month recurring. Ten clients = £698/month passive income.
+              As an Premiso sales partner, you earn a <strong>20% recurring commission</strong> on every subscription for the lifetime of the client. There is no cap. A single Professional client = £69.80/month recurring. Ten clients = £698/month passive income.
             </p>
           </div>
         </div>
@@ -806,14 +806,14 @@ export default function SalesBrochure() {
         {/* ===== PAGE 8: ONBOARDING & SUPPORT ===== */}
         <div className="page page-break">
           <div className="page-header">
-            <div className="page-logo">Estate<span>Flow</span></div>
+            <div className="page-logo">Premiso</div>
             <div className="page-num">ONBOARDING & SUPPORT · 08</div>
           </div>
 
           <div className="section-eyebrow">Getting Started</div>
           <h2 className="section-h2">Up and Running<br />in Under 2 Weeks.</h2>
           <p className="section-desc">
-            EstateFlow is designed for rapid deployment. Most clients are fully operational within 10 business days. We handle data migration, training, and setup so your team can focus on what matters.
+            Premiso is designed for rapid deployment. Most clients are fully operational within 10 business days. We handle data migration, training, and setup so your team can focus on what matters.
           </p>
 
           <div style={{ marginBottom: 36 }}>
@@ -822,7 +822,7 @@ export default function SalesBrochure() {
                 <div className="timeline-dot"></div>
                 <div className="timeline-label">Day 1–2</div>
                 <div className="timeline-title">Account Setup & Configuration</div>
-                <div className="timeline-desc">Company structure, user roles, and portfolio framework configured by the EstateFlow onboarding team.</div>
+                <div className="timeline-desc">Company structure, user roles, and portfolio framework configured by the Premiso onboarding team.</div>
               </div>
               <div className="timeline-item">
                 <div className="timeline-dot"></div>
@@ -893,7 +893,7 @@ export default function SalesBrochure() {
               <span>Your Property Business?</span>
             </h2>
             <p className="cta-desc">
-              Book a personalised demo and see EstateFlow handling your specific portfolio. We'll show you exactly how much time and money you'll save — with your own data.
+              Book a personalised demo and see Premiso handling your specific portfolio. We'll show you exactly how much time and money you'll save — with your own data.
             </p>
 
             <div className="cta-contact-box">
@@ -917,7 +917,7 @@ export default function SalesBrochure() {
           </div>
 
           <div className="cta-footer">
-            <div>EstateFlow is a trading product of RBM (North West) Limited · Company No. 16608812</div>
+            <div>Premiso is a trading product of RBM (North West) Limited · Company No. 16608812</div>
             <div>© 2026 All Rights Reserved</div>
           </div>
         </div>

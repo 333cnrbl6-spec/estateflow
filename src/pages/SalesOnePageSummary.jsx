@@ -5,7 +5,7 @@ export default function SalesOnePageSummary() {
   const [orientation, setOrientation] = useState('portrait');
 
   const handlePrint = () => {
-    document.title = 'EstateFlow-One-Pager-2026';
+        document.title = 'Premiso-One-Pager-2026';
     const style = document.createElement('style');
     style.id = '__print_orient';
     style.textContent = `@page { size: A4 ${orientation}; margin: 0; }`;
@@ -182,7 +182,7 @@ export default function SalesOnePageSummary() {
         {/* TOP BAR */}
         <div className="top-bar">
           <div>
-            <div className="top-logo">Estate<span>Flow</span></div>
+            <div className="top-logo">Premiso</div>
             <div className="top-tagline">Property Management Platform</div>
           </div>
           <div className="top-right">
@@ -196,7 +196,7 @@ export default function SalesOnePageSummary() {
         <div className="hero">
           <div className="hero-eyebrow">For Letting Agents, Block Managers, HMO Landlords & Property Companies</div>
           <h1 className="hero-h1">The Complete UK Property<br /><span>Management Platform — Lettings to Blocks.</span></h1>
-          <p className="hero-desc">EstateFlow covers the full spectrum of residential property management — ASTs, HMOs, leasehold blocks, RTM companies, and multi-company groups — with built-in compliance, financials, maintenance, CRM, and a 24/7 out-of-hours call service available as a standalone add-on for any portfolio.</p>
+          <p className="hero-desc">Premiso covers the full spectrum of residential property management — ASTs, HMOs, leasehold blocks, RTM companies, and multi-company groups — with built-in compliance, financials, maintenance, CRM, and a 24/7 out-of-hours call service available as a standalone add-on for any portfolio.</p>
         </div>
 
         {/* STATS ROW */}
@@ -269,7 +269,7 @@ export default function SalesOnePageSummary() {
           <div className="col-right">
             {/* Key Benefits */}
             <div className="content-section">
-              <div className="cs-title">Why Clients Switch to EstateFlow</div>
+              <div className="cs-title">Why Clients Switch to Premiso</div>
               <div className="benefit-items">
                 {[
                   { icon: '🏠', text: '<strong>Lettings & blocks in one system</strong> — manage ASTs, HMOs, leasehold blocks and RTM companies from a single login.' },
@@ -323,7 +323,7 @@ export default function SalesOnePageSummary() {
 
         {/* CTA BAR */}
         <div className="cta-bar">
-          <div className="cta-left">Book a Free Demo<br /><span>See EstateFlow with your own portfolio</span></div>
+          <div className="cta-left">Book a Free Demo<br /><span>See Premiso with your own portfolio</span></div>
           <div className="cta-contacts">
             <div className="cta-contact">
               <div className="cta-contact-label">Call</div>

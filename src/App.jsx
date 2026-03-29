@@ -75,7 +75,7 @@ const AuthenticatedApp = () => {
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm text-muted-foreground">Loading EstateFlow...</p>
+          <p className="text-sm text-muted-foreground">Loading Premiso...</p>
         </div>
       </div>
     );

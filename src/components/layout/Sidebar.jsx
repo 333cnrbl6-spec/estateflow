@@ -132,7 +132,7 @@ export default function Sidebar({ onCollapsedChange }) {
         {!collapsed && (
           <div className="overflow-hidden">
             <h1 className="font-serif text-base font-semibold tracking-tight text-sidebar-foreground truncate">
-              EstateFlow
+              Premiso
             </h1>
             <p className="text-[10px] uppercase tracking-[0.15em] text-sidebar-foreground/50">
               {user?.business_name ? user.business_name : 'Property Group'}
