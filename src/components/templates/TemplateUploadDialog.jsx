@@ -143,7 +143,7 @@ export default function TemplateUploadDialog({ open, onOpenChange }) {
               <SelectContent>
                 {TEMPLATE_TYPES.map((type) => (
                   <SelectItem key={type} value={type}>
-                    {type.replace(/_/g, ' ').title()}
+                    {type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                   </SelectItem>
                 ))}
               </SelectContent>

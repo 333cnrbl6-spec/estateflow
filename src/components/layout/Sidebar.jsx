@@ -103,13 +103,7 @@ const navGroups = [
 ];
 
 export default function Sidebar({ onCollapsedChange }) {
-  let location;
-  try {
-    location = useLocation();
-  } catch {
-    // useLocation() called outside Router context - provide fallback
-    location = { pathname: '/' };
-  }
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
 

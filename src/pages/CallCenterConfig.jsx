@@ -11,21 +11,6 @@ import ServiceTierPricing from '@/components/outofhours/ServiceTierPricing';
 
 export default function CallCenterConfig() {
   const { user } = useAuth();
-
-  // Restrict access to admin users only
-  if (user?.role !== 'admin') {
-    return (
-      <div className="p-8 max-w-[1200px] mx-auto">
-        <Card className="flex flex-col items-center justify-center py-12">
-          <Lock className="w-12 h-12 text-destructive mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
-          <p className="text-muted-foreground text-center max-w-md">
-            Call Center Configuration is a developer-only feature. Only app administrators can access this module.
-          </p>
-        </Card>
-      </div>
-    );
-  }
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   const { data: companies = [] } = useQuery({
@@ -41,6 +26,20 @@ export default function CallCenterConfig() {
       setSelectedCompany(companies[0].id);
     }
   }, [companies, selectedCompany]);
+
+  if (user?.role !== 'admin') {
+    return (
+      <div className="p-8 max-w-[1200px] mx-auto">
+        <Card className="flex flex-col items-center justify-center py-12">
+          <Lock className="w-12 h-12 text-destructive mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Call Center Configuration is a developer-only feature. Only app administrators can access this module.
+          </p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto space-y-6">

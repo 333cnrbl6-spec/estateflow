@@ -12,21 +12,6 @@ import CallHistoryPanel from '@/components/outofhours/CallHistoryPanel';
 
 export default function OutOfHoursCallCenter() {
   const { user } = useAuth();
-
-  // Restrict access to admin users only
-  if (user?.role !== 'admin') {
-    return (
-      <div className="p-8 max-w-[1200px] mx-auto">
-        <Card className="flex flex-col items-center justify-center py-12">
-          <Lock className="w-12 h-12 text-destructive mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
-          <p className="text-muted-foreground text-center max-w-md">
-            Out-of-Hours Support is a developer-only feature. Only app administrators can access this module.
-          </p>
-        </Card>
-      </div>
-    );
-  }
   const [activeCall, setActiveCall] = useState(null);
   const [showValidation, setShowValidation] = useState(false);
   const [callStartTime, setCallStartTime] = useState(null);
@@ -84,6 +69,20 @@ export default function OutOfHoursCallCenter() {
     if (!callStartTime) return 0;
     return Math.round((new Date() - callStartTime) / 60000);
   };
+
+  if (user?.role !== 'admin') {
+    return (
+      <div className="p-8 max-w-[1200px] mx-auto">
+        <Card className="flex flex-col items-center justify-center py-12">
+          <Lock className="w-12 h-12 text-destructive mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Developer Only</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Out-of-Hours Support is a developer-only feature. Only app administrators can access this module.
+          </p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-[1600px] mx-auto space-y-6">
