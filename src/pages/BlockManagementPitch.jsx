@@ -146,7 +146,7 @@ export default function BlockManagementPitch() {
       differentiator: 'Complex, expensive, limited SMB adoption',
     },
     {
-      name: 'EstateFlow (with Phase 1)',
+      name: 'Premiso (with Phase 1)',
       block_mgmt_score: '★★★★★ Comprehensive',
       s20_compliance: '★★★★★ Automated',
       building_safety: '★★★★★ Full 2023 Act',
@@ -188,7 +188,7 @@ export default function BlockManagementPitch() {
               Block Management Module Suite
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              EstateFlow Phase 1 Pitch for Local Block Management Agency
+              Premiso Phase 1 Pitch for Local Block Management Agency
             </p>
           </div>
           <Button className="gap-2">
@@ -204,7 +204,7 @@ export default function BlockManagementPitch() {
           <h2 className="text-3xl font-serif font-bold mb-6">Why Block Management?</h2>
           <div className="space-y-4">
             <p className="text-lg text-foreground leading-relaxed">
-              EstateFlow is expanding to serve block management agencies with a purpose-built module suite addressing the critical compliance gaps in the UK residential block management market. This is a high-growth, high-margin opportunity with minimal competition.
+              Premiso is expanding to serve block management agencies with a purpose-built module suite addressing the critical compliance gaps in the UK residential block management market. This is a high-growth, high-margin opportunity with minimal competition.
             </p>
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <p className="text-sm text-amber-900 font-semibold mb-2">Market Gap:</p>
@@ -307,7 +307,7 @@ export default function BlockManagementPitch() {
               <li>✓ <strong>Legal Foundation:</strong> Covers all core statutory requirements (s.20, RTM, Building Safety, CMP)</li>
               <li>✓ <strong>Revenue Driver:</strong> Service charge management + RTM tracking = retention + upsell</li>
               <li>✓ <strong>Competitive Moat:</strong> No competitor offers full Building Safety Act 2023 compliance</li>
-              <li>✓ <strong>MVP-Ready:</strong> 5 integrated modules, achievable in 3-4 months with existing EstateFlow architecture</li>
+              <li>✓ <strong>MVP-Ready:</strong> 5 integrated modules, achievable in 3-4 months with existing Premiso architecture</li>
             </ul>
           </div>
         </section>
@@ -357,7 +357,7 @@ export default function BlockManagementPitch() {
                   <th className="text-left py-3 px-4 font-semibold">AppFolio</th>
                   <th className="text-left py-3 px-4 font-semibold">Yardi</th>
                   <th className="text-left py-3 px-4 font-semibold bg-primary/5">
-                    EstateFlow (Phase 1)
+                    Premiso (Phase 1)
                   </th>
                 </tr>
               </thead>
@@ -421,14 +421,14 @@ export default function BlockManagementPitch() {
           </div>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-900">
-              <strong>EstateFlow's Advantage:</strong> Only UK-first, SMB-focused platform with Building Safety Act 2023 compliance + RTM workflows + s.20 automation + CMP management in a single, affordable system.
+              <strong>Premiso's Advantage:</strong> Only UK-first, SMB-focused platform with Building Safety Act 2023 compliance + RTM workflows + s.20 automation + CMP management in a single, affordable system.
             </p>
           </div>
         </section>
 
         {/* Integration with Existing EstateFlow */}
         <section className="bg-white rounded-xl shadow-lg p-8 border border-border">
-          <h2 className="text-2xl font-serif font-bold mb-6">Seamless Integration with EstateFlow</h2>
+          <h2 className="text-2xl font-serif font-bold mb-6">Seamless Integration with Premiso</h2>
           <div className="space-y-4">
             <p className="text-foreground">
               Block management modules leverage your existing infrastructure:
@@ -526,7 +526,7 @@ export default function BlockManagementPitch() {
         <section className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl p-12 text-center">
           <h2 className="text-3xl font-serif font-bold mb-4">Ready to Expand into Block Management?</h2>
           <p className="mb-8 max-w-2xl mx-auto">
-            Phase 1 is achievable in 3-4 months with your existing architecture. This positions EstateFlow as the only UK-first, SMB-friendly block management SaaS with Building Safety Act 2023 compliance.
+            Phase 1 is achievable in 3-4 months with your existing architecture. This positions Premiso as the only UK-first, SMB-friendly block management SaaS with Building Safety Act 2023 compliance.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button size="lg" variant="outline" className="bg-white text-primary hover:bg-gray-100">

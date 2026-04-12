@@ -11,7 +11,7 @@ export default function DeveloperMarketing() {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
         <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24">
           <h1 className="text-5xl sm:text-6xl font-serif font-bold mb-6">
-            EstateFlow Platform
+            Premiso
           </h1>
           <p className="text-xl text-blue-100 mb-4">
             Enterprise Property Management System
@@ -67,7 +67,7 @@ export default function DeveloperMarketing() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-slate-400">
-                  Comprehensive overview of EstateFlow capabilities, featuring 6 core modules with detailed descriptions and Powell & Co demo metrics.
+                  Comprehensive overview of Premiso capabilities, featuring 6 core modules with detailed descriptions and Powell & Co demo metrics.
                 </p>
                 <div className="space-y-2">
                   <p className="text-xs text-slate-500 font-semibold">INCLUDES:</p>
@@ -99,7 +99,7 @@ export default function DeveloperMarketing() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-slate-400">
-                  Interactive 8-slide walkthrough of the EstateFlow interface with simulated tablet views and real demo data.
+                  Interactive 8-slide walkthrough of the Premiso interface with simulated tablet views and real demo data.
                 </p>
                 <div className="space-y-2">
                   <p className="text-xs text-slate-500 font-semibold">COVERS:</p>
@@ -228,7 +228,7 @@ export default function DeveloperMarketing() {
         <div className="text-center space-y-6 py-12">
           <h2 className="text-3xl font-serif font-bold text-white">Ready to Explore?</h2>
           <p className="text-slate-300 max-w-2xl mx-auto">
-            Select any section above to dive deep into the EstateFlow platform documentation. All materials showcase a fully-functional demo environment with realistic data.
+            Select any section above to dive deep into the Premiso platform documentation. All materials showcase a fully-functional demo environment with realistic data.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/brochure">
@@ -248,7 +248,7 @@ export default function DeveloperMarketing() {
       {/* Footer */}
       <div className="border-t border-slate-700 bg-slate-900/50 mt-16">
         <div className="max-w-7xl mx-auto px-6 py-8 text-center text-slate-400 text-sm">
-          <p>EstateFlow Platform Documentation | All demo data is representative of system capabilities</p>
+          <p>Premiso Platform Documentation | All demo data is representative of system capabilities</p>
         </div>
       </div>
     </div>

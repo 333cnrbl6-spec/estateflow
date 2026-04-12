@@ -882,7 +882,7 @@ export default function SalesBrochure() {
         {/* ===== CTA PAGE ===== */}
         <div className="cta-page page-break">
           <div className="page-header" style={{ borderBottomColor: 'rgba(255,255,255,0.2)' }}>
-            <div className="page-logo" style={{ color: 'white' }}>Estate<span style={{ color: '#38bdf8' }}>Flow</span></div>
+            <div className="page-logo" style={{ color: 'white' }}>Premiso</div>
             <div className="page-num" style={{ color: '#64748b' }}>GET IN TOUCH · 09</div>
           </div>
 

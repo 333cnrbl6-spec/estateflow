@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const process = globalThis.process ?? { env: {} };
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,

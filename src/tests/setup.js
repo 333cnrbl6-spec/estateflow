@@ -73,7 +73,8 @@ vi.mock('@/api/base44Client', () => ({
 }));
 
 // Setup React Query
-global.queryClient = new QueryClient({
+// eslint-disable-next-line no-undef
+window.queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: false },
     mutations: { retry: false }
