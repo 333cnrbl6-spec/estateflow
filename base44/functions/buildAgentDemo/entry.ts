@@ -26,6 +26,15 @@ Find and return all available information including:
 - Background narrative (2-3 sentences about the company history and focus)
 - Typical portfolio size (residential lettings, block management units etc)
 
+Also extract brand identity from their website:
+- primary_color: their dominant brand colour as a hex code (e.g. #1a3a52) — look at their header, logo, buttons
+- secondary_color: secondary brand colour as hex
+- accent_color: accent/highlight colour as hex
+- logo_url: direct URL to their logo image if publicly available
+- tagline: their strapline or tagline if visible on the site
+- font_hint: the primary font name they appear to use (e.g. 'Montserrat', 'Open Sans') if determinable
+- brand_tone: one of 'professional', 'modern', 'traditional', 'friendly'
+
 Based on the scale of this agency, recommend realistic demo data numbers:
 - demo_properties: how many properties to create (3-8)
 - demo_units: how many units total across those properties (10-40)  
@@ -49,7 +58,16 @@ Return as JSON matching this schema:
   "demo_properties": number,
   "demo_units": number,
   "demo_tenants": number,
-  "portfolio_notes": string
+  "portfolio_notes": string,
+  "brand": {
+    "primary_color": string,
+    "secondary_color": string,
+    "accent_color": string,
+    "logo_url": string,
+    "tagline": string,
+    "font_hint": string,
+    "brand_tone": string
+  }
 }
 `;
 
@@ -82,7 +100,19 @@ Return as JSON matching this schema:
             demo_properties: { type: 'number' },
             demo_units: { type: 'number' },
             demo_tenants: { type: 'number' },
-            portfolio_notes: { type: 'string' }
+            portfolio_notes: { type: 'string' },
+            brand: {
+              type: 'object',
+              properties: {
+                primary_color: { type: 'string' },
+                secondary_color: { type: 'string' },
+                accent_color: { type: 'string' },
+                logo_url: { type: 'string' },
+                tagline: { type: 'string' },
+                font_hint: { type: 'string' },
+                brand_tone: { type: 'string' }
+              }
+            }
           }
         }
       });
@@ -195,8 +225,19 @@ Return as JSON:
         }))
       });
 
-      // Set this as the active demo company on the user's profile
-      await base44.auth.updateMe({ current_demo_company_id: company.id });
+      // Set this as the active demo company on the user's profile, including brand
+      const demoBrand = r.brand ? {
+        primary_color: r.brand.primary_color || '#1a3a52',
+        secondary_color: r.brand.secondary_color || '#2d5a8c',
+        accent_color: r.brand.accent_color || '#f0ad4e',
+        logo_url: r.brand.logo_url || null,
+        tagline: r.brand.tagline || null,
+        font_hint: r.brand.font_hint || null,
+        brand_tone: r.brand.brand_tone || 'professional',
+        company_name: agentName,
+        website: r.website || null,
+      } : null;
+      await base44.auth.updateMe({ current_demo_company_id: company.id, demo_brand: demoBrand });
 
       // Insert Properties and track IDs
       const propertyIds = [];

@@ -316,6 +316,37 @@ export default function SalesDemoSetup() {
               </CardContent>
             </Card>
 
+            {/* Brand Preview */}
+            {researchData.brand && (
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-white text-base flex items-center gap-2">
+                    <span style={{ color: researchData.brand.primary_color || '#f0ad4e' }}>◉</span> Brand Identity Detected
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    {researchData.brand.logo_url && (
+                      <img src={researchData.brand.logo_url} alt="Logo" className="h-10 object-contain bg-white rounded p-1" onError={e => e.target.style.display='none'} />
+                    )}
+                    <div>
+                      {researchData.brand.tagline && <p className="text-slate-200 text-sm italic">"{researchData.brand.tagline}"</p>}
+                      {researchData.brand.font_hint && <p className="text-slate-400 text-xs mt-0.5">Font: {researchData.brand.font_hint} · Tone: {researchData.brand.brand_tone}</p>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {[researchData.brand.primary_color, researchData.brand.secondary_color, researchData.brand.accent_color].filter(Boolean).map((col, i) => (
+                      <div key={i} className="flex items-center gap-1.5">
+                        <div className="w-6 h-6 rounded border border-slate-600" style={{ background: col }} />
+                        <span className="text-slate-400 text-xs">{col}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-slate-500 text-xs">These colours and fonts will be applied to your demo environment.</p>
+                </CardContent>
+              </Card>
+            )}
+
             {researchData.background_notes && (
               <Card className="bg-amber-950/40 border-amber-800">
                 <CardContent className="pt-4 pb-4 text-sm text-amber-200">
