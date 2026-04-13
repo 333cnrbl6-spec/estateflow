@@ -100,6 +100,7 @@ import TenantSelfServicePortal from './pages/TenantSelfServicePortal';
 import Settings from './pages/Settings';
 import FinancialReportingModule from './pages/FinancialReportingModule';
 import ComplianceHub from './pages/ComplianceHub';
+import FinancialReconciliation from './pages/FinancialReconciliation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -216,6 +217,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/financial-reports" element={<FinancialReportingModule />} />
         <Route path="/compliance-hub" element={<ComplianceHub />} />
+        <Route path="/reconciliation" element={<FinancialReconciliation />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
