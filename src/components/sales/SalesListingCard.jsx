@@ -185,8 +185,7 @@ export default function SalesListingCard({ listing }) {
           </div>
         </div>
       )}
-    </Card>
-      </CardContent>
-    </Card>
+    </CardContent>
+  </Card>
   );
 }
