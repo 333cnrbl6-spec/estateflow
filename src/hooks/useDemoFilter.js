@@ -5,6 +5,7 @@ export function useDemoFilter() {
   const [demoCompanyId, setDemoCompanyId] = useState(null);
   const [propertyIds, setPropertyIds] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     const loadDemoContext = async () => {

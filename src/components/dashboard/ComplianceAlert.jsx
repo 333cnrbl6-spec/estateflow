@@ -1,26 +1,44 @@
 import React from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, parseISO } from 'date-fns';
 import S21Banner from '@/components/shared/S21Banner';
-
-const DEADLINES = [
-  { company: 'Powell & Co Assets Ltd', type: 'Accounts', due: '2026-03-31' },
-  { company: 'EIV Estates Ltd', type: 'Confirmation Statement', due: '2026-04-02' },
-  { company: 'Powell & Co Management Ltd', type: 'Accounts', due: '2026-05-31' },
-];
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 export default function ComplianceAlert() {
+  const { demoCompanyId, loading } = useDemoFilter();
   const today = new Date();
-  const urgent = DEADLINES.filter(d => differenceInDays(new Date(d.due), today) <= 30)
+
+  const { data: companies = [] } = useQuery({
+    queryKey: ['companies-compliance-alert', demoCompanyId],
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const c = await base44.entities.Company.get(demoCompanyId);
+        return c ? [c] : [];
+      }
+      return base44.entities.Company.list('-created_date', 200);
+    },
+    enabled: !loading,
+  });
+
+  // Build deadline list from entity data
+  const deadlines = companies.flatMap(c => {
+    const items = [];
+    if (c.accounts_next_due) items.push({ company: c.name, type: 'Accounts', due: c.accounts_next_due });
+    if (c.confirmation_next_due) items.push({ company: c.name, type: 'Confirmation Statement', due: c.confirmation_next_due });
+    return items;
+  });
+
+  const urgent = deadlines
+    .filter(d => differenceInDays(parseISO(d.due), today) <= 30)
     .sort((a, b) => new Date(a.due) - new Date(b.due));
 
   return (
     <>
-      {/* S21 / Renters' Rights Act Banner */}
       <div className="mb-4"><S21Banner compact /></div>
 
-      {/* Companies House Deadlines */}
       {urgent.length > 0 && (
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-lg p-4 mb-6 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between gap-4">
@@ -32,7 +50,7 @@ export default function ComplianceAlert() {
                 <p className="text-sm font-bold text-foreground">Companies House Deadlines</p>
                 <div className="mt-2 space-y-2">
                   {urgent.map((d, i) => {
-                    const days = differenceInDays(new Date(d.due), today);
+                    const days = differenceInDays(parseISO(d.due), today);
                     return (
                       <div key={i} className="flex items-center justify-between text-xs bg-white/50 rounded px-2 py-1.5">
                         <div>
