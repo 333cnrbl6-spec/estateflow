@@ -27,6 +27,7 @@ const navGroups = [
       { label: 'Leads', icon: Users, path: '/sales?tab=leads' },
       { label: 'Pipeline', icon: GitBranch, path: '/sales?tab=pipeline' },
       { label: 'Viewings', icon: Calendar, path: '/viewings' },
+      { label: 'Performance', icon: BarChart3, path: '/agent-performance' },
       { label: 'Market Reports', icon: BookOpen, path: '/market-reports' },
       { label: 'Buyer Portal', icon: DoorOpen, path: '/buyer-portal' },
     ]
