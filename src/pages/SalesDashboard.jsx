@@ -33,6 +33,7 @@ import SalesSearchFilters from "@/components/sales/SalesSearchFilters";
 import LeadScoringPanel from "@/components/sales/LeadScoringPanel";
 import SalesMessageThread from "@/components/sales/SalesMessageThread";
 import ViewingScheduler from "@/components/sales/ViewingScheduler";
+import PropertyValuationPanel from "@/components/sales/PropertyValuationPanel";
 
 export default function SalesDashboard() {
   const [leadFormOpen, setLeadFormOpen] = useState(false);
@@ -213,7 +214,7 @@ export default function SalesDashboard() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="leads">Leads ({leads.length})</TabsTrigger>
           <TabsTrigger value="listings">Listings ({listings.length})</TabsTrigger>
@@ -225,6 +226,10 @@ export default function SalesDashboard() {
           <TabsTrigger value="viewings">
             <Calendar className="w-4 h-4 mr-1" />
             Viewings
+          </TabsTrigger>
+          <TabsTrigger value="valuations">
+            <BarChart3 className="w-4 h-4 mr-1" />
+            Valuations
           </TabsTrigger>
         </TabsList>
 
@@ -455,6 +460,29 @@ export default function SalesDashboard() {
                     Go to Viewings Page
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="valuations">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5" />
+                  AI Property Valuation
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Generate accurate property valuations using AI analysis of market data
+                </p>
+              </CardHeader>
+              <CardContent>
+                <PropertyValuationPanel 
+                  propertyId={null}
+                  listingId={null}
+                  address="Select a property to valuate"
+                />
               </CardContent>
             </Card>
           </div>

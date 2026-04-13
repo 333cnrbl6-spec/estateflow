@@ -11,9 +11,12 @@ import {
   Calendar,
   Eye,
   FileText,
-  ExternalLink
+  ExternalLink,
+  BarChart3
 } from "lucide-react";
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import PropertyValuationPanel from './PropertyValuationPanel';
 
 const statusColors = {
   draft: "bg-gray-500",
@@ -26,6 +29,8 @@ const statusColors = {
 };
 
 export default function SalesListingCard({ listing }) {
+  const [showValuation, setShowValuation] = useState(false);
+
   const formatPrice = (price) => {
     if (!price) return 'POA';
     return price >= 1000000 
@@ -150,11 +155,37 @@ export default function SalesListingCard({ listing }) {
             <Button variant="outline" size="sm" className="flex-1">
               View Details
             </Button>
-            <Button size="sm" className="flex-1">
-              Edit
+            <Button 
+              size="sm" 
+              className="flex-1 gap-2"
+              onClick={() => setShowValuation(true)}
+            >
+              <BarChart3 className="w-4 h-4" />
+              Valuation
             </Button>
           </div>
         </div>
+      </CardContent>
+      
+      {/* Valuation Dialog */}
+      {showValuation && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-background border-b p-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Property Valuation</h3>
+              <Button variant="ghost" size="sm" onClick={() => setShowValuation(false)}>✕</Button>
+            </div>
+            <div className="p-4">
+              <PropertyValuationPanel 
+                propertyId={listing.property_id}
+                listingId={listing.id}
+                address={listing.property_id}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
       </CardContent>
     </Card>
   );
