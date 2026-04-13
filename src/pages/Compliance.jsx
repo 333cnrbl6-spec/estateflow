@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { differenceInDays, parseISO, format, isBefore } from 'date-fns';
-import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck, Upload } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/shared/PageHeader';
+import { Button } from '@/components/ui/button';
 import S21Banner from '@/components/shared/S21Banner';
 import { cn } from '@/lib/utils';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
+import CertificateUploadDialog from '@/components/compliance/CertificateUploadDialog';
 
 const TODAY = new Date();
 
@@ -58,6 +60,7 @@ function DaysChip({ dueDateStr }) {
 
 export default function Compliance() {
   const [search, setSearch] = useState('');
+  const [showUpload, setShowUpload] = useState(false);
   const [filterSeverity, setFilterSeverity] = useState('all');
   const { demoCompanyId, loading: demoLoading } = useDemoFilter();
 
@@ -105,10 +108,15 @@ export default function Compliance() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
+      <CertificateUploadDialog open={showUpload} onClose={() => setShowUpload(false)} />
       <PageHeader
         title="Compliance Dashboard"
         subtitle="Companies House filing deadlines — accounts & confirmation statements"
-      />
+      >
+        <Button onClick={() => setShowUpload(true)} className="gap-2">
+          <Upload className="w-4 h-4" /> Upload Certificate
+        </Button>
+      </PageHeader>
 
       <div className="mb-6"><S21Banner /></div>
 
