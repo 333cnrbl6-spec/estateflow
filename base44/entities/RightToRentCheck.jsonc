@@ -1,0 +1,174 @@
+{
+  "name": "RightToRentCheck",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "check_type": {
+      "type": "string",
+      "enum": [
+        "initial",
+        "follow_up",
+        "random"
+      ],
+      "default": "initial",
+      "description": "Type of Right to Rent check"
+    },
+    "check_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date check was performed"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "british_passport",
+        "ee_passport",
+        "uk_residence_permit",
+        "biometric_residence_permit",
+        "visa",
+        "settled_status",
+        "pre_settled_status",
+        "other"
+      ],
+      "description": "Type of document checked"
+    },
+    "document_number": {
+      "type": "string",
+      "description": "Document reference number"
+    },
+    "document_expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expiry date of document (if applicable)"
+    },
+    "tenant_full_name": {
+      "type": "string",
+      "description": "Full name as shown on document"
+    },
+    "tenant_date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth"
+    },
+    "tenant_nationality": {
+      "type": "string",
+      "description": "Nationality as stated on document"
+    },
+    "check_method": {
+      "type": "string",
+      "enum": [
+        "in_person",
+        "video_call",
+        "online_idvp"
+      ],
+      "description": "How the check was conducted"
+    },
+    "documents_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether original documents were verified"
+    },
+    "copies_retained": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether copies were taken and retained"
+    },
+    "copy_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to retained document copies"
+    },
+    "check_result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "pending_home_office"
+      ],
+      "description": "Result of the check"
+    },
+    "right_to_rent_status": {
+      "type": "string",
+      "enum": [
+        "unlimited",
+        "time_limited",
+        "no_right_to_rent"
+      ],
+      "description": "Tenant's right to rent status"
+    },
+    "time_limit_expiry": {
+      "type": "string",
+      "format": "date",
+      "description": "When tenant's right to rent expires (if time-limited)"
+    },
+    "follow_up_check_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a follow-up check is required"
+    },
+    "follow_up_check_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date for follow-up check (12 months after or before expiry)"
+    },
+    "follow_up_check_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether follow-up check was completed"
+    },
+    "home_office_reference": {
+      "type": "string",
+      "description": "Home Office reference number (if applicable)"
+    },
+    "home_office_check_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date Home Office check was performed"
+    },
+    "home_office_response": {
+      "type": "string",
+      "enum": [
+        "right_to_rent",
+        "no_right_to_rent",
+        "pending"
+      ],
+      "description": "Home Office response"
+    },
+    "conducted_by": {
+      "type": "string",
+      "description": "Name of person who conducted the check"
+    },
+    "conducted_by_role": {
+      "type": "string",
+      "description": "Role of person who conducted the check"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "property_id",
+    "check_type",
+    "check_date",
+    "document_type",
+    "check_method",
+    "documents_verified",
+    "copies_retained",
+    "check_result",
+    "right_to_rent_status"
+  ]
+}

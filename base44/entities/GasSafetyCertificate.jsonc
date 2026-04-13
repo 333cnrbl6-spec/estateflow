@@ -1,0 +1,203 @@
+{
+  "name": "GasSafetyCertificate",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (if applicable)"
+    },
+    "certificate_number": {
+      "type": "string",
+      "description": "Unique CP12 certificate reference number"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date certificate was issued"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date certificate expires (12 months from issue)"
+    },
+    "engineer_name": {
+      "type": "string",
+      "description": "Name of Gas Safe registered engineer"
+    },
+    "engineer_gas_safe_number": {
+      "type": "string",
+      "description": "Gas Safe Register number (7 digits)"
+    },
+    "engineer_company": {
+      "type": "string",
+      "description": "Engineer's company name"
+    },
+    "appliances_tested": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "appliance_type": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "serial_number": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "at_risk",
+              "unsafe"
+            ]
+          },
+          "defects": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "List of appliances tested"
+    },
+    "flue_flow_tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "appliance": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail"
+            ]
+          }
+        }
+      }
+    },
+    "ventilation_check": {
+      "type": "string",
+      "enum": [
+        "adequate",
+        "inadequate"
+      ],
+      "description": "Ventilation sufficiency"
+    },
+    "gas_tightness_test": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail"
+      ],
+      "description": "Gas tightness test result"
+    },
+    "defects_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "defect_type": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "immediately_dangerous",
+              "at_risk",
+              "not_to_current_standard"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "action_taken": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "remedial_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "engineer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tenant_copy_served_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date copy provided to tenant (required within 28 days)"
+    },
+    "new_tenant_copy_served": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether copy served to new tenant before move-in"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to uploaded CP12 certificate PDF"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "expiring_soon",
+        "expired",
+        "remedial_required"
+      ],
+      "default": "valid",
+      "description": "Current compliance status"
+    },
+    "last_inspection_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of most recent inspection"
+    },
+    "next_inspection_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Date next inspection is due (12 months)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "certificate_number",
+    "issue_date",
+    "expiry_date",
+    "engineer_name",
+    "engineer_gas_safe_number",
+    "gas_tightness_test",
+    "ventilation_check"
+  ]
+}

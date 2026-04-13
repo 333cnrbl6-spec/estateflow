@@ -1,0 +1,204 @@
+{
+  "name": "DepositProtection",
+  "type": "object",
+  "properties": {
+    "tenancy_id": {
+      "type": "string",
+      "description": "Reference to Tenancy entity"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "scheme_name": {
+      "type": "string",
+      "enum": [
+        "dps",
+        "mydeposits",
+        "tds"
+      ],
+      "description": "Government-approved protection scheme"
+    },
+    "scheme_reference": {
+      "type": "string",
+      "description": "Unique reference number from scheme"
+    },
+    "deposit_amount": {
+      "type": "number",
+      "description": "Deposit amount in GBP"
+    },
+    "rent_amount": {
+      "type": "number",
+      "description": "Monthly rent in GBP (for cap calculation)"
+    },
+    "tenancy_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Tenancy start date"
+    },
+    "deposit_received_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date deposit was received from tenant"
+    },
+    "protected_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date deposit was protected (must be within 30 days)"
+    },
+    "prescribed_info_served_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date prescribed information was served (within 30 days)"
+    },
+    "prescribed_info_method": {
+      "type": "string",
+      "enum": [
+        "email",
+        "post",
+        "hand_delivered",
+        "other"
+      ],
+      "description": "How prescribed information was served"
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": [
+        "compliant",
+        "late_protection",
+        "not_protected",
+        "disputed"
+      ],
+      "default": "compliant",
+      "description": "Overall compliance status"
+    },
+    "days_to_protect": {
+      "type": "number",
+      "description": "Number of days between receipt and protection"
+    },
+    "is_late": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether protection was late (>30 days)"
+    },
+    "penalty_exposure": {
+      "type": "number",
+      "description": "Potential penalty (1-3x deposit amount)"
+    },
+    "disputes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dispute_type": {
+            "type": "string"
+          },
+          "raised_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "amount_disputed": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "resolved",
+              "adjudication",
+              "court"
+            ]
+          },
+          "resolution_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "outcome": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Deposit disputes raised"
+    },
+    "deductions_proposed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "evidence_url": {
+            "type": "string"
+          },
+          "agreed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Proposed deductions at end of tenancy"
+    },
+    "deductions_agreed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Agreed deductions"
+    },
+    "deposit_returned_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date deposit (or balance) was returned to tenant"
+    },
+    "deposit_returned_amount": {
+      "type": "number",
+      "description": "Amount returned to tenant"
+    },
+    "tenancy_end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Tenancy end date"
+    },
+    "certificate_url": {
+      "type": "string",
+      "description": "URL to deposit protection certificate"
+    },
+    "prescribed_info_document_url": {
+      "type": "string",
+      "description": "URL to prescribed information document"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenancy_id",
+    "tenant_id",
+    "property_id",
+    "scheme_name",
+    "scheme_reference",
+    "deposit_amount",
+    "deposit_received_date",
+    "protected_date",
+    "prescribed_info_served_date"
+  ]
+}

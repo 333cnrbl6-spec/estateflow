@@ -1,0 +1,179 @@
+{
+  "name": "EICRCertificate",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (if applicable)"
+    },
+    "certificate_reference": {
+      "type": "string",
+      "description": "EICR certificate reference number"
+    },
+    "inspection_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of electrical inspection"
+    },
+    "next_due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date next EICR is due (5 years from inspection)"
+    },
+    "contractor_name": {
+      "type": "string",
+      "description": "Name of electrical contractor"
+    },
+    "contractor_company": {
+      "type": "string",
+      "description": "Contractor company name"
+    },
+    "contractor_qualifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Qualifications (e.g., City & Guilds 2391, NICEIC registered)"
+    },
+    "contractor_accreditation": {
+      "type": "string",
+      "enum": [
+        "niceic",
+        "napit",
+        "elecsa",
+        "stroma",
+        "other"
+      ],
+      "description": "Accreditation body"
+    },
+    "supply_characteristics": {
+      "type": "object",
+      "properties": {
+        "voltage": {
+          "type": "string"
+        },
+        "phases": {
+          "type": "string",
+          "enum": [
+            "single",
+            "three"
+          ]
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "external_loop_impedance": {
+          "type": "string"
+        },
+        "prospective_fault_current": {
+          "type": "string"
+        }
+      }
+    },
+    "classification_codes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "C1",
+              "C2",
+              "C3",
+              "FI",
+              "N/V"
+            ]
+          },
+          "location": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "regulation_reference": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Observations with classification codes"
+    },
+    "overall_assessment": {
+      "type": "string",
+      "enum": [
+        "satisfactory",
+        "unsatisfactory"
+      ],
+      "description": "Overall EICR result"
+    },
+    "remedial_work_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether C1 or C2 codes require remedial work"
+    },
+    "remedial_work_deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline for remedial work (28 days from inspection for C1/C2)"
+    },
+    "remedial_completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date remedial work was completed"
+    },
+    "remedial_contractor": {
+      "type": "string",
+      "description": "Contractor who completed remedial work"
+    },
+    "remedial_certificate_url": {
+      "type": "string",
+      "description": "URL to Electrical Installation Condition Report"
+    },
+    "tenant_copy_served_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date copy provided to tenant (within 28 days)"
+    },
+    "new_tenant_copy_served": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether copy served to new tenant before move-in"
+    },
+    "local_authority_copy_served": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether copy served to local authority upon request"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to uploaded EICR PDF"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "expiring_soon",
+        "expired",
+        "remedial_required",
+        "unsatisfactory"
+      ],
+      "default": "valid",
+      "description": "Current compliance status"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "certificate_reference",
+    "inspection_date",
+    "next_due_date",
+    "contractor_name",
+    "overall_assessment"
+  ]
+}

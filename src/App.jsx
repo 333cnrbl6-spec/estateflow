@@ -84,6 +84,7 @@ import MarketReports from './pages/MarketReports';
 import BuyerPortal from './pages/BuyerPortal';
 import Viewings from './pages/Viewings';
 import AgentPerformanceDashboard from './pages/AgentPerformanceDashboard';
+import ComplianceDashboard2 from './pages/ComplianceDashboard2';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -184,6 +185,7 @@ const AuthenticatedApp = () => {
         <Route path="/buyer-portal" element={<BuyerPortal />} />
         <Route path="/viewings" element={<Viewings />} />
         <Route path="/agent-performance" element={<AgentPerformanceDashboard />} />
+        <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
