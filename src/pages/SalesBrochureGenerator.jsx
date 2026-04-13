@@ -82,6 +82,27 @@ const PLATFORM_FEATURES = [
     badges: ['Live CH data', 'Deadline alerts', 'Director tracking'] },
 ];
 
+const INTEGRATIONS = [
+  { logo: '🟦', name: 'Xero', category: 'Accounting', color: '#1BA5E0', bg: '#e8f7fd', border: '#b3e5f7',
+    desc: 'Two-way sync with Xero — transactions, rent receipts, service charge invoices and expenses post automatically. Your accountant sees clean, reconciled books without manual data entry.', benefit: 'Eliminate double-entry bookkeeping between your PM software and accounts.' },
+  { logo: '🟧', name: 'Sage', category: 'Accounting', color: '#00DC82', bg: '#e6fdf4', border: '#b3f0d9',
+    desc: 'Export-ready Sage-compatible data files at the click of a button. Supports Sage 50 and Sage Business Cloud — complete with nominal codes, cost centres and period mapping.', benefit: 'Your existing Sage workflow, now fed automatically by Premiso.' },
+  { logo: '🟩', name: 'QuickBooks', category: 'Accounting', color: '#2CA01C', bg: '#edfce8', border: '#c3f0bc',
+    desc: 'Full QuickBooks Online integration — bank feeds, expense categorisation, owner statement generation and VAT-ready exports. All reconciled automatically from your Premiso ledger.', benefit: 'Cut month-end close from days to hours.' },
+  { logo: '🏛️', name: 'Companies House', category: 'Government', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe',
+    desc: 'The only property platform with a native Companies House API. Director changes, accounts deadlines, confirmation statement dates and SIC codes are pulled live — no manual checking.', benefit: 'Never miss a filing deadline for any of your managed legal entities.' },
+  { logo: '📧', name: 'Mailchimp / SendGrid', category: 'Communications', color: '#FFE01B', bg: '#fefce8', border: '#fde68a',
+    desc: 'Bulk email campaigns to landlords, leaseholders or tenants. Sync contact lists from Premiso directly, trigger automated communications from workflow events, track open rates.', benefit: 'Communicate at scale without leaving your property data behind.' },
+  { logo: '📱', name: 'Twilio / SMS', category: 'Communications', color: '#F22F46', bg: '#fff1f2', border: '#fecdd3',
+    desc: 'Automated SMS notifications for rent reminders, maintenance updates, inspection schedules and emergency call confirmations — all triggered directly from workflow events in Premiso.', benefit: 'Tenants and leaseholders stay informed without any manual effort.' },
+  { logo: '🔏', name: 'DPS / myDeposits / TDS', category: 'Deposits', color: '#7c3aed', bg: '#fdf4ff', border: '#e9d5ff',
+    desc: 'Native integration with all three government-approved tenancy deposit schemes. Register deposits, issue prescribed information, manage disputes and track protection status — all within Premiso.', benefit: 'Stay legally compliant on every tenancy — no separate logins.' },
+  { logo: '📂', name: 'DocuSign / e-Signature', category: 'Documents', color: '#FFCC00', bg: '#fefce8', border: '#fde68a',
+    desc: 'Send tenancy agreements, compliance notices and legal documents for e-signature directly from Premiso. Full audit trail of who signed, when, and from where — legally binding.', benefit: 'Move tenants in faster — no printing, scanning or postal delays.' },
+  { logo: '🔗', name: 'Open API / Zapier', category: 'Automation', color: '#FF4A00', bg: '#fff7ed', border: '#fed7aa',
+    desc: 'Premiso exposes a full REST API and Zapier integration — connect to any tool in your business. CRMs, spreadsheets, appointment booking, phone systems, reporting dashboards.', benefit: 'Build your own workflows without waiting for us to build them.' },
+];
+
 const COMPETITOR_DEFAULTS = {
   competitor_names: ['Arthur Online', 'Jupix'],
   rows: [
@@ -417,6 +438,53 @@ export default function SalesBrochureGenerator() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <PFoot agentName={agentName} />
+          </div>
+
+          {/* ══ PAGE 4b: INTEGRATIONS ════════════════════════════════════════ */}
+          <div className="brochure-page">
+            <PHead primary={PRIMARY} accent={ACCENT} title="Integrations &amp; Connections" subtitle="Premiso works with the tools your business already relies on" page={5} />
+
+            <div style={{ flex: 1, padding: '22px 44px' }}>
+              <p style={{ fontSize: 11.5, color: '#374151', lineHeight: 1.7, marginBottom: 18 }}>
+                Premiso is designed to sit at the centre of your business — connected to your accounting software, your deposit schemes, your communications tools and government data sources. No more exporting spreadsheets or rekeying data between systems. Everything flows automatically.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 22 }}>
+                {INTEGRATIONS.map((int, i) => (
+                  <div key={i} style={{ background: int.bg, border: `1.5px solid ${int.border}`, borderRadius: 12, padding: '14px 15px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+                      <div style={{ fontSize: 22 }}>{int.logo}</div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: int.color }}>{int.name}</div>
+                        <div style={{ fontSize: 9, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>{int.category}</div>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 9.5, color: '#374151', lineHeight: 1.6, margin: '0 0 8px' }}>{int.desc}</p>
+                    <div style={{ fontSize: 9.5, padding: '5px 9px', background: `${int.color}18`, color: int.color, borderRadius: 7, fontWeight: 700 }}>✓ {int.benefit}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Integration summary banner */}
+              <div style={{ background: PRIMARY, borderRadius: 14, padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: ACCENT, marginBottom: 5 }}>One Source of Truth</div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: 0 }}>
+                    Every integration in Premiso is bi-directional where possible — data flows in and out without manual intervention. Your accounting software stays in sync with your rent ledger. Your deposit schemes are always up to date. Your tenants receive automated updates without anyone lifting a finger.
+                  </p>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, flexShrink: 0 }}>
+                  {[{ v: '9+', l: 'Integrations' }, { v: 'REST', l: 'Open API' }, { v: '2-way', l: 'Data Sync' }, { v: 'Zapier', l: 'No-code Ready' }].map((s, i) => (
+                    <div key={i} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: ACCENT }}>{s.v}</div>
+                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 2 }}>{s.l}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
