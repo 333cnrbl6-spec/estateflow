@@ -144,7 +144,7 @@ export default function DeveloperDemoSwitcher() {
                 <Sparkles className="w-6 h-6 text-amber-400" />
                 <div>
                   <p className="text-white font-semibold">Sales Demo Builder</p>
-                  <p className="text-amber-300 text-sm">Research a real letting agent and auto-build a tailored demo</p>
+                  <p className="text-amber-300 text-sm">Research any UK letting agent or property company and auto-build a tailored demo</p>
                 </div>
               </div>
               <Play className="w-5 h-5 text-amber-400" />

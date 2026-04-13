@@ -104,7 +104,7 @@ export default function SalesDemoSetup() {
             <h1 className="text-3xl font-serif font-bold text-white">Sales Demo Builder</h1>
           </div>
           <p className="text-slate-400">
-            Select a Horwich letting agent — Premiso will research their real-world background and build a tailored demo.
+            Enter any UK letting agent or property management company — Premiso will research their real-world background and build a tailored demo.
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function SalesDemoSetup() {
                 <div>
                   <label className="text-xs text-slate-400 mb-1.5 block">Company / Agent Name *</label>
                   <Input
-                    placeholder="e.g. Redman Casey, Regency, Your Property Manager Ltd"
+                    placeholder="e.g. Hunters, Belvoir, Your Property Manager Ltd"
                     value={searchName}
                     onChange={e => setSearchName(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -161,7 +161,7 @@ export default function SalesDemoSetup() {
                 <div>
                   <label className="text-xs text-slate-400 mb-1.5 block">Location (optional)</label>
                   <Input
-                    placeholder="e.g. Horwich Bolton, Manchester, Leeds"
+                    placeholder="e.g. Manchester, Leeds, London, Birmingham"
                     value={searchLocation}
                     onChange={e => setSearchLocation(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -182,7 +182,7 @@ export default function SalesDemoSetup() {
             <div className="text-center">
               <p className="text-slate-500 text-xs mb-3">Quick examples</p>
               <div className="flex flex-wrap gap-2 justify-center">
-                {['Redman Casey, Horwich', 'Regency, Bolton', 'Lancasters, Horwich', 'Your Name, Any Town'].map(example => (
+                {['Redman Casey, Bolton', 'Countrywide, London', 'Hunters, Leeds', 'Belvoir, Manchester'].map(example => (
                   <button
                     key={example}
                     onClick={() => {
