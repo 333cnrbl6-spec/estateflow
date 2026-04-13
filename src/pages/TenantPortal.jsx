@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import {
   FileText, Wrench, Bell, Home, PoundSterling, Calendar, Lock,
-  Upload, CheckCircle2, Clock, AlertTriangle, ChevronRight, Loader2, Phone, Download
+  Upload, CheckCircle2, Clock, AlertTriangle, ChevronRight, Loader2, Phone, Download, MessageCircle
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
+import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -552,7 +553,7 @@ export default function TenantPortal() {
         </div>
 
         <Tabs defaultValue="lease">
-          <TabsList className="grid w-full grid-cols-5 mb-4 h-auto">
+          <TabsList className="grid w-full grid-cols-6 mb-4 h-auto">
             <TabsTrigger value="lease" className="flex flex-col items-center gap-0.5 py-2 text-[11px]">
               <Home className="w-4 h-4" /> Lease
             </TabsTrigger>
@@ -570,13 +571,17 @@ export default function TenantPortal() {
             <TabsTrigger value="documents" className="flex flex-col items-center gap-0.5 py-2 text-[11px]">
               <FileText className="w-4 h-4" /> Docs
             </TabsTrigger>
-          </TabsList>
+            <TabsTrigger value="messages" className="flex flex-col items-center gap-0.5 py-2 text-[11px]">
+              <MessageCircle className="w-4 h-4" /> Messages
+            </TabsTrigger>
+            </TabsList>
 
           <TabsContent value="lease"><LeaseTab tenant={tenant} unit={unit} property={property} /></TabsContent>
           <TabsContent value="payments"><PaymentsTab tenantId={tenantId} unit={unit} /></TabsContent>
           <TabsContent value="maintenance"><MaintenanceTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab tenantId={tenantId} /></TabsContent>
           <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} /></TabsContent>
+          <TabsContent value="messages"><TenantMessageThread tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
         </Tabs>
       </div>
     </div>

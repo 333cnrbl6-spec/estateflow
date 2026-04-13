@@ -1,0 +1,104 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant sending or associated with the message"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property the message relates to"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Unit the message relates to"
+    },
+    "maintenance_order_id": {
+      "type": "string",
+      "description": "Optional reference to related maintenance request"
+    },
+    "thread_id": {
+      "type": "string",
+      "description": "Unique conversation thread identifier"
+    },
+    "sender_type": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "admin"
+      ],
+      "description": "Who sent the message"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Display name of sender"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Email of sender"
+    },
+    "body": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Message subject/topic"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "unread",
+        "read",
+        "archived"
+      ],
+      "default": "unread",
+      "description": "Message read status"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "maintenance",
+        "inquiry",
+        "complaint",
+        "document",
+        "other"
+      ],
+      "default": "inquiry",
+      "description": "Category of message"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "file_url": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Attached files"
+    },
+    "replied_to_message_id": {
+      "type": "string",
+      "description": "If this is a reply, reference to original message"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "thread_id",
+    "sender_type",
+    "sender_name",
+    "body"
+  ]
+}
