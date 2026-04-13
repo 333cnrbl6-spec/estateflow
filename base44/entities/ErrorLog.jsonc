@@ -1,0 +1,88 @@
+{
+  "name": "ErrorLog",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who encountered the error"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User email for contact"
+    },
+    "error_type": {
+      "type": "string",
+      "enum": [
+        "uncaught_error",
+        "unhandled_rejection",
+        "api_error",
+        "network_error",
+        "validation_error",
+        "auth_error",
+        "payment_error",
+        "backend_error"
+      ],
+      "description": "Classification of error"
+    },
+    "message": {
+      "type": "string",
+      "description": "Error message"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "default": "error"
+    },
+    "url": {
+      "type": "string",
+      "description": "Page URL where error occurred"
+    },
+    "stack_trace": {
+      "type": "string",
+      "description": "Full stack trace for debugging"
+    },
+    "user_agent": {
+      "type": "string",
+      "description": "Browser/client info"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "production",
+        "staging",
+        "development"
+      ],
+      "default": "production"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When error occurred"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "reviewed",
+        "resolved",
+        "ignored"
+      ],
+      "default": "new"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Developer notes on resolution"
+    }
+  },
+  "required": [
+    "user_email",
+    "error_type",
+    "message",
+    "timestamp"
+  ]
+}
