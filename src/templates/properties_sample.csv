@@ -1,0 +1,4 @@
+name,address_line_1,address_line_2,city,postcode,region,property_type,ownership_type,owning_company,management_company,total_units,year_built
+Admiral Point,45 High Street,,London,E1 6AB,london,freehold_block,freehold,Test Company 1 Ltd,Test Company 1 Ltd,24,1985
+Reed Close,123 Main Road,,Brighton,BN1 2CD,brighton,leasehold_block,leasehold,Test Company 2 Ltd,Sample Property Management,16,1992
+Victoria House,789 Station Road,,Manchester,M1 3EF,other,mixed_use,freehold,Test Company 1 Ltd,Test Company 1 Ltd,8,2005

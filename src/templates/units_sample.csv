@@ -1,0 +1,6 @@
+property_id,unit_number,bedrooms,bathrooms,floor_area_sqft,rent_amount,rent_frequency,status,available_from
+Admiral Point,Flat 1,2,1,650,1200,monthly,occupied,2024-01-01
+Admiral Point,Flat 2,1,1,450,950,monthly,vacant,2024-06-01
+Admiral Point,Flat 3,3,2,950,1800,monthly,occupied,2023-09-15
+Reed Close,Flat 1,2,1,700,1350,monthly,occupied,2024-02-01
+Reed Close,Flat 2,1,1,500,1000,monthly,maintenance,2024-07-01

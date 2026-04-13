@@ -1,0 +1,4 @@
+full_name,email,phone,date_of_birth,ni_number,occupation,employer,annual_income,previous_address,emergency_contact_name,emergency_contact_phone,move_in_date,tenancy_end_date
+James Smith,james.smith1@email.com,07700900123,15/03/1985,AB123456C,Software Engineer,Tech Corp Ltd,65000,12 Old Street London,Emma Smith,07700900124,01/01/2024,31/12/2025
+Emma Johnson,emma.johnson2@email.com,07700900456,22/07/1990,CD789012D,Teacher,Education Trust,42000,45 Previous Road Brighton,Michael Johnson,07700900457,15/03/2024,14/03/2026
+Robert Williams,robert.williams3@email.com,07700900789,EF345678E,Nurse,Healthcare NHS,38000,78 Last Avenue Manchester,Sarah Williams,07700900790,01/06/2024,31/05/2025

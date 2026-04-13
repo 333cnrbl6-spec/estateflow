@@ -85,6 +85,7 @@ import BuyerPortal from './pages/BuyerPortal';
 import Viewings from './pages/Viewings';
 import AgentPerformanceDashboard from './pages/AgentPerformanceDashboard';
 import ComplianceDashboard2 from './pages/ComplianceDashboard2';
+import BulkImportTester from './pages/BulkImportTester';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -186,6 +187,7 @@ const AuthenticatedApp = () => {
         <Route path="/viewings" element={<Viewings />} />
         <Route path="/agent-performance" element={<AgentPerformanceDashboard />} />
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
+        <Route path="/bulk-import-tester" element={<BulkImportTester />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

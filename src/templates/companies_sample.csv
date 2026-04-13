@@ -1,0 +1,4 @@
+name,company_number,company_type,registration_date,status,email,phone,address_line_1,city,postcode
+Test Company 1 Ltd,TC123456,property_management,2023-01-15,active,company1@testcompany.co.uk,020 7946 0958,45 Business Park,London,E1 6AB
+Test Company 2 Ltd,TC789012,landlord,2022-06-20,active,company2@testcompany.co.uk,020 7946 1234,123 Commerce Street,Brighton,BN1 2CD
+Sample Property Management,TC345678,property_management,2021-03-10,active,info@samplepm.co.uk,020 7946 5678,789 High Street,Manchester,M1 3EF
