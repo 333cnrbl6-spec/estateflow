@@ -17,7 +17,6 @@ import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
 import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';
 import MessageHub from '@/components/messaging/MessageHub';
-import MessageHub from '@/components/messaging/MessageHub';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
