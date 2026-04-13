@@ -1,425 +1,214 @@
-# Premiso Helper Bot - AI-Powered Assistant
-
-## Overview
-
-The Helper Bot is an intelligent, context-aware assistant that helps users navigate the Premiso property management platform. It features a floating house icon that provides module-specific suggestions, answers questions, and guides users through complex workflows.
-
-## Features
-
-### 🏠 **Floating Presence**
-- Always-accessible floating house icon (bottom-right corner)
-- Animated pulse effect when idle
-- Smooth open/close transitions
-- Non-intrusive design
-
-### 🧠 **AI-Powered Intelligence**
-- Trained on complete app documentation and codebase
-- Context-aware responses based on current module
-- Natural language understanding
-- Smart suggestions and recommendations
-
-### 📍 **Module-Specific Assistance**
-- Detects current page/module automatically
-- Provides relevant suggestions for current context
-- Shows module-specific tips and features
-- Offers quick actions related to current task
-
-### 💬 **Interactive Chat**
-- Real-time conversation interface
-- Quick suggestion buttons
-- Actionable recommendations with direct navigation
-- Timestamped message history
-- Loading indicators
-
-### 🎯 **Smart Features**
-- **Quick Suggestions**: Context-aware action buttons
-- **Quick Actions**: Direct navigation to common tasks
-- **FAQ Integration**: Answers to common questions
-- **Search Capability**: Finds relevant modules and features
-- **AI Responses**: Intelligent answers using LLM
+# Premiso Assistant Implementation Guide
 
 ## Architecture
 
 ### Components
 
-#### `HelperBot.jsx`
-Main bot component with:
-- Chat interface
-- Message handling
-- Suggestion management
-- AI integration
-- Navigation helpers
+1. **HelperBot.jsx** - Main UI component
+   - Floating chat interface in bottom-right corner
+   - Message history display
+   - Real-time query input
+   - Page context awareness via React Router
 
-#### `app-knowledge.js`
-Comprehensive knowledge base containing:
-- All module definitions
-- Features and capabilities
-- Common tasks and routes
-- FAQs with answers
-- Getting started guide
-- Search functionality
+2. **helperBotQuery.js** - Backend function
+   - Processes user queries with LLM
+   - Provides contextual responses based on current page
+   - Suggests actions and related modules
+   - Uses app knowledge base for context
 
-### Integration
+3. **app-knowledge.js** - Knowledge base
+   - Complete module documentation
+   - Common tasks and workflows
+   - Integration details
+   - FAQs and glossary
 
-The bot is integrated into `AppLayout.jsx` and appears on all authenticated pages:
+### Integration Points
 
+#### In AppLayout.jsx
 ```jsx
+import HelperBot from '@/components/HelperBot';
+
+// In component:
 <HelperBot />
 ```
 
-## Usage
+The bot is automatically available on all authenticated pages via the main layout.
 
-### Opening the Bot
-1. Click the floating house icon (bottom-right)
-2. Chat window opens with welcome message
-3. View module-specific suggestions
+## Features
 
-### Asking Questions
-1. Type your question in the input field
-2. Press Enter or click Send
-3. AI provides intelligent response
-4. Click suggested actions for direct navigation
+### Contextual Awareness
+- Detects current page/module from React Router location
+- Provides page-specific guidance
+- Suggests relevant features based on context
 
-### Quick Actions
-- **Suggestion Buttons**: Click any suggestion to auto-fill question
-- **Quick Actions**: Direct navigation to common tasks
-- **Module Tips**: Context-specific recommendations
+### Conversation Features
+- Multi-turn conversation support
+- Suggested actions for quick navigation
+- Related module suggestions
+- Smooth message scrolling
 
-## Knowledge Base
-
-### Module Coverage
-
-The bot has complete knowledge of all 20+ modules:
-
-| Module | Route | Key Features |
-|--------|-------|--------------|
-| Dashboard | `/` | Portfolio overview, metrics, alerts |
-| Companies | `/companies` | Company management, Companies House |
-| Properties | `/properties` | Property profiles, unit management |
-| Tenants | `/tenants` | Tenant profiles, lease tracking |
-| Financials | `/financials` | Rent collection, reporting, Stripe |
-| Maintenance | `/maintenance` | Request tracking, contractors |
-| Compliance | `/compliance` | Certificates, expiry tracking |
-| Sales | `/sales` | Leads, listings, valuations, pipeline |
-| Workflows | `/workflows` | AI automation, triggers |
-| Out of Hours | `/out-of-hours` | 24/7 call handling, emergencies |
-| ... and more | | |
-
-### Common Tasks
-
-Pre-configured quick actions:
-- Add a new property
-- Create a sales listing
-- Process rent payment
-- Upload compliance certificate
-- Create maintenance request
-- Generate tenancy agreement
-- View financial reports
-- Schedule property viewing
-- Add new tenant
-- Set up workflow automation
-
-### FAQs
-
-Built-in answers to common questions:
-- How do I add a new property?
-- How do I generate a property valuation?
-- How do I process rent payments?
-- How do I track compliance certificates?
-- How do I create a maintenance request?
-- Can I automate document generation?
-- How do I set up workflows?
-- What is the Out of Hours service?
-
-## AI Integration
-
-### Model Configuration
-
-Uses Base44's InvokeLLM integration:
-- **Model**: `gpt_5_mini` (fast, efficient)
-- **Context**: App knowledge + current module + search results
-- **Response Format**: Natural, helpful, actionable
-
-### Prompt Engineering
-
-The bot constructs intelligent prompts with:
-1. Current module context
-2. Relevant search results
-3. Complete module directory
-4. Common tasks mapping
-5. FAQ database
-6. Specific instructions
-
-### Search Enhancement
-
-Before AI invocation, the bot:
-1. Searches knowledge base for matches
-2. Finds related modules
-3. Identifies relevant FAQs
-4. Locates common tasks
-5. Provides context to AI
-
-## UI/UX Design
-
-### Visual Elements
-
-**Floating Icon**:
-- House icon (Home from Lucide)
-- Gradient blue background
-- Pulse animation when idle
-- Rotates to X when open
-- Shadow for depth
-
-**Chat Window**:
-- Fixed position (bottom-right)
-- Card-based design
-- Blue gradient header
-- Scrollable message area
-- Suggestion chips
-- Quick action buttons
-
-**Messages**:
-- User: Blue bubbles (right-aligned)
-- Assistant: Gray bubbles with avatar (left-aligned)
-- Timestamps
-- Suggested action buttons
-- Welcome message styling
-
-**Suggestions**:
-- Chip buttons
-- Module-specific tips section
-- Quick actions grid
-- Context-aware ordering
-
-### Responsive Design
-
-- Fixed width: 384px (w-96)
-- Max height: 600px
-- Scrollable content
-- Mobile-friendly positioning
+### Smart Responses
+- Formatted text with bullet points
+- Action-oriented guidance
+- Brief summaries with link options
+- Error handling with helpful fallbacks
 
 ## Customization
 
-### Adding New Modules
+### Adding Module-Specific Knowledge
 
 Edit `lib/app-knowledge.js`:
 
 ```javascript
 modules: {
-  newModule: {
-    name: "Module Name",
-    route: "/route",
-    description: "What it does",
-    features: ["Feature 1", "Feature 2"],
-    useCases: ["Use case 1"],
-    suggestions: ["Suggestion 1", "Suggestion 2"]
-  }
+  your_module: {
+    name: 'Module Name',
+    description: 'Description',
+    features: [
+      'Feature 1',
+      'Feature 2',
+    ],
+    entities: ['Entity1', 'Entity2'],
+  },
+}
+```
+
+### Adding Common Tasks
+
+```javascript
+common_tasks: {
+  'Task Name': {
+    module: 'module_name',
+    steps: [
+      'Step 1',
+      'Step 2',
+      'Step 3',
+    ],
+  },
 }
 ```
 
 ### Adding FAQs
 
 ```javascript
-faqs: [
-  {
-    question: "How do I...?",
-    answer: "Step-by-step answer...",
-    relatedModules: ["module1", "module2"]
-  }
-]
+faqs: {
+  'Question?': 'Answer with guidance and next steps.',
+}
 ```
 
-### Adding Common Tasks
+## Training Data
+
+The bot is trained on:
+
+- **Module Descriptions** - Purpose and scope of each feature area
+- **Features List** - Available functionality in each module
+- **Common Tasks** - Step-by-step walkthroughs
+- **Entity Overview** - What each data type represents
+- **Glossary** - Technical terms and definitions
+- **FAQs** - Common questions and answers
+- **Integration Guide** - Connected systems and capabilities
+
+## Page Context Mapping
 
 ```javascript
-commonTasks: [
-  { 
-    task: "Do something", 
-    module: "module-name", 
-    action: "/route" 
-  }
-]
+const pathMap = {
+  '/': 'dashboard',
+  '/properties': 'properties',
+  '/tenants': 'tenancies',
+  '/maintenance': 'maintenance',
+  '/compliance': 'compliance',
+  '/financials': 'financials',
+  '/sales': 'sales',
+  '/block-management': 'block_management',
+};
 ```
 
-### Styling
+Add new mappings when new pages are created.
 
-Edit `components/HelperBot.jsx`:
-- Change colors in className
-- Adjust positioning (bottom, right)
-- Modify card size
-- Update animations
+## Usage Examples
 
-## Performance
+### Simple Question
+**User:** "How do I create a tenancy?"
 
-### Optimizations
+**Bot Response:** Provides step-by-step guide including tenant creation, agreement setup, deposit protection, and prescribed information.
 
-1. **Lazy Loading**: Bot loads on demand
-2. **Cached Knowledge**: In-memory knowledge base
-3. **Efficient Search**: Fast text matching
-4. **AI Caching**: Similar questions get cached responses
-5. **Debounced Input**: Prevents rapid-fire requests
+### Compliance Question
+**User:** "What certificates do I need?"
 
-### Loading States
+**Bot Response:** Lists all required certificates (Gas, EICR, EPC), renewal frequencies, and links to Compliance module for tracking.
 
-- Spinner during AI response
-- Disabled input while processing
-- Visual feedback for all actions
+### Contextual Help
+**User:** (On Maintenance page) "How do I assign a contractor?"
 
-## Accessibility
+**Bot Response:** Recognizes maintenance context and provides specific guidance for contractor assignment on that page.
 
-### Features
+### Suggested Actions
+**User:** "How do I get started?"
 
-- Keyboard navigation support
-- ARIA labels on buttons
-- High contrast colors
-- Clear focus indicators
-- Screen reader friendly
+**Bot Response:** Shows suggested actions like "Create a property", "Add a tenant", "Schedule maintenance" based on app setup stage.
 
-### Keyboard Shortcuts
+## LLM Integration
 
-- `Enter`: Send message
-- `Escape`: Close bot
-- `Tab`: Navigate buttons
+The bot uses the base44 InvokeLLM integration:
 
-## Testing
+```javascript
+await base44.integrations.Core.InvokeLLM({
+  prompt: systemPrompt + userMessage,
+  response_json_schema: {
+    // Structured response format
+  },
+});
+```
 
-### Manual Testing Checklist
+This enables:
+- Natural language understanding
+- Context-aware responses
+- Suggested next steps
+- Multi-topic conversations
 
-- [ ] Icon appears on all pages
-- [ ] Click opens chat window
-- [ ] Welcome message shows
-- [ ] Suggestions are relevant
-- [ ] AI responses are helpful
-- [ ] Quick actions navigate correctly
-- [ ] Messages scroll properly
-- [ ] Loading states work
-- [ ] Error handling works
-- [ ] Close button works
+## Performance Considerations
 
-### Test Scenarios
+- Bot loads after initial app render
+- Uses React Router location for zero-latency context detection
+- Message history stored in component state (session-based)
+- LLM calls cached by message hash in production
 
-1. **Basic Chat**
-   - Open bot
-   - Send message
-   - Receive AI response
-   - Click suggested action
+## Analytics & Improvements
 
-2. **Module Navigation**
-   - Visit different modules
-   - Check suggestions update
-   - Verify module tips change
+Track bot usage through:
+- Query topics and frequencies
+- User satisfaction (add rating feature)
+- Suggested action click-through rates
+- Common unanswered questions
 
-3. **Quick Actions**
-   - Click common task buttons
-   - Verify navigation
-   - Check correct routes
-
-4. **AI Questions**
-   - Ask FAQ questions
-   - Verify accurate answers
-   - Check module recommendations
-
-## Troubleshooting
-
-### Common Issues
-
-**Bot doesn't appear**:
-- Check AppLayout import
-- Verify component rendering
-- Check z-index conflicts
-
-**AI not responding**:
-- Verify integration credentials
-- Check network connection
-- Review error logs
-
-**Wrong module detected**:
-- Check URL parsing logic
-- Verify route matching
-- Update module mapping
-
-**Suggestions not showing**:
-- Check knowledge base data
-- Verify module configuration
-- Review updateSuggestions logic
+Use this data to improve training data and identify missing features.
 
 ## Future Enhancements
 
-### Planned Features
+1. **Multi-language support** - Translate responses based on user locale
+2. **Video tutorials** - Link to tutorial videos from responses
+3. **Live agent escalation** - Transfer to human support if needed
+4. **Feedback collection** - Rate response helpfulness
+5. **Custom knowledge** - Company-specific policies and procedures
+6. **Document search** - Index and search uploaded documents
+7. **API documentation** - Help developers integrate with Premiso
 
-1. **Conversation History**
-   - Persist chat across sessions
-   - Searchable history
-   - Export conversations
+## Troubleshooting
 
-2. **Voice Input**
-   - Speech-to-text
-   - Voice commands
-   - Audio responses
+### Bot not responding
+- Check network connectivity
+- Verify backend function is deployed
+- Check browser console for errors
+- Try refreshing the page
 
-3. **Advanced AI**
-   - Multi-turn conversations
-   - Context retention
-   - Personalized responses
-   - Learning from interactions
+### Generic responses
+- Check knowledge base is complete
+- Verify current page context is detected
+- Review LLM prompt in backend function
+- Test with specific, detailed questions
 
-4. **Proactive Assistance**
-   - Detect user confusion
-   - Offer help automatically
-   - Suggest workflows
-   - Highlight features
-
-5. **Analytics**
-   - Track common questions
-   - Monitor usage patterns
-   - Identify knowledge gaps
-   - Improve responses
-
-6. **Multi-language**
-   - Internationalization
-   - Language detection
-   - Translation support
-
-7. **Custom Workflows**
-   - Guided wizards
-   - Step-by-step tutorials
-   - Interactive onboarding
-
-## Support
-
-For issues or questions about the Helper Bot:
-- Check this documentation
-- Review code comments
-- Contact development team
-- Submit bug report
-
-## Credits
-
-**Developed by**: Premiso AI Team  
-**Date**: April 2026  
-**Version**: 1.0  
-**License**: Proprietary
-
----
-
-## Quick Reference
-
-### Icon States
-- 🏠 **House**: Bot closed (idle)
-- ❌ **X**: Bot open (active)
-
-### Message Types
-- 💬 **User messages**: Blue, right-aligned
-- 🤖 **Bot messages**: Gray, left-aligned
-- ✨ **Welcome**: Special styling with icon
-
-### Button Types
-- **Suggestions**: Blue outline, auto-fill question
-- **Quick Actions**: Gray outline, direct navigation
-- **Module Tips**: Context-specific recommendations
-
-### Color Scheme
-- Primary: Blue (#2563eb)
-- Background: White/Gray
-- Accent: Blue gradient
-- Text: High contrast
+### Missing information
+- Update knowledge base with new modules
+- Add common tasks as features are added
+- Include glossary terms for technical concepts
+- Update page context mapping for new routes
