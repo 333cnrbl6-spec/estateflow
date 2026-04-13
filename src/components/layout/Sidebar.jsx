@@ -100,7 +100,8 @@ const navGroups = [
       { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
       { label: 'Leaseholder Portal', icon: Users, path: '/leaseholder-portal' },
       { label: 'Dev: Demo Switcher', icon: Code2, path: '/dev-demo-switcher' },
-      { label: 'Sales Demo Builder', icon: Sparkles, path: '/sales-demo-setup' },
+      { label: '⭐ Demo Station', icon: Sparkles, path: '/demo-station' },
+      { label: 'Sales Demo Builder', icon: Zap, path: '/sales-demo-setup' },
       { label: 'Expansion Opportunities', icon: Lightbulb, path: '/expansion-opportunities' },
     ]
   }

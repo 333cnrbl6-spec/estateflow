@@ -69,6 +69,7 @@ import SalesOnePageSummary from './pages/SalesOnePageSummary';
 import OwnerFinancialDashboard from './pages/OwnerFinancialDashboard';
 import SalesDemoSetup from './pages/SalesDemoSetup';
 import ExpansionOpportunities from './pages/ExpansionOpportunities';
+import DemoStation from './pages/DemoStation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -154,6 +155,7 @@ const AuthenticatedApp = () => {
         <Route path="/owner-financials" element={<OwnerFinancialDashboard />} />
         <Route path="/sales-demo-setup" element={<SalesDemoSetup />} />
         <Route path="/expansion-opportunities" element={<ExpansionOpportunities />} />
+        <Route path="/demo-station" element={<DemoStation />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
