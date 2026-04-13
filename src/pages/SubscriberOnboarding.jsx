@@ -233,7 +233,101 @@ function StepCompany({ data, onChange }) {
 }
 
 function StepDirectors({ data, onChange }) {
+  const [fetching, setFetching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchingAdditional, setSearchingAdditional] = useState(false);
+  const [additionalResults, setAdditionalResults] = useState([]);
+
   const directors = data.directors || [];
+
+  const fetchDirectorsFromCompaniesHouse = async () => {
+    if (!data.company_number) return;
+    setFetching(true);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `Fetch all directors from Companies House for company number: ${data.company_number}. Return their full names, appointment dates, and roles. Return as a JSON array of objects with fields: name, appointed_date, role, nationality.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            directors: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  appointed_date: { type: 'string' },
+                  role: { type: 'string' },
+                  nationality: { type: 'string' }
+                }
+              }
+            }
+          }
+        }
+      });
+      if (res.directors && res.directors.length > 0) {
+        onChange({ ...data, directors: res.directors });
+      }
+    } catch (error) {
+      console.error('Error fetching directors:', error);
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  const searchAdditionalCompanies = async () => {
+    if (!searchQuery.trim()) return;
+    setSearchingAdditional(true);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `Search Companies House for company matching: "${searchQuery}". Return top 3 results with company_name, company_number, registered_address, and list of all directors with their names, roles, and appointment dates.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            companies: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  company_name: { type: 'string' },
+                  company_number: { type: 'string' },
+                  registered_address: { type: 'string' },
+                  directors: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        name: { type: 'string' },
+                        role: { type: 'string' },
+                        appointed_date: { type: 'string' }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+      setAdditionalResults(res.companies || []);
+    } finally {
+      setSearchingAdditional(false);
+    }
+  };
+
+  const addDirectorsFromCompany = (companyDirectors) => {
+    const newDirectors = [...directors];
+    companyDirectors.forEach(d => {
+      if (!newDirectors.some(nd => nd.name?.toLowerCase() === d.name?.toLowerCase())) {
+        newDirectors.push(d);
+      }
+    });
+    onChange({ ...data, directors: newDirectors });
+    setAdditionalResults([]);
+    setSearchQuery('');
+  };
+
   const toggle = (name) => {
     const confirmed = data.confirmed_directors || [];
     const next = confirmed.includes(name) ? confirmed.filter(d => d !== name) : [...confirmed, name];
@@ -245,14 +339,21 @@ function StepDirectors({ data, onChange }) {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-slate-900">Confirm directors</h2>
-        <p className="text-sm text-muted-foreground mt-1">Confirm which directors should have access to Premiso. Tick all that apply.</p>
+        <p className="text-sm text-muted-foreground mt-1">Fetch from Companies House or search for additional company directors to add.</p>
       </div>
 
-      {directors.length === 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-          No directors found from Companies House. Add them manually below.
-        </div>
+      {data.company_number && !directors.length && (
+        <Button onClick={fetchDirectorsFromCompaniesHouse} disabled={fetching} className="w-full gap-2" variant="outline">
+          {fetching ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+          Fetch Directors from Companies House
+        </Button>
       )}
+
+      {directors.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Company Directors</p>
+
+
 
       <div className="space-y-2">
         {directors.map((d, i) => {
@@ -270,6 +371,57 @@ function StepDirectors({ data, onChange }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Search for directors from other companies</p>
+          <div className="flex gap-2">
+            <Input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && searchAdditionalCompanies()}
+              placeholder="Company name or number"
+              className="flex-1"
+            />
+            <Button onClick={searchAdditionalCompanies} disabled={searchingAdditional} variant="outline" className="gap-2">
+              {searchingAdditional ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              Search
+            </Button>
+          </div>
+        </div>
+
+        {additionalResults.length > 0 && (
+          <div className="border rounded-xl p-4 bg-blue-50 space-y-3">
+            <p className="text-xs font-semibold text-blue-900">Found {additionalResults.length} company/companies with directors</p>
+            {additionalResults.map((company, idx) => (
+              <div key={idx} className="bg-white border border-blue-200 rounded-lg p-3">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <p className="font-medium text-slate-900">{company.company_name}</p>
+                    <p className="text-xs text-muted-foreground">{company.company_number}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => addDirectorsFromCompany(company.directors || [])}
+                    className="gap-1"
+                  >
+                    + Add {company.directors?.length || 0} directors
+                  </Button>
+                </div>
+                {company.directors && company.directors.length > 0 && (
+                  <div className="text-xs space-y-1 mt-2">
+                    {company.directors.map((d, didx) => (
+                      <div key={didx} className="text-muted-foreground">
+                        {d.name} · {d.role}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Button variant="outline" size="sm" onClick={addDirector} className="gap-2">
