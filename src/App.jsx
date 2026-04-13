@@ -95,6 +95,7 @@ import LandlordMonthlyReporting from './pages/LandlordMonthlyReporting';
 import ContractorDashboard from './pages/ContractorDashboard';
 import TenantSelfServicePortal from './pages/TenantSelfServicePortal';
 import Settings from './pages/Settings';
+import FinancialReportingModule from './pages/FinancialReportingModule';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -207,6 +208,7 @@ const AuthenticatedApp = () => {
         <Route path="/contractor" element={<ContractorDashboard />} />
         <Route path="/tenant-portal" element={<TenantSelfServicePortal />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/financial-reports" element={<FinancialReportingModule />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
