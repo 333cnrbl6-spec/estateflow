@@ -309,12 +309,12 @@ export default function SalesBrochure() {
             </p>
             <div className="cover-stats">
               <div>
-                <div className="cover-stat-num">100+</div>
-                <div className="cover-stat-label">Units Managed</div>
+                <div className="cover-stat-num">Lettings + Sales</div>
+                <div className="cover-stat-label">Dual Modules</div>
               </div>
               <div>
-                <div className="cover-stat-num">14</div>
-                <div className="cover-stat-label">Modules</div>
+                <div className="cover-stat-num">Real Listings</div>
+                <div className="cover-stat-label">From Agent Websites</div>
               </div>
               <div>
                 <div className="cover-stat-num">24/7</div>
@@ -395,15 +395,15 @@ export default function SalesBrochure() {
 
             <div className="feature-card">
               <div className="feature-icon-row">
-                <div className="feature-icon">📂</div>
-                <div className="feature-title">Document Chaos</div>
+                <div className="feature-icon">🏠</div>
+                <div className="feature-title">Sales & Lettings Disconnect</div>
               </div>
-              <p className="feature-desc">Documents stored across email inboxes, shared drives, and filing cabinets — often inaccessible when needed most.</p>
+              <p className="feature-desc">Most platforms handle either lettings OR sales — forcing agents to run two separate systems with duplicate data entry.</p>
               <ul className="feature-bullets">
-                <li>Lease documents not centrally accessible</li>
-                <li>No version control on templates</li>
-                <li>Leaseholders cannot self-serve documents</li>
-                <li>Bulk generation takes days not minutes</li>
+                <li>Sales leads tracked in separate CRM</li>
+                <li>Property listings manually entered twice</li>
+                <li>No unified view of landlord/tenant/buyer relationships</li>
+                <li>Portal integrations (Rightmove/Zoopla) not connected</li>
               </ul>
             </div>
           </div>
@@ -672,15 +672,15 @@ export default function SalesBrochure() {
             </div>
             <div className="feature-card">
               <div className="feature-icon-row">
-                <div className="feature-icon">🏗️</div>
-                <div className="feature-title">Service Charges</div>
+                <div className="feature-icon">🏠</div>
+                <div className="feature-title">Residential Sales</div>
               </div>
               <ul className="feature-bullets">
-                <li>Itemised cost breakdown per category</li>
-                <li>Estimated vs actual variance tracking</li>
-                <li>Per-unit charge calculation</li>
-                <li>Section 20 consultation threshold alerts</li>
-                <li>Leaseholder statement distribution</li>
+                <li>Complete sales workflow from lead to completion</li>
+                <li>Real property listings from agent websites/portals</li>
+                <li>Offer tracking and sales progression pipeline</li>
+                <li>Buyer/seller CRM with automated follow-ups</li>
+                <li>Rightmove/Zoopla/OnTheMarket integration ready</li>
               </ul>
             </div>
             <div className="feature-card">

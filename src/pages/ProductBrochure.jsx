@@ -17,16 +17,16 @@ import {
 export default function ProductBrochure() {
   const sections = [
     {
-      title: 'Portfolio Management',
+      title: 'Portfolio Management + Sales',
       icon: Building2,
-      description: 'Centralized oversight of your entire property portfolio across multiple regions.',
+      description: 'Unified platform for lettings AND sales — real agent listings automatically imported from websites and portals.',
       benefits: [
-        'Real-time property status & occupancy tracking',
-        'Company & unit hierarchy management',
-        'Multi-property search and filtering',
-        'Property history and documentation',
+        'Real property listings from Rightmove/Zoopla/OnTheMarket',
+        'Sales leads and progression pipeline',
+        'Lettings tenancy management',
+        'Unified landlord/tenant/buyer CRM',
       ],
-      data: '13 Properties | 120+ Units | 91% Occupancy (Powell & Co Demo)',
+      data: 'Real Agent Listings | Dual Modules | Portal Integration',
     },
     {
       title: 'Financial Intelligence',

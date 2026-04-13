@@ -87,7 +87,7 @@ const PLATFORM_FEATURES = [
 
 const INTEGRATIONS = [
   { logo: '🏠', name: 'Rightmove / Zoopla', category: 'Property Portals', color: '#dc2626', bg: '#fef2f2', border: '#fecaca',
-    desc: 'Direct integration with UK property portals — list properties for sale automatically from Premiso, sync enquiries, track views and manage leads. No more double-entry between your CRM and portals.', benefit: 'List once, publish everywhere — all enquiries captured in Premiso.' },
+    desc: 'Two-way integration with UK property portals. Premiso AUTOMATICALLY fetches the agent's current listings from Rightmove, Zoopla and OnTheMarket during demo setup — populating the sales module with REAL properties. Enquiries sync back automatically.', benefit: 'Real listings imported automatically — no manual data entry.' },
   { logo: '🟦', name: 'Xero', category: 'Accounting', color: '#1BA5E0', bg: '#e8f7fd', border: '#b3e5f7',
     desc: 'Two-way sync with Xero — transactions, rent receipts, service charge invoices and expenses post automatically. Your accountant sees clean, reconciled books without manual data entry.', benefit: 'Eliminate double-entry bookkeeping between your PM software and accounts.' },
   { logo: '🟧', name: 'Sage', category: 'Accounting', color: '#00DC82', bg: '#e6fdf4', border: '#b3f0d9',
