@@ -1109,7 +1109,7 @@ Generate a realistic summary of what's been created and configured.`,
             const done = i < step;
             const active = i === step;
             return (
-              <React.Fragment key={s.id}>
+              <div key={s.id} className="flex items-center gap-1">
                 <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
                   done ? 'bg-green-100 text-green-700' :
                   active ? 'bg-primary text-primary-foreground shadow-md' :
@@ -1119,7 +1119,7 @@ Generate a realistic summary of what's been created and configured.`,
                   <span className="hidden sm:inline">{s.label}</span>
                 </div>
                 {i < STEPS.length - 1 && <div className={`h-px w-3 shrink-0 ${i < step ? 'bg-green-300' : 'bg-slate-200'}`} />}
-              </React.Fragment>
+              </div>
             );
           })}
         </div>
