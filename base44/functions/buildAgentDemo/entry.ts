@@ -128,15 +128,15 @@ Return as JSON matching this schema:
 
       // Fetch real current listings from the agent's website and property portals
       const listingsPrompt = `
-Search for current property listings (both for sale and to rent) for the estate/letting agent "${agentName}" based in ${location}.
+Search for current property listings (both for sale AND to rent) for the estate/letting agent "${agentName}" based in ${location}.
 
 CRITICAL: You must search:
 1. Their official website (find their property listings page)
-2. Rightmove (search for the agent name)
-3. Zoopla (search for the agent name)
+2. Rightmove (search for the agent name - check both Sales and Lettings tabs)
+3. Zoopla (search for the agent name - check both For Sale and To Rent)
 4. OnTheMarket.com (if applicable)
 
-Extract ALL current active listings you can find. For each property, get:
+Extract ALL current active listings you can find for BOTH lettings AND sales. For each property, get:
 - Full address including postcode
 - Property type (detached, semi-detached, terraced, flat, apartment, etc.)
 - Number of bedrooms
@@ -147,7 +147,7 @@ Extract ALL current active listings you can find. For each property, get:
 - Tenure (freehold/leasehold if mentioned)
 - EPC rating (if mentioned)
 - Council tax band (if mentioned)
-- Images URLs if available
+- Image URLs if available
 - Whether it's for sale or rent
 - Status (available, under offer, sold subject to contract, let, etc.)
 
@@ -209,6 +209,8 @@ Format:
 
       const actualListings = realListings?.listings || [];
       const useRealData = actualListings.length > 0;
+      const salesListings = actualListings.filter(l => l.listing_type === 'sale');
+      const lettingsListings = actualListings.filter(l => l.listing_type === 'rent');
 
       // Generate company and tenant data using LLM seeded with research
       const dataPrompt = `
@@ -382,6 +384,61 @@ Return as JSON:
         await base44.asServiceRole.entities.Contact.create(contact);
       }
 
+      // Create Sales Listings from real properties (if available)
+      const createdSalesListings = [];
+      if (useRealData && salesListings.length > 0) {
+        for (const listing of salesListings.slice(0, 8)) {
+          try {
+            const salesListing = await base44.asServiceRole.entities.SalesListing.create({
+              property_id: propertyIds[Math.floor(Math.random() * propertyIds.length)],
+              listing_type: "sale",
+              status: listing.status === 'under_offer' ? 'under_offer' : 
+                      listing.status === 'sold_let' ? 'sold_subject_to_contract' : 'active',
+              asking_price: listing.price,
+              marketing_text: listing.description,
+              featured_text: `${listing.bedrooms} bed ${listing.property_type} - £${(listing.price/1000).toFixed(0)}K`,
+              bedrooms: listing.bedrooms,
+              bathrooms: listing.bathrooms || 1,
+              reception_rooms: listing.reception_rooms || 1,
+              property_type: listing.property_type,
+              tenure: listing.tenure || 'freehold',
+              council_tax_band: listing.council_tax_band,
+              epc_rating: listing.epc_rating,
+              features: listing.features || [],
+              listing_agent_id: user.id,
+              listing_agent_name: user.full_name,
+              listed_date: new Date().toISOString().split('T')[0],
+              viewing_count: Math.floor(Math.random() * 15),
+              offer_count: Math.floor(Math.random() * 3)
+            });
+            createdSalesListings.push(salesListing);
+          } catch (err) {
+            console.error('Failed to create sales listing:', err.message);
+          }
+        }
+      }
+
+      // Create Sales Leads from research
+      const createdSalesLeads = [];
+      const sampleLeads = [
+        { lead_type: 'buyer', contact_name: 'Property Investor', budget_min: 200000, budget_max: 500000, property_type: 'flat', location_preference: location, bedrooms_min: 2, timescale: '3_months', motivation: 'Investment purchase', status: 'qualified', lead_score: 75 },
+        { lead_type: 'seller', contact_name: 'Home Owner', property_type: 'detached', location_preference: location, timescale: '6_months', motivation: 'Downsizing', status: 'contacted', lead_score: 80 },
+        { lead_type: 'buyer', contact_name: 'First Time Buyer', budget_min: 150000, budget_max: 300000, property_type: 'terraced', location_preference: location, bedrooms_min: 2, timescale: 'immediate', motivation: 'First home', status: 'new', lead_score: 65 },
+      ];
+      for (const lead of sampleLeads) {
+        try {
+          const created = await base44.asServiceRole.entities.SalesLead.create({
+            ...lead,
+            assigned_agent_id: user.id,
+            assigned_agent_name: user.full_name,
+            last_contact_date: new Date().toISOString().split('T')[0]
+          });
+          createdSalesLeads.push(created);
+        } catch (err) {
+          console.error('Failed to create sales lead:', err.message);
+        }
+      }
+
       // Create sample financial transactions
       const now = new Date();
       for (let i = 0; i < Math.min(tenantIds.length, 8); i++) {
@@ -485,13 +542,15 @@ Return JSON matching this schema.
 
       return Response.json({
         success: true,
-        summary: `${agentName} demo created with ${propertyIds.length} properties (${useRealData ? 'real current listings' : 'demo data'}), ${unitIds.length} units, ${tenantIds.length} tenants and financial records.`,
+        summary: `${agentName} demo created with ${propertyIds.length} properties (${useRealData ? `${actualListings.length} real listings: ${salesListings.length} sales, ${lettingsListings.length} lettings` : 'demo data'}), ${unitIds.length} units, ${tenantIds.length} tenants, ${createdSalesListings.length} sales listings, and financial records.`,
         counts: {
           companies: 1,
           properties: propertyIds.length,
           units: unitIds.length,
           tenants: tenantIds.length,
-          real_listings: actualListings.length
+          real_listings: actualListings.length,
+          sales_listings: createdSalesListings.length,
+          sales_leads: createdSalesLeads.length
         },
         expansion_included: !!expansionReport,
         expansion_summary: expansionReport ? {

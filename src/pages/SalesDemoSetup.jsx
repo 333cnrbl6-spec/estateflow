@@ -311,9 +311,9 @@ export default function SalesDemoSetup() {
                   { label: 'Maintenance', value: '6 orders' },
                   { label: 'Contacts', value: `${researchData.key_people?.length || 2} contacts` },
                   { label: 'Compliance', value: 'Full set' },
-                  { label: 'Sales Listings', value: `${researchData.demo_sales_listings || 12} listings` },
+                  { label: 'Sales Listings', value: `${researchData.demo_sales_listings || 'Real listings'} listings` },
                   { label: 'Sales Leads', value: `${researchData.demo_sales_leads || 5} leads` },
-                  { label: 'Transactions', value: `${researchData.demo_sales_transactions || 4} sales` },
+                  { label: 'Lettings', value: `${researchData.demo_lettings || 'Real listings'} properties` },
                 ].map(item => (
                   <div key={item.label} className="bg-slate-700/50 rounded p-3 text-center">
                     <p className="text-xs text-slate-400 mb-1">{item.label}</p>
