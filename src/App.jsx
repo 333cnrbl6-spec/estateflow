@@ -90,6 +90,7 @@ import UserTypeManager from './pages/UserTypeManager';
 import PropertyKPIDashboard from './pages/PropertyKPIDashboard';
 import ContractorPortal from './pages/ContractorPortal';
 import PropertyInspection from './pages/PropertyInspection';
+import MaintenanceAnalyticsDashboard from './pages/MaintenanceAnalyticsDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -197,6 +198,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="/contractor" element={<ContractorPortal />} />
       <Route path="/inspection" element={<PropertyInspection />} />
+      <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
