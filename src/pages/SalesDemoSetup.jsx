@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import {
   Building2, Search, CheckCircle2, Loader2, ChevronRight,
-  MapPin, Globe, Phone, Users, Home, FileText, Zap, ArrowLeft, Lightbulb
+  MapPin, Globe, Phone, Users, Home, FileText, Zap, ArrowLeft, Lightbulb, TrendingUp
 } from 'lucide-react';
 
 const STEPS = ['choose', 'researching', 'preview', 'building', 'done'];
@@ -311,6 +311,9 @@ export default function SalesDemoSetup() {
                   { label: 'Maintenance', value: '6 orders' },
                   { label: 'Contacts', value: `${researchData.key_people?.length || 2} contacts` },
                   { label: 'Compliance', value: 'Full set' },
+                  { label: 'Sales Listings', value: `${researchData.demo_sales_listings || 12} listings` },
+                  { label: 'Sales Leads', value: `${researchData.demo_sales_leads || 5} leads` },
+                  { label: 'Transactions', value: `${researchData.demo_sales_transactions || 4} sales` },
                 ].map(item => (
                   <div key={item.label} className="bg-slate-700/50 rounded p-3 text-center">
                     <p className="text-xs text-slate-400 mb-1">{item.label}</p>

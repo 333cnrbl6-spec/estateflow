@@ -56,6 +56,9 @@ const PLATFORM_FEATURES = [
   { icon: '📊', title: 'Portfolio Dashboard', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe',
     desc: 'Real-time KPIs across your entire portfolio — occupancy, arrears, income, maintenance status and compliance alerts, all on a single screen. Multi-company support means you see every legal entity you manage in one consolidated view.',
     badges: ['Multi-company', 'Real-time KPIs', 'Compliance alerts'] },
+  { icon: '🏡', title: 'Residential Sales', color: '#dc2626', bg: '#fef2f2', border: '#fecaca',
+    desc: 'Complete sales module — lead management, property listings, offer tracking, and sales progression pipeline. From initial enquiry through to exchange and completion, with full UK-specific workflow stages.',
+    badges: ['Lead tracking', 'Sales pipeline', 'Offer management'] },
   { icon: '🏠', title: 'Tenancy Pipeline', color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0',
     desc: 'Kanban-style board taking applicants from enquiry through referencing, move-in and all the way to renewal. Drag-and-drop simplicity with automated task prompts at each stage keeps your team on track without chasing spreadsheets.',
     badges: ['Kanban workflow', 'Referencing tracker', 'Renewal automation'] },
@@ -83,6 +86,8 @@ const PLATFORM_FEATURES = [
 ];
 
 const INTEGRATIONS = [
+  { logo: '🏠', name: 'Rightmove / Zoopla', category: 'Property Portals', color: '#dc2626', bg: '#fef2f2', border: '#fecaca',
+    desc: 'Direct integration with UK property portals — list properties for sale automatically from Premiso, sync enquiries, track views and manage leads. No more double-entry between your CRM and portals.', benefit: 'List once, publish everywhere — all enquiries captured in Premiso.' },
   { logo: '🟦', name: 'Xero', category: 'Accounting', color: '#1BA5E0', bg: '#e8f7fd', border: '#b3e5f7',
     desc: 'Two-way sync with Xero — transactions, rent receipts, service charge invoices and expenses post automatically. Your accountant sees clean, reconciled books without manual data entry.', benefit: 'Eliminate double-entry bookkeeping between your PM software and accounts.' },
   { logo: '🟧', name: 'Sage', category: 'Accounting', color: '#00DC82', bg: '#e6fdf4', border: '#b3f0d9',
@@ -106,6 +111,7 @@ const INTEGRATIONS = [
 const COMPETITOR_DEFAULTS = {
   competitor_names: ['Arthur Online', 'Jupix'],
   rows: [
+    { feature: 'Residential Sales Module', premiso: 'Complete sales workflow — leads, listings, offers, progression pipeline', c1: 'Not available — lettings only', c2: 'Not available — lettings only', premiso_wins: true },
     { feature: 'Block Management', premiso: 'First-class — S.20, ground rent, RTM, leaseholder portal', c1: 'Basic — limited service charge capability', c2: 'Not included — requires separate software', premiso_wins: true },
     { feature: 'Companies House Integration', premiso: 'Native API — directors, deadlines, filings auto-synced', c1: 'Not available', c2: 'Not available', premiso_wins: true },
     { feature: 'Building Safety Act 2023', premiso: 'Full register, accountable person, resident comms log', c1: 'Not included', c2: 'Not included', premiso_wins: true },
@@ -115,7 +121,7 @@ const COMPETITOR_DEFAULTS = {
     { feature: 'Onboarding Time', premiso: 'Live in days — self-serve with support', c1: '4–8 weeks typical onboarding', c2: '2–6 weeks + migration fee', premiso_wins: true },
     { feature: 'Pricing Model', premiso: 'Transparent monthly — no annual lock-in', c1: 'Annual contract required', c2: 'Annual licence + setup fee', premiso_wins: true },
     { feature: 'UK Legislation Depth', premiso: 'RTM, S.20, BSA 2023, L&T Act 1985 — all built in', c1: 'Basic UK compliance', c2: 'Limited — US-influenced development', premiso_wins: true },
-    { feature: 'All-in-One Platform', premiso: 'Lettings + Block + Compliance + Finance + OOH', c1: 'Lettings-focused, block is weak', c2: 'Lettings only — multiple tools needed', premiso_wins: true },
+    { feature: 'All-in-One Platform', premiso: 'Lettings + Sales + Block + Compliance + Finance + OOH', c1: 'Lettings-focused, block is weak', c2: 'Lettings only — multiple tools needed', premiso_wins: true },
   ]
 };
 
