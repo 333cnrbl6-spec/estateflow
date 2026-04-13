@@ -4,51 +4,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
 import {
   Building2, Search, CheckCircle2, Loader2, ChevronRight,
   MapPin, Globe, Phone, Users, Home, FileText, Zap, ArrowLeft
 } from 'lucide-react';
-
-const AGENTS = [
-  {
-    id: 'redman_casey',
-    name: 'Redman Casey',
-    location: 'Horwich, Bolton',
-    description: 'Independent lettings and estate agency serving the Horwich and Bolton area.',
-    color: 'border-blue-500 bg-blue-50',
-    badgeColor: 'bg-blue-600',
-    searchQuery: 'Redman Casey estate agents Horwich Bolton letting agent services legal entity company number',
-  },
-  {
-    id: 'regency',
-    name: 'Regency',
-    location: 'Horwich / Bolton',
-    description: 'Established letting and property management agency in the Bolton borough.',
-    color: 'border-purple-500 bg-purple-50',
-    badgeColor: 'bg-purple-600',
-    searchQuery: 'Regency estate agents Horwich Bolton letting agents property management services company registration',
-  },
-  {
-    id: 'lancasters',
-    name: 'Lancasters',
-    location: 'Horwich, Bolton',
-    description: 'Local letting agent and property management firm based in Horwich.',
-    color: 'border-green-500 bg-green-50',
-    badgeColor: 'bg-green-600',
-    searchQuery: 'Lancasters estate agents Horwich letting agents property management Bolton company background',
-  },
-];
 
 const STEPS = ['choose', 'researching', 'preview', 'building', 'done'];
 
 export default function SalesDemoSetup() {
   const [step, setStep] = useState('choose');
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [searchName, setSearchName] = useState('');
+  const [searchLocation, setSearchLocation] = useState('');
   const [researchData, setResearchData] = useState(null);
   const [error, setError] = useState(null);
   const [buildResult, setBuildResult] = useState(null);
 
-  const handleSelectAgent = async (agent) => {
+  const handleSearch = async () => {
+    if (!searchName.trim()) return;
+    const agent = {
+      name: searchName.trim(),
+      location: searchLocation.trim() || 'UK',
+      searchQuery: `${searchName.trim()} ${searchLocation.trim()} letting agent estate agent property management services legal entity company number`,
+    };
     setSelectedAgent(agent);
     setError(null);
     setStep('researching');
@@ -152,38 +131,73 @@ export default function SalesDemoSetup() {
 
         {/* STEP: Choose */}
         {step === 'choose' && (
-          <div className="space-y-4">
-            <h2 className="text-white font-semibold text-lg mb-4">Choose a Horwich Letting Agent</h2>
-            {AGENTS.map(agent => (
-              <Card
-                key={agent.id}
-                className={`cursor-pointer border-2 transition-all hover:shadow-lg ${agent.color}`}
-                onClick={() => handleSelectAgent(agent)}
-              >
-                <CardContent className="pt-5 pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className={`${agent.badgeColor} text-white rounded-lg p-2.5`}>
-                        <Building2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-lg text-slate-900">{agent.name}</h3>
-                        <div className="flex items-center gap-1 text-sm text-slate-600 mt-0.5">
-                          <MapPin className="w-3.5 h-3.5" />
-                          {agent.location}
-                        </div>
-                        <p className="text-sm text-slate-600 mt-1">{agent.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Search className="w-4 h-4 text-slate-400" />
-                      <span className="text-xs text-slate-500">Research & Build</span>
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="space-y-6">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-white text-base flex items-center gap-2">
+                  <Search className="w-4 h-4 text-amber-400" />
+                  Search for Any Letting Agent or Property Company
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-xs text-slate-400 mb-1.5 block">Company / Agent Name *</label>
+                  <Input
+                    placeholder="e.g. Redman Casey, Regency, Your Property Manager Ltd"
+                    value={searchName}
+                    onChange={e => setSearchName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-400 mb-1.5 block">Location (optional)</label>
+                  <Input
+                    placeholder="e.g. Horwich Bolton, Manchester, Leeds"
+                    value={searchLocation}
+                    onChange={e => setSearchLocation(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
+                  />
+                </div>
+                <Button
+                  onClick={handleSearch}
+                  disabled={!searchName.trim()}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  Research & Build Demo
+                </Button>
+              </CardContent>
+            </Card>
+
+            <div className="text-center">
+              <p className="text-slate-500 text-xs mb-3">Quick examples</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {['Redman Casey, Horwich', 'Regency, Bolton', 'Lancasters, Horwich', 'Your Name, Any Town'].map(example => (
+                  <button
+                    key={example}
+                    onClick={() => {
+                      const [name, loc] = example.split(', ');
+                      setSearchName(name);
+                      setSearchLocation(loc || '');
+                    }}
+                    className="text-xs px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-full transition-colors"
+                  >
+                    {example}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardContent className="pt-4 pb-4">
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  <span className="text-amber-400 font-semibold">How it works: </span>
+                  Enter any letting agent, estate agent, block management firm or property company. Premiso will search public domain sources (Companies House, web listings, directories) to find their real trading name, legal entity, services, directors and background — then build a fully tailored demo environment using that data.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         )}
 
