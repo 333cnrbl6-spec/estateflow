@@ -12,6 +12,7 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
+import TenantPortalAccess from '@/components/tenants/TenantPortalAccess';
 
 const TENANT_FIELDS = [
   { name: 'full_name', type: 'string' },
@@ -110,14 +111,17 @@ export default function Tenants() {
                   </div>
                 </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100"><MoreHorizontal className="w-4 h-4" /></Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => { setEditing(tenant); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5 mr-2" /> Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive" onClick={() => deleteMutation.mutate(tenant.id)}><Trash2 className="w-3.5 h-3.5 mr-2" /> Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100"><MoreHorizontal className="w-4 h-4" /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => { setEditing(tenant); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5 mr-2" /> Edit</DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive" onClick={() => deleteMutation.mutate(tenant.id)}><Trash2 className="w-3.5 h-3.5 mr-2" /> Delete</DropdownMenuItem>
+                </DropdownMenuContent>
                 </DropdownMenu>
+                <div className="mt-3 pt-3 border-t">
+                <TenantPortalAccess tenant={tenant} />
+                </div>
               </div>
               <div className="space-y-1 mb-3">
                 {tenant.email && <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Mail className="w-3 h-3" /> {tenant.email}</p>}
