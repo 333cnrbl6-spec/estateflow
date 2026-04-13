@@ -87,6 +87,7 @@ import AgentPerformanceDashboard from './pages/AgentPerformanceDashboard';
 import ComplianceDashboard2 from './pages/ComplianceDashboard2';
 import BulkImportTester from './pages/BulkImportTester';
 import UserTypeManager from './pages/UserTypeManager';
+import PropertyKPIDashboard from './pages/PropertyKPIDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -190,6 +191,7 @@ const AuthenticatedApp = () => {
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
         <Route path="/bulk-import-tester" element={<BulkImportTester />} />
         <Route path="/user-type-manager" element={<UserTypeManager />} />
+        <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
