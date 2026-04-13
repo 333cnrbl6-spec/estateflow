@@ -36,13 +36,7 @@ export default function MaintenanceWorkflow() {
 
   const { data: orders = [] } = useQuery({
     queryKey: ['maintenance', propertyIds],
-    queryFn: async () => {
-      if (propertyIds) {
-        const all = await base44.entities.MaintenanceOrder.list('-created_date');
-        return all.filter(o => propertyIds.includes(o.property_id));
-      }
-      return base44.entities.MaintenanceOrder.list('-created_date');
-    }
+    queryFn: async () => base44.entities.MaintenanceOrder.list('-created_date', 200)
   });
 
   const { data: properties = [] } = useQuery({
