@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import SmartDropZone from '@/components/onboarding/SmartDropZone';
 import DataImportPipelineConfig from '@/components/onboarding/DataImportPipelineConfig';
+import DataSourceGuidedGlean from '@/components/onboarding/DataSourceGuidedGlean';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
@@ -889,6 +890,15 @@ function StepDataAudit({ data, onChange }) {
 function StepDataSource({ data, onChange }) {
   const selected = data.data_sources || [];
   const toggle = (id) => onChange({ ...data, data_sources: selected.includes(id) ? selected.filter(s => s !== id) : [...selected, id] });
+  const dataGleans = data.data_gleans || {};
+
+  const gleanHelper = {
+    getGleans: (sourceId) => dataGleans[sourceId] || [],
+    setGleans: (sourceId, gleans) => {
+      const newGleans = { ...dataGleans, [sourceId]: gleans };
+      onChange({ ...data, data_gleans: newGleans });
+    },
+  };
 
   return (
     <div className="space-y-6">
@@ -917,6 +927,10 @@ function StepDataSource({ data, onChange }) {
           <p className="text-xs mt-1">After setup, you'll be able to connect your cloud storage directly. For now, export your key files and upload them in the next step.</p>
         </div>
       )}
+
+      <div className="mt-6 pt-6 border-t">
+        <DataSourceGuidedGlean selectedSources={selected} onGleanUpdate={gleanHelper} />
+      </div>
     </div>
   );
 }
@@ -1012,7 +1026,10 @@ function StepReview({ data, onBuild, building, buildResult }) {
        <ReviewRow label="Data types" value={`${(data.data_types || []).length} categories`}
          sub={Object.entries(counts).filter(([,v]) => v).map(([k,v]) => `${k.replace(/_/g,' ')}: ~${v}`).join(', ')} />
        <ReviewRow label="Files uploaded" value={`${(data.classified_files || []).length} files (${hasFiles} classified by AI)`} />
-      </div>
+       {Object.keys(data.data_gleans || {}).length > 0 && (
+         <ReviewRow label="Data sources classified" value={Object.entries(data.data_gleans).filter(([,v]) => v.length > 0).map(([k]) => k.replace(/_/g, ' ')).join(', ')} />
+       )}
+       </div>
 
       {!buildResult && (
        <Button onClick={onBuild} disabled={building || !data.company_name} size="lg" className="w-full gap-2">
