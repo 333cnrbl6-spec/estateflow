@@ -339,76 +339,72 @@ export default function ProductComparison() {
           ))}
         </Tabs>
 
-        {/* Pricing Comparison */}
+        {/* Pricing Comparison Table */}
         <Card className="border-2 border-slate-200">
           <CardHeader>
             <CardTitle className="text-2xl">Pricing Comparison</CardTitle>
+            <p className="text-sm text-slate-500 mt-1">Side-by-side breakdown for a 250-unit portfolio</p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {pricingDetails.map((pricing, idx) => (
-                <div
-                  key={idx}
-                  className={`border-2 rounded-lg p-6 ${
-                    pricing.product === 'Premiso'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-slate-200 bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-4">
-                    {pricing.product === 'Premiso' && (
-                      <Crown className="w-5 h-5 text-amber-500" />
-                    )}
-                    <h3 className="font-bold text-lg">{pricing.product}</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs text-slate-600">Pricing Model</p>
-                      <p className="font-semibold">{pricing.model}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-600">Base Price</p>
-                      <p className="font-bold text-lg text-slate-900">{pricing.basePrice}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-xs text-slate-600">Per Unit</p>
-                        <p className="font-semibold">{pricing.perUnit}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-600">Implementation</p>
-                        <p className="font-semibold">{pricing.implementation}</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-xs text-slate-600">Support</p>
-                        <p className="font-semibold text-sm">{pricing.support}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-600">Min. Contract</p>
-                        <p className="font-semibold text-sm">{pricing.contracts}</p>
-                      </div>
-                    </div>
-                    <div className="pt-3 border-t border-slate-300">
-                      <p className="text-xs text-slate-600 mb-2">Key Highlights</p>
-                      <ul className="space-y-1">
-                        {pricing.highlights.map((highlight, hidx) => (
-                          <li key={hidx} className="text-sm flex items-start gap-2">
-                            <span className="text-green-600 mt-0.5">✓</span>
-                            {highlight}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-slate-200">
+                    <th className="text-left py-3 px-4 bg-slate-50 font-semibold w-36">Metric</th>
+                    {pricingDetails.map((p, i) => (
+                      <th key={i} className={`text-center py-3 px-3 font-semibold ${
+                        p.product === 'Premiso' ? 'bg-blue-50 text-blue-900' : 'bg-slate-50 text-slate-700'
+                      }`}>
+                        {p.product === 'Premiso' && <Crown className="w-4 h-4 text-amber-500 mx-auto mb-1" />}
+                        {p.product}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: 'Pricing Model', key: 'model' },
+                    { label: 'Monthly Cost', key: 'basePrice' },
+                    { label: 'Per Unit', key: 'perUnit' },
+                    { label: 'Implementation', key: 'implementation' },
+                    { label: 'Support', key: 'support' },
+                    { label: 'Min. Contract', key: 'contracts' },
+                  ].map((row, ridx) => (
+                    <tr key={ridx} className={`border-b border-slate-100 ${ridx % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'}`}>
+                      <td className="py-3 px-4 font-medium text-slate-700 bg-slate-50">{row.label}</td>
+                      {pricingDetails.map((p, i) => (
+                        <td key={i} className={`text-center py-3 px-3 ${
+                          p.product === 'Premiso' ? 'bg-blue-50/60 font-semibold text-blue-900' : 'text-slate-700'
+                        } ${row.key === 'basePrice' ? 'font-bold text-base' : ''}`}>
+                          {p[row.key]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="border-b border-slate-100 bg-white">
+                    <td className="py-3 px-4 font-medium text-slate-700 bg-slate-50">Key Highlights</td>
+                    {pricingDetails.map((p, i) => (
+                      <td key={i} className={`py-3 px-3 ${
+                        p.product === 'Premiso' ? 'bg-blue-50/60' : ''
+                      }`}>
+                        <ul className="space-y-1">
+                          {p.highlights.map((h, hi) => (
+                            <li key={hi} className="text-xs flex items-start gap-1">
+                              <Check className="w-3 h-3 text-green-600 mt-0.5 shrink-0" />
+                              <span className={p.product === 'Premiso' ? 'text-blue-800' : 'text-slate-600'}>{h}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
 
-        {/* Total Cost of Ownership Estimate */}
+
         <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200">
           <CardHeader>
             <CardTitle>Annual Total Cost of Ownership (TCO) - 250 Unit Portfolio</CardTitle>
