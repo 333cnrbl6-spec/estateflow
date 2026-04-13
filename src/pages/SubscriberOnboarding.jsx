@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import SmartDropZone from '@/components/onboarding/SmartDropZone';
+import DataImportPipelineConfig from '@/components/onboarding/DataImportPipelineConfig';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
@@ -21,6 +22,7 @@ const STEPS = [
   { id: 'software',   label: 'Software & Integrations', icon: Globe },
   { id: 'data_audit', label: 'Your Data',       icon: Database },
   { id: 'data_source',label: 'Data Sources',    icon: HardDrive },
+  { id: 'import_pipeline', label: 'Configure Import', icon: Loader2 },
   { id: 'upload',     label: 'Import Data',     icon: FileText },
   { id: 'review',     label: 'Review & Create', icon: CheckCircle2 },
 ];
@@ -841,6 +843,22 @@ function StepDataSource({ data, onChange }) {
   );
 }
 
+function StepImportPipeline({ data, onChange }) {
+  const handleImportStart = (config) => {
+    onChange({ ...data, import_pipeline_config: config });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Configure Data Import</h2>
+        <p className="text-sm text-muted-foreground mt-1">Automated pipelines to fetch historical data from your software integrations.</p>
+      </div>
+      <DataImportPipelineConfig data={data} onImportStart={handleImportStart} />
+    </div>
+  );
+}
+
 function StepUpload({ data, onChange }) {
   const [classified, setClassified] = useState(data.classified_files || []);
 
@@ -1090,8 +1108,9 @@ Generate a realistic onboarding summary: what records would be created, what wor
             {step === 4 && <StepSoftware data={formData} onChange={setFormData} />}
             {step === 5 && <StepDataAudit data={formData} onChange={setFormData} />}
             {step === 6 && <StepDataSource data={formData} onChange={setFormData} />}
-            {step === 7 && <StepUpload data={formData} onChange={setFormData} />}
-            {step === 8 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
+            {step === 7 && <StepImportPipeline data={formData} onChange={setFormData} />}
+            {step === 8 && <StepUpload data={formData} onChange={setFormData} />}
+            {step === 9 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
           </div>
 
           {/* Navigation */}
