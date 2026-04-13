@@ -1,41 +1,111 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Loader2, Printer, ArrowLeft, CheckCircle, AlertTriangle, Clock, FileX, DollarSign, Users, Shield, Zap, Phone, TrendingUp, Award, Building2, ChevronRight } from 'lucide-react';
+import { Loader2, Printer, ArrowLeft, Zap, Building2, Phone, FileX } from 'lucide-react';
 
-const ICON_MAP = { Clock, AlertTriangle, FileX, DollarSign, Users, Shield, Zap, Phone, TrendingUp };
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-function hexToRgb(hex) {
-  if (!hex) return null;
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function hex(h) {
+  if (!h || h.length < 7) return '26, 58, 82';
+  const r = parseInt(h.slice(1, 3), 16);
+  const g = parseInt(h.slice(3, 5), 16);
+  const b = parseInt(h.slice(5, 7), 16);
   return `${r}, ${g}, ${b}`;
 }
 
-function CoverageChip({ coverage }) {
-  const map = { full: ['#22c55e', 'Fully Covered'], partial: ['#f59e0b', 'Partial'], addon: ['#8b5cf6', 'Add-on'] };
-  const [bg, label] = map[coverage] || ['#6b7280', coverage];
-  return <span style={{ background: bg, color: '#fff', fontSize: 10, padding: '2px 8px', borderRadius: 99, fontWeight: 600 }}>{label}</span>;
+function Chip({ color, label }) {
+  const map = { full: ['#16a34a', '✓ Fully Covered'], partial: ['#d97706', '◑ Partial'], addon: ['#7c3aed', '+ Add-on'] };
+  const [bg, text] = map[color] || ['#6b7280', color];
+  return <span style={{ background: bg, color: '#fff', fontSize: 9, padding: '3px 9px', borderRadius: 99, fontWeight: 700, whiteSpace: 'nowrap' }}>{text}</span>;
 }
 
-function WinChip({ wins }) {
-  return wins
-    ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>✓ Premiso</span>
-    : <span style={{ color: '#dc2626', fontWeight: 600, fontSize: 11 }}>✗</span>;
+function SLabel({ color, text }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+      <div style={{ width: 4, height: 18, borderRadius: 99, background: color, flexShrink: 0 }} />
+      <div style={{ fontSize: 10.5, fontWeight: 800, color: '#1f2937', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{text}</div>
+    </div>
+  );
 }
 
-// ─── Main Page ──────────────────────────────────────────────────────────────
+function PHead({ primary, accent, title, subtitle, page }) {
+  return (
+    <div style={{ background: primary, padding: '18px 44px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+      <div>
+        <h2 style={{ fontSize: 19, fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2 }}>{title}</h2>
+        {subtitle && <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>{subtitle}</div>}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: accent, letterSpacing: '-0.02em' }}>premiso<span style={{ color: '#fff' }}>.</span></div>
+        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', borderLeft: '1px solid rgba(255,255,255,0.15)', paddingLeft: 10 }}>p.{page}</div>
+      </div>
+    </div>
+  );
+}
+
+function PFoot({ agentName }) {
+  return (
+    <div style={{ padding: '10px 44px', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+      <div style={{ fontSize: 8.5, color: '#aaa' }}>Prepared exclusively for {agentName} · Confidential · Not for distribution</div>
+      <div style={{ fontSize: 8.5, color: '#aaa' }}>premiso.co.uk · {new Date().getFullYear()}</div>
+    </div>
+  );
+}
+
+// ─── Static platform feature definitions ─────────────────────────────────────
+const PLATFORM_FEATURES = [
+  { icon: '📊', title: 'Portfolio Dashboard', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe',
+    desc: 'Real-time KPIs across your entire portfolio — occupancy, arrears, income, maintenance status and compliance alerts, all on a single screen. Multi-company support means you see every legal entity you manage in one consolidated view.',
+    badges: ['Multi-company', 'Real-time KPIs', 'Compliance alerts'] },
+  { icon: '🏠', title: 'Tenancy Pipeline', color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0',
+    desc: 'Kanban-style board taking applicants from enquiry through referencing, move-in and all the way to renewal. Drag-and-drop simplicity with automated task prompts at each stage keeps your team on track without chasing spreadsheets.',
+    badges: ['Kanban workflow', 'Referencing tracker', 'Renewal automation'] },
+  { icon: '💷', title: 'Rent Ledger', color: '#b45309', bg: '#fefce8', border: '#fde68a',
+    desc: 'Double-entry rent accounting per tenancy — every payment, arrear, credit and adjustment tracked against a full audit trail. Automated arrears escalation emails, payment plan management, and instant statement generation.',
+    badges: ['Full audit trail', 'Arrears escalation', 'Payment plans'] },
+  { icon: '✅', title: 'Compliance Hub', color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0',
+    desc: 'Gas safety, EICR, EPC, fire risk assessments, asbestos, legionella, PAT testing, lift safety — all tracked in one place with configurable expiry alerts. Building Safety Act 2023 register, accountable person records and resident communication log built in.',
+    badges: ['BSA 2023 ready', '9 certificate types', 'Auto reminders'] },
+  { icon: '🔧', title: 'Maintenance Orders', color: '#7e22ce', bg: '#fdf4ff', border: '#e9d5ff',
+    desc: 'Log, assign, schedule and close maintenance jobs with full contractor dispatch. Preferred contractor lists, SMS/email notification, cost estimates vs actuals, Section 20 flagging for major works, and live status updates for tenants.',
+    badges: ['Contractor dispatch', 'S.20 flagging', 'Cost tracking'] },
+  { icon: '🏢', title: 'Block Management', color: '#c2410c', bg: '#fff7ed', border: '#fed7aa',
+    desc: 'First-class block management built in — not bolted on. Service charge accounts with budgeting, actuals and per-unit allocation. Section 20 consultation tracker. Ground rent register. RTM eligibility calculator. Leaseholder self-service portal.',
+    badges: ['S.20 consultation', 'Ground rent', 'RTM management'] },
+  { icon: '📄', title: 'Document Automation', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe',
+    desc: 'Create, merge and send hundreds of documents in one click. Tenancy agreements, Section 21/8 notices, service charge statements, maintenance notices — all from your template library with live data fields auto-populated from your records.',
+    badges: ['Mail merge', 'Bulk generation', 'Digital delivery'] },
+  { icon: '📈', title: 'Financial Reporting', color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0',
+    desc: 'P&L, cashflow, income by property and by company. Bank transaction import and reconciliation. Owner statements. Expense tracking with receipt upload. Xero, Sage and QuickBooks-compatible exports — so your accountant gets what they need.',
+    badges: ['Bank reconciliation', 'Owner statements', 'Xero/Sage export'] },
+  { icon: '🏛️', title: 'Companies House API', color: '#b45309', bg: '#fefce8', border: '#fde68a',
+    desc: 'No other property platform does this natively. Premiso connects directly to Companies House — pulling incorporation dates, directors, confirmation statement deadlines and accounts due dates automatically. Compliance calendar auto-populated, zero manual entry.',
+    badges: ['Live CH data', 'Deadline alerts', 'Director tracking'] },
+];
+
+const COMPETITOR_DEFAULTS = {
+  competitor_names: ['Arthur Online', 'Jupix'],
+  rows: [
+    { feature: 'Block Management', premiso: 'First-class — S.20, ground rent, RTM, leaseholder portal', c1: 'Basic — limited service charge capability', c2: 'Not included — requires separate software', premiso_wins: true },
+    { feature: 'Companies House Integration', premiso: 'Native API — directors, deadlines, filings auto-synced', c1: 'Not available', c2: 'Not available', premiso_wins: true },
+    { feature: 'Building Safety Act 2023', premiso: 'Full register, accountable person, resident comms log', c1: 'Not included', c2: 'Not included', premiso_wins: true },
+    { feature: 'Out-of-Hours Service', premiso: '24/7 native add-on — call log, maintenance, dispatch', c1: 'Not available — requires third party', c2: 'Not available', premiso_wins: true },
+    { feature: 'Document Automation', premiso: 'Mail merge, bulk generation, digital delivery', c1: 'Basic templates, no bulk generation', c2: 'Limited merge fields, manual only', premiso_wins: true },
+    { feature: 'Financial Reporting', premiso: 'P&L, cashflow, bank reconciliation, owner statements', c1: 'Requires Xero separately', c2: 'Basic reports, no bank reconciliation', premiso_wins: true },
+    { feature: 'Onboarding Time', premiso: 'Live in days — self-serve with support', c1: '4–8 weeks typical onboarding', c2: '2–6 weeks + migration fee', premiso_wins: true },
+    { feature: 'Pricing Model', premiso: 'Transparent monthly — no annual lock-in', c1: 'Annual contract required', c2: 'Annual licence + setup fee', premiso_wins: true },
+    { feature: 'UK Legislation Depth', premiso: 'RTM, S.20, BSA 2023, L&T Act 1985 — all built in', c1: 'Basic UK compliance', c2: 'Limited — US-influenced development', premiso_wins: true },
+    { feature: 'All-in-One Platform', premiso: 'Lettings + Block + Compliance + Finance + OOH', c1: 'Lettings-focused, block is weak', c2: 'Lettings only — multiple tools needed', premiso_wins: true },
+  ]
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function SalesBrochureGenerator() {
-  const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [content, setContent] = useState(null);
   const [research, setResearch] = useState(null);
   const [expansion, setExpansion] = useState(null);
   const [agentName, setAgentName] = useState('');
   const [error, setError] = useState(null);
-  const printRef = useRef(null);
 
   const params = new URLSearchParams(window.location.search);
   const paramAgent = params.get('agent');
@@ -53,25 +123,18 @@ export default function SalesBrochureGenerator() {
   }, []);
 
   const brand = research?.brand || {};
-  const primaryColor = brand.primary_color || '#1a3a52';
-  const accentColor = brand.accent_color || '#f0ad4e';
-  const primaryRgb = hexToRgb(primaryColor);
+  const PRIMARY = brand.primary_color || '#1a3a52';
+  const ACCENT = brand.accent_color || '#f0ad4e';
+  const RGB = hex(PRIMARY);
 
   const handleGenerate = async () => {
     if (!agentName) return;
     setGenerating(true);
     setError(null);
     try {
-      const res = await base44.functions.invoke('generateSalesBrochure', {
-        agent_name: agentName,
-        research,
-        expansion,
-      });
-      if (res.data?.success) {
-        setContent(res.data.content);
-      } else {
-        setError(res.data?.error || 'Generation failed');
-      }
+      const res = await base44.functions.invoke('generateSalesBrochure', { agent_name: agentName, research, expansion });
+      if (res.data?.success) setContent(res.data.content);
+      else setError(res.data?.error || 'Generation failed');
     } catch (e) {
       setError(e.message);
     } finally {
@@ -79,581 +142,520 @@ export default function SalesBrochureGenerator() {
     }
   };
 
-  const handlePrint = () => window.print();
-
   if (!agentName && !research) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
         <div className="text-center text-slate-400 max-w-md">
           <Building2 className="w-12 h-12 mx-auto mb-4 opacity-30" />
           <p className="text-lg font-semibold text-white mb-2">No Demo Data Found</p>
-          <p className="text-sm mb-6">Please build a demo first using the Sales Demo Setup page.</p>
-          <Button onClick={() => window.location.href = '/sales-demo-setup'} className="bg-amber-500 hover:bg-amber-600 text-white">
-            Go to Demo Builder
-          </Button>
+          <p className="text-sm mb-6">Build a demo first using the Sales Demo Setup page.</p>
+          <Button onClick={() => window.location.href = '/sales-demo-setup'} className="bg-amber-500 hover:bg-amber-600 text-white">Go to Demo Builder</Button>
         </div>
       </div>
     );
   }
 
+  const cmp = content?.competitor_comparison || COMPETITOR_DEFAULTS;
+
   return (
     <>
-      {/* Print Styles */}
       <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          .brochure-page {
-            width: 210mm;
-            min-height: 297mm;
-            page-break-after: always;
-            margin: 0;
-            box-shadow: none !important;
-          }
-          body { margin: 0; padding: 0; }
-          @page { size: A4; margin: 0; }
-        }
-        @media screen {
-          .brochure-page {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto 24px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-          }
-        }
-        .brochure-page { background: #fff; overflow: hidden; position: relative; font-family: ${brand.font_hint ? `'${brand.font_hint}', ` : ''}Inter, sans-serif; }
+        @media print { .no-print { display:none!important; } @page { size:A4; margin:0; } body { margin:0; padding:0; } .brochure-page { box-shadow:none!important; page-break-after:always; } }
+        .brochure-page { width:210mm; min-height:297mm; margin:0 auto 28px; background:#fff; overflow:hidden; position:relative; display:flex; flex-direction:column; font-family:${brand.font_hint ? `'${brand.font_hint}',` : ''}Inter,sans-serif; box-shadow:0 6px 32px rgba(0,0,0,0.18); }
       `}</style>
 
       {/* Toolbar */}
-      <div className="no-print bg-slate-900 border-b border-slate-700 px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+      <div className="no-print sticky top-0 z-50 bg-slate-900 border-b border-slate-700 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white" onClick={() => window.history.back()}>
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+            <ArrowLeft className="w-4 h-4 mr-1" />Back
           </Button>
           <span className="text-white font-semibold">{agentName} — Sales Brochure</span>
           {research?.brand?.logo_url && (
-            <img src={research.brand.logo_url} alt="" className="h-7 object-contain bg-white rounded px-1" onError={e => e.target.style.display='none'} />
+            <img src={research.brand.logo_url} alt="" className="h-7 object-contain bg-white rounded px-1" onError={e => e.target.style.display = 'none'} />
           )}
         </div>
         <div className="flex items-center gap-3">
-          {!content && (
+          {!content ? (
             <Button onClick={handleGenerate} disabled={generating} className="bg-amber-500 hover:bg-amber-600 text-white">
-              {generating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating…</> : <><Zap className="w-4 h-4 mr-2" /> Generate Brochure</>}
+              {generating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating…</> : <><Zap className="w-4 h-4 mr-2" />Generate AI Content</>}
             </Button>
-          )}
-          {content && (
-            <Button onClick={handlePrint} className="bg-green-600 hover:bg-green-700 text-white">
-              <Printer className="w-4 h-4 mr-2" /> Print / Save PDF
-            </Button>
-          )}
-          {content && (
-            <Button variant="outline" size="sm" onClick={() => { setContent(null); handleGenerate(); }} className="border-slate-600 text-slate-300">
-              Regenerate
-            </Button>
+          ) : (
+            <>
+              <Button onClick={() => window.print()} className="bg-green-600 hover:bg-green-700 text-white">
+                <Printer className="w-4 h-4 mr-2" />Print / Save PDF
+              </Button>
+              <Button variant="outline" size="sm" className="border-slate-600 text-slate-300" onClick={() => { setContent(null); handleGenerate(); }}>
+                Regenerate
+              </Button>
+            </>
           )}
         </div>
       </div>
 
-      {error && (
-        <div className="no-print bg-red-950 border border-red-700 rounded mx-8 mt-4 p-3 text-red-200 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <div className="no-print bg-red-950 border border-red-700 rounded mx-8 mt-4 p-3 text-red-200 text-sm">{error}</div>}
 
       {generating && (
         <div className="no-print flex flex-col items-center justify-center py-24 bg-slate-900 min-h-96">
           <Loader2 className="w-14 h-14 text-amber-400 animate-spin mb-5" />
-          <p className="text-white text-xl font-semibold">Crafting your brochure…</p>
-          <p className="text-slate-400 text-sm mt-2">Using AI to tailor content specifically for {agentName}</p>
-          <p className="text-slate-500 text-xs mt-1">This uses Claude Sonnet and takes ~30 seconds</p>
+          <p className="text-white text-xl font-semibold">Crafting your personalised brochure…</p>
+          <p className="text-slate-400 text-sm mt-2">Researching competitors, matching services, writing copy for {agentName}</p>
+          <p className="text-slate-500 text-xs mt-1">Powered by Claude Sonnet — takes ~30–45 seconds</p>
         </div>
       )}
 
       {!content && !generating && (
         <div className="no-print bg-slate-900 min-h-screen flex items-center justify-center p-8">
           <div className="text-center max-w-lg">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: primaryColor }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: PRIMARY }}>
               <FileX className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-3">Ready to Generate</h2>
-            <p className="text-slate-400 mb-2">
-              A full A4 colour brochure tailored for <strong className="text-white">{agentName}</strong> — including their services, competitor analysis, feature match, out-of-hours pitch, and expansion opportunities.
-            </p>
-            {research && (
-              <div className="flex flex-wrap gap-2 justify-center mt-4 mb-6">
-                {(research.services || []).slice(0, 5).map((s, i) => (
-                  <span key={i} className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded-full">{s}</span>
-                ))}
-              </div>
-            )}
+            <p className="text-slate-400 mb-6">Click below to generate a full 8-page A4 brochure personalised for <strong className="text-white">{agentName}</strong> — featuring competitor analysis, service matching, feature breakdowns, OOH pitch and expansion roadmap.</p>
             <Button onClick={handleGenerate} size="lg" className="bg-amber-500 hover:bg-amber-600 text-white px-8">
-              <Zap className="w-5 h-5 mr-2" /> Generate Brochure
+              <Zap className="w-5 h-5 mr-2" />Generate Brochure
             </Button>
           </div>
         </div>
       )}
 
       {content && (
-        <div ref={printRef} style={{ background: '#e5e7eb', paddingTop: 32, paddingBottom: 48 }}>
+        <div style={{ background: '#d1d5db', paddingTop: 36, paddingBottom: 60 }}>
 
-          {/* ══ PAGE 1: COVER ══════════════════════════════════════════════ */}
-          <div className="brochure-page" style={{ background: primaryColor, display: 'flex', flexDirection: 'column' }}>
-            {/* Header stripe */}
-            <div style={{ height: 8, background: accentColor }} />
+          {/* ══ PAGE 1: COVER ══════════════════════════════════════════════════ */}
+          <div className="brochure-page" style={{ background: PRIMARY }}>
+            <div style={{ height: 8, background: ACCENT, flexShrink: 0 }} />
 
-            {/* Logo area */}
-            <div style={{ padding: '36px 44px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                {research?.brand?.logo_url && (
-                  <img src={research.brand.logo_url} alt={agentName} style={{ height: 44, objectFit: 'contain', background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '4px 10px' }}
-                    onError={e => e.target.style.display = 'none'} />
-                )}
+            {/* Logo bar */}
+            <div style={{ padding: '32px 44px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+                premiso<span style={{ color: ACCENT }}>.</span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Prepared exclusively for</div>
+                {research?.brand?.logo_url && (
+                  <img src={research.brand.logo_url} alt={agentName} style={{ height: 40, objectFit: 'contain', background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: '4px 10px', marginBottom: 6 }}
+                    onError={e => e.target.style.display = 'none'} />
+                )}
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Prepared exclusively for</div>
                 <div style={{ fontSize: 15, color: '#fff', fontWeight: 700 }}>{agentName}</div>
               </div>
             </div>
 
-            {/* Centre content */}
+            {/* Hero */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 44px' }}>
-              <div style={{ fontSize: 11, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 18 }}>
-                Property Management Platform
+              <div style={{ fontSize: 10.5, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 16 }}>
+                Property Management Platform · UK
               </div>
-              <h1 style={{ fontSize: 40, fontWeight: 800, color: '#fff', lineHeight: 1.15, margin: '0 0 20px', maxWidth: 520 }}>
+              <h1 style={{ fontSize: 38, fontWeight: 800, color: '#fff', lineHeight: 1.15, margin: '0 0 20px', maxWidth: 520 }}>
                 {content.cover_headline || `The Complete Platform Built for ${agentName}`}
               </h1>
-              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, maxWidth: 480, margin: '0 0 40px' }}>
-                {content.cover_subheading || 'Discover how Premiso transforms property management — tailored to your portfolio, your team, your growth.'}
+              <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,0.72)', lineHeight: 1.65, maxWidth: 500, margin: '0 0 40px' }}>
+                {content.cover_subheading || 'One platform. Every module. Built for UK property professionals who want to grow without the admin.'}
               </p>
 
-              {/* Key stats bar */}
-              {content.stats && (
-                <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                  {content.stats.slice(0, 4).map((s, i) => (
-                    <div key={i} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '16px 22px', minWidth: 120 }}>
-                      <div style={{ fontSize: 26, fontWeight: 800, color: accentColor }}>{s.value}</div>
-                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>{s.label}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Stats bar */}
+              <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+                {(content.stats || [
+                  { value: '40%', label: 'Admin time saved' },
+                  { value: '100%', label: 'UK legislation built-in' },
+                  { value: '24/7', label: 'Emergency cover available' },
+                  { value: '1 platform', label: 'For lettings & blocks' },
+                ]).slice(0, 4).map((s, i) => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 14, padding: '16px 22px', minWidth: 110 }}>
+                    <div style={{ fontSize: 26, fontWeight: 800, color: ACCENT }}>{s.value}</div>
+                    <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 3 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Cover footer */}
-            <div style={{ padding: '24px 44px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
-                premiso<span style={{ color: accentColor }}>.</span>
+            {/* Cover footer strip */}
+            <div style={{ padding: '20px 44px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Lettings · Block Management · Compliance · Finance · Out-of-Hours
               </div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Confidential — {new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+                {new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
               </div>
             </div>
           </div>
 
-          {/* ══ PAGE 2: EXECUTIVE SUMMARY + COMPANY PROFILE ══════════════ */}
-          <div className="brochure-page" style={{ display: 'flex', flexDirection: 'column' }}>
-            <PageHeader primary={primaryColor} accent={accentColor} title="About Your Demo" subtitle={`Tailored for ${agentName}`} pageNum={2} />
-            <div style={{ flex: 1, padding: '32px 44px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
+          {/* ══ PAGE 2: EXECUTIVE SUMMARY + COMPANY PROFILE + PAIN POINTS ══ */}
+          <div className="brochure-page">
+            <PHead primary={PRIMARY} accent={ACCENT} title="Why Premiso — For You" subtitle={`Personalised analysis for ${agentName}`} page={2} />
 
+            <div style={{ flex: 1, padding: '28px 44px', overflowHidden: 'hidden' }}>
               {/* Executive Summary */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <SectionLabel color={accentColor} text="Executive Summary" />
-                <p style={{ fontSize: 13, lineHeight: 1.75, color: '#374151', marginTop: 10 }}>
-                  {content.executive_summary || `${agentName} is a UK property management company. Premiso has been tailored specifically for their portfolio, services and team to demonstrate exactly how the platform would work for them from day one.`}
+              <div style={{ marginBottom: 24, padding: '18px 22px', background: `rgba(${RGB},0.05)`, borderRadius: 12, border: `1.5px solid rgba(${RGB},0.15)` }}>
+                <SLabel color={ACCENT} text="Executive Summary" />
+                <p style={{ fontSize: 13, lineHeight: 1.8, color: '#1f2937', margin: 0 }}>
+                  {content.executive_summary}
                 </p>
               </div>
 
-              {/* Company Profile */}
-              <div>
-                <SectionLabel color={accentColor} text="Company Profile" />
-                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10, fontSize: 11 }}>
-                  <tbody>
-                  {[
-                    ['Company', research?.trading_name || agentName],
-                    ['Location', research?.registered_address],
-                    ['Est.', research?.founded],
-                    ['Website', research?.website],
-                    ['Phone', research?.phone],
-                  ].filter(r => r[1] && r[1] !== 'Not publicly available').map(([k, v]) => (
-                    <tr key={k} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '6px 0', color: '#6b7280', width: 90, fontWeight: 600 }}>{k}</td>
-                      <td style={{ padding: '6px 0', color: '#111827' }}>{v}</td>
-                    </tr>
-                  ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Key People */}
-              {research?.key_people?.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                {/* Company Profile */}
                 <div>
-                  <SectionLabel color={accentColor} text="Key Contacts" />
-                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {research.key_people.map((p, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: primaryColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
-                          {p.name.charAt(0)}
+                  <SLabel color={ACCENT} text="Company Profile" />
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                    <tbody>
+                      {[
+                        ['Company', research?.trading_name || agentName],
+                        ['Location', research?.registered_address],
+                        ['Established', research?.founded],
+                        ['Website', research?.website],
+                        ['Phone', research?.phone],
+                        ['Services', (research?.services || []).slice(0, 3).join(', ')],
+                      ].filter(r => r[1] && r[1] !== 'Not publicly available').map(([k, v]) => (
+                        <tr key={k} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '7px 0', color: '#6b7280', width: 90, fontWeight: 600, fontSize: 10.5 }}>{k}</td>
+                          <td style={{ padding: '7px 0', color: '#111827', fontSize: 10.5 }}>{v}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {research?.key_people?.length > 0 && (
+                    <div style={{ marginTop: 16 }}>
+                      <SLabel color={ACCENT} text="Key Contacts" />
+                      {research.key_people.slice(0, 3).map((p, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb', marginBottom: 6 }}>
+                          <div style={{ width: 30, height: 30, borderRadius: '50%', background: PRIMARY, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{p.name?.charAt(0) || '?'}</div>
+                          <div>
+                            <div style={{ fontSize: 11.5, fontWeight: 600, color: '#111827' }}>{p.name}</div>
+                            <div style={{ fontSize: 10, color: '#6b7280' }}>{p.role}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: '#111827' }}>{p.name}</div>
-                          <div style={{ fontSize: 10, color: '#6b7280' }}>{p.role}</div>
-                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Pain Points */}
+                <div>
+                  <SLabel color={ACCENT} text="Challenges We Solve" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                    {(content.pain_points || []).slice(0, 6).map((p, i) => (
+                      <div key={i} style={{ padding: '10px 12px', background: '#fef9f0', borderRadius: 9, border: `1px solid rgba(${hex(ACCENT)},0.3)` }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#92400e', marginBottom: 3 }}>{p.problem}</div>
+                        <div style={{ fontSize: 10.5, color: '#16a34a', fontWeight: 600 }}>→ {p.solution}</div>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* Services */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <SectionLabel color={accentColor} text="Services We've Matched to Premiso" />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-                  {(research?.services || []).map((s, i) => (
-                    <span key={i} style={{ fontSize: 10, padding: '4px 10px', background: `rgba(${primaryRgb},0.08)`, color: primaryColor, borderRadius: 99, border: `1px solid rgba(${primaryRgb},0.2)`, fontWeight: 600 }}>{s}</span>
-                  ))}
                 </div>
               </div>
-
-              {/* Pain Points */}
-              {(content.pain_points?.length > 0) && (
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <SectionLabel color={accentColor} text="Challenges We Solve for You" />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginTop: 10 }}>
-                    {content.pain_points.slice(0, 6).map((p, i) => (
-                      <div key={i} style={{ background: '#fef9f0', border: `1px solid ${accentColor}33`, borderRadius: 10, padding: '12px 14px' }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: '#92400e', textTransform: 'uppercase', marginBottom: 4 }}>Challenge</div>
-                        <div style={{ fontSize: 11, color: '#1f2937', fontWeight: 600, marginBottom: 6 }}>{p.problem || '—'}</div>
-                        <div style={{ fontSize: 10, color: '#16a34a', fontWeight: 600 }}>→ {p.solution || 'Resolved by Premiso'}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
+
+            <PFoot agentName={agentName} />
           </div>
 
-          {/* ══ PAGE 3: SERVICE MATCH TABLE ═══════════════════════════════ */}
+          {/* ══ PAGE 3: SERVICE MATCH TABLE ════════════════════════════════════ */}
           <div className="brochure-page">
-            <PageHeader primary={primaryColor} accent={accentColor} title="Service Match" subtitle="How your services map to Premiso's platform" pageNum={3} />
-            <div style={{ padding: '24px 44px 0' }}>
-              <SectionLabel color={accentColor} text={`${agentName} Services → Premiso Coverage`} />
-              {(!content.feature_match || content.feature_match.length === 0) && (
-                <p style={{ fontSize: 12, color: '#6b7280', marginTop: 12 }}>Service match data will appear here once the brochure is generated.</p>
-              )}
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12, fontSize: 11 }}>
+            <PHead primary={PRIMARY} accent={ACCENT} title="Service Match" subtitle="Your services mapped to Premiso's modules" page={3} />
+
+            <div style={{ flex: 1, padding: '24px 44px' }}>
+              <SLabel color={ACCENT} text={`${agentName}'s Services → Premiso Coverage`} />
+              <p style={{ fontSize: 11.5, color: '#374151', marginBottom: 14, lineHeight: 1.65 }}>
+                Every service you offer today has a corresponding Premiso module that handles it — with deeper capability, better audit trails, and full compliance built in. Below is how your current business maps to the platform.
+              </p>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                 <thead>
-                  <tr style={{ background: primaryColor }}>
-                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'left', fontWeight: 600 }}>Your Service</th>
-                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'left', fontWeight: 600 }}>Premiso Module</th>
-                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'left', fontWeight: 600 }}>Key Benefit</th>
-                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'center', fontWeight: 600 }}>Coverage</th>
+                  <tr style={{ background: PRIMARY }}>
+                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'left', fontWeight: 700, width: '22%' }}>Your Service</th>
+                    <th style={{ padding: '10px 14px', color: ACCENT, textAlign: 'left', fontWeight: 700, width: '22%' }}>Premiso Module</th>
+                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'left', fontWeight: 600, width: '44%' }}>What This Means for You</th>
+                    <th style={{ padding: '10px 14px', color: '#fff', textAlign: 'center', fontWeight: 600, width: '12%' }}>Coverage</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(content.feature_match || []).map((row, i) => (
                     <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '9px 14px', color: '#111827', fontWeight: 600 }}>{row.their_service}</td>
-                      <td style={{ padding: '9px 14px', color: primaryColor, fontWeight: 600 }}>{row.premiso_module}</td>
-                      <td style={{ padding: '9px 14px', color: '#374151' }}>{row.benefit}</td>
-                      <td style={{ padding: '9px 14px', textAlign: 'center' }}><CoverageChip coverage={row.coverage} /></td>
+                      <td style={{ padding: '9px 14px', fontWeight: 700, color: '#1f2937', fontSize: 11 }}>{row.their_service}</td>
+                      <td style={{ padding: '9px 14px', color: PRIMARY, fontWeight: 700, fontSize: 11 }}>{row.premiso_module}</td>
+                      <td style={{ padding: '9px 14px', color: '#374151', fontSize: 10.5, lineHeight: 1.5 }}>{row.benefit}</td>
+                      <td style={{ padding: '9px 14px', textAlign: 'center' }}><Chip color={row.coverage} /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
-              {/* Module Highlights */}
-              {content.module_highlights && (
-                <div style={{ marginTop: 28 }}>
-                  <SectionLabel color={accentColor} text="Spotlight: Key Modules for Your Business" />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 12 }}>
-                    {content.module_highlights.slice(0, 4).map((m, i) => (
-                      <div key={i} style={{ border: `2px solid rgba(${primaryRgb},0.15)`, borderRadius: 12, padding: '16px 18px', background: `rgba(${primaryRgb},0.03)` }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: primaryColor, marginBottom: 4 }}>{m.module}</div>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: '#1f2937', marginBottom: 6 }}>{m.headline}</div>
-                        <p style={{ fontSize: 10, color: '#6b7280', lineHeight: 1.6, margin: 0 }}>{m.description}</p>
-                        <div style={{ marginTop: 8, fontSize: 10, color: '#16a34a', fontWeight: 600 }}>
-                          ✓ {m.relevant_to}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Coverage legend */}
+              <div style={{ marginTop: 14, display: 'flex', gap: 16, alignItems: 'center' }}>
+                <div style={{ fontSize: 9.5, color: '#6b7280', fontWeight: 600, textTransform: 'uppercase' }}>Coverage key:</div>
+                <Chip color="full" />
+                <div style={{ fontSize: 9.5, color: '#374151' }}>All functionality included in platform</div>
+                <Chip color="partial" />
+                <div style={{ fontSize: 9.5, color: '#374151' }}>Core covered, advanced modules available</div>
+                <Chip color="addon" />
+                <div style={{ fontSize: 9.5, color: '#374151' }}>Available as optional add-on</div>
+              </div>
             </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
+
+            <PFoot agentName={agentName} />
           </div>
 
-          {/* ══ PAGE 4: MODULE VISUALS — App Capability Showcase ═════════ */}
+          {/* ══ PAGE 4: PLATFORM CAPABILITIES ══════════════════════════════════ */}
           <div className="brochure-page">
-            <PageHeader primary={primaryColor} accent={accentColor} title="Platform Capabilities" subtitle="A visual overview of the Premiso platform" pageNum={4} />
-            <div style={{ padding: '24px 44px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-                {[
-                  { title: 'Portfolio Dashboard', desc: 'Real-time KPIs, occupancy rates, income tracking and compliance alerts across your entire portfolio.', icon: '📊', bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af' },
-                  { title: 'Tenancy Pipeline', desc: 'Manage prospects, referencing, move-ins and renewals through a visual Kanban pipeline.', icon: '🏠', bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d' },
-                  { title: 'Rent Ledger', desc: 'Full rent accounting, arrears tracking, payment history and automated reminders per tenancy.', icon: '💷', bg: '#fefce8', border: '#fde68a', color: '#b45309' },
-                  { title: 'Compliance Suite', desc: 'Gas safety, EICR, EPC, fire safety, asbestos and Building Safety Act in one compliance hub.', icon: '✅', bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d' },
-                  { title: 'Maintenance Orders', desc: 'Log, assign, track and close maintenance jobs with contractor dispatch and cost tracking.', icon: '🔧', bg: '#fdf4ff', border: '#e9d5ff', color: '#7e22ce' },
-                  { title: 'Service Charges', desc: 'Block management service charge accounts, S.20 consultation, per-unit allocations and reserve funds.', icon: '🏢', bg: '#fff7ed', border: '#fed7aa', color: '#c2410c' },
-                  { title: 'Document Engine', desc: 'Mail-merge templates, bulk generation, tenancy agreements, statutory notices and compliance docs.', icon: '📄', bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af' },
-                  { title: 'Financial Reporting', desc: 'P&L, cashflow, income by property, expense categorisation and accountancy export.', icon: '📈', bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d' },
-                  { title: 'Leaseholder Portal', desc: 'Self-service access for leaseholders to view accounts, service charges, documents and raise requests.', icon: '👥', bg: '#fefce8', border: '#fde68a', color: '#b45309' },
-                ].map((mod, i) => (
-                  <div key={i} style={{ background: mod.bg, border: `1.5px solid ${mod.border}`, borderRadius: 12, padding: '16px 16px 14px' }}>
-                    <div style={{ fontSize: 22, marginBottom: 6 }}>{mod.icon}</div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: mod.color, marginBottom: 5 }}>{mod.title}</div>
-                    <p style={{ fontSize: 10, color: '#374151', lineHeight: 1.55, margin: 0 }}>{mod.desc}</p>
+            <PHead primary={PRIMARY} accent={ACCENT} title="Platform Capabilities" subtitle="Everything in one place — no extra tools needed" page={4} />
+
+            <div style={{ flex: 1, padding: '22px 44px' }}>
+              <p style={{ fontSize: 11.5, color: '#374151', lineHeight: 1.7, marginBottom: 18 }}>
+                Most property management businesses are running 3–5 separate tools — a CRM, a maintenance app, a compliance tracker, a rent ledger, and something else for block management. Premiso replaces all of them with a single, connected platform where data flows seamlessly between every module.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                {PLATFORM_FEATURES.map((mod, i) => (
+                  <div key={i} style={{ background: mod.bg, border: `1.5px solid ${mod.border}`, borderRadius: 12, padding: '14px 15px 12px' }}>
+                    <div style={{ fontSize: 20, marginBottom: 6 }}>{mod.icon}</div>
+                    <div style={{ fontSize: 11.5, fontWeight: 800, color: mod.color, marginBottom: 5 }}>{mod.title}</div>
+                    <p style={{ fontSize: 9.5, color: '#374151', lineHeight: 1.6, margin: '0 0 8px' }}>{mod.desc}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                      {mod.badges.map((b, j) => (
+                        <span key={j} style={{ fontSize: 8.5, padding: '2px 7px', background: `${mod.color}18`, color: mod.color, borderRadius: 99, fontWeight: 700 }}>{b}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <PFoot agentName={agentName} />
+          </div>
+
+          {/* ══ PAGE 5: MODULE SPOTLIGHTS (AI) ══════════════════════════════════ */}
+          <div className="brochure-page">
+            <PHead primary={PRIMARY} accent={ACCENT} title="Built for Your Business" subtitle={`How Premiso's key modules deliver for ${agentName}`} page={5} />
+
+            <div style={{ flex: 1, padding: '28px 44px' }}>
+              {/* Module highlights */}
+              <SLabel color={ACCENT} text="Key Modules for Your Portfolio" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+                {(content.module_highlights || []).map((m, i) => (
+                  <div key={i} style={{ border: `2px solid rgba(${RGB},0.15)`, borderRadius: 14, padding: '18px 20px', background: `rgba(${RGB},0.03)` }}>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: PRIMARY, marginBottom: 5 }}>{m.module}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1f2937', marginBottom: 8 }}>{m.headline}</div>
+                    <p style={{ fontSize: 10.5, color: '#374151', lineHeight: 1.65, margin: '0 0 10px' }}>{m.description}</p>
+                    <div style={{ fontSize: 10, color: '#16a34a', fontWeight: 700, padding: '6px 10px', background: '#f0fdf4', borderRadius: 7 }}>
+                      ✓ Relevant because: {m.relevant_to}
+                    </div>
                   </div>
                 ))}
               </div>
 
               {/* Testimonial */}
               {content.testimonial_placeholder && (
-                <div style={{ marginTop: 22, background: primaryColor, borderRadius: 14, padding: '22px 28px', position: 'relative' }}>
-                  <div style={{ fontSize: 36, color: accentColor, lineHeight: 1, marginBottom: 8, fontFamily: 'Georgia, serif' }}>"</div>
-                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', lineHeight: 1.65, fontStyle: 'italic', margin: 0 }}>{content.testimonial_placeholder}</p>
-                  <div style={{ marginTop: 12, fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                    — Illustrative customer statement
+                <div style={{ background: PRIMARY, borderRadius: 14, padding: '22px 28px' }}>
+                  <div style={{ fontSize: 32, color: ACCENT, lineHeight: 1, marginBottom: 8, fontFamily: 'Georgia, serif' }}>"</div>
+                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', lineHeight: 1.7, fontStyle: 'italic', margin: 0 }}>{content.testimonial_placeholder}</p>
+                  <div style={{ marginTop: 10, fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    — Illustrative customer statement · Based on real agent outcomes
                   </div>
                 </div>
               )}
             </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
+
+            <PFoot agentName={agentName} />
           </div>
 
-          {/* ══ PAGE 5: COMPETITOR COMPARISON ════════════════════════════ */}
+          {/* ══ PAGE 6: COMPETITOR COMPARISON ══════════════════════════════════ */}
           <div className="brochure-page">
-            <PageHeader primary={primaryColor} accent={accentColor} title="Why Premiso" subtitle="Head-to-head comparison with market alternatives" pageNum={5} />
-            <div style={{ padding: '24px 44px' }}>
-              {!content.competitor_comparison && (
-                <div style={{ padding: '24px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb', marginBottom: 16 }}>
-                  <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>Competitor comparison is generated during brochure creation based on the prospect's likely tech stack.</p>
-                </div>
-              )}
-              {!expansion?.existing_software?.length && (
-                <div style={{ marginTop: 24, padding: '16px 20px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#15803d', marginBottom: 4 }}>No existing tech stack detected</div>
-                  <p style={{ fontSize: 10, color: '#374151', margin: 0 }}>Premiso can serve as the primary platform for {agentName}, replacing fragmented spreadsheets and legacy tools with a single integrated solution.</p>
-                </div>
-              )}
-              {content.competitor_comparison && (
-                <>
-                  <SectionLabel color={accentColor} text={`Premiso vs ${(content.competitor_comparison.competitor_names || ['Competitor A', 'Competitor B']).join(' & ')}`} />
-                  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12, fontSize: 10.5 }}>
-                    <thead>
-                      <tr style={{ background: primaryColor }}>
-                        <th style={{ padding: '10px 12px', color: '#fff', textAlign: 'left', fontWeight: 600, width: '28%' }}>Feature</th>
-                        <th style={{ padding: '10px 12px', color: accentColor, textAlign: 'left', fontWeight: 700, width: '22%' }}>✦ Premiso</th>
-                        {(content.competitor_comparison.competitor_names || ['Competitor A', 'Competitor B']).map((cn, i) => (
-                          <th key={i} style={{ padding: '10px 12px', color: 'rgba(255,255,255,0.7)', textAlign: 'left', fontWeight: 600, width: '22%' }}>{cn}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(content.competitor_comparison.rows || []).map((row, i) => (
-                        <tr key={i} style={{ background: row.premiso_wins ? (i % 2 === 0 ? '#f0fdf4' : '#dcfce7') : (i % 2 === 0 ? '#fff' : '#f9fafb'), borderBottom: '1px solid #e5e7eb' }}>
-                          <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1f2937' }}>{row.feature}</td>
-                          <td style={{ padding: '8px 12px', color: '#15803d', fontWeight: row.premiso_wins ? 700 : 400 }}>
-                            {row.premiso_wins && <span style={{ color: '#16a34a', marginRight: 4 }}>✓</span>}
-                            {row.premiso}
-                          </td>
-                          <td style={{ padding: '8px 12px', color: '#6b7280' }}>{row.c1}</td>
-                          <td style={{ padding: '8px 12px', color: '#6b7280' }}>{row.c2}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </>
-              )}
+            <PHead primary={PRIMARY} accent={ACCENT} title="Why Premiso Wins" subtitle="Head-to-head with the alternatives you might be considering" page={6} />
 
-              {/* Existing software they use */}
+            <div style={{ flex: 1, padding: '22px 44px' }}>
+              <p style={{ fontSize: 11.5, color: '#374151', lineHeight: 1.7, marginBottom: 16 }}>
+                The UK proptech market is crowded — but most platforms were built for one thing (lettings, or maintenance, or referencing) and struggle with everything else. Premiso was designed from the ground up as a complete platform for professional UK property managers. Here's how we compare.
+              </p>
+
+              <SLabel color={ACCENT} text={`Premiso vs ${(cmp.competitor_names || ['Arthur Online', 'Jupix']).join(' & ')}`} />
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10.5, marginBottom: 16 }}>
+                <thead>
+                  <tr style={{ background: PRIMARY }}>
+                    <th style={{ padding: '9px 12px', color: '#fff', textAlign: 'left', fontWeight: 600, width: '22%' }}>Feature</th>
+                    <th style={{ padding: '9px 12px', color: ACCENT, textAlign: 'left', fontWeight: 800, width: '28%' }}>✦ Premiso</th>
+                    {(cmp.competitor_names || ['Competitor A', 'Competitor B']).map((cn, i) => (
+                      <th key={i} style={{ padding: '9px 12px', color: 'rgba(255,255,255,0.65)', textAlign: 'left', fontWeight: 600, width: '25%' }}>{cn}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cmp.rows || []).map((row, i) => (
+                    <tr key={i} style={{ background: row.premiso_wins ? (i % 2 === 0 ? '#f0fdf4' : '#dcfce7') : (i % 2 === 0 ? '#fff' : '#f9fafb'), borderBottom: '1px solid #e5e7eb' }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 700, color: '#1f2937', fontSize: 10.5 }}>{row.feature}</td>
+                      <td style={{ padding: '8px 12px', color: '#15803d', fontWeight: 700, fontSize: 10.5 }}>
+                        <span style={{ color: '#16a34a', marginRight: 4 }}>✓</span>{row.premiso}
+                      </td>
+                      <td style={{ padding: '8px 12px', color: '#6b7280', fontSize: 10 }}>{row.c1}</td>
+                      <td style={{ padding: '8px 12px', color: '#6b7280', fontSize: 10 }}>{row.c2}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Current tech stack */}
               {expansion?.existing_software?.length > 0 && (
-                <div style={{ marginTop: 24 }}>
-                  <SectionLabel color={accentColor} text="Your Likely Current Tech Stack" />
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginTop: 10 }}>
+                <div>
+                  <SLabel color={ACCENT} text="Your Likely Current Tech Stack — Replaced by Premiso" />
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                     {expansion.existing_software.slice(0, 6).map((sw, i) => (
-                      <div key={i} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: '10px 12px', background: '#fff' }}>
+                      <div key={i} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: '9px 12px', background: '#fff' }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: '#1f2937' }}>{sw.name}</div>
                         <div style={{ fontSize: 9, color: '#6b7280', margin: '2px 0' }}>{sw.category}</div>
-                        <div style={{ fontSize: 10, color: '#374151' }}>{sw.description}</div>
-                        {sw.has_api && <div style={{ marginTop: 4, fontSize: 9, color: '#16a34a', fontWeight: 600 }}>↔ API available — integration possible</div>}
+                        <div style={{ fontSize: 9.5, color: '#374151' }}>{sw.description}</div>
+                        {sw.has_api && <div style={{ marginTop: 4, fontSize: 9, color: '#16a34a', fontWeight: 600 }}>↔ API integration with Premiso possible</div>}
                       </div>
                     ))}
                   </div>
-                  <p style={{ fontSize: 10, color: '#6b7280', marginTop: 10, fontStyle: 'italic' }}>
-                    Premiso is designed to integrate with or replace these platforms, reducing duplication and cutting software costs.
-                  </p>
                 </div>
               )}
             </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
+
+            <PFoot agentName={agentName} />
           </div>
 
-          {/* ══ PAGE 6: OUT OF HOURS ══════════════════════════════════════ */}
+          {/* ══ PAGE 7: OUT-OF-HOURS ════════════════════════════════════════════ */}
           <div className="brochure-page">
-            <div style={{ height: 8, background: accentColor }} />
-            <div style={{ padding: '36px 44px 0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Phone style={{ width: 24, height: 24, color: accentColor }} />
+            <div style={{ height: 8, background: ACCENT, flexShrink: 0 }} />
+
+            <div style={{ flex: 1, padding: '30px 44px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Phone style={{ width: 26, height: 26, color: ACCENT }} />
                 </div>
                 <div>
                   <div style={{ fontSize: 10, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>Premium Add-On Service</div>
-                  <h2 style={{ fontSize: 26, fontWeight: 800, color: primaryColor, margin: 0 }}>
-                    {content.out_of_hours?.headline || 'Out-of-Hours Emergency Cover'}
+                  <h2 style={{ fontSize: 24, fontWeight: 800, color: PRIMARY, margin: 0 }}>
+                    {content.out_of_hours?.headline || '24/7 Out-of-Hours Emergency Cover'}
                   </h2>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 32 }}>
                 <div>
-                  <SectionLabel color={accentColor} text="Why This Matters for You" />
-                  <p style={{ fontSize: 12.5, lineHeight: 1.7, color: '#374151', marginTop: 10, marginBottom: 20 }}>
-                    {content.out_of_hours?.why_relevant || `As a property management company, ${agentName} will inevitably face out-of-hours emergency calls from tenants — boiler failures, water leaks, security issues. Without a dedicated service, these calls go unanswered or fall to directors and staff outside of working hours. Premiso's Out-of-Hours add-on removes that burden entirely.`}
+                  <SLabel color={ACCENT} text="Why This Matters for Your Business" />
+                  <p style={{ fontSize: 12, lineHeight: 1.75, color: '#374151', marginTop: 4, marginBottom: 18 }}>
+                    {content.out_of_hours?.why_relevant || `Every property manager faces the same problem: tenants don't have emergencies between 9 and 5. Boiler failures at 11pm on Christmas Eve, water leaks on a Sunday morning, lockouts at midnight. Without a dedicated out-of-hours service, these calls fall to you personally — or go unanswered, creating liability and damaging tenant relationships. Premiso's Out-of-Hours service is the only one that logs directly into your property management platform in real time.`}
                   </p>
 
-                  <SectionLabel color={accentColor} text="What's Included" />
-                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {(content.out_of_hours?.benefits?.length ? content.out_of_hours.benefits : ['24/7 emergency call handling by trained property professionals', 'Real-time call logging directly into Premiso', 'Automated maintenance order creation on every call', 'GDPR-validated caller identification on every call']).map((b, i) => (
+                  <SLabel color={ACCENT} text="What's Included in Every Call" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                    {(content.out_of_hours?.benefits?.length ? content.out_of_hours.benefits : [
+                      '24/7/365 UK-based call answering by trained property professionals',
+                      'GDPR-compliant caller validation — property matched to your Premiso database on every call',
+                      'Real-time call log created in Premiso — you see it instantly when you check in the morning',
+                      'Automated maintenance order raised from every relevant call — no manual entry needed',
+                      'Emergency contractor dispatch from our national network — plumbers, electricians, locksmiths',
+                    ]).map((b, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                         <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
-                          <span style={{ color: '#16a34a', fontSize: 10, fontWeight: 700 }}>✓</span>
+                          <span style={{ color: '#16a34a', fontSize: 9, fontWeight: 800 }}>✓</span>
                         </div>
-                        <span style={{ fontSize: 11.5, color: '#1f2937' }}>{b}</span>
+                        <span style={{ fontSize: 11, color: '#1f2937', lineHeight: 1.55 }}>{b}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  {/* Service Tiers */}
-                  <SectionLabel color={accentColor} text="Service Tiers" />
-                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <SLabel color={ACCENT} text="Service Tiers" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                     {[
-                      { tier: 'Basic', price: '£49/mo', desc: 'Call logging + email alerts', highlight: false },
-                      { tier: 'Standard', price: '£99/mo', desc: 'Auto maintenance order creation', highlight: false },
-                      { tier: 'Premium', price: '£179/mo', desc: 'Contractor dispatch included', highlight: true },
-                      { tier: 'Enterprise', price: 'POA', desc: 'Fully managed service', highlight: false },
+                      { tier: 'Basic', price: '£49/mo', desc: 'Call logging + instant email to property manager', highlight: false },
+                      { tier: 'Standard', price: '£99/mo', desc: 'Maintenance order auto-created in Premiso', highlight: false },
+                      { tier: 'Premium', price: '£179/mo', desc: 'Contractor dispatch + real-time Premiso sync', highlight: true },
+                      { tier: 'Enterprise', price: 'POA', desc: 'Fully managed — bespoke SLA and escalation', highlight: false },
                     ].map((t, i) => (
-                      <div key={i} style={{ border: `2px solid ${t.highlight ? accentColor : '#e5e7eb'}`, borderRadius: 10, padding: '10px 14px', background: t.highlight ? `rgba(${hexToRgb(accentColor)},0.06)` : '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div key={i} style={{ border: `2px solid ${t.highlight ? ACCENT : '#e5e7eb'}`, borderRadius: 10, padding: '10px 14px', background: t.highlight ? `rgba(${hex(ACCENT)},0.07)` : '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: t.highlight ? primaryColor : '#1f2937' }}>
-                            {t.tier} {t.highlight && <span style={{ fontSize: 9, background: accentColor, color: '#fff', padding: '2px 6px', borderRadius: 99, marginLeft: 4 }}>RECOMMENDED</span>}
+                          <div style={{ fontSize: 12, fontWeight: 700, color: t.highlight ? PRIMARY : '#1f2937' }}>
+                            {t.tier} {t.highlight && <span style={{ fontSize: 8.5, background: ACCENT, color: '#fff', padding: '2px 6px', borderRadius: 99, marginLeft: 4 }}>RECOMMENDED</span>}
                           </div>
                           <div style={{ fontSize: 10, color: '#6b7280', marginTop: 2 }}>{t.desc}</div>
                         </div>
-                        <div style={{ fontSize: 14, fontWeight: 800, color: primaryColor }}>{t.price}</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: PRIMARY }}>{t.price}</div>
                       </div>
                     ))}
                   </div>
 
-                  <div style={{ marginTop: 14, background: `rgba(${primaryRgb},0.06)`, borderRadius: 10, padding: '12px 14px', border: `1px solid rgba(${primaryRgb},0.15)` }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: primaryColor, textTransform: 'uppercase', marginBottom: 4 }}>Our Recommendation for You</div>
-                    <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.6, margin: 0 }}>{content.out_of_hours?.tier_recommendation || 'Based on your portfolio size and services, the Premium tier provides full contractor dispatch with real-time Premiso integration — the most effective option for professional property managers.'}</p>
+                  <div style={{ background: `rgba(${RGB},0.07)`, borderRadius: 10, padding: '12px 14px', border: `1px solid rgba(${RGB},0.15)`, marginBottom: 14 }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: PRIMARY, textTransform: 'uppercase', marginBottom: 5 }}>Our Recommendation for {agentName}</div>
+                    <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.6, margin: 0 }}>
+                      {content.out_of_hours?.tier_recommendation || 'Based on your portfolio profile and services, the Premium tier gives you full contractor dispatch with real-time Premiso integration — the most effective option for professional property managers handling residential and block portfolios.'}
+                    </p>
                   </div>
 
-                  {/* OOH Stats */}
-                  <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    {[
-                      { v: '24/7', l: 'Live Answering' }, { v: '< 3 min', l: 'Response Time' },
-                      { v: '100%', l: 'GDPR Compliant' }, { v: 'Real-time', l: 'Premiso Sync' },
-                    ].map((s, i) => (
-                      <div key={i} style={{ background: primaryColor, borderRadius: 10, padding: '12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: accentColor }}>{s.v}</div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>{s.l}</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    {[{ v: '24/7', l: 'Live Answering' }, { v: '<3 min', l: 'Response Time' }, { v: '100%', l: 'GDPR Compliant' }, { v: 'Live Sync', l: 'Into Premiso' }].map((s, i) => (
+                      <div key={i} style={{ background: PRIMARY, borderRadius: 10, padding: '12px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: ACCENT }}>{s.v}</div>
+                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 2 }}>{s.l}</div>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
+
+            <PFoot agentName={agentName} />
           </div>
 
-          {/* ══ PAGE 7: EXPANSION OPPORTUNITIES ══════════════════════════ */}
+          {/* ══ PAGE 8: EXPANSION + NEXT STEPS ════════════════════════════════ */}
           <div className="brochure-page">
-            <PageHeader primary={primaryColor} accent={accentColor} title="Expansion Opportunities" subtitle="How Premiso grows with your business" pageNum={7} />
-            <div style={{ padding: '24px 44px' }}>
-              <p style={{ fontSize: 12.5, color: '#374151', lineHeight: 1.7, marginBottom: 24 }}>
-                {content.expansion_narrative || `Premiso is designed to grow alongside ${agentName}. As the platform evolves, new modules and integrations will open additional revenue streams and service capabilities, ensuring long-term platform value.`}
-              </p>
+            <PHead primary={PRIMARY} accent={ACCENT} title="Growth Roadmap &amp; Next Steps" subtitle={`How Premiso grows with ${agentName}`} page={8} />
 
-              <SectionLabel color={accentColor} text="Your Growth Roadmap with Premiso" />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 12 }}>
-                {(content.expansion_opportunities || []).map((opp, i) => {
-                  const timelineColor = { '0-3 months': '#16a34a', '3-6 months': '#d97706', '6-12 months': '#7c3aed', '12+ months': '#dc2626' }[opp.timeline] || '#6b7280';
-                  const revenueIcons = { low: '●○○', medium: '●●○', high: '●●●' }[opp.revenue_potential] || '●○○';
-                  return (
-                    <div key={i} style={{ border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '16px 18px', background: '#fff', position: 'relative' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: '#1f2937', flex: 1, paddingRight: 8 }}>{opp.title}</div>
-                        <span style={{ fontSize: 9, fontWeight: 700, color: '#fff', background: timelineColor, padding: '2px 8px', borderRadius: 99, flexShrink: 0 }}>{opp.timeline}</span>
+            <div style={{ flex: 1, padding: '24px 44px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+              {/* Expansion */}
+              <div>
+                <SLabel color={ACCENT} text="Your Expansion Roadmap" />
+                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.7, marginBottom: 14 }}>
+                  {content.expansion_narrative || `Premiso is built to scale with your business. As you add properties, expand into block management, or launch new service lines, the platform grows with you — no data migration, no new software, no additional per-user fees that spiral as your team grows.`}
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                  {(content.expansion_opportunities || []).slice(0, 5).map((opp, i) => {
+                    const tc = { '0-3 months': '#16a34a', '3-6 months': '#d97706', '6-12 months': '#7c3aed', '12+ months': '#dc2626' }[opp.timeline] || '#6b7280';
+                    const ri = { low: '●○○', medium: '●●○', high: '●●●' }[opp.revenue_potential] || '●○○';
+                    return (
+                      <div key={i} style={{ border: '1.5px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', background: '#fff' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
+                          <div style={{ fontSize: 11.5, fontWeight: 700, color: '#1f2937', flex: 1, paddingRight: 8 }}>{opp.title}</div>
+                          <span style={{ fontSize: 9, fontWeight: 700, color: '#fff', background: tc, padding: '2px 7px', borderRadius: 99, flexShrink: 0 }}>{opp.timeline}</span>
+                        </div>
+                        <p style={{ fontSize: 10, color: '#374151', lineHeight: 1.6, margin: '0 0 5px' }}>{opp.description}</p>
+                        <div style={{ fontSize: 9.5, color: '#6b7280' }}>Revenue potential: <strong style={{ color: '#1f2937' }}>{ri} {opp.revenue_potential}</strong></div>
                       </div>
-                      <p style={{ fontSize: 10.5, color: '#374151', lineHeight: 1.6, margin: '0 0 8px' }}>{opp.description}</p>
-                      <div style={{ fontSize: 10, color: '#6b7280' }}>Revenue potential: <span style={{ color: '#1f2937', fontWeight: 700 }}>{revenueIcons} {opp.revenue_potential}</span></div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
 
-              {expansion?.integration_opportunities?.length > 0 && (
-                <div style={{ marginTop: 24 }}>
-                  <SectionLabel color={accentColor} text="Integration Opportunities" />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginTop: 10 }}>
-                    {expansion.integration_opportunities.slice(0, 6).map((int, i) => (
-                      <div key={i} style={{ background: '#f9fafb', borderRadius: 8, padding: '10px 12px', border: '1px solid #e5e7eb' }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: primaryColor, marginBottom: 4 }}>{int.title}</div>
-                        <div style={{ fontSize: 10, color: '#374151' }}>{int.description}</div>
-                        <div style={{ marginTop: 6, fontSize: 9, color: '#6b7280' }}>Priority: <strong style={{ color: { high: '#dc2626', medium: '#d97706', low: '#6b7280' }[int.priority] || '#6b7280' }}>{int.priority}</strong></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <PageFooter primary={primaryColor} accent={accentColor} agentName={agentName} />
-          </div>
-
-          {/* ══ PAGE 8: NEXT STEPS ═══════════════════════════════════════ */}
-          <div className="brochure-page" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ height: 8, background: accentColor }} />
-            <div style={{ flex: 1, padding: '44px 44px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+              {/* Next steps */}
               <div>
-                <div style={{ fontSize: 10, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600, marginBottom: 10 }}>Ready to get started?</div>
-                <h2 style={{ fontSize: 28, fontWeight: 800, color: primaryColor, lineHeight: 1.2, margin: '0 0 20px' }}>
-                  Your Next Steps with Premiso
-                </h2>
-                <p style={{ fontSize: 12, color: '#374151', lineHeight: 1.7 }}>
-                  We've built a complete demo environment specifically for {agentName}. Every module has been populated with realistic data from your portfolio profile so you can explore Premiso as it would look on day one of going live.
-                </p>
-
-                <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <SLabel color={ACCENT} text="Your Next Steps" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 22 }}>
                   {(content.next_steps?.length ? content.next_steps : [
-                    { step: 'Review Your Demo', description: 'Log into your personalised Premiso demo environment and explore your portfolio data.' },
-                    { step: 'Book a Walkthrough', description: 'Join a live call with our team to see every module tailored to your business.' },
-                    { step: 'Data Migration Planning', description: 'We map your existing data to Premiso and plan a smooth migration.' },
-                    { step: 'Go Live', description: 'Your team is onboarded, data is live, and you start saving time from day one.' },
+                    { step: 'Explore Your Demo', description: 'Log into your personalised Premiso demo — populated with data matching your portfolio profile.' },
+                    { step: 'Book a Live Walkthrough', description: 'Join a 45-minute call where we walk through every module relevant to your business.' },
+                    { step: 'Data Migration Planning', description: 'We map your current data and plan a smooth, low-disruption migration to Premiso.' },
+                    { step: 'Go Live', description: 'Onboard your team, go live within days — with dedicated support throughout.' },
                   ]).map((step, i) => (
                     <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: primaryColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: PRIMARY, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
                       <div>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#1f2937' }}>{step.step}</div>
-                        <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>{step.description}</div>
+                        <div style={{ fontSize: 10.5, color: '#6b7280', marginTop: 2, lineHeight: 1.55 }}>{step.description}</div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
 
-              <div>
-                {/* Contact block */}
-                <div style={{ background: primaryColor, borderRadius: 16, padding: '28px 28px', marginBottom: 20 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: accentColor, marginBottom: 6 }}>Book Your Live Demo</div>
-                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: '0 0 18px' }}>
-                    Join a personalised walkthrough of your {agentName} demo environment. We'll show every feature that matters to your business.
+                {/* CTA box */}
+                <div style={{ background: PRIMARY, borderRadius: 16, padding: '22px 24px', marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: ACCENT, marginBottom: 7 }}>Book Your Live Demo</div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6, margin: '0 0 14px' }}>
+                    We'll walk you through your {agentName}-specific demo environment — every module, every feature that matters to your portfolio.
                   </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{ fontSize: 11, color: '#fff' }}>🌐 www.premiso.co.uk</div>
                     <div style={{ fontSize: 11, color: '#fff' }}>📧 hello@premiso.co.uk</div>
                     <div style={{ fontSize: 11, color: '#fff' }}>📞 Book a call via our website</div>
@@ -661,18 +663,18 @@ export default function SalesBrochureGenerator() {
                 </div>
 
                 {/* Summary stats */}
-                <div style={{ border: `2px solid rgba(${primaryRgb},0.15)`, borderRadius: 14, padding: '20px 22px' }}>
-                  <SectionLabel color={accentColor} text="Your Demo at a Glance" />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
+                <div style={{ border: `2px solid rgba(${RGB},0.15)`, borderRadius: 12, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, color: PRIMARY, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Your Demo at a Glance</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                     {[
-                      { label: 'Services Covered', value: content.feature_match?.filter(f => f.coverage === 'full').length + '+' || '10+' },
-                      { label: 'Compliance Modules', value: '8' },
-                      { label: 'Integration Options', value: expansion?.integration_opportunities?.length + '+' || '5+' },
-                      { label: 'Expansion Areas', value: content.expansion_opportunities?.length || '6' },
+                      { label: 'Services Matched', value: content.feature_match?.length + '' || '10+' },
+                      { label: 'Compliance Modules', value: '9' },
+                      { label: 'Expansion Areas', value: content.expansion_opportunities?.length + '' || '5+' },
+                      { label: 'Time to Go Live', value: 'Days' },
                     ].map((s, i) => (
-                      <div key={i} style={{ textAlign: 'center', padding: '10px 0' }}>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: primaryColor }}>{s.value}</div>
-                        <div style={{ fontSize: 9, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 2 }}>{s.label}</div>
+                      <div key={i} style={{ textAlign: 'center', padding: '8px 0' }}>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: PRIMARY }}>{s.value}</div>
+                        <div style={{ fontSize: 9, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2 }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
@@ -681,13 +683,11 @@ export default function SalesBrochureGenerator() {
             </div>
 
             {/* Final footer */}
-            <div style={{ margin: '0 44px 28px', marginTop: 'auto', paddingTop: 24, borderTop: `3px solid ${accentColor}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: primaryColor, letterSpacing: '-0.02em' }}>
-                premiso<span style={{ color: accentColor }}>.</span>
-              </div>
-              <div style={{ fontSize: 10, color: '#9ca3af', textAlign: 'right' }}>
+            <div style={{ margin: '0 44px 24px', paddingTop: 20, borderTop: `3px solid ${ACCENT}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: PRIMARY, letterSpacing: '-0.02em' }}>premiso<span style={{ color: ACCENT }}>.</span></div>
+              <div style={{ fontSize: 9.5, color: '#9ca3af', textAlign: 'right', lineHeight: 1.6 }}>
                 This brochure was generated specifically for {agentName}<br />
-                Premiso Property Management Platform · {new Date().getFullYear()}
+                Premiso Property Management Platform · premiso.co.uk · {new Date().getFullYear()}
               </div>
             </div>
           </div>
@@ -695,39 +695,5 @@ export default function SalesBrochureGenerator() {
         </div>
       )}
     </>
-  );
-}
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-function PageHeader({ primary, accent, title, subtitle, pageNum }) {
-  return (
-    <div style={{ background: primary, padding: '20px 44px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>
-        <h2 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0 }}>{title}</h2>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{subtitle}</div>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, color: accent, letterSpacing: '-0.02em' }}>premiso<span style={{ color: '#fff' }}>.</span></div>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', borderLeft: '1px solid rgba(255,255,255,0.2)', paddingLeft: 12 }}>p. {pageNum}</div>
-      </div>
-    </div>
-  );
-}
-
-function PageFooter({ primary, accent, agentName }) {
-  return (
-    <div style={{ marginTop: 'auto', padding: '12px 44px', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ fontSize: 9, color: '#9ca3af' }}>Prepared exclusively for {agentName} · Confidential</div>
-      <div style={{ fontSize: 9, color: '#9ca3af' }}>premiso.co.uk · {new Date().getFullYear()}</div>
-    </div>
-  );
-}
-
-function SectionLabel({ color, text }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ width: 4, height: 16, borderRadius: 99, background: color, flexShrink: 0 }} />
-      <div style={{ fontSize: 11, fontWeight: 700, color: '#1f2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{text}</div>
-    </div>
   );
 }
