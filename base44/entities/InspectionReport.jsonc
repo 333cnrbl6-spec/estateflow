@@ -1,0 +1,165 @@
+{
+  "name": "InspectionReport",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "inspector_id": {
+      "type": "string",
+      "description": "User ID of inspector"
+    },
+    "inspector_name": {
+      "type": "string",
+      "description": "Name of inspector"
+    },
+    "inspection_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of inspection"
+    },
+    "inspection_type": {
+      "type": "string",
+      "enum": [
+        "routine",
+        "pre_tenancy",
+        "post_tenancy",
+        "complaint",
+        "safety"
+      ],
+      "default": "routine",
+      "description": "Type of inspection"
+    },
+    "overall_condition": {
+      "type": "string",
+      "enum": [
+        "excellent",
+        "good",
+        "fair",
+        "poor",
+        "critical"
+      ],
+      "description": "Overall condition rating"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "structural",
+              "electrical",
+              "plumbing",
+              "heating",
+              "decoration",
+              "safety",
+              "pest",
+              "damp_mould",
+              "other"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "description": "Location in unit (e.g., 'Kitchen', 'Master Bedroom')"
+          },
+          "photo_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requires_maintenance": {
+            "type": "boolean",
+            "default": false
+          },
+          "maintenance_request_id": {
+            "type": "string",
+            "description": "Reference to generated MaintenanceRequest"
+          }
+        },
+        "required": [
+          "issue_type",
+          "description",
+          "severity",
+          "location"
+        ]
+      },
+      "description": "List of findings flagged during inspection"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "uploaded_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "General inspection photos"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional inspection notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "reviewed",
+        "completed"
+      ],
+      "default": "draft",
+      "description": "Report status"
+    },
+    "submitted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When report was submitted"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "User ID who reviewed report"
+    },
+    "reviewed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When report was reviewed"
+    }
+  },
+  "required": [
+    "property_id",
+    "unit_id",
+    "inspector_id",
+    "inspection_date",
+    "inspection_type",
+    "overall_condition"
+  ]
+}
