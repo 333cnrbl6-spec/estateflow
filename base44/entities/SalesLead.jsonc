@@ -125,7 +125,50 @@
     "lead_score": {
       "type": "number",
       "default": 0,
-      "description": "Lead quality score (0-100)"
+      "description": "Predictive completion probability score (0-100)"
+    },
+    "priority_tier": {
+      "type": "string",
+      "enum": [
+        "hot",
+        "warm",
+        "cold"
+      ],
+      "description": "Lead priority tier based on scoring"
+    },
+    "scoring_breakdown": {
+      "type": "object",
+      "properties": {
+        "timescale": {
+          "type": "number"
+        },
+        "motivation": {
+          "type": "number"
+        },
+        "financial": {
+          "type": "number"
+        },
+        "engagement": {
+          "type": "number"
+        },
+        "property_match": {
+          "type": "number"
+        }
+      },
+      "description": "Detailed scoring breakdown by category"
+    },
+    "completion_probability": {
+      "type": "string",
+      "description": "Estimated completion probability range"
+    },
+    "recommended_action": {
+      "type": "string",
+      "description": "AI-recommended next action for this lead"
+    },
+    "last_scored_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When lead was last scored"
     },
     "last_contact_date": {
       "type": "string",

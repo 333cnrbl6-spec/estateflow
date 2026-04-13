@@ -27,6 +27,7 @@ import SalesListingCard from "@/components/sales/SalesListingCard";
 import LeadCard from "@/components/sales/LeadCard";
 import TransactionPipeline from "@/components/sales/TransactionPipeline";
 import SalesSearchFilters from "@/components/sales/SalesSearchFilters";
+import LeadScoringPanel from "@/components/sales/LeadScoringPanel";
 
 export default function SalesDashboard() {
   const [leadFormOpen, setLeadFormOpen] = useState(false);
@@ -62,6 +63,12 @@ export default function SalesDashboard() {
     completedSales: transactions.filter(t => t.status === 'completed').length,
     pendingTransactions: transactions.filter(t => !['completed', 'fallen_through'].includes(t.status)).length,
   };
+
+  // Lead scoring stats
+  const hotLeads = leads.filter(l => l.priority_tier === 'hot' || (l.lead_score && l.lead_score >= 75));
+  const warmLeads = leads.filter(l => l.priority_tier === 'warm' || (l.lead_score && l.lead_score >= 50 && l.lead_score < 75));
+  const coldLeads = leads.filter(l => l.priority_tier === 'cold' || (l.lead_score && l.lead_score < 50));
+  const avgScore = leads.length > 0 ? Math.round(leads.reduce((sum, l) => sum + (l.lead_score || 0), 0) / leads.length) : 0;
 
   const totalValue = listings
     .filter(l => ['active', 'under_offer', 'sold_subject_to_contract'].includes(l.status))
@@ -164,6 +171,11 @@ export default function SalesDashboard() {
         </div>
       </div>
 
+      {/* Lead Scoring Panel */}
+      <div className="mb-6">
+        <LeadScoringPanel />
+      </div>
+
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -173,22 +185,24 @@ export default function SalesDashboard() {
           trend={stats.newLeads > 0 ? `+${stats.newLeads} new` : undefined}
         />
         <StatCard
+          title="Hot Leads"
+          value={hotLeads.length}
+          icon={TrendingUp}
+          trend="Priority outreach"
+          colorIndex={2}
+        />
+        <StatCard
           title="Active Listings"
           value={stats.activeListings}
           icon={Home}
           trend={stats.underOffer > 0 ? `${stats.underOffer} under offer` : undefined}
         />
         <StatCard
-          title="Pending Sales"
-          value={stats.pendingTransactions}
-          icon={Clock}
-          trend={stats.completedSales > 0 ? `${stats.completedSales} completed` : undefined}
-        />
-        <StatCard
-          title="Total Value"
-          value={`£${(totalValue / 1000000).toFixed(1)}M`}
-          icon={TrendingUp}
-          trend="On market"
+          title="Avg Lead Score"
+          value={avgScore}
+          icon={BarChart3}
+          trend="/100"
+          colorIndex={1}
         />
       </div>
 
