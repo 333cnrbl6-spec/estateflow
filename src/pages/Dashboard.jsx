@@ -199,7 +199,7 @@ export default function Dashboard() {
                     <div key={m.id} className="flex items-center justify-between py-3 hover:bg-muted/30 px-2 -mx-2 rounded transition-colors">
                       <div>
                         <p className="text-sm font-medium text-foreground">{m.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{m.category?.replace(/_/g, ' ')} · {format(new Date(m.created_date), 'dd MMM yyyy')}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{m.category?.replace(/_/g, ' ')}{m.created_date ? ` · ${format(new Date(m.created_date), 'dd MMM yyyy')}` : ''}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <StatusBadge status={m.priority} />

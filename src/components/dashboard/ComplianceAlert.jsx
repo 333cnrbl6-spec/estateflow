@@ -32,7 +32,9 @@ export default function ComplianceAlert() {
   });
 
   const urgent = deadlines
-    .filter(d => differenceInDays(parseISO(d.due), today) <= 30)
+    .filter(d => {
+      try { return differenceInDays(parseISO(d.due), today) <= 30; } catch { return false; }
+    })
     .sort((a, b) => new Date(a.due) - new Date(b.due));
 
   return (
@@ -50,7 +52,8 @@ export default function ComplianceAlert() {
                 <p className="text-sm font-bold text-foreground">Companies House Deadlines</p>
                 <div className="mt-2 space-y-2">
                   {urgent.map((d, i) => {
-                    const days = differenceInDays(parseISO(d.due), today);
+                    let days;
+                    try { days = differenceInDays(parseISO(d.due), today); } catch { return null; }
                     return (
                       <div key={i} className="flex items-center justify-between text-xs bg-white/50 rounded px-2 py-1.5">
                         <div>

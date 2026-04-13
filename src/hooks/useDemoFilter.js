@@ -1,31 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
+/**
+ * Returns the active demo company ID and associated property IDs.
+ * Uses React Query so it's cache-aware, reactive, and consistent
+ * with the rest of the application's data fetching strategy.
+ */
 export function useDemoFilter() {
-  const [demoCompanyId, setDemoCompanyId] = useState(null);
-  const [propertyIds, setPropertyIds] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [resolved, setResolved] = useState(false); // eslint-disable-line
+  const { data, isLoading } = useQuery({
+    queryKey: ['demoFilter'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const demoCompanyId = user?.current_demo_company_id || null;
+      if (!demoCompanyId) return { demoCompanyId: null, propertyIds: null };
 
-  useEffect(() => {
-    const loadDemoContext = async () => {
-      try {
-        const user = await base44.auth.me();
-        if (user?.current_demo_company_id) {
-          setDemoCompanyId(user.current_demo_company_id);
-          // Pre-fetch property IDs for this company
-          const props = await base44.entities.Property.filter({ owning_company: user.current_demo_company_id });
-          setPropertyIds(props.map(p => p.id));
-        }
-      setResolved(true);
-      } catch (err) {
-      console.error('Failed to load demo context:', err);
-      } finally {
-      setLoading(false);
-      }
-    };
-    loadDemoContext();
-  }, []);
+      const props = await base44.entities.Property.filter({ owning_company: demoCompanyId });
+      const propertyIds = props.map(p => p.id);
+      return { demoCompanyId, propertyIds };
+    },
+    staleTime: 30_000, // treat as fresh for 30s to avoid repeated refetches
+  });
 
-  return { demoCompanyId, propertyIds, loading, resolved };
+  return {
+    demoCompanyId: data?.demoCompanyId ?? null,
+    propertyIds: data?.propertyIds ?? null,
+    loading: isLoading,
+    resolved: !isLoading,
+  };
 }
