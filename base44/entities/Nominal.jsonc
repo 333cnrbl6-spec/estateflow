@@ -1,0 +1,237 @@
+{
+  "name": "Nominal",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "Reference to Company entity"
+    },
+    "account_code": {
+      "type": "string",
+      "description": "Internal GL account code (e.g., 1000, 2000, 4000)"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "Account name (e.g., Bank Account, Rent Payable)"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "asset",
+        "liability",
+        "equity",
+        "income",
+        "expense",
+        "cost_of_sales"
+      ],
+      "description": "Account classification for GL structure"
+    },
+    "account_category": {
+      "type": "string",
+      "enum": [
+        "current_asset",
+        "fixed_asset",
+        "current_liability",
+        "long_term_liability",
+        "capital_and_reserves",
+        "sales_revenue",
+        "other_income",
+        "cost_of_goods_sold",
+        "distribution_costs",
+        "administrative_expenses",
+        "other_expenses",
+        "finance_costs",
+        "tax"
+      ],
+      "description": "Detailed GL category for financial reporting"
+    },
+    "description": {
+      "type": "string",
+      "description": "Extended description of account usage"
+    },
+    "is_header_account": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a parent/header account for grouping"
+    },
+    "parent_account_id": {
+      "type": "string",
+      "description": "Reference to parent Nominal account if hierarchical"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "archived"
+      ],
+      "default": "active",
+      "description": "Account status"
+    },
+    "xero_mapping": {
+      "type": "object",
+      "properties": {
+        "xero_code": {
+          "type": "string",
+          "description": "Xero account code (e.g., 200, 630)"
+        },
+        "xero_account_id": {
+          "type": "string",
+          "description": "Xero internal account ID"
+        },
+        "xero_account_name": {
+          "type": "string",
+          "description": "Xero account name"
+        },
+        "xero_account_type": {
+          "type": "string",
+          "description": "Xero account type (BANK, EXPENSE, etc)"
+        },
+        "xero_tax_type": {
+          "type": "string",
+          "description": "Xero tax type code"
+        },
+        "last_synced": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this mapping was last synced"
+        }
+      },
+      "description": "Xero integration mapping"
+    },
+    "sage_mapping": {
+      "type": "object",
+      "properties": {
+        "sage_code": {
+          "type": "string",
+          "description": "Sage GL account code (4-digit numeric)"
+        },
+        "sage_account_id": {
+          "type": "string",
+          "description": "Sage internal account reference"
+        },
+        "sage_account_name": {
+          "type": "string",
+          "description": "Sage account name"
+        },
+        "sage_cost_code": {
+          "type": "string",
+          "description": "Sage cost code for cost center allocation"
+        },
+        "sage_tax_code": {
+          "type": "string",
+          "description": "Sage tax code (T0, T1, T2, etc)"
+        },
+        "last_synced": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this mapping was last synced"
+        }
+      },
+      "description": "Sage integration mapping"
+    },
+    "quickbooks_mapping": {
+      "type": "object",
+      "properties": {
+        "quickbooks_account_number": {
+          "type": "string",
+          "description": "QuickBooks account number"
+        },
+        "quickbooks_account_id": {
+          "type": "string",
+          "description": "QuickBooks internal account ID"
+        },
+        "quickbooks_account_name": {
+          "type": "string",
+          "description": "QuickBooks account name"
+        },
+        "quickbooks_account_type": {
+          "type": "string",
+          "description": "QuickBooks account type (Bank, CreditCard, OtherAsset, etc)"
+        },
+        "quickbooks_account_subtype": {
+          "type": "string",
+          "description": "QuickBooks account subtype"
+        },
+        "quickbooks_tax_code": {
+          "type": "string",
+          "description": "QuickBooks tax code"
+        },
+        "last_synced": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this mapping was last synced"
+        }
+      },
+      "description": "QuickBooks integration mapping"
+    },
+    "cost_center_code": {
+      "type": "string",
+      "description": "Cost center allocation (e.g., property reference)"
+    },
+    "is_bank_account": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a bank/cash account"
+    },
+    "bank_account_number": {
+      "type": "string",
+      "description": "If bank account, the account number"
+    },
+    "bank_sort_code": {
+      "type": "string",
+      "description": "If UK bank account, sort code"
+    },
+    "is_payable_account": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a payable (AP) account"
+    },
+    "is_receivable_account": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a receivable (AR) account"
+    },
+    "allows_multi_currency": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether account supports multi-currency transactions"
+    },
+    "standard_gl_code": {
+      "type": "string",
+      "description": "Standard/benchmark GL code for comparability (e.g., IAS/IFRS classification)"
+    },
+    "is_reconciliation_account": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this account requires manual reconciliation"
+    },
+    "reconciliation_frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "annually",
+        "manual"
+      ],
+      "description": "How often this account should be reconciled"
+    },
+    "balance_carrier": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether balance carries forward to next period"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about this account"
+    }
+  },
+  "required": [
+    "company_id",
+    "account_code",
+    "account_name",
+    "account_type"
+  ]
+}
