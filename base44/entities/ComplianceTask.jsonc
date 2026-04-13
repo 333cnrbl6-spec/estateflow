@@ -1,0 +1,137 @@
+{
+  "name": "ComplianceTask",
+  "type": "object",
+  "properties": {
+    "certificate_type": {
+      "type": "string",
+      "enum": [
+        "gas_safety",
+        "eicr",
+        "epc",
+        "fire_safety",
+        "asbestos",
+        "legionella",
+        "pat_testing",
+        "boiler_service",
+        "lift_safety",
+        "safety_cert"
+      ],
+      "description": "Type of safety certificate requiring renewal"
+    },
+    "certificate_id": {
+      "type": "string",
+      "description": "Reference to the specific certificate entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity if applicable"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the current certificate expires"
+    },
+    "days_until_expiry": {
+      "type": "number",
+      "description": "Calculated days remaining until expiry"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "overdue",
+        "warning",
+        "upcoming"
+      ],
+      "default": "upcoming",
+      "description": "Task priority level based on urgency"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reminder_sent",
+        "reminder_needed",
+        "in_progress",
+        "escalated",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Current task status"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "urgent_renewal",
+        "immediate_renewal",
+        "scheduled_renewal"
+      ],
+      "description": "Type of renewal task based on timeline"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the renewal inspection should be completed"
+    },
+    "contractor_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether professional contractor is needed"
+    },
+    "assigned_contractor_id": {
+      "type": "string",
+      "description": "Reference to assigned Contact (contractor)"
+    },
+    "assigned_contractor_name": {
+      "type": "string"
+    },
+    "estimated_cost": {
+      "type": "number",
+      "description": "Estimated cost of renewal in GBP"
+    },
+    "actual_cost": {
+      "type": "number",
+      "description": "Actual cost incurred after completion"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Task notes and details"
+    },
+    "last_reminder_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last reminder was sent"
+    },
+    "reminder_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of reminders sent"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date renewal was completed"
+    },
+    "new_certificate_url": {
+      "type": "string",
+      "description": "URL to uploaded renewed certificate"
+    },
+    "completion_notes": {
+      "type": "string",
+      "description": "Notes on how renewal was completed"
+    }
+  },
+  "required": [
+    "certificate_type",
+    "certificate_id",
+    "property_id",
+    "expiry_date",
+    "days_until_expiry",
+    "priority",
+    "status"
+  ]
+}
