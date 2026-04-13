@@ -1,0 +1,208 @@
+{
+  "name": "InspectionRecord",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "inspector_id": {
+      "type": "string",
+      "description": "User ID of inspector/contractor"
+    },
+    "inspector_name": {
+      "type": "string",
+      "description": "Name of inspector"
+    },
+    "inspection_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of inspection"
+    },
+    "inspection_type": {
+      "type": "string",
+      "enum": [
+        "pre_tenancy",
+        "post_tenancy",
+        "routine",
+        "complaint",
+        "safety"
+      ],
+      "description": "Type of inspection"
+    },
+    "overall_condition": {
+      "type": "string",
+      "enum": [
+        "excellent",
+        "good",
+        "fair",
+        "poor",
+        "critical"
+      ],
+      "description": "Overall property condition rating"
+    },
+    "room_inspections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "room_id": {
+            "type": "string",
+            "description": "Unique identifier for this room"
+          },
+          "room_name": {
+            "type": "string",
+            "description": "e.g., Kitchen, Master Bedroom, Bathroom"
+          },
+          "condition_rating": {
+            "type": "string",
+            "enum": [
+              "excellent",
+              "good",
+              "fair",
+              "poor",
+              "critical"
+            ]
+          },
+          "comments": {
+            "type": "string",
+            "description": "Detailed comments on room condition"
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "photo_id": {
+                  "type": "string"
+                },
+                "photo_url": {
+                  "type": "string"
+                },
+                "caption": {
+                  "type": "string"
+                },
+                "uploaded_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "fixtures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fixture_name": {
+                  "type": "string",
+                  "description": "e.g., Boiler, Windows, Carpets"
+                },
+                "condition": {
+                  "type": "string",
+                  "description": "Condition description"
+                },
+                "needs_repair": {
+                  "type": "boolean"
+                },
+                "repair_priority": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "urgent"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Inspection data organized by room"
+    },
+    "issues_identified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "photo_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requires_action": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "summary_notes": {
+      "type": "string",
+      "description": "Overall inspection summary and recommendations"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "completed",
+        "submitted",
+        "reviewed"
+      ],
+      "default": "draft",
+      "description": "Report status"
+    },
+    "submitted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When report was submitted to property manager"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "User ID who reviewed the report"
+    },
+    "reviewed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When report was reviewed"
+    },
+    "pdf_url": {
+      "type": "string",
+      "description": "URL to generated PDF report"
+    }
+  },
+  "required": [
+    "property_id",
+    "inspector_id",
+    "inspection_date",
+    "inspection_type",
+    "overall_condition",
+    "room_inspections"
+  ]
+}
