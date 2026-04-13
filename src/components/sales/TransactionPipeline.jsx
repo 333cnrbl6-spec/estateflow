@@ -17,6 +17,7 @@ const statusStages = [
   "exchange_of_contracts",
   "completion_pending",
   "completed",
+  "fallen_through",
 ];
 
 const statusLabels = {
@@ -50,7 +51,7 @@ const statusColors = {
   exchange_of_contracts: "bg-emerald-500",
   completion_pending: "bg-teal-500",
   completed: "bg-cyan-500",
-  fallen_through: "bg-red-800",
+  fallen_through: "bg-red-600",
 };
 
 export default function TransactionPipeline({ transactions = [], isLoading }) {

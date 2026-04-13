@@ -15,21 +15,26 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Property ID or Listing ID required' }, { status: 400 });
     }
 
-    // Fetch property data
+    // Fetch property data with error handling
     let property;
     let listing = null;
     let unit = null;
 
-    if (property_id) {
-      property = await base44.entities.Property.get(property_id);
-    } else if (listing_id) {
-      listing = await base44.entities.SalesListing.get(listing_id);
-      if (listing?.property_id) {
-        property = await base44.entities.Property.get(listing.property_id);
+    try {
+      if (property_id) {
+        property = await base44.entities.Property.get(property_id);
+      } else if (listing_id) {
+        listing = await base44.entities.SalesListing.get(listing_id);
+        if (listing?.property_id) {
+          property = await base44.entities.Property.get(listing.property_id);
+        }
+        if (listing?.unit_id) {
+          unit = await base44.entities.Unit.get(listing.unit_id);
+        }
       }
-      if (listing?.unit_id) {
-        unit = await base44.entities.Unit.get(listing.unit_id);
-      }
+    } catch (fetchError) {
+      console.error('Error fetching property data:', fetchError);
+      return Response.json({ error: 'Failed to fetch property data', details: fetchError.message }, { status: 500 });
     }
 
     if (!property) {
@@ -129,11 +134,23 @@ Deno.serve(async (req) => {
       }
     };
 
-    // Call AI for comprehensive valuation
-    const aiResponse = await base44.functions.invoke('aiPropertyValuation', {
-      property_data: marketData,
-      listing_id: listing_id || null,
-    });
+    // Call AI for comprehensive valuation with timeout
+    let aiResponse;
+    try {
+      aiResponse = await base44.functions.invoke('aiPropertyValuation', {
+        property_data: marketData,
+        listing_id: listing_id || null,
+      });
+    } catch (aiError) {
+      console.error('AI valuation failed:', aiError);
+      // Return market data without AI valuation
+      return Response.json({
+        success: true,
+        valuation: null,
+        market_data: marketData,
+        ai_error: 'Valuation service temporarily unavailable',
+      });
+    }
 
     return Response.json({
       success: true,

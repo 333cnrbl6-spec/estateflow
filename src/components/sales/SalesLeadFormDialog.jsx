@@ -40,9 +40,41 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
     motivation: "",
     notes: "",
   });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.contact_name?.trim()) {
+      newErrors.contact_name = "Name is required";
+    }
+    if (formData.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact_email)) {
+      newErrors.contact_email = "Invalid email format";
+    }
+    if (formData.contact_phone && !/^[\d\s\+\-\(\)]+$/.test(formData.contact_phone)) {
+      newErrors.contact_phone = "Invalid phone format";
+    }
+    if (formData.budget_max > 0 && formData.budget_min > formData.budget_max) {
+      newErrors.budget_min = "Min budget cannot exceed max";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const createLeadMutation = useMutation({
-    mutationFn: (data) => base44.entities.SalesLead.create(data),
+    mutationFn: async (data) => {
+      // Check for duplicate (same email)
+      if (data.contact_email) {
+        const existingLeads = await base44.entities.SalesLead.filter({});
+        const duplicate = existingLeads.find(
+          lead => lead.contact_email?.toLowerCase() === data.contact_email?.toLowerCase() && lead.status !== 'lost'
+        );
+        if (duplicate) {
+          throw new Error(`Lead with this email already exists (${duplicate.contact_name})`);
+        }
+      }
+      return base44.entities.SalesLead.create(data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales-leads'] });
       toast.success("Lead created successfully");
@@ -63,14 +95,21 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
         motivation: "",
         notes: "",
       });
+      setErrors({});
+      setIsSubmitting(false);
     },
     onError: (error) => {
       toast.error(`Failed to create lead: ${error.message}`);
+      setIsSubmitting(false);
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+    setIsSubmitting(true);
     createLeadMutation.mutate(formData);
   };
 
@@ -135,8 +174,11 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
                   value={formData.contact_name}
                   onChange={(e) => setFormData({...formData, contact_name: e.target.value})}
                   placeholder="John Smith"
-                  required
+                  className={errors.contact_name ? "border-red-500" : ""}
                 />
+                {errors.contact_name && (
+                  <p className="text-xs text-red-500 mt-1">{errors.contact_name}</p>
+                )}
               </div>
               <div>
                 <Label>Email</Label>
@@ -145,7 +187,11 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
                   value={formData.contact_email}
                   onChange={(e) => setFormData({...formData, contact_email: e.target.value})}
                   placeholder="john@example.com"
+                  className={errors.contact_email ? "border-red-500" : ""}
                 />
+                {errors.contact_email && (
+                  <p className="text-xs text-red-500 mt-1">{errors.contact_email}</p>
+                )}
               </div>
               <div>
                 <Label>Phone</Label>
@@ -153,7 +199,11 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
                   value={formData.contact_phone}
                   onChange={(e) => setFormData({...formData, contact_phone: e.target.value})}
                   placeholder="07123 456789"
+                  className={errors.contact_phone ? "border-red-500" : ""}
                 />
+                {errors.contact_phone && (
+                  <p className="text-xs text-red-500 mt-1">{errors.contact_phone}</p>
+                )}
               </div>
             </div>
           </div>
@@ -289,8 +339,8 @@ export default function SalesLeadFormDialog({ open, onOpenChange }) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={createLeadMutation.isPending}>
-              {createLeadMutation.isPending ? "Creating..." : "Create Lead"}
+            <Button type="submit" disabled={isSubmitting || createLeadMutation.isPending}>
+              {isSubmitting || createLeadMutation.isPending ? "Creating..." : "Create Lead"}
             </Button>
           </div>
         </form>

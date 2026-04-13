@@ -70,7 +70,7 @@ export default function SalesListingCard({ listing }) {
             </CardTitle>
             <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
               <MapPin className="w-3 h-3" />
-              {listing.property_id || 'Property ID: ' + listing.property_id}
+              {listing.property_id ? `Property: ${listing.property_id}` : 'No property assigned'}
             </p>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function SalesListingCard({ listing }) {
               <PropertyValuationPanel 
                 propertyId={listing.property_id}
                 listingId={listing.id}
-                address={listing.property_id}
+                address={`${listing.property_id || 'Property'} - ${formatPrice(listing.asking_price)}`}
               />
             </div>
           </div>

@@ -12,6 +12,7 @@ import {
   Clock
 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 const statusColors = {
   new: "bg-blue-500",
@@ -132,11 +133,33 @@ export default function LeadCard({ lead }) {
 
         {/* Actions */}
         <div className="border-t pt-3 flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => {
+              if (lead.contact_email) {
+                window.location.href = `mailto:${lead.contact_email}`;
+              } else {
+                toast.error("No email available");
+              }
+            }}
+          >
             <Mail className="w-3 h-3 mr-1" />
             Email
           </Button>
-          <Button variant="outline" size="sm" className="flex-1">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => {
+              if (lead.contact_phone) {
+                window.location.href = `tel:${lead.contact_phone}`;
+              } else {
+                toast.error("No phone available");
+              }
+            }}
+          >
             <Phone className="w-3 h-3 mr-1" />
             Call
           </Button>

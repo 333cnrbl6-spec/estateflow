@@ -43,6 +43,16 @@ import { format } from "date-fns";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
+// Helper functions
+const transformMonthlyData = (monthlyData) => {
+  if (!monthlyData) return [];
+  return Object.entries(monthlyData).map(([month, count]) => ({
+    month: format(new Date(month + '-01'), 'MMM yyyy'),
+    leads: count,
+    sales: Math.round(count * 0.3),
+  }));
+};
+
 export default function AgentPerformanceDashboard() {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [dateRange, setDateRange] = useState('all');
@@ -515,10 +525,12 @@ function CommunicationStat({ label, value, icon: Icon }) {
   );
 }
 
-function transformMonthlyData(monthlyData) {
+// Helper functions moved to top level to avoid undefined errors
+const transformMonthlyData = (monthlyData) => {
+  if (!monthlyData) return [];
   return Object.entries(monthlyData).map(([month, count]) => ({
     month: format(new Date(month + '-01'), 'MMM yyyy'),
     leads: count,
     sales: Math.round(count * 0.3), // Approximation
   }));
-}
+};

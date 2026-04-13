@@ -142,9 +142,12 @@ Consider:
 
 Be conservative in estimates and account for all compliance costs in investment analysis.`;
 
-    const aiResult = await base44.integrations.Core.InvokeLLM({
-      prompt: prompt,
-      response_json_schema: {
+    // Invoke LLM with proper error handling
+    let aiResult;
+    try {
+      aiResult = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        response_json_schema: {
         type: "object",
         properties: {
           sales_valuation: {
@@ -239,7 +242,14 @@ Be conservative in estimates and account for all compliance costs in investment 
         required: ["sales_valuation", "rental_valuation", "compliance_status", "certifications_needed", "valuation_date", "methodology"]
       },
       model: "claude_sonnet_4_6"
-    });
+      });
+    } catch (llmError) {
+      console.error('LLM invocation failed:', llmError);
+      return Response.json({ 
+        error: 'Valuation service unavailable', 
+        details: llm.message 
+      }, { status: 503 });
+    }
 
     return Response.json({
       success: true,

@@ -19,11 +19,18 @@ Deno.serve(async (req) => {
     else if (date_range === '1_year') startDate = new Date(now.setFullYear(now.getFullYear() - 1));
     else startDate = new Date(0); // All time
 
-    // Fetch all relevant data
-    const leads = await base44.entities.SalesLead.filter({});
-    const listings = await base44.entities.SalesListing.filter({});
-    const transactions = await base44.entities.SalesTransaction.filter({});
-    const communications = await base44.entities.SalesCommunication.filter({});
+    // Fetch all relevant data with error handling
+    let leads = [], listings = [], transactions = [], communications = [];
+    
+    try {
+      leads = await base44.entities.SalesLead.filter({});
+      listings = await base44.entities.SalesListing.filter({});
+      transactions = await base44.entities.SalesTransaction.filter({});
+      communications = await base44.entities.SalesCommunication.filter({});
+    } catch (fetchError) {
+      console.error('Error fetching sales data:', fetchError);
+      return Response.json({ error: 'Failed to fetch performance data', details: fetchError.message }, { status: 500 });
+    }
 
     // Filter by agent if specified
     const agentFilter = agent_id ? (item) => 
