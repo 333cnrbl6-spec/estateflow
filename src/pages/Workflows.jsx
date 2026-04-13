@@ -3,16 +3,20 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle, CheckCircle2, Clock, Play, Trash2, Plus } from 'lucide-react';
+import { CheckCircle2, Pencil, Trash2, Plus, Zap, ToggleLeft, ToggleRight } from 'lucide-react';
 import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
-import WorkflowFormDialog from '@/components/workflows/WorkflowFormDialog';
+import WorkflowFormDialog, { TRIGGER_TYPES, ACTION_TYPES } from '@/components/workflows/WorkflowFormDialog';
 import PendingExecutionsPanel from '@/components/workflows/PendingExecutionsPanel';
+
+const CATEGORY_COLORS = { Tenancy: '#3b82f6', Operations: '#f59e0b', Finance: '#16a34a', Compliance: '#dc2626' };
 
 export default function Workflows() {
   const [showNewWorkflow, setShowNewWorkflow] = useState(false);
+  const [editingWorkflow, setEditingWorkflow] = useState(null);
   const queryClient = useQueryClient();
 
   // Fetch workflows
@@ -121,57 +125,60 @@ export default function Workflows() {
             />
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
-              {workflows.map(workflow => (
-                <Card key={workflow.id} className={!workflow.is_active ? 'opacity-60' : ''}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-base">{workflow.name}</CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Trigger: <span className="font-medium">{workflow.trigger_type.replace(/_/g, ' ').toUpperCase()}</span>
-                        </p>
+              {workflows.map(workflow => {
+                const triggerDef = TRIGGER_TYPES.find(t => t.value === workflow.trigger_type);
+                const catColor = CATEGORY_COLORS[triggerDef?.category] || '#6b7280';
+                return (
+                  <Card key={workflow.id} className={`transition-opacity ${!workflow.is_active ? 'opacity-55' : ''}`}>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <CardTitle className="text-base truncate">{workflow.name}</CardTitle>
+                            {workflow.is_active
+                              ? <Badge className="text-xs bg-green-100 text-green-700 border-green-200">Active</Badge>
+                              : <Badge variant="outline" className="text-xs">Paused</Badge>}
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <span className="text-xs font-semibold rounded-full px-2 py-0.5 text-white" style={{ background: catColor }}>{triggerDef?.category || 'General'}</span>
+                            <span className="text-xs text-muted-foreground">{triggerDef?.label || workflow.trigger_type.replace(/_/g,' ')}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => toggleWorkflowMutation.mutate(workflow)} title={workflow.is_active ? 'Pause' : 'Activate'}>
+                            {workflow.is_active ? <ToggleRight className="w-4 h-4 text-green-600" /> : <ToggleLeft className="w-4 h-4" />}
+                          </Button>
+                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditingWorkflow(workflow)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => deleteWorkflowMutation.mutate(workflow.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          size="icon" 
-                          variant="ghost"
-                          onClick={() => toggleWorkflowMutation.mutate(workflow)}
-                        >
-                          {workflow.is_active ? '✓' : '○'}
-                        </Button>
-                        <Button 
-                          size="icon" 
-                          variant="ghost"
-                          className="text-destructive"
-                          onClick={() => deleteWorkflowMutation.mutate(workflow.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Trigger Days:</span>
-                      <span className="ml-2 font-medium">{workflow.days_before || 'N/A'} days before</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Actions:</span>
-                      <span className="ml-2 font-medium">{workflow.actions?.length || 0} action(s)</span>
-                    </div>
-                    <div className="pt-2 border-t">
-                      {workflow.actions?.slice(0, 2).map((action, i) => (
-                        <p key={i} className="text-xs text-muted-foreground">
-                          • {action.action_type.replace(/_/g, ' ')}
-                        </p>
-                      ))}
-                      {workflow.actions?.length > 2 && (
-                        <p className="text-xs text-muted-foreground">• +{workflow.actions.length - 2} more</p>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-sm">
+                      {workflow.days_before > 0 && (
+                        <div className="text-xs text-muted-foreground">⏱ Runs <strong>{workflow.days_before} days</strong> before/after the event</div>
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      {workflow.conditions?.length > 0 && (
+                        <div className="text-xs">
+                          <span className="text-amber-700 font-semibold">Conditions: </span>
+                          {workflow.conditions.map((c, i) => (
+                            <span key={i} className="bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 mr-1 text-amber-800">{c.field} {c.operator} {c.value}</span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="border-t pt-2 space-y-1">
+                        {workflow.actions?.map((action, i) => {
+                          const def = ACTION_TYPES.find(a => a.value === action.action_type);
+                          return <p key={i} className="text-xs text-muted-foreground">{def?.label || action.action_type.replace(/_/g,' ')}</p>;
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </TabsContent>
@@ -205,12 +212,17 @@ export default function Workflows() {
       </Tabs>
 
       {showNewWorkflow && (
-        <WorkflowFormDialog 
+        <WorkflowFormDialog
           onClose={() => setShowNewWorkflow(false)}
-          onSuccess={() => {
-            setShowNewWorkflow(false);
-            queryClient.invalidateQueries({ queryKey: ['workflows'] });
-          }}
+          onSuccess={() => { setShowNewWorkflow(false); queryClient.invalidateQueries({ queryKey: ['workflows'] }); }}
+        />
+      )}
+
+      {editingWorkflow && (
+        <WorkflowFormDialog
+          initialData={editingWorkflow}
+          onClose={() => setEditingWorkflow(null)}
+          onSuccess={() => { setEditingWorkflow(null); queryClient.invalidateQueries({ queryKey: ['workflows'] }); }}
         />
       )}
     </div>
