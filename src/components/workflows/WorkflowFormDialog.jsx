@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Plus, X, ChevronRight, Zap, Layers, CheckCircle2 } from 'lucide-react';
+import WorkflowAIAssistant from './WorkflowAIAssistant';
 
 // ─── Catalogue ─────────────────────────────────────────────────────────────
 
@@ -683,6 +684,27 @@ export default function WorkflowFormDialog({ onClose, onSuccess, initialData = n
                 </div>
               ))}
             </div>
+
+            {/* AI Assistant */}
+            <WorkflowAIAssistant
+              formData={formData}
+              onApplySuggestion={(suggestion) => {
+                if (suggestion.type === 'copy') {
+                  // Find first send_email action and apply, or add one
+                  const actions = [...(formData.actions || [])];
+                  const emailIdx = actions.findIndex(a => a.action_type === 'send_email');
+                  if (emailIdx >= 0) {
+                    if (suggestion.email_subject) actions[emailIdx] = { ...actions[emailIdx], email_subject: suggestion.email_subject, email_body_template: suggestion.email_body };
+                  } else {
+                    actions.push({ action_type: 'send_email', email_subject: suggestion.email_subject, email_body_template: suggestion.email_body });
+                  }
+                  // Apply SMS if present
+                  const smsIdx = actions.findIndex(a => a.action_type === 'send_sms');
+                  if (suggestion.sms && smsIdx >= 0) actions[smsIdx] = { ...actions[smsIdx], sms_template: suggestion.sms };
+                  setFormData(f => ({ ...f, actions }));
+                }
+              }}
+            />
 
             {/* Placeholders reference */}
             <div className="bg-muted/30 rounded-lg p-3 border">
