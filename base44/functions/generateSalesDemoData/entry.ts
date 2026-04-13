@@ -13,8 +13,70 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Admin access required' }, { status: 403 });
     }
 
-    // Sample property data from various UK locations
-    const properties = [
+    // Fetch real property listings for the agent's area
+    const listingsPrompt = `
+Search for current residential property listings (for sale) in the UK. Focus on properties that would typically be listed by estate agents.
+
+Find real examples across different price ranges and property types. For each property, provide:
+- Full address with realistic UK postcode
+- Property type
+- Bedrooms, bathrooms, reception rooms
+- Asking price
+- Brief description
+- Key features
+- EPC rating and council tax band if available
+
+Return 12 diverse properties across different UK regions (Brighton, Blackpool, Leeds, Ipswich, Lancashire, North Wales, etc.) with realistic prices and details.
+
+Format as JSON array:
+[
+  {
+    "address": "full address",
+    "postcode": "UK postcode",
+    "price": number,
+    "type": "property type",
+    "bedrooms": number,
+    "bathrooms": number,
+    "tenure": "freehold|leasehold",
+    "epc": "A-G",
+    "council_tax": "A-H",
+    "features": ["feature1", "feature2"],
+    "description": "property description"
+  }
+]
+`;
+
+    const realListingsResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: listingsPrompt,
+      add_context_from_internet: true,
+      model: 'gemini_3_flash',
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          listings: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                address: { type: 'string' },
+                postcode: { type: 'string' },
+                price: { type: 'number' },
+                type: { type: 'string' },
+                bedrooms: { type: 'number' },
+                bathrooms: { type: 'number' },
+                tenure: { type: 'string' },
+                epc: { type: 'string' },
+                council_tax: { type: 'string' },
+                features: { type: 'array', items: { type: 'string' } },
+                description: { type: 'string' }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const properties = realListingsResult?.listings || [
       {
         address: "Admiral Point, Blackpool",
         postcode: "FY1 5DU",

@@ -126,7 +126,91 @@ Return as JSON matching this schema:
       const agentName = agent_name;
       const location = agent_location || 'UK';
 
-      // Generate realistic property/tenant data using LLM seeded with research
+      // Fetch real current listings from the agent's website and property portals
+      const listingsPrompt = `
+Search for current property listings (both for sale and to rent) for the estate/letting agent "${agentName}" based in ${location}.
+
+CRITICAL: You must search:
+1. Their official website (find their property listings page)
+2. Rightmove (search for the agent name)
+3. Zoopla (search for the agent name)
+4. OnTheMarket.com (if applicable)
+
+Extract ALL current active listings you can find. For each property, get:
+- Full address including postcode
+- Property type (detached, semi-detached, terraced, flat, apartment, etc.)
+- Number of bedrooms
+- Number of bathrooms/receptions
+- Price (asking price for sale, or monthly rent for lettings)
+- Property description
+- Key features (garden, parking, garage, etc.)
+- Tenure (freehold/leasehold if mentioned)
+- EPC rating (if mentioned)
+- Council tax band (if mentioned)
+- Images URLs if available
+- Whether it's for sale or rent
+- Status (available, under offer, sold subject to contract, let, etc.)
+
+Return as JSON array of real listings. If you cannot find real listings, return an empty array and I will use realistic demo data instead.
+
+Format:
+[
+  {
+    "address": "full address with postcode",
+    "property_type": "detached|semi_detached|terraced|flat|apartment|penthouse|studio|bungalow|commercial",
+    "bedrooms": number,
+    "bathrooms": number,
+    "reception_rooms": number,
+    "price": number,
+    "listing_type": "sale|rent",
+    "description": "property description",
+    "features": ["feature1", "feature2"],
+    "tenure": "freehold|leasehold",
+    "epc_rating": "A|B|C|D|E|F|G",
+    "council_tax_band": "A|B|C|D|E|F|G",
+    "image_urls": ["url1", "url2"],
+    "status": "available|under_offer|sold_let|reserved"
+  }
+]
+`;
+
+      const realListings = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt: listingsPrompt,
+        add_context_from_internet: true,
+        model: 'gemini_3_flash',
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            listings: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  address: { type: 'string' },
+                  property_type: { type: 'string' },
+                  bedrooms: { type: 'number' },
+                  bathrooms: { type: 'number' },
+                  reception_rooms: { type: 'number' },
+                  price: { type: 'number' },
+                  listing_type: { type: 'string' },
+                  description: { type: 'string' },
+                  features: { type: 'array', items: { type: 'string' } },
+                  tenure: { type: 'string' },
+                  epc_rating: { type: 'string' },
+                  council_tax_band: { type: 'string' },
+                  image_urls: { type: 'array', items: { type: 'string' } },
+                  status: { type: 'string' }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const actualListings = realListings?.listings || [];
+      const useRealData = actualListings.length > 0;
+
+      // Generate company and tenant data using LLM seeded with research
       const dataPrompt = `
 You are building realistic demo data for a property management platform for the letting agency "${agentName}" based in ${location}.
 
@@ -134,11 +218,17 @@ Agency background: ${r.background_notes || 'Local letting agency'}
 Services: ${(r.services || []).join(', ')}
 Portfolio notes: ${r.portfolio_notes || 'Mix of residential and HMO properties'}
 
-Generate a complete but realistic demo dataset with:
+${useRealData 
+  ? `USE THESE REAL CURRENT LISTINGS from the agent (extracted from their website and property portals):
+${JSON.stringify(actualListings, null, 2)}
+
+Create property entities matching these real addresses. Generate ${r.demo_tenants || 10} tenants with realistic UK names to occupy these properties.`
+  : `Generate a complete but realistic demo dataset with:
 - ${r.demo_properties || 3} properties (realistic street names and postcodes appropriate to ${location})
 - Each property has 2-8 units
 - ${r.demo_tenants || 10} tenants with realistic UK names
-- Postcodes must be realistic and appropriate to the ${location} area
+- Postcodes must be realistic and appropriate to the ${location} area`
+}
 
 Return as JSON:
 {
@@ -157,8 +247,8 @@ Return as JSON:
       "name": string,
       "address_line_1": string,
       "city": string,
-          "postcode": string,
-          "region": string,
+      "postcode": string,
+      "region": string,
       "property_type": "freehold_block or house",
       "ownership_type": "freehold or leasehold",
       "total_units": number,
@@ -395,12 +485,13 @@ Return JSON matching this schema.
 
       return Response.json({
         success: true,
-        summary: `${agentName} demo created with ${propertyIds.length} properties, ${unitIds.length} units, ${tenantIds.length} tenants and financial records.`,
+        summary: `${agentName} demo created with ${propertyIds.length} properties (${useRealData ? 'real current listings' : 'demo data'}), ${unitIds.length} units, ${tenantIds.length} tenants and financial records.`,
         counts: {
           companies: 1,
           properties: propertyIds.length,
           units: unitIds.length,
-          tenants: tenantIds.length
+          tenants: tenantIds.length,
+          real_listings: actualListings.length
         },
         expansion_included: !!expansionReport,
         expansion_summary: expansionReport ? {
