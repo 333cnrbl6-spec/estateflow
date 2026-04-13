@@ -1,0 +1,158 @@
+{
+  "name": "SalesTransaction",
+  "type": "object",
+  "properties": {
+    "sales_listing_id": {
+      "type": "string",
+      "description": "Reference to SalesListing entity"
+    },
+    "accepted_offer_id": {
+      "type": "string",
+      "description": "Reference to accepted Offer entity"
+    },
+    "seller_contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (seller)"
+    },
+    "buyer_contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (buyer)"
+    },
+    "seller_solicitor_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (seller's solicitor)"
+    },
+    "buyer_solicitor_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (buyer's solicitor)"
+    },
+    "sale_price": {
+      "type": "number",
+      "description": "Final sale price in GBP"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "offer_accepted",
+        "instructing_solicitors",
+        "draft_contract",
+        "searches_underway",
+        "mortgage_application",
+        "survey_completed",
+        "mortgage_offer_received",
+        "enquiries_raised",
+        "enquiries_resolved",
+        "ready_to_exchange",
+        "exchange_of_contracts",
+        "completion_pending",
+        "completed",
+        "fallen_through"
+      ],
+      "default": "offer_accepted",
+      "description": "Current sales progression stage"
+    },
+    "exchange_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of exchange of contracts"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Actual completion date"
+    },
+    "target_completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date"
+    },
+    "chain_position": {
+      "type": "string",
+      "enum": [
+        "no_chain",
+        "first_time_buyer",
+        "in_chain",
+        "cash_buyer"
+      ],
+      "description": "Buyer's position in property chain"
+    },
+    "deposit_amount": {
+      "type": "number",
+      "description": "Deposit amount paid on exchange"
+    },
+    "agent_commission": {
+      "type": "number",
+      "description": "Agent commission amount"
+    },
+    "commission_percentage": {
+      "type": "number",
+      "description": "Agent commission percentage"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string"
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "description": "Tasks for this transaction"
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "milestone": {
+            "type": "string"
+          },
+          "date_completed": {
+            "type": "string",
+            "format": "date"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Completed milestones"
+    },
+    "assigned_agent_id": {
+      "type": "string",
+      "description": "User ID of assigned sales agent"
+    },
+    "assigned_agent_name": {
+      "type": "string",
+      "description": "Name of assigned agent"
+    },
+    "days_on_market": {
+      "type": "number",
+      "description": "Number of days from listing to completion"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "sales_listing_id",
+    "accepted_offer_id",
+    "sale_price"
+  ]
+}

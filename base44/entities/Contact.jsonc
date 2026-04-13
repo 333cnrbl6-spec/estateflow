@@ -22,6 +22,11 @@
         "surveyor",
         "managing_agent",
         "insurance_broker",
+        "buyer",
+        "seller",
+        "landlord",
+        "tenant",
+        "mortgage_advisor",
         "other"
       ]
     },

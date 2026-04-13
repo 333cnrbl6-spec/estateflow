@@ -79,6 +79,7 @@ import BankReconciliation from './pages/BankReconciliation';
 import LandlordReportingDashboard from './pages/LandlordReportingDashboard';
 import MessagesAdmin from './pages/MessagesAdmin';
 import MaintenanceReports from './pages/MaintenanceReports';
+import SalesDashboard from './pages/SalesDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -174,6 +175,7 @@ const AuthenticatedApp = () => {
         <Route path="/reporting" element={<LandlordReportingDashboard />} />
         <Route path="/messages" element={<MessagesAdmin />} />
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
+        <Route path="/sales" element={<SalesDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

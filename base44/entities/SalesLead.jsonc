@@ -1,0 +1,149 @@
+{
+  "name": "SalesLead",
+  "type": "object",
+  "properties": {
+    "lead_type": {
+      "type": "string",
+      "enum": [
+        "buyer",
+        "seller",
+        "landlord",
+        "tenant"
+      ],
+      "description": "Type of lead"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity"
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Name of the lead"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Email of the lead"
+    },
+    "contact_phone": {
+      "type": "string",
+      "description": "Phone number of the lead"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "website",
+        "phone",
+        "email",
+        "portal",
+        "referral",
+        "walk_in",
+        "social_media"
+      ],
+      "description": "How the lead was generated"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "qualified",
+        "nurturing",
+        "converted",
+        "lost"
+      ],
+      "default": "new",
+      "description": "Current lead status"
+    },
+    "property_interest": {
+      "type": "string",
+      "description": "Type of property they're interested in"
+    },
+    "budget_min": {
+      "type": "number",
+      "description": "Minimum budget (for buyers)"
+    },
+    "budget_max": {
+      "type": "number",
+      "description": "Maximum budget (for buyers)"
+    },
+    "location_preference": {
+      "type": "string",
+      "description": "Preferred locations/areas"
+    },
+    "bedrooms_min": {
+      "type": "number",
+      "description": "Minimum number of bedrooms"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "house",
+        "flat",
+        "apartment",
+        "penthouse",
+        "studio",
+        "maisonette",
+        "commercial",
+        "land"
+      ],
+      "description": "Preferred property type"
+    },
+    "tenure_preference": {
+      "type": "string",
+      "enum": [
+        "freehold",
+        "leasehold",
+        "commonhold",
+        "any"
+      ],
+      "description": "Preferred tenure type"
+    },
+    "motivation": {
+      "type": "string",
+      "description": "Why they want to move (e.g., job relocation, upsizing, downsizing)"
+    },
+    "timescale": {
+      "type": "string",
+      "enum": [
+        "immediate",
+        "1_month",
+        "3_months",
+        "6_months",
+        "12_months",
+        "unsure"
+      ],
+      "description": "When they want to move"
+    },
+    "assigned_agent_id": {
+      "type": "string",
+      "description": "User ID of assigned agent"
+    },
+    "assigned_agent_name": {
+      "type": "string",
+      "description": "Name of assigned agent"
+    },
+    "lead_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Lead quality score (0-100)"
+    },
+    "last_contact_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of last contact"
+    },
+    "next_follow_up_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled follow-up date"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the lead"
+    }
+  },
+  "required": [
+    "lead_type",
+    "contact_name"
+  ]
+}

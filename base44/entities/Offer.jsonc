@@ -1,0 +1,116 @@
+{
+  "name": "Offer",
+  "type": "object",
+  "properties": {
+    "sales_listing_id": {
+      "type": "string",
+      "description": "Reference to SalesListing entity"
+    },
+    "buyer_contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (buyer)"
+    },
+    "buyer_name": {
+      "type": "string",
+      "description": "Name of buyer"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Email of buyer"
+    },
+    "buyer_phone": {
+      "type": "string",
+      "description": "Phone of buyer"
+    },
+    "offer_amount": {
+      "type": "number",
+      "description": "Offer amount in GBP"
+    },
+    "offer_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date offer was made"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected",
+        "withdrawn",
+        "counter_offered"
+      ],
+      "default": "pending",
+      "description": "Current offer status"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Offer conditions (e.g., subject to survey, chain-free)"
+    },
+    "is_chain_free": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether buyer is chain-free"
+    },
+    "mortgage_status": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "agreed_in_principle",
+        "full_offer",
+        "pending",
+        "unknown"
+      ],
+      "description": "Buyer's mortgage status"
+    },
+    "solicitor_name": {
+      "type": "string",
+      "description": "Name of buyer's solicitor"
+    },
+    "solicitor_contact": {
+      "type": "string",
+      "description": "Contact details for solicitor"
+    },
+    "target_exchange_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target exchange of contracts date"
+    },
+    "target_completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date"
+    },
+    "vendor_feedback": {
+      "type": "string",
+      "description": "Seller's feedback on the offer"
+    },
+    "counter_offer_amount": {
+      "type": "number",
+      "description": "Counter offer amount if applicable"
+    },
+    "accepted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date offer was accepted"
+    },
+    "rejected_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date offer was rejected"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the offer"
+    }
+  },
+  "required": [
+    "sales_listing_id",
+    "buyer_contact_id",
+    "offer_amount",
+    "offer_date"
+  ]
+}

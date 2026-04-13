@@ -1,0 +1,227 @@
+{
+  "name": "SalesListing",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (if applicable)"
+    },
+    "listing_type": {
+      "type": "string",
+      "enum": [
+        "sale",
+        "rent",
+        "both"
+      ],
+      "default": "sale",
+      "description": "Type of listing"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "under_offer",
+        "sold_subject_to_contract",
+        "completed",
+        "withdrawn",
+        "expired"
+      ],
+      "default": "draft",
+      "description": "Current listing status"
+    },
+    "asking_price": {
+      "type": "number",
+      "description": "Asking price in GBP"
+    },
+    "price_qualifier": {
+      "type": "string",
+      "enum": [
+        "offers_in_excess_of",
+        "offers_over",
+        "guide_price",
+        "fixed_price",
+        "price_on_application"
+      ],
+      "default": "offers_over",
+      "description": "Price qualifier"
+    },
+    "marketing_text": {
+      "type": "string",
+      "description": "Property description for marketing"
+    },
+    "featured_text": {
+      "type": "string",
+      "description": "Short featured description"
+    },
+    "bedrooms": {
+      "type": "number",
+      "description": "Number of bedrooms"
+    },
+    "bathrooms": {
+      "type": "number",
+      "description": "Number of bathrooms"
+    },
+    "reception_rooms": {
+      "type": "number",
+      "description": "Number of reception rooms"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "detached",
+        "semi_detached",
+        "terraced",
+        "flat",
+        "apartment",
+        "penthouse",
+        "studio",
+        "maisonette",
+        "bungalow",
+        "commercial",
+        "land"
+      ],
+      "description": "Type of property"
+    },
+    "tenure": {
+      "type": "string",
+      "enum": [
+        "freehold",
+        "leasehold",
+        "commonhold",
+        "shared_ownership"
+      ],
+      "description": "Property tenure"
+    },
+    "lease_remaining_years": {
+      "type": "number",
+      "description": "Years remaining on lease (for leasehold)"
+    },
+    "council_tax_band": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ],
+      "description": "Council tax band"
+    },
+    "epc_rating": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "description": "EPC rating"
+    },
+    "floor_area_sqft": {
+      "type": "number",
+      "description": "Floor area in square feet"
+    },
+    "floor_area_sqm": {
+      "type": "number",
+      "description": "Floor area in square meters"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Key features (e.g., garden, parking, garage)"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_url": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "is_primary": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Property images"
+    },
+    "floor_plan_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to floor plan images"
+    },
+    "virtual_tour_url": {
+      "type": "string",
+      "description": "URL to virtual tour"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "URL to property video"
+    },
+    "listing_agent_id": {
+      "type": "string",
+      "description": "User ID of listing agent"
+    },
+    "listing_agent_name": {
+      "type": "string",
+      "description": "Name of listing agent"
+    },
+    "listed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date property was listed"
+    },
+    "portal_links": {
+      "type": "object",
+      "properties": {
+        "rightmove_id": {
+          "type": "string"
+        },
+        "zoopla_id": {
+          "type": "string"
+        },
+        "onthemarket_id": {
+          "type": "string"
+        }
+      },
+      "description": "Property portal IDs"
+    },
+    "viewing_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of viewings conducted"
+    },
+    "offer_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of offers received"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    }
+  },
+  "required": [
+    "property_id",
+    "asking_price",
+    "marketing_text"
+  ]
+}
