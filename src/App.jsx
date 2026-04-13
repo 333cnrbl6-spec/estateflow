@@ -93,6 +93,7 @@ import PropertyInspection from './pages/PropertyInspection';
 import MaintenanceAnalyticsDashboard from './pages/MaintenanceAnalyticsDashboard';
 import LandlordMonthlyReporting from './pages/LandlordMonthlyReporting';
 import ContractorDashboard from './pages/ContractorDashboard';
+import TenantSelfServicePortal from './pages/TenantSelfServicePortal';
 import Settings from './pages/Settings';
 
 const AuthenticatedApp = () => {
@@ -204,6 +205,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
         <Route path="/contractor" element={<ContractorDashboard />} />
+        <Route path="/tenant-portal" element={<TenantSelfServicePortal />} />
         <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
