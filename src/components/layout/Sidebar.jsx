@@ -1,38 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import {
-  LayoutDashboard,
-  Building2,
-  Home,
-  DoorOpen,
-  Users,
-  PoundSterling,
-  Wrench,
-  BookUser,
-  ShieldCheck,
-  GitBranch,
-  ChevronLeft,
-  ChevronRight,
-  Crown,
-  BookOpen,
-  Layers,
-  MapPin,
-  Landmark,
-  Receipt,
-  MessageSquare,
-  Settings,
-  Plug,
-  Scale,
-  Zap,
-  FileText,
-  Shield,
-  AlertCircle,
-  Code2,
-  TrendingUp,
-  Phone,
-  Lightbulb,
-  Sparkles
+  LayoutDashboard, Building2, Home, DoorOpen, Users, PoundSterling, Wrench,
+  BookUser, ShieldCheck, GitBranch, ChevronLeft, ChevronRight, Crown, BookOpen,
+  Layers, MapPin, Landmark, Receipt, MessageSquare, Settings, Plug, Scale, Zap,
+  FileText, Shield, AlertCircle, Code2, TrendingUp, Phone, Lightbulb, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -125,17 +98,15 @@ export default function Sidebar({ onCollapsedChange }) {
       )}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 h-[72px] border-b border-sidebar-border shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-3 px-4 h-[72px] border-b border-sidebar-border shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-sidebar-primary flex items-center justify-center shrink-0 shadow-md">
           <Crown className="w-4 h-4 text-sidebar-primary-foreground" />
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
-            <h1 className="font-serif text-base font-semibold tracking-tight text-sidebar-foreground truncate">
-              Premiso
-            </h1>
-            <p className="text-[10px] uppercase tracking-[0.15em] text-sidebar-foreground/50">
-              {user?.business_name ? user.business_name : 'Property Software'}
+            <h1 className="font-bold text-[15px] tracking-tight text-sidebar-foreground truncate">Premiso</h1>
+            <p className="text-[10px] uppercase tracking-[0.12em] text-sidebar-foreground/40">
+              {user?.business_name || 'Property Software'}
             </p>
           </div>
         )}
@@ -146,17 +117,15 @@ export default function Sidebar({ onCollapsedChange }) {
         {navGroups.map((group) => (
           <div key={group.label}>
             {!collapsed && (
-              <div className="px-3 mb-1 text-[10px] uppercase tracking-[0.12em] font-semibold text-sidebar-foreground/30">
+              <div className="px-3 mb-1.5 text-[9px] uppercase tracking-[0.15em] font-bold text-sidebar-foreground/35">
                 {group.label}
               </div>
             )}
             <div className="space-y-0.5">
               {group.items.map((item) => {
-                // Hide out-of-hours features from non-admin users
                 if ((item.path === '/out-of-hours' || item.path === '/call-center-config') && user?.role !== 'admin') {
                   return null;
                 }
-
                 const isActive = location.pathname === item.path ||
                   (item.path !== '/' && location.pathname.startsWith(item.path));
                 return (
@@ -164,13 +133,13 @@ export default function Sidebar({ onCollapsedChange }) {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      "flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-primary"
-                        : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                        : "text-sidebar-foreground/65 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                     )}
                   >
-                    <item.icon className={cn("w-[18px] h-[18px] shrink-0", isActive && "text-sidebar-primary")} />
+                    <item.icon className={cn("w-[17px] h-[17px] shrink-0", isActive ? "text-sidebar-primary-foreground" : "")} />
                     {!collapsed && <span className="truncate">{item.label}</span>}
                   </Link>
                 );
@@ -180,10 +149,23 @@ export default function Sidebar({ onCollapsedChange }) {
         ))}
       </nav>
 
-      {/* Collapse Toggle */}
+      {/* User card */}
+      {!collapsed && (
+        <div className="px-4 py-3 border-t border-sidebar-border flex items-center gap-3">
+          <div className="w-7 h-7 rounded-lg bg-sidebar-primary flex items-center justify-center text-xs font-bold text-sidebar-primary-foreground shrink-0">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-sidebar-foreground truncate">{user?.full_name || 'User'}</p>
+            <p className="text-[10px] text-sidebar-foreground/40 truncate">{user?.role}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Collapse toggle */}
       <button
         onClick={() => handleCollapse(!collapsed)}
-        className="flex items-center justify-center h-12 border-t border-sidebar-border text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+        className="flex items-center justify-center h-10 border-t border-sidebar-border text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
       >
         {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>

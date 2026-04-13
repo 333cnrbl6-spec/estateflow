@@ -138,17 +138,17 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard title="Companies" value={companies.length} icon={Building2} subtitle={`${companies.filter(c => c.status === 'active').length} active`} />
-          <StatCard title="Properties" value={properties.length} icon={Home} subtitle={`${units.length} total units`} />
-          <StatCard title="Occupancy" value={`${occupancyRate}%`} icon={DoorOpen} subtitle={`${occupiedUnits} of ${units.length} units`} />
-          <StatCard title="Active Tenants" value={tenants.filter(t => t.status === 'active').length} icon={Users} subtitle={`${tenants.filter(t => t.status === 'in_arrears').length} in arrears`} />
+          <StatCard title="Companies" value={companies.length} icon={Building2} subtitle={`${companies.filter(c => c.status === 'active').length} active`} colorIndex={0} />
+          <StatCard title="Properties" value={properties.length} icon={Home} subtitle={`${units.length} total units`} colorIndex={1} />
+          <StatCard title="Occupancy" value={`${occupancyRate}%`} icon={DoorOpen} subtitle={`${occupiedUnits} of ${units.length} units`} colorIndex={2} />
+          <StatCard title="Active Tenants" value={tenants.filter(t => t.status === 'active').length} icon={Users} subtitle={`${tenants.filter(t => t.status === 'in_arrears').length} in arrears`} colorIndex={3} />
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="demo data — import actuals" />
-          <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="demo data — import actuals" />
-          <StatCard title="Overdue Items" value={overdueCount} icon={AlertTriangle} />
-          <StatCard title="Open Maintenance" value={activeMaintenance} icon={Wrench} />
+          <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="demo data — import actuals" colorIndex={2} />
+          <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="demo data — import actuals" colorIndex={4} />
+          <StatCard title="Overdue Items" value={overdueCount} icon={AlertTriangle} colorIndex={4} />
+          <StatCard title="Open Maintenance" value={activeMaintenance} icon={Wrench} colorIndex={1} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
