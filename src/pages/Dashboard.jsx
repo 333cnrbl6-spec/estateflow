@@ -9,6 +9,7 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
+import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -183,6 +184,29 @@ export default function Dashboard() {
             ) : (
               <p className="text-sm text-muted-foreground py-12 text-center">No data yet</p>
             )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <MarketIntelligenceWidget />
+          </div>
+          <div className="lg:col-span-1">
+            <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Quick Actions</h3>
+              </div>
+              <div className="space-y-2">
+                <Link to="/sales" className="block p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+                  <p className="text-sm font-semibold text-blue-900">View Sales Dashboard</p>
+                  <p className="text-xs text-blue-700 mt-1">Manage listings and leads</p>
+                </Link>
+                <Link to="/market-reports" className="block p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors">
+                  <p className="text-sm font-semibold text-green-900">Market Intelligence</p>
+                  <p className="text-xs text-green-700 mt-1">Generate market reports</p>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
 

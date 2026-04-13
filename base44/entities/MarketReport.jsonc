@@ -1,0 +1,117 @@
+{
+  "name": "MarketReport",
+  "type": "object",
+  "properties": {
+    "generated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the report was generated"
+    },
+    "regions_covered": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of regions analyzed in this report"
+    },
+    "executive_summary": {
+      "type": "string",
+      "description": "High-level market summary and key insights"
+    },
+    "key_metrics": {
+      "type": "object",
+      "properties": {
+        "avg_price_change_percent": {
+          "type": "number",
+          "description": "Month-over-month price change percentage"
+        },
+        "properties_for_sale": {
+          "type": "number",
+          "description": "Total properties currently for sale"
+        },
+        "hottest_area": {
+          "type": "string",
+          "description": "Area with highest demand"
+        },
+        "average_price": {
+          "type": "number",
+          "description": "Average property price across all regions"
+        },
+        "avg_days_on_market": {
+          "type": "number",
+          "description": "Average days properties stay on market"
+        }
+      },
+      "description": "Key market metrics and KPIs"
+    },
+    "price_trends": {
+      "type": "object",
+      "properties": {
+        "monthly_data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string"
+              },
+              "avg_price": {
+                "type": "number"
+              },
+              "listings_count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "description": "Historical price trend data"
+    },
+    "demand_forecast": {
+      "type": "object",
+      "properties": {
+        "area_breakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": {
+                "type": "string"
+              },
+              "demand_score": {
+                "type": "number"
+              },
+              "trend": {
+                "type": "string"
+              },
+              "reasoning": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "description": "Demand forecast by area with scores"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Strategic recommendations for investors/landlords"
+    },
+    "raw_data": {
+      "type": "object",
+      "description": "Original market data from portals"
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Email of user who generated the report"
+    }
+  },
+  "required": [
+    "generated_date",
+    "regions_covered",
+    "executive_summary"
+  ]
+}
