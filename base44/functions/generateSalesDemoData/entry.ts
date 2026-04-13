@@ -317,6 +317,7 @@ Deno.serve(async (req) => {
         council_tax_band: prop.council_tax,
         epc_rating: prop.epc,
         features: prop.features,
+        listing_agent_id: user.id,
         listing_agent_name: user.full_name,
         listed_date: new Date().toISOString().split('T')[0],
         viewing_count: Math.floor(Math.random() * 20),
@@ -330,6 +331,7 @@ Deno.serve(async (req) => {
     for (const lead of leads) {
       const created = await base44.entities.SalesLead.create({
         ...lead,
+        assigned_agent_id: user.id,
         assigned_agent_name: user.full_name,
         last_contact_date: new Date().toISOString().split('T')[0]
       });
@@ -370,6 +372,7 @@ Deno.serve(async (req) => {
           status: transactions[i].status,
           target_completion_date: transactions[i].target_completion_date,
           chain_position: transactions[i].chain_position,
+          assigned_agent_id: user.id,
           assigned_agent_name: user.full_name,
           days_on_market: Math.floor(Math.random() * 90) + 30
         });
