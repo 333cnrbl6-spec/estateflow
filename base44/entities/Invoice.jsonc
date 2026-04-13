@@ -2,140 +2,77 @@
   "name": "Invoice",
   "type": "object",
   "properties": {
-    "service_id": {
+    "maintenance_request_id": {
       "type": "string",
-      "description": "Reference to OutOfHoursService entity"
+      "description": "Reference to MaintenanceRequest entity"
     },
-    "company_id": {
+    "contractor_id": {
       "type": "string",
-      "description": "Reference to Company entity"
-    },
-    "invoice_number": {
-      "type": "string",
-      "description": "Unique invoice identifier e.g. INV-2026-001"
-    },
-    "billing_period_start": {
-      "type": "string",
-      "format": "date",
-      "description": "Start of billing period"
-    },
-    "billing_period_end": {
-      "type": "string",
-      "format": "date",
-      "description": "End of billing period"
-    },
-    "service_tier": {
-      "type": "string",
-      "enum": [
-        "basic",
-        "standard",
-        "premium",
-        "enterprise"
-      ],
-      "description": "Service tier at time of invoice"
+      "description": "Reference to Contact (contractor)"
     },
     "amount": {
       "type": "number",
       "description": "Invoice amount in GBP"
     },
-    "currency": {
+    "description": {
       "type": "string",
-      "default": "GBP",
-      "description": "Currency code"
+      "description": "Invoice description and work details"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to uploaded invoice PDF/image"
     },
     "status": {
       "type": "string",
       "enum": [
-        "draft",
-        "issued",
-        "sent",
-        "viewed",
-        "paid",
-        "overdue",
-        "cancelled"
+        "pending_approval",
+        "approved",
+        "rejected",
+        "paid"
       ],
-      "default": "draft",
-      "description": "Invoice status"
+      "default": "pending_approval",
+      "description": "Invoice approval status"
     },
-    "issue_date": {
+    "submitted_by": {
       "type": "string",
-      "format": "date",
-      "description": "Date invoice was issued"
+      "description": "Email of contractor who submitted invoice"
     },
-    "due_date": {
+    "submitted_date": {
       "type": "string",
-      "format": "date",
-      "description": "Payment due date"
+      "format": "date-time",
+      "description": "When invoice was submitted"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Email of person who approved/rejected"
+    },
+    "approved_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When invoice was approved/rejected"
+    },
+    "approval_notes": {
+      "type": "string",
+      "description": "Notes on approval or rejection"
     },
     "paid_date": {
       "type": "string",
-      "format": "date",
-      "description": "Date payment received"
+      "format": "date-time",
+      "description": "When invoice was paid"
     },
-    "payment_method": {
+    "payment_reference": {
       "type": "string",
-      "enum": [
-        "stripe",
-        "bank_transfer",
-        "manual",
-        "none"
-      ],
-      "default": "none",
-      "description": "Payment method used"
-    },
-    "stripe_invoice_id": {
-      "type": "string",
-      "description": "Stripe invoice ID for tracking"
-    },
-    "stripe_payment_intent_id": {
-      "type": "string",
-      "description": "Stripe payment intent ID"
-    },
-    "payment_status": {
-      "type": "string",
-      "enum": [
-        "unpaid",
-        "pending",
-        "succeeded",
-        "failed",
-        "cancelled"
-      ],
-      "default": "unpaid",
-      "description": "Payment processing status"
-    },
-    "line_items": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "unit_price": {
-            "type": "number"
-          },
-          "amount": {
-            "type": "number"
-          }
-        }
-      },
-      "description": "Itemized line items"
+      "description": "Payment reference or transaction ID"
     },
     "notes": {
-      "type": "string"
+      "type": "string",
+      "description": "Additional notes"
     }
   },
   "required": [
-    "service_id",
-    "company_id",
-    "invoice_number",
-    "billing_period_start",
-    "billing_period_end",
+    "maintenance_request_id",
     "amount",
-    "issue_date",
-    "due_date"
+    "document_url",
+    "submitted_by"
   ]
 }
