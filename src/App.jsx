@@ -73,6 +73,7 @@ import DemoStation from './pages/DemoStation';
 import SalesBrochureGenerator from './pages/SalesBrochureGenerator';
 import SubscriberOnboarding from './pages/SubscriberOnboarding';
 import SubscriberIntelligentOnboarding from './pages/SubscriberIntelligentOnboarding';
+import SalesTargetedDemoBuilder from './pages/SalesTargetedDemoBuilder';
 import DocumentRepository from './pages/DocumentRepository';
 import MaintenanceBoard from './pages/MaintenanceBoard';
 import LandlordPortal from './pages/LandlordPortal';
@@ -186,6 +187,7 @@ const AuthenticatedApp = () => {
         <Route path="/sales-brochure-generator" element={<SalesBrochureGenerator />} />
         <Route path="/onboarding" element={<SubscriberOnboarding />} />
         <Route path="/intelligent-onboarding" element={<SubscriberIntelligentOnboarding />} />
+        <Route path="/sales-targeted-demo-builder" element={<SalesTargetedDemoBuilder />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/maintenance-board" element={<MaintenanceBoard />} />
         <Route path="/landlord-portal" element={<LandlordPortal />} />
