@@ -1,0 +1,105 @@
+{
+  "name": "BuyerPortalOffer",
+  "type": "object",
+  "properties": {
+    "sales_listing_id": {
+      "type": "string",
+      "description": "Reference to SalesListing entity"
+    },
+    "buyer_name": {
+      "type": "string",
+      "description": "Name of the buyer"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Email of the buyer"
+    },
+    "buyer_phone": {
+      "type": "string",
+      "description": "Phone number of the buyer"
+    },
+    "offer_amount": {
+      "type": "number",
+      "description": "Offer amount in GBP"
+    },
+    "offer_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date offer was made"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "under_review",
+        "accepted",
+        "rejected",
+        "counter_offered",
+        "withdrawn"
+      ],
+      "default": "submitted",
+      "description": "Current offer status"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Offer conditions (e.g., subject to survey, chain-free)"
+    },
+    "is_chain_free": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether buyer is chain-free"
+    },
+    "mortgage_status": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "agreed_in_principle",
+        "full_offer",
+        "pending",
+        "unknown"
+      ],
+      "description": "Buyer's mortgage status"
+    },
+    "solicitor_name": {
+      "type": "string",
+      "description": "Name of buyer's solicitor"
+    },
+    "solicitor_contact": {
+      "type": "string",
+      "description": "Contact details for solicitor"
+    },
+    "target_exchange_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target exchange of contracts date"
+    },
+    "target_completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Secure token for buyer to access their offer"
+    },
+    "portal_url": {
+      "type": "string",
+      "description": "Unique portal URL for this buyer"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the offer"
+    }
+  },
+  "required": [
+    "sales_listing_id",
+    "buyer_name",
+    "buyer_email",
+    "offer_amount",
+    "offer_date",
+    "access_token"
+  ]
+}

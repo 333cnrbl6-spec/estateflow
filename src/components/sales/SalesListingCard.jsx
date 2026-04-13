@@ -10,8 +10,10 @@ import {
   PoundSterling,
   Calendar,
   Eye,
-  FileText
+  FileText,
+  ExternalLink
 } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 const statusColors = {
   draft: "bg-gray-500",
@@ -137,13 +139,21 @@ export default function SalesListingCard({ listing }) {
         </div>
 
         {/* Actions */}
-        <div className="border-t pt-3 flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            View Details
-          </Button>
-          <Button size="sm" className="flex-1">
-            Edit
-          </Button>
+        <div className="border-t pt-3 space-y-2">
+          <Link to={`/buyer-portal?listing=${listing.id}`} target="_blank">
+            <Button variant="outline" size="sm" className="w-full gap-2">
+              <ExternalLink className="w-3 h-3" />
+              Buyer Portal Link
+            </Button>
+          </Link>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" className="flex-1">
+              View Details
+            </Button>
+            <Button size="sm" className="flex-1">
+              Edit
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
