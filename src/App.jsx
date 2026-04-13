@@ -73,6 +73,7 @@ import DemoStation from './pages/DemoStation';
 import SalesBrochureGenerator from './pages/SalesBrochureGenerator';
 import SubscriberOnboarding from './pages/SubscriberOnboarding';
 import DocumentRepository from './pages/DocumentRepository';
+import MaintenanceBoard from './pages/MaintenanceBoard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -162,6 +163,7 @@ const AuthenticatedApp = () => {
         <Route path="/sales-brochure-generator" element={<SalesBrochureGenerator />} />
         <Route path="/onboarding" element={<SubscriberOnboarding />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
+        <Route path="/maintenance-board" element={<MaintenanceBoard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
