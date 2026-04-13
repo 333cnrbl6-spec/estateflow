@@ -72,7 +72,11 @@ export default function SalesDemoSetup() {
       if (res.data?.success) {
         setBuildResult(res.data);
         setStep('done');
-        // Invalidate so DemoSwitcher and other pages pick up the new demo
+        localStorage.setItem('premiso_brochure_data', JSON.stringify({
+          agent_name: selectedAgent.name,
+          research: researchData,
+          expansion: null,
+        }));
         queryClient.invalidateQueries({ queryKey: ['demo-switcher-companies'] });
         queryClient.invalidateQueries({ queryKey: ['demo-switcher-properties'] });
         queryClient.invalidateQueries({ queryKey: ['currentUser'] });
