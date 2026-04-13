@@ -15,9 +15,12 @@ import {
   AlertCircle,
   Phone,
   Mail,
-  MapPin
+  MapPin,
+  Database,
+  Download
 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import StatCard from "@/components/shared/StatCard";
 import SalesLeadFormDialog from "@/components/sales/SalesLeadFormDialog";
 import SalesListingCard from "@/components/sales/SalesListingCard";
@@ -30,6 +33,7 @@ export default function SalesDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({});
+  const [loadingDemo, setLoadingDemo] = useState(false);
 
   // Fetch leads
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
@@ -119,6 +123,23 @@ export default function SalesDashboard() {
     setFilters({});
   };
 
+  const loadDemoData = async () => {
+    try {
+      setLoadingDemo(true);
+      const response = await base44.functions.invoke('generateSalesDemoData', {});
+      if (response.data.success) {
+        toast.success(`Demo data loaded: ${response.data.properties} properties, ${response.data.listings} listings, ${response.data.leads} leads`);
+        queryClient.invalidateQueries({ queryKey: ['sales-leads'] });
+        queryClient.invalidateQueries({ queryKey: ['sales-listings'] });
+        queryClient.invalidateQueries({ queryKey: ['sales-transactions'] });
+      }
+    } catch (error) {
+      toast.error(`Failed to load demo data: ${error.message}`);
+    } finally {
+      setLoadingDemo(false);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -128,6 +149,10 @@ export default function SalesDashboard() {
           <p className="text-muted-foreground">Manage leads, listings, and sales progression</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={loadDemoData} disabled={loadingDemo}>
+            <Database className="w-4 h-4 mr-2" />
+            {loadingDemo ? "Loading..." : "Load Demo Data"}
+          </Button>
           <Button variant="outline" onClick={() => setActiveTab("leads")}>
             <Phone className="w-4 h-4 mr-2" />
             New Lead
