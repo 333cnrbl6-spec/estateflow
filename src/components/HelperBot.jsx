@@ -8,126 +8,6 @@ import { cn } from "@/lib/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { APP_KNOWLEDGE, getModuleByRoute, searchKnowledge } from "@/lib/app-knowledge";
-    companies: {
-      name: "Companies",
-      description: "Manage company structures, directors, and corporate entities",
-      features: ["Company registration", "Director management", "Companies House integration", "SIC codes", "Filing tracking"],
-      suggestions: ["Add a new company", "Update director information", "Check filing deadlines", "Review company structure"]
-    },
-    properties: {
-      name: "Properties",
-      description: "Manage your property portfolio including freehold and leasehold blocks",
-      features: ["Property details", "Unit management", "Owner information", "Property images", "Address management"],
-      suggestions: ["Add a new property", "View property details", "Manage units", "Update property information"]
-    },
-    tenants: {
-      name: "Tenants & Contacts",
-      description: "Manage tenant relationships, leases, and contact information",
-      features: ["Tenant profiles", "Lease tracking", "Contact management", "Communication history", "Document sharing"],
-      suggestions: ["Add a new tenant", "View lease details", "Send tenant communication", "Update contact information"]
-    },
-    financials: {
-      name: "Financials",
-      description: "Complete financial management including rent, service charges, and expenses",
-      features: ["Rent collection", "Service charge management", "Ground rent", "Bank reconciliation", "Financial reporting", "Stripe payments"],
-      suggestions: ["View income statements", "Process rent payments", "Manage service charges", "Run financial reports", "Reconcile bank transactions"]
-    },
-    maintenance: {
-      name: "Maintenance",
-      description: "Handle maintenance requests, contractor management, and repairs",
-      features: ["Request tracking", "Contractor assignment", "Priority management", "Cost tracking", "Completion monitoring"],
-      suggestions: ["Create maintenance request", "Assign contractor", "View pending repairs", "Track maintenance costs"]
-    },
-    compliance: {
-      name: "Compliance",
-      description: "Track certificates, safety requirements, and regulatory compliance",
-      features: ["Certificate management", "Expiry tracking", "Safety compliance", "HMO licensing", "Building safety"],
-      suggestions: ["Upload certificates", "Check expiring compliance", "View safety requirements", "Generate compliance report"]
-    },
-    sales: {
-      name: "Sales",
-      description: "Property sales management with leads, listings, and transaction pipeline",
-      features: ["Lead management", "Property listings", "Offer tracking", "Transaction pipeline", "AI valuations", "Buyer portal"],
-      suggestions: ["Create sales listing", "Manage leads", "Generate property valuation", "View transaction pipeline", "Schedule viewings"]
-    },
-    pipeline: {
-      name: "Tenancy Pipeline",
-      description: "Track lettings from inquiry to move-in",
-      features: ["Lead tracking", "Viewing scheduling", "Application management", "Referencing", "Move-in coordination"],
-      suggestions: ["Add new inquiry", "Schedule viewing", "Process application", "Track referencing"]
-    },
-    documents: {
-      name: "Documents",
-      description: "Document generation, templates, and secure storage",
-      features: ["Template library", "AI document generation", "Bulk document creation", "Secure sharing", "Version control"],
-      suggestions: ["Generate tenancy agreement", "Create compliance documents", "Upload certificates", "Share with tenant"]
-    },
-    workflows: {
-      name: "Workflows",
-      description: "Automate processes with AI-powered workflow engine",
-      features: ["Workflow builder", "AI automation", "Trigger management", "Task automation", "Integration hub"],
-      suggestions: ["Create new workflow", "View automation rules", "Set up triggers", "Monitor workflow execution"]
-    },
-    "out-of-hours": {
-      name: "Out of Hours",
-      description: "24/7 call handling and emergency response management",
-      features: ["Virtual call center", "Emergency triage", "Contractor dispatch", "Case management", "Service tiers"],
-      suggestions: ["Configure call handling", "View emergency calls", "Dispatch contractor", "Review service tier"]
-    },
-    reporting: {
-      name: "Reporting",
-      description: "Comprehensive reports and analytics across all modules",
-      features: ["Financial reports", "Compliance reports", "Performance metrics", "Custom reports", "Export capabilities"],
-      suggestions: ["Generate financial report", "View compliance summary", "Export data", "Create custom report"]
-    }
-  },
-  commonTasks: [
-    { task: "Add a new property", module: "properties", action: "/properties" },
-    { task: "Create a sales listing", module: "sales", action: "/sales" },
-    { task: "Process rent payment", module: "financials", action: "/financials" },
-    { task: "Upload compliance certificate", module: "compliance", action: "/compliance" },
-    { task: "Create maintenance request", module: "maintenance", action: "/maintenance" },
-    { task: "Generate tenancy agreement", module: "documents", action: "/document-templates" },
-    { task: "View financial reports", module: "financials", action: "/financial-reporting" },
-    { task: "Schedule property viewing", module: "sales", action: "/viewings" },
-    { task: "Add new tenant", module: "tenants", action: "/tenants" },
-    { task: "Set up workflow automation", module: "workflows", action: "/workflows" }
-  ],
-  faqs: [
-    {
-      question: "How do I add a new property?",
-      answer: "Go to Properties module, click 'Add Property', fill in the address and details, then save. You can add multiple units to the property afterwards."
-    },
-    {
-      question: "How do I generate a property valuation?",
-      answer: "Navigate to Sales module, select a property listing, and click 'Valuation'. Our AI will analyze comparable sales and rental data to provide a comprehensive valuation."
-    },
-    {
-      question: "How do I process rent payments?",
-      answer: "Go to Financials module, select the tenant or property, and click 'Process Payment'. You can set up recurring payments via Stripe for automated collection."
-    },
-    {
-      question: "How do I track compliance certificates?",
-      answer: "Visit the Compliance module to view all certificates, upload new ones, and see expiry dates. You'll get automatic alerts for upcoming renewals."
-    },
-    {
-      question: "How do I create a maintenance request?",
-      answer: "Go to Maintenance module, click 'New Request', describe the issue, set priority, and assign a contractor. Track progress through completion."
-    },
-    {
-      question: "Can I automate document generation?",
-      answer: "Yes! Use the Document Templates module to create templates, then generate documents individually or in bulk using the AI document engine."
-    },
-    {
-      question: "How do I set up workflows?",
-      answer: "Navigate to Workflows module, click 'Create Workflow', define triggers and actions. The AI assistant can help suggest automation rules based on your processes."
-    },
-    {
-      question: "What is the Out of Hours service?",
-      answer: "Out of Hours provides 24/7 virtual call handling for emergencies. Configure service tiers, set up contractor dispatch, and manage emergency calls automatically."
-    }
-  ]
-};
 
 // Get current module from URL
 function getCurrentModule() {
@@ -270,8 +150,6 @@ ANSWER:`,
 
   const handleSuggestionClick = (suggestion) => {
     setInput(suggestion);
-    // Optionally auto-send
-    // handleSend();
   };
 
   const handleQuickAction = (action) => {
