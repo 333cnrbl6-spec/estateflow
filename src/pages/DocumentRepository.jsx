@@ -16,6 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import SmartDropZone from '@/components/onboarding/SmartDropZone';
+import DocumentAIProcessor from '@/components/documents/DocumentAIProcessor';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 const DOC_CATEGORIES = {
@@ -88,10 +89,10 @@ function UploadDialog({ open, onClose, properties, tenants }) {
   });
   const [saving, setSaving] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [aiResult, setAiResult] = useState(null);
 
   const onClassified = ({ file, file_url, classification }) => {
     setUploadedFile({ file_url, file_name: file.name, file_size_bytes: file.size });
-    // Auto-fill from AI classification
     const typeMap = {
       tenancy_agreement: 'tenancy_agreement', rent_ledger: 'rent_statement',
       bank_statement: 'bank_statement', invoice: 'invoice',
@@ -103,6 +104,23 @@ function UploadDialog({ open, onClose, properties, tenants }) {
       document_type: suggestedType,
       title: f.title || (file.name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')),
     }));
+  };
+
+  // Handle field applications from AI processor
+  const onAIExtracted = (extraction) => {
+    setAiResult(extraction);
+    if (extraction._apply) {
+      const map = extraction._apply;
+      setForm(f => ({
+        ...f,
+        ...(map.document_type && { document_type: map.document_type }),
+        ...(map.title && { title: map.title }),
+        ...(map.expiry_date && { expiry_date: map.expiry_date }),
+        ...(map.tags && { tags: map.tags }),
+        ...(map.generated_date && { generated_date: map.generated_date }),
+        ...(map.notes && { notes: f.notes ? f.notes + '\n' + map.notes : map.notes }),
+      }));
+    }
   };
 
   const save = async () => {
@@ -139,6 +157,14 @@ function UploadDialog({ open, onClose, properties, tenants }) {
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" /> File ready: {uploadedFile.file_name}
             </div>
+          )}
+
+          {uploadedFile?.file_url && (
+            <DocumentAIProcessor
+              fileUrl={uploadedFile.file_url}
+              fileName={uploadedFile.file_name}
+              onExtracted={onAIExtracted}
+            />
           )}
 
           <div className="grid grid-cols-2 gap-3">
