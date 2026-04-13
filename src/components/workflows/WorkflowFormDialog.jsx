@@ -45,15 +45,116 @@ export const ACTION_TYPES = [
   { value: 'flag_compliance_alert',        label: '🚨 Raise Compliance Alert',           desc: 'Add to compliance dashboard as a priority item' },
 ];
 
+// ─── Operator definitions by field type ─────────────────────────────────────
+export const OPERATORS_BY_TYPE = {
+  number:    [
+    { value: 'equals',       label: 'equals' },
+    { value: 'not_equals',   label: 'not equals' },
+    { value: 'greater_than', label: 'greater than' },
+    { value: 'less_than',    label: 'less than' },
+    { value: 'gte',          label: '>= (at least)' },
+    { value: 'lte',          label: '<= (at most)' },
+  ],
+  select:    [
+    { value: 'equals',       label: 'equals' },
+    { value: 'not_equals',   label: 'not equals' },
+    { value: 'in_list',      label: 'is one of' },
+  ],
+  string:    [
+    { value: 'equals',       label: 'equals (exact)' },
+    { value: 'not_equals',   label: 'not equals' },
+    { value: 'contains',     label: 'contains' },
+    { value: 'not_contains', label: 'does not contain' },
+    { value: 'starts_with',  label: 'starts with' },
+    { value: 'ends_with',    label: 'ends with' },
+    { value: 'regex',        label: 'matches pattern (regex)' },
+  ],
+  date:      [
+    { value: 'within_days',  label: 'is within next N days' },
+    { value: 'overdue_by',   label: 'is overdue by N days' },
+    { value: 'before_date',  label: 'is before date' },
+    { value: 'after_date',   label: 'is after date' },
+  ],
+  existence: [
+    { value: 'exists',       label: 'exists / is present' },
+    { value: 'not_exists',   label: 'does not exist / is missing' },
+    { value: 'is_valid',     label: 'is valid (not expired)' },
+    { value: 'is_expired',   label: 'is expired' },
+  ],
+};
+
 export const CONDITION_FIELDS = {
-  out_of_hours_call:         [{ value: 'severity',    label: 'Severity',     type: 'select', options: ['critical','high','medium','low'] },
-                               { value: 'call_type',  label: 'Call Type',    type: 'select', options: ['water_leak','gas_smell','electrical_fault','fire_alarm','heating_failure','access_issue','general_enquiry'] }],
-  rent_overdue:              [{ value: 'arrears_days',label: 'Days in Arrears', type: 'number' },
-                               { value: 'arrears_amount', label: 'Arrears Amount (£)', type: 'number' }],
-  new_tenant_added:          [{ value: 'tenant_type', label: 'Tenant Type',  type: 'select', options: ['leaseholder','assured_shorthold','assured','regulated','licensee'] }],
-  maintenance_order_created: [{ value: 'priority',   label: 'Priority',     type: 'select', options: ['emergency','urgent','standard','low'] },
-                               { value: 'category',  label: 'Category',     type: 'select', options: ['plumbing','electrical','structural','fire_safety','lift','security','general'] }],
-  service_charge_period:     [{ value: 'charge_type',label: 'Charge Type',  type: 'select', options: ['residential','commercial','mixed'] }],
+  // OOH
+  out_of_hours_call: [
+    { value: 'severity',            label: 'Severity',                     type: 'select',    options: ['critical','high','medium','low'] },
+    { value: 'call_type',           label: 'Call Type',                    type: 'select',    options: ['water_leak','gas_smell','electrical_fault','fire_alarm','heating_failure','access_issue','general_enquiry','security_breach','structural_damage'] },
+    { value: 'caller_type',         label: 'Caller Type',                  type: 'select',    options: ['tenant','landlord','unknown'] },
+    { value: 'property_postcode',   label: 'Property Postcode',            type: 'string' },
+    { value: 'matched_property_id', label: 'Property Matched in System',   type: 'existence' },
+    { value: 'matched_tenant_id',   label: 'Caller Matched as Tenant',     type: 'existence' },
+    { value: 'gdpr_consent_recorded', label: 'GDPR Consent Recorded',      type: 'existence' },
+  ],
+  // Tenancy
+  rent_overdue: [
+    { value: 'arrears_days',        label: 'Days in Arrears',              type: 'number' },
+    { value: 'arrears_amount',      label: 'Arrears Amount (£)',           type: 'number' },
+    { value: 'tenant_type',         label: 'Tenant Type',                  type: 'select',    options: ['leaseholder','assured_shorthold','assured','regulated','licensee'] },
+    { value: 'tenant_status',       label: 'Tenant Status',                type: 'select',    options: ['active','in_arrears','notice_given'] },
+    { value: 'deposit_scheme',      label: 'Deposit Protected',            type: 'existence' },
+  ],
+  new_tenant_added: [
+    { value: 'tenant_type',         label: 'Tenant Type',                  type: 'select',    options: ['leaseholder','assured_shorthold','assured','regulated','licensee'] },
+    { value: 'deposit_amount',      label: 'Deposit Amount (£)',           type: 'number' },
+    { value: 'deposit_scheme',      label: 'Deposit Scheme Set',           type: 'existence' },
+    { value: 'email',               label: 'Tenant Email',                 type: 'existence' },
+    { value: 'phone',               label: 'Tenant Phone',                 type: 'existence' },
+  ],
+  tenancy_renewal_due: [
+    { value: 'tenant_type',         label: 'Tenant Type',                  type: 'select',    options: ['leaseholder','assured_shorthold','assured','regulated','licensee'] },
+    { value: 'tenancy_end_date',    label: 'Tenancy End Date',             type: 'date' },
+    { value: 'monthly_rent',        label: 'Monthly Rent (£)',             type: 'number' },
+  ],
+  // Maintenance
+  maintenance_order_created: [
+    { value: 'priority',            label: 'Priority',                     type: 'select',    options: ['emergency','urgent','standard','low'] },
+    { value: 'category',            label: 'Category',                     type: 'select',    options: ['plumbing','electrical','structural','fire_safety','lift','security','general','other'] },
+    { value: 'assigned_contractor_id', label: 'Contractor Already Assigned', type: 'existence' },
+    { value: 'estimated_cost',      label: 'Estimated Cost (£)',           type: 'number' },
+    { value: 'title',               label: 'Work Order Title',             type: 'string' },
+  ],
+  maintenance_overdue: [
+    { value: 'priority',            label: 'Priority',                     type: 'select',    options: ['emergency','urgent','standard','low'] },
+    { value: 'category',            label: 'Category',                     type: 'select',    options: ['plumbing','electrical','structural','fire_safety','general'] },
+    { value: 'assigned_contractor_id', label: 'Contractor Assigned',       type: 'existence' },
+  ],
+  // Finance
+  service_charge_period: [
+    { value: 'service_charge_budget', label: 'Budget Amount (£)',          type: 'number' },
+    { value: 'leaseholder_count',   label: 'Number of Leaseholders',       type: 'number' },
+    { value: 'section_20_required', label: 'Section 20 Required',          type: 'existence' },
+  ],
+  invoice_overdue: [
+    { value: 'amount',              label: 'Invoice Amount (£)',           type: 'number' },
+    { value: 'service_tier',        label: 'Service Tier',                 type: 'select',    options: ['basic','standard','premium','enterprise'] },
+    { value: 'due_date',            label: 'Due Date',                     type: 'date' },
+  ],
+  // Compliance
+  gas_safety_expiry: [
+    { value: 'expiry_date',         label: 'Expiry Date',                  type: 'date' },
+    { value: 'certificate_number',  label: 'Certificate Reference',        type: 'existence' },
+    { value: 'issuing_body',        label: 'Issuing Body Name',            type: 'string' },
+  ],
+  epc_expiry: [
+    { value: 'expiry_date',         label: 'Expiry Date',                  type: 'date' },
+    { value: 'certificate_number',  label: 'EPC Reference',                type: 'existence' },
+  ],
+  electrical_expiry: [
+    { value: 'expiry_date',         label: 'Expiry Date',                  type: 'date' },
+    { value: 'certificate_number',  label: 'EICR Reference',               type: 'existence' },
+  ],
+  fire_safety_expiry: [
+    { value: 'expiry_date',         label: 'Expiry Date',                  type: 'date' },
+  ],
 };
 
 // ─── Pre-built templates ────────────────────────────────────────────────────
@@ -175,6 +276,7 @@ export default function WorkflowFormDialog({ onClose, onSuccess, initialData = n
 
   const availableConditions = CONDITION_FIELDS[formData.trigger_type] || [];
   const triggerDef = TRIGGER_TYPES.find(t => t.value === formData.trigger_type);
+  const conditionLogic = formData.condition_logic || 'AND';
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -298,42 +400,155 @@ export default function WorkflowFormDialog({ onClose, onSuccess, initialData = n
                 <p className="text-xs text-muted-foreground">Select a trigger first to see available conditions.</p>
               )}
 
+              {/* AND / OR logic toggle — shown when 2+ conditions */}
+              {(formData.conditions || []).length >= 2 && (
+                <div className="flex items-center gap-2 py-1">
+                  <span className="text-xs text-muted-foreground font-medium">Match:</span>
+                  {['AND','OR'].map(op => (
+                    <button key={op} onClick={() => setFormData(f => ({ ...f, condition_logic: op }))}
+                      className={`text-xs font-bold px-3 py-1 rounded-full border transition-all ${
+                        conditionLogic === op
+                          ? 'bg-amber-500 text-white border-amber-500'
+                          : 'bg-white text-muted-foreground border-border hover:border-amber-400'
+                      }`}>
+                      {op}
+                    </button>
+                  ))}
+                  <span className="text-xs text-muted-foreground">
+                    {conditionLogic === 'AND' ? '— all conditions must be true' : '— any one condition is enough'}
+                  </span>
+                </div>
+              )}
+
               {(formData.conditions || []).map((cond, i) => {
                 const fieldDef = availableConditions.find(f => f.value === cond.field);
+                const operators = fieldDef ? (OPERATORS_BY_TYPE[fieldDef.type] || OPERATORS_BY_TYPE.string) : OPERATORS_BY_TYPE.string;
+                const needsValue = !['exists','not_exists','is_valid','is_expired'].includes(cond.operator);
                 return (
-                  <div key={i} className="flex items-center gap-2 flex-wrap">
-                    <Select value={cond.field} onValueChange={v => updateCondition(i, 'field', v)}>
-                      <SelectTrigger className="w-40 h-8 text-xs bg-white"><SelectValue placeholder="Field" /></SelectTrigger>
-                      <SelectContent>
-                        {availableConditions.map(fc => <SelectItem key={fc.value} value={fc.value}>{fc.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <Select value={cond.operator || 'equals'} onValueChange={v => updateCondition(i, 'operator', v)}>
-                      <SelectTrigger className="w-28 h-8 text-xs bg-white"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="equals">equals</SelectItem>
-                        <SelectItem value="not_equals">not equals</SelectItem>
-                        <SelectItem value="greater_than">greater than</SelectItem>
-                        <SelectItem value="less_than">less than</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {fieldDef?.type === 'select' ? (
-                      <Select value={cond.value || ''} onValueChange={v => updateCondition(i, 'value', v)}>
-                        <SelectTrigger className="w-36 h-8 text-xs bg-white"><SelectValue placeholder="Value" /></SelectTrigger>
+                  <div key={i} className="space-y-1">
+                    {/* Connector label between rows */}
+                    {i > 0 && (
+                      <div className="flex items-center gap-2">
+                        <div className="h-px flex-1 bg-amber-200" />
+                        <span className="text-xs font-bold text-amber-600 px-2 py-0.5 bg-amber-100 rounded-full">{conditionLogic}</span>
+                        <div className="h-px flex-1 bg-amber-200" />
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 flex-wrap bg-white rounded-lg border border-amber-100 p-2">
+                      {/* Field */}
+                      <Select value={cond.field} onValueChange={v => {
+                        const def = availableConditions.find(f => f.value === v);
+                        updateCondition(i, 'field', v);
+                        // reset operator to first valid one for this type
+                        const firstOp = def ? (OPERATORS_BY_TYPE[def.type]?.[0]?.value || 'equals') : 'equals';
+                        updateCondition(i, 'operator', firstOp);
+                        updateCondition(i, 'value', '');
+                      }}>
+                        <SelectTrigger className="w-44 h-8 text-xs"><SelectValue placeholder="Field" /></SelectTrigger>
                         <SelectContent>
-                          {fieldDef.options.map(o => <SelectItem key={o} value={o}>{o.replace(/_/g, ' ')}</SelectItem>)}
+                          {['number','select','string','date','existence'].map(typeGroup => {
+                            const fields = availableConditions.filter(f => f.type === typeGroup);
+                            if (!fields.length) return null;
+                            const labels = { number: '# Numeric', select: '⚙ Categorical', string: 'Aa Text', date: '📅 Date', existence: '◎ Existence' };
+                            return (
+                              <React.Fragment key={typeGroup}>
+                                <div className="px-2 py-1 text-xs font-bold text-muted-foreground uppercase tracking-wide">{labels[typeGroup]}</div>
+                                {fields.map(fc => <SelectItem key={fc.value} value={fc.value}>{fc.label}</SelectItem>)}
+                              </React.Fragment>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
-                    ) : (
-                      <Input className="w-28 h-8 text-xs bg-white" placeholder="Value" value={cond.value || ''}
-                        onChange={e => updateCondition(i, 'value', e.target.value)} />
-                    )}
-                    <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => removeCondition(i)}>
-                      <X className="w-3 h-3" />
-                    </Button>
+
+                      {/* Operator */}
+                      <Select value={cond.operator || operators[0]?.value} onValueChange={v => updateCondition(i, 'operator', v)}>
+                        <SelectTrigger className="w-36 h-8 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {operators.map(op => <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+
+                      {/* Value — varies by type and operator */}
+                      {needsValue && fieldDef?.type === 'select' && (
+                        cond.operator === 'in_list' ? (
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-muted-foreground mb-1">Select multiple values:</div>
+                            <div className="flex flex-wrap gap-1">
+                              {fieldDef.options.map(o => {
+                                const vals = (cond.value || '').split(',').filter(Boolean);
+                                const active = vals.includes(o);
+                                return (
+                                  <button key={o} onClick={() => {
+                                    const next = active ? vals.filter(v => v !== o) : [...vals, o];
+                                    updateCondition(i, 'value', next.join(','));
+                                  }} className={`text-xs px-2 py-0.5 rounded-full border transition-all ${
+                                    active ? 'bg-amber-500 text-white border-amber-500' : 'bg-white border-border hover:border-amber-400'
+                                  }`}>{o.replace(/_/g,' ')}</button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : (
+                          <Select value={cond.value || ''} onValueChange={v => updateCondition(i, 'value', v)}>
+                            <SelectTrigger className="w-36 h-8 text-xs"><SelectValue placeholder="Value" /></SelectTrigger>
+                            <SelectContent>
+                              {fieldDef.options.map(o => <SelectItem key={o} value={o}>{o.replace(/_/g,' ')}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        )
+                      )}
+
+                      {needsValue && (fieldDef?.type === 'number' || fieldDef?.type === 'date') && (
+                        <div className="flex items-center gap-1">
+                          <Input className="w-24 h-8 text-xs" type="number" min="0"
+                            placeholder={fieldDef.type === 'date' ? 'days' : 'amount'}
+                            value={cond.value || ''}
+                            onChange={e => updateCondition(i, 'value', e.target.value)} />
+                          {fieldDef.type === 'date' && (
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              {cond.operator === 'within_days' ? 'days ahead' :
+                               cond.operator === 'overdue_by' ? 'days past' : ''}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {needsValue && fieldDef?.type === 'string' && (
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <Input className="h-8 text-xs" placeholder={
+                            cond.operator === 'regex' ? 'Regex pattern e.g. ^(BL|M)\\d+' :
+                            cond.operator === 'contains' ? 'Text to search for…' : 'Value'
+                          } value={cond.value || ''} onChange={e => updateCondition(i, 'value', e.target.value)} />
+                          {cond.operator === 'regex' && (
+                            <p className="text-xs text-muted-foreground">⚠ Regular expression. Use standard regex syntax e.g. <code className="bg-amber-50 px-1 rounded">^BL</code> to match postcodes starting with BL.</p>
+                          )}
+                        </div>
+                      )}
+
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive shrink-0" onClick={() => removeCondition(i)}>
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
+
+              {/* Summary preview */}
+              {(formData.conditions || []).filter(c => c.field && c.operator).length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 text-xs text-amber-800">
+                  <span className="font-semibold">Rule: </span>
+                  {formData.conditions.filter(c => c.field && c.operator).map((c, i) => {
+                    const fd = availableConditions.find(f => f.value === c.field);
+                    const needsVal = !['exists','not_exists','is_valid','is_expired'].includes(c.operator);
+                    return (
+                      <span key={i}>
+                        {i > 0 && <strong className="text-amber-700"> {conditionLogic} </strong>}
+                        <em>{fd?.label || c.field}</em> {c.operator.replace(/_/g,' ')}{needsVal && c.value ? ` "${c.value}"` : ''}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Actions */}
