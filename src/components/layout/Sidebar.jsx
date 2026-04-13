@@ -6,7 +6,8 @@ import {
   LayoutDashboard, Building2, Home, DoorOpen, Users, PoundSterling, Wrench,
   BookUser, ShieldCheck, GitBranch, ChevronLeft, ChevronRight, Crown, BookOpen,
   Layers, MapPin, Landmark, Receipt, MessageSquare, Settings, Plug, Scale, Zap,
-  FileText, Shield, AlertCircle, Code2, TrendingUp, Phone, Lightbulb, Sparkles
+  FileText, Shield, AlertCircle, Code2, TrendingUp, Phone, Lightbulb, Sparkles,
+  Calendar, BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
