@@ -1,0 +1,64 @@
+{
+  "name": "ComplianceAlertConfig",
+  "type": "object",
+  "properties": {
+    "certificate_type": {
+      "type": "string",
+      "enum": [
+        "all",
+        "gas_safety",
+        "eicr",
+        "fire_safety",
+        "asbestos",
+        "legionella",
+        "pat_testing",
+        "boiler_service",
+        "lift_safety",
+        "other"
+      ],
+      "description": "Type of certificate this alert applies to"
+    },
+    "threshold_days": {
+      "type": "number",
+      "default": 30,
+      "description": "Days before expiry to trigger alert"
+    },
+    "notify_email": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send email notifications"
+    },
+    "notify_dashboard": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show dashboard alerts"
+    },
+    "recipients": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "property_manager",
+          "maintenance_team",
+          "compliance_officer",
+          "landlord",
+          "custom"
+        ]
+      },
+      "description": "Who should receive notifications"
+    },
+    "custom_email": {
+      "type": "string",
+      "description": "Custom email address for notifications"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this alert is active"
+    }
+  },
+  "required": [
+    "certificate_type",
+    "threshold_days"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "CertificateExpiryAlert",
+  "type": "object",
+  "properties": {
+    "certificate_id": {
+      "type": "string",
+      "description": "Reference to SafetyCertificate entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "certificate_type": {
+      "type": "string",
+      "description": "Type of certificate"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Certificate expiry date"
+    },
+    "days_until_expiry": {
+      "type": "number",
+      "description": "Number of days until expiry"
+    },
+    "threshold_days": {
+      "type": "number",
+      "description": "Alert threshold that triggered this"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "acknowledged",
+        "dismissed"
+      ],
+      "default": "pending",
+      "description": "Alert status"
+    },
+    "sent_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Email addresses alert was sent to"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When alert was sent"
+    },
+    "acknowledged_by": {
+      "type": "string",
+      "description": "User who acknowledged the alert"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When alert was acknowledged"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "certificate_id",
+    "property_id",
+    "certificate_type",
+    "expiry_date",
+    "days_until_expiry"
+  ]
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlertTriangle, Plus, Search, FileUp, Download, MoreHorizontal, Pencil, Trash2, Calendar } from 'lucide-react';
+import { AlertTriangle, Plus, Search, FileUp, Download, MoreHorizontal, Pencil, Trash2, Calendar, Bell, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +12,7 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 import { format, differenceInDays, parseISO } from 'date-fns';
+import AlertConfigDialog from '@/components/compliance/AlertConfigDialog';
 
 const CERT_TYPES = {
   gas_safety: 'Gas Safety (CP12)',
@@ -48,6 +49,7 @@ export default function CertificateCompliance() {
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [configDialogOpen, setConfigDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const queryClient = useQueryClient();
@@ -133,6 +135,12 @@ export default function CertificateCompliance() {
   const expiringCerts = certificates.filter(c => c.status === 'expiring_soon').length;
   const expiredCerts = certificates.filter(c => c.status === 'expired').length;
 
+  const { data: alertConfigs = [] } = useQuery({
+    queryKey: ['alert-configs'],
+    queryFn: () => base44.entities.ComplianceAlertConfig.list(),
+  });
+  const activeConfigs = alertConfigs.filter(c => c.enabled);
+
   const handleSave = (data) => {
     if (editing) {
       updateMutation.mutate({ id: editing.id, data });
@@ -143,27 +151,39 @@ export default function CertificateCompliance() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
+      <AlertConfigDialog open={configDialogOpen} onClose={setConfigDialogOpen} />
       <PageHeader title="Certificate Compliance" subtitle={`${certificates.length} safety certificates tracked`}>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => { setEditing(null); setSelectedFile(null); }} size="sm">
-              <Plus className="w-4 h-4 mr-1.5" /> Add Certificate
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>{editing ? 'Edit Certificate' : 'Add Certificate'}</DialogTitle>
-            </DialogHeader>
-            <CertificateForm
-              cert={editing}
-              properties={properties}
-              onSave={handleSave}
-              onFileSelect={setSelectedFile}
-              selectedFile={selectedFile}
-              saving={createMutation.isPending || updateMutation.isPending}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => setConfigDialogOpen(true)} 
+            size="sm"
+            className="gap-2"
+          >
+            <Bell className="w-4 h-4" />
+            {activeConfigs.length > 0 ? `${activeConfigs.length} Alerts Active` : 'Configure Alerts'}
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => { setEditing(null); setSelectedFile(null); }} size="sm">
+                <Plus className="w-4 h-4 mr-1.5" /> Add Certificate
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>{editing ? 'Edit Certificate' : 'Add Certificate'}</DialogTitle>
+              </DialogHeader>
+              <CertificateForm
+                cert={editing}
+                properties={properties}
+                onSave={handleSave}
+                onFileSelect={setSelectedFile}
+                selectedFile={selectedFile}
+                saving={createMutation.isPending || updateMutation.isPending}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </PageHeader>
 
       {/* Alerts */}
