@@ -88,6 +88,7 @@ import ComplianceDashboard2 from './pages/ComplianceDashboard2';
 import BulkImportTester from './pages/BulkImportTester';
 import UserTypeManager from './pages/UserTypeManager';
 import PropertyKPIDashboard from './pages/PropertyKPIDashboard';
+import ContractorPortal from './pages/ContractorPortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -193,6 +194,7 @@ const AuthenticatedApp = () => {
         <Route path="/user-type-manager" element={<UserTypeManager />} />
         <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
       </Route>
+      <Route path="/contractor" element={<ContractorPortal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
