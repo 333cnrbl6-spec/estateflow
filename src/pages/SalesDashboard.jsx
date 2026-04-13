@@ -23,10 +23,13 @@ import SalesLeadFormDialog from "@/components/sales/SalesLeadFormDialog";
 import SalesListingCard from "@/components/sales/SalesListingCard";
 import LeadCard from "@/components/sales/LeadCard";
 import TransactionPipeline from "@/components/sales/TransactionPipeline";
+import SalesSearchFilters from "@/components/sales/SalesSearchFilters";
 
 export default function SalesDashboard() {
   const [leadFormOpen, setLeadFormOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({});
 
   // Fetch leads
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
@@ -59,6 +62,62 @@ export default function SalesDashboard() {
   const totalValue = listings
     .filter(l => ['active', 'under_offer', 'sold_subject_to_contract'].includes(l.status))
     .reduce((sum, l) => sum + (l.asking_price || 0), 0);
+
+  // Filter listings based on search and filters
+  const filteredListings = listings.filter(listing => {
+    // Search query filter (postcode, property type, price)
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const propertyId = listing.property_id?.toLowerCase() || "";
+      const propertyType = listing.property_type?.toLowerCase() || "";
+      const price = listing.asking_price?.toString() || "";
+      
+      const matchesSearch = 
+        propertyId.includes(query) ||
+        propertyType.includes(query) ||
+        price.includes(query.replace(/[^0-9]/g, ''));
+      
+      if (!matchesSearch) return false;
+    }
+
+    // Status filter
+    if (filters.status && listing.status !== filters.status) {
+      return false;
+    }
+
+    // Property type filter
+    if (filters.propertyType && listing.property_type !== filters.propertyType) {
+      return false;
+    }
+
+    // Bedrooms filter
+    if (filters.bedrooms && (listing.bedrooms || 0) < parseInt(filters.bedrooms)) {
+      return false;
+    }
+
+    // Bathrooms filter
+    if (filters.bathrooms && (listing.bathrooms || 0) < parseInt(filters.bathrooms)) {
+      return false;
+    }
+
+    // Price range filter
+    if (filters.priceRange) {
+      const price = listing.asking_price || 0;
+      if (filters.priceRange === "2000000+") {
+        if (price < 2000000) return false;
+      } else {
+        const [min, max] = filters.priceRange.split("-").map(Number);
+        if (price < min || price > max) return false;
+      }
+    }
+
+    return true;
+  });
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setFilters({});
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -232,21 +291,35 @@ export default function SalesDashboard() {
         </TabsContent>
 
         <TabsContent value="listings">
+          <SalesSearchFilters 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            filters={filters}
+            onFilterChange={setFilters}
+            onClearFilters={clearFilters}
+          />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {listingsLoading ? (
               <p className="text-muted-foreground">Loading...</p>
-            ) : listings.length === 0 ? (
+            ) : filteredListings.length === 0 ? (
               <Card className="col-span-full">
                 <CardContent className="py-12 text-center text-muted-foreground">
-                  No listings yet. Click "Add Listing" to create one.
+                  {listings.length === 0 
+                    ? 'No listings yet. Click "Add Listing" to create one.' 
+                    : 'No listings match your search criteria.'}
                 </CardContent>
               </Card>
             ) : (
-              listings.map((listing) => (
+              filteredListings.map((listing) => (
                 <SalesListingCard key={listing.id} listing={listing} />
               ))
             )}
           </div>
+          {filteredListings.length > 0 && (
+            <p className="text-sm text-muted-foreground text-center mt-4">
+              Showing {filteredListings.length} of {listings.length} listings
+            </p>
+          )}
         </TabsContent>
 
         <TabsContent value="pipeline">
