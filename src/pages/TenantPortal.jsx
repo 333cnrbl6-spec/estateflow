@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import TenantMessageThread from '@/components/messaging/TenantMessageThread';
+import RentPaymentModal from '@/components/payments/RentPaymentModal';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -101,48 +102,99 @@ function Row({ label, value }) {
 
 // ── Tab: Payments ─────────────────────────────────────────────────────────────
 
-function PayRentModal({ open, onClose, unit }) {
-  const [step, setStep] = useState('confirm'); // confirm | processing | done
+function PayRentModal({ open, onClose, unit, tenantId, propertyId }) {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['tenant-transactions-unpaid', tenantId],
+    queryFn: () => base44.entities.FinancialTransaction.filter({ tenant_id: tenantId }),
+    enabled: !!tenantId && open,
+  });
+
+  const unpaidTransactions = transactions.filter(t => t.status !== 'paid' && t.transaction_type === 'rent_payment');
+
   if (!open) return null;
-  const rent = unit?.monthly_rent;
+
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl">
-        <div className="p-5 space-y-4">
-          {step === 'confirm' && (
-            <>
-              <div className="text-center">
-                <PoundSterling className="w-10 h-10 text-green-600 mx-auto mb-2" />
-                <h3 className="text-lg font-bold">Pay Rent</h3>
-                <p className="text-3xl font-extrabold text-green-700 mt-1">{rent ? `£${rent.toLocaleString()}` : '—'}</p>
-                <p className="text-xs text-muted-foreground mt-1">Monthly rent for {unit?.unit_reference}</p>
-              </div>
-              <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 space-y-1">
-                <p>💳 <strong>Payment via bank transfer</strong></p>
-                <p>Please transfer your rent to the account details provided by your property manager.</p>
-                <p>Reference: <strong>RENT-{unit?.unit_reference?.replace(/\s/g,'-').toUpperCase() || 'N/A'}</strong></p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={onClose}>Close</Button>
-                <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setStep('done')}>Mark as Sent</Button>
-              </div>
-            </>
-          )}
-          {step === 'done' && (
-            <div className="text-center py-4">
-              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
-              <h3 className="text-lg font-bold">Payment Noted</h3>
-              <p className="text-sm text-muted-foreground mt-1">Your property manager will confirm receipt and update your ledger.</p>
-              <Button className="mt-4 w-full" onClick={onClose}>Done</Button>
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+        <div className="bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
+          <div className="p-5 space-y-4">
+            <div className="text-center">
+              <PoundSterling className="w-10 h-10 text-green-600 mx-auto mb-2" />
+              <h3 className="text-lg font-bold">Pay Rent</h3>
+              <p className="text-xs text-muted-foreground mt-1">Select a payment to process</p>
             </div>
-          )}
+
+            {unpaidTransactions.length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <p className="text-sm font-medium">All payments are up to date!</p>
+                <p className="text-xs text-muted-foreground mt-1">No outstanding rent payments found.</p>
+                <Button className="mt-4" variant="outline" onClick={onClose}>Close</Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {unpaidTransactions.map(t => (
+                  <div
+                    key={t.id}
+                    className="border rounded-lg p-3 hover:bg-slate-50 cursor-pointer transition"
+                    onClick={() => {
+                      setSelectedTransaction(t);
+                      setShowPaymentModal(true);
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-sm">{t.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Due: {safeFormat(t.due_date)} {t.status === 'overdue' && <span className="text-red-600 font-medium">(Overdue)</span>}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-primary">£{(t.amount || 0).toLocaleString()}</p>
+                        <StatusPill status={t.status} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" className="flex-1" onClick={onClose}>Close</Button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {selectedTransaction && (
+        <RentPaymentModal
+          open={showPaymentModal}
+          onOpenChange={(isOpen) => {
+            setShowPaymentModal(isOpen);
+            if (!isOpen) {
+              setSelectedTransaction(null);
+              onClose();
+            }
+          }}
+          amount={selectedTransaction.amount}
+          propertyName={propertyId ? 'Property' : 'Your Property'}
+          dueDate={selectedTransaction.due_date}
+          transactionId={selectedTransaction.id}
+          onSuccess={() => {
+            setShowPaymentModal(false);
+            setSelectedTransaction(null);
+            onClose();
+          }}
+        />
+      )}
+    </>
   );
 }
 
-function PaymentsTab({ tenantId, unit }) {
+function PaymentsTab({ tenantId, unit, propertyId }) {
   const [showPayModal, setShowPayModal] = useState(false);
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['tenant-transactions', tenantId],
@@ -151,10 +203,11 @@ function PaymentsTab({ tenantId, unit }) {
   });
 
   const totalOverdue = transactions.filter(t => t.status === 'overdue').reduce((s, t) => s + (t.amount || 0), 0);
+  const paidTransactions = transactions.filter(t => t.status === 'paid');
 
   return (
     <div className="space-y-4">
-      <PayRentModal open={showPayModal} onClose={() => setShowPayModal(false)} unit={unit} />
+      <PayRentModal open={showPayModal} onClose={() => setShowPayModal(false)} unit={unit} tenantId={tenantId} propertyId={propertyId} />
 
       {/* Pay now banner */}
       {unit?.monthly_rent && (
@@ -577,7 +630,7 @@ export default function TenantPortal() {
             </TabsList>
 
           <TabsContent value="lease"><LeaseTab tenant={tenant} unit={unit} property={property} /></TabsContent>
-          <TabsContent value="payments"><PaymentsTab tenantId={tenantId} unit={unit} /></TabsContent>
+          <TabsContent value="payments"><PaymentsTab tenantId={tenantId} unit={unit} propertyId={tenant.property_id} /></TabsContent>
           <TabsContent value="maintenance"><MaintenanceTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab tenantId={tenantId} /></TabsContent>
           <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} /></TabsContent>
