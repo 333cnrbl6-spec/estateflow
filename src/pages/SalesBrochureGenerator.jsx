@@ -258,25 +258,29 @@ export default function SalesBrochureGenerator() {
               {/* Executive Summary */}
               <div style={{ gridColumn: '1 / -1' }}>
                 <SectionLabel color={accentColor} text="Executive Summary" />
-                <p style={{ fontSize: 13, lineHeight: 1.75, color: '#374151', marginTop: 10 }}>{content.executive_summary}</p>
+                <p style={{ fontSize: 13, lineHeight: 1.75, color: '#374151', marginTop: 10 }}>
+                  {content.executive_summary || `${agentName} is a UK property management company. Premiso has been tailored specifically for their portfolio, services and team to demonstrate exactly how the platform would work for them from day one.`}
+                </p>
               </div>
 
               {/* Company Profile */}
               <div>
                 <SectionLabel color={accentColor} text="Company Profile" />
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10, fontSize: 11 }}>
+                  <tbody>
                   {[
                     ['Company', research?.trading_name || agentName],
                     ['Location', research?.registered_address],
                     ['Est.', research?.founded],
                     ['Website', research?.website],
                     ['Phone', research?.phone],
-                  ].filter(r => r[1]).map(([k, v]) => (
+                  ].filter(r => r[1] && r[1] !== 'Not publicly available').map(([k, v]) => (
                     <tr key={k} style={{ borderBottom: '1px solid #f3f4f6' }}>
                       <td style={{ padding: '6px 0', color: '#6b7280', width: 90, fontWeight: 600 }}>{k}</td>
                       <td style={{ padding: '6px 0', color: '#111827' }}>{v}</td>
                     </tr>
                   ))}
+                  </tbody>
                 </table>
               </div>
 
@@ -311,15 +315,15 @@ export default function SalesBrochureGenerator() {
               </div>
 
               {/* Pain Points */}
-              {content.pain_points && (
+              {(content.pain_points?.length > 0) && (
                 <div style={{ gridColumn: '1 / -1' }}>
                   <SectionLabel color={accentColor} text="Challenges We Solve for You" />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginTop: 10 }}>
                     {content.pain_points.slice(0, 6).map((p, i) => (
                       <div key={i} style={{ background: '#fef9f0', border: `1px solid ${accentColor}33`, borderRadius: 10, padding: '12px 14px' }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: '#92400e', textTransform: 'uppercase', marginBottom: 4 }}>Challenge</div>
-                        <div style={{ fontSize: 11, color: '#1f2937', fontWeight: 600, marginBottom: 6 }}>{p.problem}</div>
-                        <div style={{ fontSize: 10, color: '#16a34a', fontWeight: 600 }}>→ {p.solution}</div>
+                        <div style={{ fontSize: 11, color: '#1f2937', fontWeight: 600, marginBottom: 6 }}>{p.problem || '—'}</div>
+                        <div style={{ fontSize: 10, color: '#16a34a', fontWeight: 600 }}>→ {p.solution || 'Resolved by Premiso'}</div>
                       </div>
                     ))}
                   </div>
@@ -334,6 +338,9 @@ export default function SalesBrochureGenerator() {
             <PageHeader primary={primaryColor} accent={accentColor} title="Service Match" subtitle="How your services map to Premiso's platform" pageNum={3} />
             <div style={{ padding: '24px 44px 0' }}>
               <SectionLabel color={accentColor} text={`${agentName} Services → Premiso Coverage`} />
+              {(!content.feature_match || content.feature_match.length === 0) && (
+                <p style={{ fontSize: 12, color: '#6b7280', marginTop: 12 }}>Service match data will appear here once the brochure is generated.</p>
+              )}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12, fontSize: 11 }}>
                 <thead>
                   <tr style={{ background: primaryColor }}>
@@ -419,6 +426,17 @@ export default function SalesBrochureGenerator() {
           <div className="brochure-page">
             <PageHeader primary={primaryColor} accent={accentColor} title="Why Premiso" subtitle="Head-to-head comparison with market alternatives" pageNum={5} />
             <div style={{ padding: '24px 44px' }}>
+              {!content.competitor_comparison && (
+                <div style={{ padding: '24px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb', marginBottom: 16 }}>
+                  <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>Competitor comparison is generated during brochure creation based on the prospect's likely tech stack.</p>
+                </div>
+              )}
+              {!expansion?.existing_software?.length && (
+                <div style={{ marginTop: 24, padding: '16px 20px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#15803d', marginBottom: 4 }}>No existing tech stack detected</div>
+                  <p style={{ fontSize: 10, color: '#374151', margin: 0 }}>Premiso can serve as the primary platform for {agentName}, replacing fragmented spreadsheets and legacy tools with a single integrated solution.</p>
+                </div>
+              )}
               {content.competitor_comparison && (
                 <>
                   <SectionLabel color={accentColor} text={`Premiso vs ${(content.competitor_comparison.competitor_names || ['Competitor A', 'Competitor B']).join(' & ')}`} />
@@ -492,12 +510,12 @@ export default function SalesBrochureGenerator() {
                 <div>
                   <SectionLabel color={accentColor} text="Why This Matters for You" />
                   <p style={{ fontSize: 12.5, lineHeight: 1.7, color: '#374151', marginTop: 10, marginBottom: 20 }}>
-                    {content.out_of_hours?.why_relevant}
+                    {content.out_of_hours?.why_relevant || `As a property management company, ${agentName} will inevitably face out-of-hours emergency calls from tenants — boiler failures, water leaks, security issues. Without a dedicated service, these calls go unanswered or fall to directors and staff outside of working hours. Premiso's Out-of-Hours add-on removes that burden entirely.`}
                   </p>
 
                   <SectionLabel color={accentColor} text="What's Included" />
                   <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {(content.out_of_hours?.benefits || []).map((b, i) => (
+                    {(content.out_of_hours?.benefits?.length ? content.out_of_hours.benefits : ['24/7 emergency call handling by trained property professionals', 'Real-time call logging directly into Premiso', 'Automated maintenance order creation on every call', 'GDPR-validated caller identification on every call']).map((b, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                         <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
                           <span style={{ color: '#16a34a', fontSize: 10, fontWeight: 700 }}>✓</span>
@@ -532,7 +550,7 @@ export default function SalesBrochureGenerator() {
 
                   <div style={{ marginTop: 14, background: `rgba(${primaryRgb},0.06)`, borderRadius: 10, padding: '12px 14px', border: `1px solid rgba(${primaryRgb},0.15)` }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: primaryColor, textTransform: 'uppercase', marginBottom: 4 }}>Our Recommendation for You</div>
-                    <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.6, margin: 0 }}>{content.out_of_hours?.tier_recommendation}</p>
+                    <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.6, margin: 0 }}>{content.out_of_hours?.tier_recommendation || 'Based on your portfolio size and services, the Premium tier provides full contractor dispatch with real-time Premiso integration — the most effective option for professional property managers.'}</p>
                   </div>
 
                   {/* OOH Stats */}
@@ -557,7 +575,9 @@ export default function SalesBrochureGenerator() {
           <div className="brochure-page">
             <PageHeader primary={primaryColor} accent={accentColor} title="Expansion Opportunities" subtitle="How Premiso grows with your business" pageNum={7} />
             <div style={{ padding: '24px 44px' }}>
-              <p style={{ fontSize: 12.5, color: '#374151', lineHeight: 1.7, marginBottom: 24 }}>{content.expansion_narrative}</p>
+              <p style={{ fontSize: 12.5, color: '#374151', lineHeight: 1.7, marginBottom: 24 }}>
+                {content.expansion_narrative || `Premiso is designed to grow alongside ${agentName}. As the platform evolves, new modules and integrations will open additional revenue streams and service capabilities, ensuring long-term platform value.`}
+              </p>
 
               <SectionLabel color={accentColor} text="Your Growth Roadmap with Premiso" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 12 }}>
@@ -609,7 +629,12 @@ export default function SalesBrochureGenerator() {
                 </p>
 
                 <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {(content.next_steps || []).map((step, i) => (
+                  {(content.next_steps?.length ? content.next_steps : [
+                    { step: 'Review Your Demo', description: 'Log into your personalised Premiso demo environment and explore your portfolio data.' },
+                    { step: 'Book a Walkthrough', description: 'Join a live call with our team to see every module tailored to your business.' },
+                    { step: 'Data Migration Planning', description: 'We map your existing data to Premiso and plan a smooth migration.' },
+                    { step: 'Go Live', description: 'Your team is onboarded, data is live, and you start saving time from day one.' },
+                  ]).map((step, i) => (
                     <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                       <div style={{ width: 28, height: 28, borderRadius: '50%', background: primaryColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
                       <div>
