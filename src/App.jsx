@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import RBMBrandingProvider from '@/components/RBMBrandingProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { RoleProvider } from '@/lib/RoleContext';
 
 import AppLayout from './components/layout/AppLayout';
 import Dashboard from './pages/Dashboard';
@@ -223,12 +224,14 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
-          <RBMBrandingProvider>
-            <Router>
-              <AuthenticatedApp />
-            </Router>
-            <Toaster />
-          </RBMBrandingProvider>
+          <RoleProvider>
+            <RBMBrandingProvider>
+              <Router>
+                <AuthenticatedApp />
+              </Router>
+              <Toaster />
+            </RBMBrandingProvider>
+          </RoleProvider>
         </QueryClientProvider>
       </AuthProvider>
     </ErrorBoundary>
