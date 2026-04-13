@@ -12,71 +12,114 @@ import { cn } from '@/lib/utils';
 
 const navGroups = [
   {
-    label: 'Portfolio',
+    label: 'Core',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-      { label: 'Companies', icon: Building2, path: '/companies' },
       { label: 'Properties', icon: Home, path: '/properties' },
-      { label: 'Units & Leases', icon: DoorOpen, path: '/units' },
-      { label: 'Tenants', icon: Users, path: '/tenants' },
-      { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
-      { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
-    ]
-  },
-  {
-    label: 'Finance',
-    items: [
-      { label: 'Rent Ledger', icon: BookOpen, path: '/rent-ledger' },
-      { label: 'Service Charges', icon: Layers, path: '/service-charges' },
-      { label: 'Ground Rent', icon: MapPin, path: '/ground-rent' },
-      { label: 'Banking', icon: Landmark, path: '/banking' },
-      { label: 'Expenses', icon: Receipt, path: '/expenses' },
-      { label: 'Financials', icon: PoundSterling, path: '/financials' },
-      { label: 'Financial Dashboard', icon: TrendingUp, path: '/financial-reporting' },
-      { label: 'Owner Tax Summary', icon: Crown, path: '/owner-financials' },
-      { label: 'Accounting', icon: Settings, path: '/accounting' },
-    ]
-  },
-  {
-    label: 'Operations',
-    items: [
-      { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
-      { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
-      { label: 'Out-of-Hours Support', icon: Phone, path: '/out-of-hours' },
-      { label: 'Call Center Config', icon: Settings, path: '/call-center-config' },
-      { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
-      { label: 'Certificates', icon: FileText, path: '/certificate-compliance' },
-      { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
-      { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
-      { label: 'Documents', icon: FileText, path: '/document-templates' },
-      { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
-      { label: 'CRM', icon: MessageSquare, path: '/crm' },
       { label: 'Contacts', icon: BookUser, path: '/contacts' },
     ]
   },
   {
-    label: 'Block Management',
+    label: '🏷️ For Sale',
     items: [
-      { label: 'Compliance Hub', icon: Scale, path: '/block-compliance-dashboard' },
-      { label: 'Document Automation', icon: FileText, path: '/document-automation' },
+      { label: 'Sales Dashboard', icon: TrendingUp, path: '/sales' },
+      { label: 'Listings', icon: Home, path: '/sales?tab=listings' },
+      { label: 'Leads', icon: Users, path: '/sales?tab=leads' },
+      { label: 'Pipeline', icon: GitBranch, path: '/sales?tab=pipeline' },
+      { label: 'Market Reports', icon: BookOpen, path: '/market-reports' },
+      { label: 'Buyer Portal', icon: DoorOpen, path: '/buyer-portal' },
+    ]
+  },
+  {
+    label: '🏠 To Let',
+    items: [
+      { label: 'Lettings Dashboard', icon: LayoutDashboard, path: '/pipeline' },
+      { label: 'Tenants', icon: Users, path: '/tenants' },
+      { label: 'Units & Leases', icon: DoorOpen, path: '/units' },
+      { label: 'Rent Ledger', icon: BookOpen, path: '/rent-ledger' },
+      { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
+    ]
+  },
+  {
+    label: '👤 New Applicants',
+    items: [
+      { label: 'CRM', icon: MessageSquare, path: '/crm' },
+      { label: 'Sales Leads', icon: Users, path: '/sales?tab=leads' },
+      { label: 'Tenant Applications', icon: FileText, path: '/pipeline' },
+      { label: 'Messages', icon: MessageSquare, path: '/messages' },
+    ]
+  },
+  {
+    label: '💼 Block Management',
+    items: [
       { label: 'Overview', icon: Building2, path: '/block-management' },
       { label: 'Service Charges', icon: PoundSterling, path: '/service-charges-management' },
       { label: 'RTM Management', icon: Users, path: '/rtm-management' },
       { label: 'Building Safety', icon: Shield, path: '/building-safety-register' },
+      { label: 'Compliance Hub', icon: Scale, path: '/block-compliance-dashboard' },
+      { label: 'Document Automation', icon: FileText, path: '/document-automation' },
+      { label: 'Leaseholder Portal', icon: Users, path: '/leaseholder-portal' },
     ]
   },
   {
-    label: 'Platform',
+    label: '💰 Finance',
     items: [
-      { label: 'Setup & Integrations', icon: Plug, path: '/setup' },
+      { label: 'Financial Dashboard', icon: TrendingUp, path: '/financial-reporting' },
+      { label: 'Banking', icon: Landmark, path: '/banking' },
+      { label: 'Expenses', icon: Receipt, path: '/expenses' },
+      { label: 'Service Charges', icon: Layers, path: '/service-charges' },
+      { label: 'Ground Rent', icon: MapPin, path: '/ground-rent' },
+      { label: 'Owner Tax Summary', icon: Crown, path: '/owner-financials' },
+      { label: 'Bank Reconciliation', icon: Receipt, path: '/bank-reconciliation' },
+      { label: 'Accounting', icon: Settings, path: '/accounting' },
+    ]
+  },
+  {
+    label: '🔧 Operations',
+    items: [
+      { label: 'Maintenance', icon: Wrench, path: '/maintenance' },
+      { label: 'Maintenance Board', icon: Layers, path: '/maintenance-board' },
+      { label: 'Maintenance Reports', icon: FileText, path: '/maintenance-reports' },
+      { label: 'Emergency Callouts', icon: AlertCircle, path: '/emergency-callouts' },
+      { label: 'Compliance', icon: ShieldCheck, path: '/compliance' },
+      { label: 'Certificates', icon: FileText, path: '/certificate-compliance' },
+      { label: 'Compliance Audit', icon: Scale, path: '/compliance-audit' },
+      { label: 'Regulatory Hub', icon: Scale, path: '/regulatory-hub' },
+      { label: 'Documents', icon: FileText, path: '/document-repository' },
+      { label: 'Workflow Engine', icon: Zap, path: '/workflows' },
+    ]
+  },
+  {
+    label: '📞 Out-of-Hours',
+    items: [
+      { label: 'Call Center', icon: Phone, path: '/out-of-hours' },
+      { label: 'Service Pipeline', icon: GitBranch, path: '/out-of-hours-pipeline' },
+      { label: 'Reporting', icon: TrendingUp, path: '/out-of-hours-reporting' },
+      { label: 'Config', icon: Settings, path: '/call-center-config' },
+      { label: 'Contractor Portal', icon: Users, path: '/contractor-portal' },
+    ]
+  },
+  {
+    label: '⚙️ Admin',
+    items: [
+      { label: 'Companies', icon: Building2, path: '/companies' },
+      { label: 'Land Registry', icon: PoundSterling, path: '/land-registry' },
+      { label: 'Setup & Onboarding', icon: Plug, path: '/setup' },
       { label: 'Integrations', icon: Settings, path: '/integrations' },
       { label: 'API Hub', icon: Zap, path: '/api-integrations' },
-      { label: 'Tenant Portal', icon: Users, path: '/tenant-portal' },
-      { label: 'Leaseholder Portal', icon: Users, path: '/leaseholder-portal' },
-      { label: 'Dev: Demo Switcher', icon: Code2, path: '/dev-demo-switcher' },
+      { label: 'Document Templates', icon: FileText, path: '/document-templates' },
+      { label: 'Landlord Portal', icon: Users, path: '/landlord-portal' },
+      { label: 'Reporting', icon: TrendingUp, path: '/reporting' },
+    ]
+  },
+  {
+    label: '🚀 Demo & Sales',
+    items: [
       { label: '⭐ Demo Station', icon: Sparkles, path: '/demo-station' },
       { label: 'Sales Demo Builder', icon: Zap, path: '/sales-demo-setup' },
+      { label: 'Brochure Generator', icon: FileText, path: '/sales-brochure-generator' },
       { label: 'Expansion Opportunities', icon: Lightbulb, path: '/expansion-opportunities' },
+      { label: 'Dev: Demo Switcher', icon: Code2, path: '/dev-demo-switcher' },
     ]
   }
 ];
