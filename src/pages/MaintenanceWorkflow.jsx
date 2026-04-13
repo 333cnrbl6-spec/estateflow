@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Wrench, Plus, Search, GripVertical, Phone, Mail, Calendar, DollarSign } from 'lucide-react';
@@ -10,6 +10,8 @@ import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge from '@/components/shared/StatusBadge';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 import { format } from 'date-fns';
+import { useQueryError } from '@/hooks/useQueryError';
+import { toast } from 'sonner';
 
 const WORKFLOW_STAGES = [
   { id: 'reported', label: 'Reported', color: 'bg-slate-100' },
@@ -34,12 +36,14 @@ export default function MaintenanceWorkflow() {
   const queryClient = useQueryClient();
   const { propertyIds } = useDemoFilter();
 
-  const { data: orders = [] } = useQuery({
+  const ordersQuery = useQuery({
     queryKey: ['maintenance', propertyIds],
     queryFn: async () => base44.entities.MaintenanceOrder.list('-created_date', 200)
   });
+  useQueryError(ordersQuery, 'maintenance orders');
+  const { data: orders = [] } = ordersQuery;
 
-  const { data: properties = [] } = useQuery({
+  const propertiesQuery = useQuery({
     queryKey: ['properties', propertyIds],
     queryFn: async () => {
       if (propertyIds) {
@@ -49,11 +53,15 @@ export default function MaintenanceWorkflow() {
       return base44.entities.Property.list();
     }
   });
+  useQueryError(propertiesQuery, 'properties');
+  const { data: properties = [] } = propertiesQuery;
 
-  const { data: contacts = [] } = useQuery({
+  const contactsQuery = useQuery({
     queryKey: ['contacts'],
     queryFn: () => base44.entities.Contact.list()
   });
+  useQueryError(contactsQuery, 'contacts');
+  const { data: contacts = [] } = contactsQuery;
 
   const propMap = properties.reduce((m, p) => { m[p.id] = p.name; return m; }, {});
   const contractorMap = contacts.filter(c => c.contact_type === 'contractor').reduce((m, c) => { m[c.id] = c; return m; }, {});
@@ -61,19 +69,23 @@ export default function MaintenanceWorkflow() {
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MaintenanceOrder.create(data),
     onSuccess: () => {
+      toast.success('Order created');
       queryClient.invalidateQueries({ queryKey: ['maintenance'] });
       setDialogOpen(false);
       setEditing(null);
-    }
+    },
+    onError: () => toast.error('Failed to create order')
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.MaintenanceOrder.update(id, data),
     onSuccess: () => {
+      toast.success('Order updated');
       queryClient.invalidateQueries({ queryKey: ['maintenance'] });
       setDialogOpen(false);
       setEditing(null);
-    }
+    },
+    onError: () => toast.error('Failed to update order')
   });
 
   const moveToStage = useMutation({
@@ -83,7 +95,11 @@ export default function MaintenanceWorkflow() {
       if (newStage === 'completed') updates.completed_date = new Date().toISOString();
       return base44.entities.MaintenanceOrder.update(orderId, updates);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['maintenance'] })
+    onSuccess: () => {
+      toast.success('Order status updated');
+      queryClient.invalidateQueries({ queryKey: ['maintenance'] });
+    },
+    onError: () => toast.error('Failed to update status')
   });
 
   const deleteMutation = useMutation({

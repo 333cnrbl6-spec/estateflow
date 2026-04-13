@@ -14,13 +14,14 @@ import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceW
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
+import { useQueryError } from '@/hooks/useQueryError';
 
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 export default function Dashboard() {
   const { demoCompanyId, propertyIds, loading: demoLoading } = useDemoFilter();
 
-  const { data: companies = [] } = useQuery({
+  const companiesQuery = useQuery({
     queryKey: ['companies', demoCompanyId],
     enabled: !demoLoading,
     queryFn: async () => {
@@ -28,68 +29,56 @@ export default function Dashboard() {
         const c = await base44.entities.Company.get(demoCompanyId);
         return c ? [c] : [];
       }
-      return base44.entities.Company.list();
+      return base44.entities.Company.list('-updated_date', 50);
     }
   });
+  useQueryError(companiesQuery, 'companies');
+  const { data: companies = [] } = companiesQuery;
 
-  const { data: properties = [] } = useQuery({
+  const propertiesQuery = useQuery({
     queryKey: ['properties', demoCompanyId],
     enabled: !demoLoading,
     queryFn: async () => {
       if (demoCompanyId) {
-        return base44.entities.Property.filter({ owning_company: demoCompanyId });
+        return base44.entities.Property.filter({ owning_company: demoCompanyId }, '-updated_date', 50);
       }
-      return base44.entities.Property.list();
+      return base44.entities.Property.list('-updated_date', 50);
     }
   });
+  useQueryError(propertiesQuery, 'properties');
+  const { data: properties = [] } = propertiesQuery;
 
-  const { data: units = [] } = useQuery({
+  const unitsQuery = useQuery({
     queryKey: ['units', propertyIds],
-    enabled: !demoLoading,
-    queryFn: async () => {
-      if (propertyIds) {
-        const all = await base44.entities.Unit.list();
-        return all.filter(u => propertyIds.includes(u.property_id));
-      }
-      return base44.entities.Unit.list();
-    }
+    enabled: !demoLoading && propertyIds?.length > 0,
+    queryFn: () => base44.entities.Unit.list('-updated_date', 200)
   });
+  useQueryError(unitsQuery, 'units');
+  const { data: units = [] } = unitsQuery;
 
-  const { data: tenants = [] } = useQuery({
+  const tenantsQuery = useQuery({
     queryKey: ['tenants', propertyIds],
     enabled: !demoLoading,
-    queryFn: async () => {
-      if (propertyIds) {
-        const all = await base44.entities.Tenant.list();
-        return all.filter(t => propertyIds.includes(t.property_id));
-      }
-      return base44.entities.Tenant.list();
-    }
+    queryFn: () => base44.entities.Tenant.list('-updated_date', 100)
   });
+  useQueryError(tenantsQuery, 'tenants');
+  const { data: tenants = [] } = tenantsQuery;
 
-  const { data: transactions = [] } = useQuery({
+  const transactionsQuery = useQuery({
     queryKey: ['transactions', propertyIds],
     enabled: !demoLoading,
-    queryFn: async () => {
-      if (propertyIds) {
-        const all = await base44.entities.FinancialTransaction.list();
-        return all.filter(t => propertyIds.includes(t.property_id));
-      }
-      return base44.entities.FinancialTransaction.list();
-    }
+    queryFn: () => base44.entities.FinancialTransaction.list('-updated_date', 200)
   });
+  useQueryError(transactionsQuery, 'transactions');
+  const { data: transactions = [] } = transactionsQuery;
 
-  const { data: maintenance = [] } = useQuery({
+  const maintenanceQuery = useQuery({
     queryKey: ['maintenance', propertyIds],
     enabled: !demoLoading,
-    queryFn: async () => {
-      if (propertyIds) {
-        const all = await base44.entities.MaintenanceOrder.list();
-        return all.filter(m => propertyIds.includes(m.property_id));
-      }
-      return base44.entities.MaintenanceOrder.list();
-    }
+    queryFn: () => base44.entities.MaintenanceOrder.list('-updated_date', 50)
   });
+  useQueryError(maintenanceQuery, 'maintenance orders');
+  const { data: maintenance = [] } = maintenanceQuery;
 
   const totalIncome = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
   const totalExpenses = transactions.filter(t => t.direction === 'expense' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
