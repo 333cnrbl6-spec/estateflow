@@ -74,6 +74,7 @@ import SalesBrochureGenerator from './pages/SalesBrochureGenerator';
 import SubscriberOnboarding from './pages/SubscriberOnboarding';
 import DocumentRepository from './pages/DocumentRepository';
 import MaintenanceBoard from './pages/MaintenanceBoard';
+import LandlordPortal from './pages/LandlordPortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -164,6 +165,7 @@ const AuthenticatedApp = () => {
         <Route path="/onboarding" element={<SubscriberOnboarding />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/maintenance-board" element={<MaintenanceBoard />} />
+        <Route path="/landlord-portal" element={<LandlordPortal />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

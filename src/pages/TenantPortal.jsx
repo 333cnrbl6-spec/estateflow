@@ -100,7 +100,49 @@ function Row({ label, value }) {
 
 // ── Tab: Payments ─────────────────────────────────────────────────────────────
 
-function PaymentsTab({ tenantId }) {
+function PayRentModal({ open, onClose, unit }) {
+  const [step, setStep] = useState('confirm'); // confirm | processing | done
+  if (!open) return null;
+  const rent = unit?.monthly_rent;
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl">
+        <div className="p-5 space-y-4">
+          {step === 'confirm' && (
+            <>
+              <div className="text-center">
+                <PoundSterling className="w-10 h-10 text-green-600 mx-auto mb-2" />
+                <h3 className="text-lg font-bold">Pay Rent</h3>
+                <p className="text-3xl font-extrabold text-green-700 mt-1">{rent ? `£${rent.toLocaleString()}` : '—'}</p>
+                <p className="text-xs text-muted-foreground mt-1">Monthly rent for {unit?.unit_reference}</p>
+              </div>
+              <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+                <p>💳 <strong>Payment via bank transfer</strong></p>
+                <p>Please transfer your rent to the account details provided by your property manager.</p>
+                <p>Reference: <strong>RENT-{unit?.unit_reference?.replace(/\s/g,'-').toUpperCase() || 'N/A'}</strong></p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={onClose}>Close</Button>
+                <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setStep('done')}>Mark as Sent</Button>
+              </div>
+            </>
+          )}
+          {step === 'done' && (
+            <div className="text-center py-4">
+              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+              <h3 className="text-lg font-bold">Payment Noted</h3>
+              <p className="text-sm text-muted-foreground mt-1">Your property manager will confirm receipt and update your ledger.</p>
+              <Button className="mt-4 w-full" onClick={onClose}>Done</Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PaymentsTab({ tenantId, unit }) {
+  const [showPayModal, setShowPayModal] = useState(false);
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['tenant-transactions', tenantId],
     queryFn: () => base44.entities.FinancialTransaction.filter({ tenant_id: tenantId }),
@@ -111,6 +153,19 @@ function PaymentsTab({ tenantId }) {
 
   return (
     <div className="space-y-4">
+      <PayRentModal open={showPayModal} onClose={() => setShowPayModal(false)} unit={unit} />
+
+      {/* Pay now banner */}
+      {unit?.monthly_rent && (
+        <div className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 p-4 flex items-center justify-between">
+          <div>
+            <p className="text-white font-bold text-base">Monthly Rent Due</p>
+            <p className="text-white/80 text-sm">£{unit.monthly_rent.toLocaleString()} / month</p>
+          </div>
+          <Button onClick={() => setShowPayModal(true)} className="bg-white text-green-700 hover:bg-white/90 font-bold">Pay Now</Button>
+        </div>
+      )}
+
       {totalOverdue > 0 && (
         <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-800">
           <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -518,7 +573,7 @@ export default function TenantPortal() {
           </TabsList>
 
           <TabsContent value="lease"><LeaseTab tenant={tenant} unit={unit} property={property} /></TabsContent>
-          <TabsContent value="payments"><PaymentsTab tenantId={tenantId} /></TabsContent>
+          <TabsContent value="payments"><PaymentsTab tenantId={tenantId} unit={unit} /></TabsContent>
           <TabsContent value="maintenance"><MaintenanceTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab tenantId={tenantId} /></TabsContent>
           <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} /></TabsContent>
