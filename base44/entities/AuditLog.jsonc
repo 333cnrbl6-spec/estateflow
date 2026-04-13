@@ -1,0 +1,72 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "user.created",
+        "user.updated",
+        "user.deleted",
+        "user.role_changed",
+        "entity.created",
+        "entity.updated",
+        "entity.deleted",
+        "entity.bulk_imported",
+        "invoice.approved",
+        "invoice.rejected",
+        "payment.processed",
+        "refund.issued",
+        "certificate.uploaded",
+        "compliance.issue_resolved",
+        "login.success",
+        "login.failed",
+        "logout",
+        "unauthorized_access"
+      ],
+      "description": "Type of action performed"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who performed action"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Type of entity affected (e.g., MaintenanceRequest, Invoice)"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "ID of entity affected"
+    },
+    "changes": {
+      "type": "object",
+      "description": "Before/after changes (old_value, new_value)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure"
+      ],
+      "default": "success"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context or failure reason"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address of request (for security)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When action occurred"
+    }
+  },
+  "required": [
+    "action",
+    "entity_type",
+    "timestamp"
+  ]
+}
