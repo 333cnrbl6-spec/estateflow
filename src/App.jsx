@@ -91,6 +91,7 @@ import PropertyKPIDashboard from './pages/PropertyKPIDashboard';
 import ContractorPortal from './pages/ContractorPortal';
 import PropertyInspection from './pages/PropertyInspection';
 import MaintenanceAnalyticsDashboard from './pages/MaintenanceAnalyticsDashboard';
+import LandlordMonthlyReporting from './pages/LandlordMonthlyReporting';
 import Settings from './pages/Settings';
 
 const AuthenticatedApp = () => {
@@ -200,6 +201,7 @@ const AuthenticatedApp = () => {
       <Route path="/contractor" element={<ContractorPortal />} />
       <Route path="/inspection" element={<PropertyInspection />} />
       <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
+      <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
