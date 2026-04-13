@@ -195,6 +195,9 @@ Return as JSON:
         }))
       });
 
+      // Set this as the active demo company on the user's profile
+      await base44.auth.updateMe({ current_demo_company_id: company.id });
+
       // Insert Properties and track IDs
       const propertyIds = [];
       for (const prop of (demoData.properties || [])) {
@@ -236,9 +239,10 @@ Return as JSON:
           full_name: p.name,
           contact_type: 'director',
           company_name: agentName,
+          related_company_id: company.id,
           notes: p.role
         })),
-        ...(demoData.contacts || []).filter(c => c.contact_type !== 'director')
+        ...(demoData.contacts || []).filter(c => c.contact_type !== 'director').map(c => ({ ...c, related_company_id: company.id }))
       ];
       for (const contact of allContacts) {
         await base44.asServiceRole.entities.Contact.create(contact);

@@ -12,6 +12,7 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const MAINTENANCE_FIELDS = [
   { name: 'title', type: 'string' },
@@ -35,8 +36,16 @@ export default function Maintenance() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { propertyIds } = useDemoFilter();
 
-  const { data: orders = [] } = useQuery({ queryKey: ['maintenance'], queryFn: () => base44.entities.MaintenanceOrder.list('-created_date') });
+  const { data: orders = [] } = useQuery({
+    queryKey: ['maintenance', propertyIds],
+    queryFn: async () => {
+      const all = await base44.entities.MaintenanceOrder.list('-created_date');
+      if (propertyIds) return all.filter(o => propertyIds.includes(o.property_id));
+      return all;
+    }
+  });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MaintenanceOrder.create(data),

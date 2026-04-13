@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Search, Mail, Phone, MessageSquare, FileText, Calendar, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const FIELDS = [
   { name: 'date', label: 'Date', format: 'date' },
@@ -59,10 +60,15 @@ export default function CRM() {
   const [editing, setEditing] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId } = useDemoFilter();
 
   const { data: interactions = [], isLoading } = useQuery({
-    queryKey: ['crm'],
-    queryFn: () => base44.entities.CRMInteraction.list('-date', 300),
+    queryKey: ['crm', demoCompanyId],
+    queryFn: async () => {
+      const all = await base44.entities.CRMInteraction.list('-date', 300);
+      if (demoCompanyId) return all.filter(i => i.company_id === demoCompanyId);
+      return all;
+    }
   });
 
   const createMutation = useMutation({

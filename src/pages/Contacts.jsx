@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const CONTACT_FIELDS = [
   { name: 'full_name', type: 'string' },
@@ -26,8 +27,16 @@ export default function Contacts() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId } = useDemoFilter();
 
-  const { data: contacts = [] } = useQuery({ queryKey: ['contacts'], queryFn: () => base44.entities.Contact.list('-created_date') });
+  const { data: contacts = [] } = useQuery({
+    queryKey: ['contacts', demoCompanyId],
+    queryFn: async () => {
+      const all = await base44.entities.Contact.list('-created_date');
+      if (demoCompanyId) return all.filter(c => c.related_company_id === demoCompanyId);
+      return all;
+    }
+  });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Contact.create(data),

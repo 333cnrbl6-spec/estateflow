@@ -18,6 +18,11 @@
       "type": "boolean",
       "default": false,
       "description": "Whether the user has an active subscription"
+    },
+    "current_demo_company_id": {
+      "type": "string",
+      "description": "ID of the currently active demo company \u2014 used to scope all pages to a single agent demo"
     }
-  }
+  },
+  "required": []
 }

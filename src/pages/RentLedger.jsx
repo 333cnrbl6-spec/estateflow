@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Search, TrendingUp, TrendingDown, AlertCircle, CheckCircle2 } from 'lucide-react';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
 import { format } from 'date-fns';
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const FIELDS = [
   { name: 'tenant_name', label: 'Tenant Name' },
@@ -49,10 +50,15 @@ export default function RentLedger() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const queryClient = useQueryClient();
+  const { demoCompanyId } = useDemoFilter();
 
   const { data: entries = [], isLoading } = useQuery({
-    queryKey: ['rent-ledger'],
-    queryFn: () => base44.entities.RentLedger.list('-created_date', 200),
+    queryKey: ['rent-ledger', demoCompanyId],
+    queryFn: async () => {
+      const all = await base44.entities.RentLedger.list('-created_date', 200);
+      if (demoCompanyId) return all.filter(e => e.company_id === demoCompanyId);
+      return all;
+    }
   });
 
   const createMutation = useMutation({

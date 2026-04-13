@@ -1,47 +1,25 @@
 import React, { useState } from 'react';
-import { differenceInDays, parseISO, format, isAfter, isBefore, addDays } from 'date-fns';
-import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck, Filter, Scale } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import { differenceInDays, parseISO, format, isBefore } from 'date-fns';
+import { AlertTriangle, CheckCircle2, Clock, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/shared/PageHeader';
 import S21Banner from '@/components/shared/S21Banner';
 import { cn } from '@/lib/utils';
-
-// Real data sourced live from Companies House — verified 28 March 2026
-const COMPANIES = [
-  { name: "Powell And Co Property (London) Ltd", number: "09976213", status: "active", accounts_due: "2026-10-30", accounts_period: "30 Jan 2026", cs_due: "2027-02-09", cs_date: "26 Jan 2026", sic: "68320" },
-  { name: "EstateFlow Property (Brighton) Limited", number: "05826387", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-06-20", cs_date: "6 Jun 2025", sic: "68100" },
-  { name: "EstateFlow Property Limited", number: "05826347", status: "active", accounts_due: "2027-02-28", accounts_period: "30 May 2026", cs_due: "2026-06-06", cs_date: "23 May 2025", sic: "68100" },
-  { name: "Powell And Co (Blackpool) Ltd", number: "13992328", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2027-04-03", cs_date: "20 Mar 2026", sic: "68100" },
-  { name: "Powell And Co Associates Ltd", number: "14346745", status: "active", accounts_due: "2026-06-30", accounts_period: "30 Sep 2025", cs_due: "2026-09-20", cs_date: "6 Sep 2025", sic: "68100" },
-  { name: "EstateFlow Assets Limited", number: "10833646", status: "active", accounts_due: "2026-03-31", accounts_period: "30 Jun 2025", cs_due: "2026-07-08", cs_date: "24 Jun 2025", sic: "68209", notes: "⚠ Accounts due 31 Mar 2026 — imminent" },
-  { name: "EstateFlow Freeholds Limited", number: "10764568", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-05-24", cs_date: "10 May 2025", sic: "68209" },
-  { name: "EstateFlow Management Limited", number: "06030136", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "68100" },
-  { name: "Powell And Carvalho International Ltd", number: "13696161", status: "active", accounts_due: "2026-07-31", accounts_period: "31 Oct 2025", cs_due: "2026-11-03", cs_date: "20 Oct 2025", sic: "68100" },
-  { name: "Carvalho Concept Limited", number: "06173925", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-11-27", cs_date: "13 Nov 2025", sic: "68209" },
-  { name: "JD Property (Blackpool) Limited", number: "05256027", status: "active", accounts_due: "2026-07-31", accounts_period: "31 Oct 2025", cs_due: "2026-09-17", cs_date: "3 Sep 2025", sic: "68209" },
-  { name: "North Avenue Limited", number: "10653744", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-08-13", cs_date: "30 Jul 2025", sic: "68209" },
-  { name: "24 Charles Road Limited", number: "10398602", status: "active", accounts_due: "2027-06-30", accounts_period: "30 Sep 2026", cs_due: "2026-10-11", cs_date: "27 Sep 2025", sic: "68209" },
-  { name: "London Sailors Ltd", number: "12852077", status: "active", accounts_due: "2026-06-29", accounts_period: "29 Sep 2025", cs_due: "2026-12-29", cs_date: "15 Dec 2025", sic: "82990" },
-  { name: "Harold Road Ltd", number: "13433757", status: "active", accounts_due: "2027-03-31", accounts_period: "30 Jun 2026", cs_due: "2026-11-10", cs_date: "27 Oct 2025", sic: "68320" },
-  { name: "Harehills Land Ltd", number: "16496661", status: "active", accounts_due: "2027-03-04", accounts_period: "30 Jun 2026", cs_due: "2026-07-23", cs_date: "9 Jul 2025", sic: "68100", notes: "First accounts due" },
-  { name: "11 Rancorn Rd Freehold Ltd", number: "13379255", status: "active", accounts_due: "2027-02-28", accounts_period: "31 May 2026", cs_due: "2026-08-16", cs_date: "2 Aug 2025", sic: "68320" },
-  { name: "22 Meteor Road Freehold Ltd", number: "13075231", status: "active", accounts_due: "2027-09-30", accounts_period: "31 Dec 2026", cs_due: "2026-12-23", cs_date: "9 Dec 2025", sic: "98000" },
-  { name: "105 Courthill Road Freehold Limited", number: "13044670", status: "active", accounts_due: "2027-08-31", accounts_period: "30 Nov 2026", cs_due: "2027-01-05", cs_date: "22 Dec 2025", sic: "98000" },
-  { name: "Admiral Point RTM Company Limited", number: "06597661", status: "active", accounts_due: "2026-09-30", accounts_period: "31 Dec 2025", cs_due: "2026-06-03", cs_date: "20 May 2025", sic: "98000" },
-  { name: "Brookshaw Court Management Limited", number: "04629390", status: "active", accounts_due: "2026-10-31", accounts_period: "31 Jan 2026", cs_due: "2027-01-20", cs_date: "6 Jan 2026", sic: "68320", notes: "Proposal to strike off — monitor" },
-  { name: "Broken Banks Management Limited", number: "01627345", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-04-14", cs_date: "31 Mar 2025", sic: "68320" },
-  { name: "7 North Avenue RTM Company Limited", number: "05708178", status: "active", accounts_due: "2026-12-24", accounts_period: "24 Mar 2026", cs_due: "2027-02-28", cs_date: "14 Feb 2026", sic: "98000" },
-  { name: "128 Grosvenor Place RTM Company Limited", number: "05853898", status: "active", accounts_due: "2027-03-24", accounts_period: "24 Jun 2026", cs_due: "2026-07-05", cs_date: "21 Jun 2025", sic: "98000" },
-  { name: "23 Belgrave Road RTM Company Limited", number: "06583386", status: "active", accounts_due: "2026-12-25", accounts_period: "25 Mar 2026", cs_due: "2026-05-16", cs_date: "2 May 2025", sic: "98000" },
-  { name: "Majestic Court Management Company Limited", number: "01258091", status: "active", accounts_due: "2026-06-28", accounts_period: "28 Sep 2025", cs_due: "2026-07-14", cs_date: "30 Jun 2025", sic: "68209" },
-  { name: "Enfield Island Village Phase 1 Management & Tenants Association Limited", number: "03537063", status: "active", accounts_due: "2026-12-31", accounts_period: "31 Mar 2026", cs_due: "2026-04-02", cs_date: "19 Mar 2025", sic: "98000", notes: "CS due 2 Apr 2026 — 5 days" },
-  { name: "11 Rancorn Road RTM Company Limited", number: "13061798", status: "active", accounts_due: "2027-09-30", accounts_period: "31 Dec 2026", cs_due: "2026-12-17", cs_date: "3 Dec 2025", sic: "98000" },
-  { name: "46 Surrey Rd RTM Company Limited", number: "15496575", status: "dissolved", accounts_due: null, accounts_period: null, cs_due: null, cs_date: null, sic: null },
-];
+import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const TODAY = new Date();
+
+const SIC_LABELS = {
+  '68100': 'Buying & selling real estate',
+  '68209': 'Letting / operating real estate',
+  '68320': 'Management of real estate',
+  '98000': 'Residents property management',
+  '82990': 'Other business support services',
+};
 
 function getDueSeverity(dueDateStr) {
   if (!dueDateStr) return 'na';
@@ -78,29 +56,44 @@ function DaysChip({ dueDateStr }) {
   return <SeverityBadge severity={severity} label={label} />;
 }
 
-const SIC_LABELS = {
-  '68100': 'Buying & selling real estate',
-  '68209': 'Letting / operating real estate',
-  '68320': 'Management of real estate',
-  '98000': 'Residents property management',
-  '82990': 'Other business support services',
-};
-
 export default function Compliance() {
   const [search, setSearch] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('all');
+  const { demoCompanyId, loading: demoLoading } = useDemoFilter();
 
-  const today = TODAY;
+  const { data: companies = [], isLoading } = useQuery({
+    queryKey: ['companies-compliance', demoCompanyId],
+    queryFn: async () => {
+      if (demoCompanyId) {
+        const c = await base44.entities.Company.get(demoCompanyId);
+        return c ? [c] : [];
+      }
+      return base44.entities.Company.list('-created_date', 200);
+    },
+    enabled: !demoLoading,
+  });
 
-  const enriched = COMPANIES.map(c => {
-    const aS = getDueSeverity(c.accounts_due);
-    const cS = getDueSeverity(c.cs_due);
+  // Map entity fields → display model
+  const enriched = companies.map(c => {
+    const aS = getDueSeverity(c.accounts_next_due);
+    const cS = getDueSeverity(c.confirmation_next_due);
     const worst = ['overdue', 'critical', 'warning', 'ok', 'na'].find(s => s === aS || s === cS) || 'na';
-    return { ...c, accounts_severity: aS, cs_severity: cS, worst_severity: worst };
+    return {
+      ...c,
+      number: c.company_number,
+      accounts_due: c.accounts_next_due,
+      accounts_period: c.accounts_last_made_up,
+      cs_due: c.confirmation_next_due,
+      cs_date: c.confirmation_last_dated,
+      sic: c.sic_code,
+      accounts_severity: aS,
+      cs_severity: cS,
+      worst_severity: worst,
+    };
   });
 
   const filtered = enriched.filter(c => {
-    const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.number.includes(search);
+    const matchSearch = !search || c.name?.toLowerCase().includes(search.toLowerCase()) || c.number?.includes(search);
     const matchSeverity = filterSeverity === 'all' || c.worst_severity === filterSeverity;
     return matchSearch && matchSeverity;
   });
@@ -119,7 +112,6 @@ export default function Compliance() {
 
       <div className="mb-6"><S21Banner /></div>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Overdue', count: overdue, cls: 'border-red-200 bg-red-50', text: 'text-red-700', severity: 'overdue' },
@@ -138,7 +130,6 @@ export default function Compliance() {
         ))}
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
           <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -156,7 +147,6 @@ export default function Compliance() {
         </Select>
       </div>
 
-      {/* Table */}
       <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -173,15 +163,21 @@ export default function Compliance() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filtered.map(c => (
-                <tr key={c.number} className={cn('hover:bg-muted/20 transition-colors', c.status === 'dissolved' && 'opacity-50')}>
+              {isLoading || demoLoading ? (
+                <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">Loading...</td></tr>
+              ) : filtered.length === 0 ? (
+                <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">No companies found</td></tr>
+              ) : filtered.map(c => (
+                <tr key={c.id} className={cn('hover:bg-muted/20 transition-colors', c.status === 'dissolved' && 'opacity-50')}>
                   <td className="px-4 py-3">
                     <div className="font-medium text-foreground leading-tight">{c.name}</div>
                     {c.notes && <div className="text-[11px] text-amber-600 mt-0.5">{c.notes}</div>}
                     {c.status === 'dissolved' && <Badge variant="outline" className="text-[10px] mt-0.5 border-slate-300 text-slate-500">Dissolved</Badge>}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{c.number}</td>
-                  <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">{c.accounts_period || '—'}</td>
+                  <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{c.number || '—'}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
+                    {c.accounts_period ? format(parseISO(c.accounts_period), 'dd MMM yyyy') : '—'}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {c.accounts_due ? (
                       <div className="space-y-1">
@@ -190,7 +186,9 @@ export default function Compliance() {
                       </div>
                     ) : '—'}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">{c.cs_date || '—'}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
+                    {c.cs_date ? format(parseISO(c.cs_date), 'dd MMM yyyy') : '—'}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {c.cs_due ? (
                       <div className="space-y-1">
@@ -205,14 +203,16 @@ export default function Compliance() {
                     ) : '—'}
                   </td>
                   <td className="px-4 py-3">
-                    <a
-                      href={`https://find-and-update.company-information.service.gov.uk/company/${c.number}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                      title="View on Companies House"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    {c.number && (
+                      <a
+                        href={`https://find-and-update.company-information.service.gov.uk/company/${c.number}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                        title="View on Companies House"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -220,7 +220,7 @@ export default function Compliance() {
           </table>
         </div>
         <div className="px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
-          Showing {filtered.length} of {COMPANIES.length} companies · Data sourced live from Companies House · Last verified: 28 March 2026 · <a href="https://find-and-update.company-information.service.gov.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">companies house ↗</a>
+          Showing {filtered.length} of {enriched.length} companies · Data sourced from your Company records
         </div>
       </div>
     </div>

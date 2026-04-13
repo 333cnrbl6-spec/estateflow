@@ -28,6 +28,10 @@
     "company_name": {
       "type": "string"
     },
+    "related_company_id": {
+      "type": "string",
+      "description": "ID of the Company entity this contact belongs to \u2014 used for demo scoping"
+    },
     "address": {
       "type": "string"
     },
