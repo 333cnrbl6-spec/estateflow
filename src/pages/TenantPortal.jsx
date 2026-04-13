@@ -16,6 +16,8 @@ import { format, parseISO, differenceInDays } from 'date-fns';
 import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
 import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';
+import MessageHub from '@/components/messaging/MessageHub';
+import MessageHub from '@/components/messaging/MessageHub';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -665,7 +667,7 @@ export default function TenantPortal() {
           <TabsContent value="maintenance"><MaintenanceTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab tenantId={tenantId} /></TabsContent>
           <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} /></TabsContent>
-          <TabsContent value="messages"><TenantMessageThread tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
+          <TabsContent value="messages"><MessageHub tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
         </Tabs>
       </div>
     </div>
