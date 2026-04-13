@@ -9,6 +9,7 @@ import DataSourceGuidedGlean from '@/components/onboarding/DataSourceGuidedGlean
 import DataImportMappingGuidance from '@/components/onboarding/DataImportMappingGuidance';
 import DataDeduplicationReview from '@/components/onboarding/DataDeduplicationReview';
 import DataStagingReview from '@/components/onboarding/DataStagingReview';
+import DataCSVUploadAndMapping from '@/components/onboarding/DataCSVUploadAndMapping';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
@@ -819,11 +820,16 @@ function StepImportPipeline({ data, onChange }) {
 
 function StepUpload({ data, onChange }) {
   const [classified, setClassified] = useState(data.classified_files || []);
+  const [showCSVMode, setShowCSVMode] = useState(false);
 
   const onFileClassified = (file) => {
     const next = [...classified.filter(f => f.id !== file.id), file];
     setClassified(next);
     onChange({ ...data, classified_files: next });
+  };
+
+  const onCSVImportComplete = (result) => {
+    onChange({ ...data, csv_import_result: result });
   };
 
   const hints = {
@@ -842,24 +848,35 @@ function StepUpload({ data, onChange }) {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-slate-900">Upload your data files</h2>
-        <p className="text-sm text-muted-foreground mt-1">Drop in your spreadsheets, PDFs, and documents. Our AI will classify each file, extract records, and map them to the right part of Premiso.</p>
+        <p className="text-sm text-muted-foreground mt-1">Drop in your spreadsheets, PDFs, and documents. Our AI will classify each file, extract records, and map them to the right part of Premiso. Or use our guided CSV importer for structured data.</p>
       </div>
 
-      <SmartDropZone onFilesClassified={onFileClassified} hint={hint} />
+      <div className="flex gap-2 mb-4">
+        <Button variant={!showCSVMode ? 'default' : 'outline'} onClick={() => setShowCSVMode(false)} className="flex-1">Drop Zone (Files & PDFs)</Button>
+        <Button variant={showCSVMode ? 'default' : 'outline'} onClick={() => setShowCSVMode(true)} className="flex-1">CSV Importer</Button>
+      </div>
 
-      {classified.filter(f => f.classification).length > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
-          <p className="text-sm font-semibold text-green-800">📊 AI Summary</p>
-          {[...new Set(classified.filter(f => f.classification?.document_type).map(f => f.classification.document_type))].map(type => {
-            const files = classified.filter(f => f.classification?.document_type === type);
-            return (
-              <div key={type} className="flex items-center justify-between text-xs">
-                <span className="text-green-700 capitalize">{type.replace(/_/g, ' ')}</span>
-                <span className="text-green-600 font-medium">{files.length} file{files.length > 1 ? 's' : ''}</span>
-              </div>
-            );
-          })}
-        </div>
+      {!showCSVMode ? (
+        <>
+          <SmartDropZone onFilesClassified={onFileClassified} hint={hint} />
+
+          {classified.filter(f => f.classification).length > 0 && (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
+              <p className="text-sm font-semibold text-green-800">📊 AI Summary</p>
+              {[...new Set(classified.filter(f => f.classification?.document_type).map(f => f.classification.document_type))].map(type => {
+                const files = classified.filter(f => f.classification?.document_type === type);
+                return (
+                  <div key={type} className="flex items-center justify-between text-xs">
+                    <span className="text-green-700 capitalize">{type.replace(/_/g, ' ')}</span>
+                    <span className="text-green-600 font-medium">{files.length} file{files.length > 1 ? 's' : ''}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      ) : (
+        <DataCSVUploadAndMapping onComplete={onCSVImportComplete} />
       )}
     </div>
   );
