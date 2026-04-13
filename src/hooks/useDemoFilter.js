@@ -5,7 +5,7 @@ export function useDemoFilter() {
   const [demoCompanyId, setDemoCompanyId] = useState(null);
   const [propertyIds, setPropertyIds] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [resolved, setResolved] = useState(false);
+  const [resolved, setResolved] = useState(false); // eslint-disable-line
 
   useEffect(() => {
     const loadDemoContext = async () => {
@@ -17,14 +17,15 @@ export function useDemoFilter() {
           const props = await base44.entities.Property.filter({ owning_company: user.current_demo_company_id });
           setPropertyIds(props.map(p => p.id));
         }
+      setResolved(true);
       } catch (err) {
-        console.error('Failed to load demo context:', err);
+      console.error('Failed to load demo context:', err);
       } finally {
-        setLoading(false);
+      setLoading(false);
       }
     };
     loadDemoContext();
   }, []);
 
-  return { demoCompanyId, propertyIds, loading };
+  return { demoCompanyId, propertyIds, loading, resolved };
 }

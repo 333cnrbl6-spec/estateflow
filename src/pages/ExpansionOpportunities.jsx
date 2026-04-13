@@ -84,7 +84,7 @@ export default function ExpansionOpportunities() {
             <div className="sm:w-52">
               <label className="text-xs text-muted-foreground mb-1 block">Location (optional)</label>
               <Input
-                placeholder="e.g. Horwich Bolton"
+                placeholder="e.g. Manchester, Leeds, London"
                 value={agentLocation}
                 onChange={e => setAgentLocation(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleResearch()}

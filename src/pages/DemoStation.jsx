@@ -367,7 +367,7 @@ function AgentOnePager({ report, counts }) {
         </div>
         <div className="bg-slate-900 text-white px-8 py-4 flex justify-between items-center text-sm">
           <div className="font-serif font-bold">Book a Free Demo <span className="text-sky-400">Personalised for {name}</span></div>
-          <div className="text-slate-400 text-xs">info@rbm-nw.co.uk · 01204 695919</div>
+          <div className="text-slate-400 text-xs">hello@premiso.co.uk · premiso.co.uk</div>
         </div>
       </div>
     </div>

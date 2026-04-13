@@ -94,7 +94,7 @@ Return as JSON matching this schema:
     if (action === 'build') {
       const r = research;
       const agentName = agent_name;
-      const location = agent_location || 'Horwich, Bolton';
+      const location = agent_location || 'UK';
 
       // Generate realistic property/tenant data using LLM seeded with research
       const dataPrompt = `
@@ -105,10 +105,10 @@ Services: ${(r.services || []).join(', ')}
 Portfolio notes: ${r.portfolio_notes || 'Mix of residential and HMO properties'}
 
 Generate a complete but realistic demo dataset with:
-- ${r.demo_properties || 3} properties (realistic Bolton/Horwich street names and postcodes BL6/BL1/BL3)
+- ${r.demo_properties || 3} properties (realistic street names and postcodes appropriate to ${location})
 - Each property has 2-8 units
 - ${r.demo_tenants || 10} tenants with realistic UK names
-- Postcodes must be valid Bolton area (BL6 for Horwich, BL1/BL2/BL3 for Bolton)
+- Postcodes must be realistic and appropriate to the ${location} area
 
 Return as JSON:
 {
@@ -126,9 +126,9 @@ Return as JSON:
     {
       "name": string,
       "address_line_1": string,
-      "city": "Bolton",
-      "postcode": string,
-      "region": "lancashire",
+      "city": string,
+          "postcode": string,
+          "region": string,
       "property_type": "freehold_block or house",
       "ownership_type": "freehold or leasehold",
       "total_units": number,

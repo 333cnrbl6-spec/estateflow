@@ -117,7 +117,7 @@ export default function HelperBot() {
             ) : (
               <div className="space-y-2 pr-4">
                 <p className="text-xs text-muted-foreground mb-3">
-                  Backend entities available in EstateFlow:
+                  Backend entities available in Premiso:
                 </p>
                 {Object.entries(entityKnowledge).map(([name, info]) => (
                   <div key={name} className="text-xs p-2 bg-muted/50 rounded-md border border-border/50 hover:border-primary/30 transition-colors">
