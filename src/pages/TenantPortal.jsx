@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import {
   FileText, Wrench, Bell, Home, PoundSterling, Calendar, Lock,
-  Upload, CheckCircle2, Clock, AlertTriangle, ChevronRight, Loader2, Phone, Download, MessageCircle
+  Upload, CheckCircle2, Clock, AlertTriangle, ChevronRight, Loader2, Phone, Download, MessageCircle, Repeat
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
+import { useState, useEffect } from 'react';
 import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
 import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';

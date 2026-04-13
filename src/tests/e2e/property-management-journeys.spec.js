@@ -402,7 +402,7 @@ test.describe('Human User Journeys - Core Management', () => {
           }
           
           const uploadBtn2 = page.locator('button[type="submit"], button:has-text("Upload")');
-          await uploadBtnBtn2.click();
+          await uploadBtn2.click();
           
           // Verify uploaded
           await page.waitForSelector('text=uploaded, text=certificate added', { timeout: 5000 });

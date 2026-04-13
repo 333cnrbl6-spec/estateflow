@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { useState } from "react";
 import StatCard from "@/components/shared/StatCard";
 import SalesLeadFormDialog from "@/components/sales/SalesLeadFormDialog";
 import SalesListingCard from "@/components/sales/SalesListingCard";
@@ -36,6 +37,7 @@ import ViewingScheduler from "@/components/sales/ViewingScheduler";
 import PropertyValuationPanel from "@/components/sales/PropertyValuationPanel";
 
 export default function SalesDashboard() {
+  const queryClient = useQueryClient();
   const [leadFormOpen, setLeadFormOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");

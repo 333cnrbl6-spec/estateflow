@@ -8,15 +8,13 @@ import DataImportPipelineConfig from '@/components/onboarding/DataImportPipeline
 import DataSourceGuidedGlean from '@/components/onboarding/DataSourceGuidedGlean';
 import DataImportMappingGuidance from '@/components/onboarding/DataImportMappingGuidance';
 import DataDeduplicationReview from '@/components/onboarding/DataDeduplicationReview';
+import DataStagingReview from '@/components/onboarding/DataStagingReview';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
   Home, Key, Wrench, Receipt, AlertCircle, Check, X, ExternalLink
 } from 'lucide-react';
 
-// ─────────────────────────────────────────────────────────────────
-// Step definitions
-// ─────────────────────────────────────────────────────────────────
 const STEPS = [
   { id: 'company',    label: 'Your Company',    icon: Building2 },
   { id: 'directors',  label: 'Directors',       icon: Users },
@@ -29,6 +27,8 @@ const STEPS = [
   { id: 'import_pipeline', label: 'Configure Import', icon: Loader2 },
   { id: 'upload',     label: 'Import Data',     icon: FileText },
   { id: 'deduplicate', label: 'Review Duplicates', icon: AlertCircle },
+  { id: 'cleanse',    label: 'Cleanse & Stage', icon: Loader2 },
+  { id: 'approve',    label: 'Approve & Commit', icon: CheckCircle2 },
   { id: 'review',     label: 'Review & Create', icon: CheckCircle2 },
 ];
 
@@ -93,11 +93,6 @@ const DATA_SOURCES = [
   { id: 'email', label: 'Email attachments', icon: '✉️' },
   { id: 'paper', label: 'Paper documents (scan)', icon: '📄' },
 ];
-
-// ─────────────────────────────────────────────────────────────────
-// Step components (StepCompany, StepDirectors, StepAddresses, StepServices, StepSoftware)
-// ... [keeping all existing step functions from before] ...
-// ─────────────────────────────────────────────────────────────────
 
 function StepCompany({ data, onChange }) {
   const [query, setQuery] = useState(data.company_name || '');
@@ -463,46 +458,6 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
               })}
             </div>
           )}
-
-          {officers.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Other Officers</p>
-              {officers.map((o, i) => {
-                const idx = directors.length + i;
-                const selected = selectedOfficers.includes(idx);
-                return (
-                  <div key={idx} onClick={() => toggleOfficer(idx)}
-                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
-                    {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
-                    <div className="flex-1">
-                      <p className="font-medium text-slate-800">{o.name}</p>
-                      <p className="text-xs text-muted-foreground">{o.role}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {psc.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Persons with Significant Control</p>
-              {psc.map((p, i) => {
-                const idx = directors.length + officers.length + i;
-                const selected = selectedOfficers.includes(idx);
-                return (
-                  <div key={idx} onClick={() => toggleOfficer(idx)}
-                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
-                    {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
-                    <div className="flex-1">
-                      <p className="font-medium text-slate-800">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">{p.control_type}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
       )}
 
@@ -516,98 +471,15 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
         </div>
       )}
 
-      {associatedCompanies.length > 0 && (
-        <div className="border rounded-xl p-4 bg-amber-50 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-amber-900">Found {associatedCompanies.length} associated companies</p>
-            <Button size="sm" onClick={() => addAssociatedCompanies(associatedCompanies)} className="gap-1">
-              + Add All
-            </Button>
-          </div>
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {associatedCompanies.map((company, idx) => (
-              <div key={idx} className="bg-white border border-amber-200 rounded-lg p-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-slate-900">{company.company_name}</p>
-                    <p className="text-xs text-muted-foreground">{company.company_number} · {company.status}</p>
-                    {company.officer_roles && company.officer_roles.length > 0 && (
-                      <p className="text-xs text-slate-600 mt-1">Roles: {company.officer_roles.join(', ')}</p>
-                    )}
-                  </div>
-                  <Button size="sm" onClick={() => addAssociatedCompanies([company])} className="gap-1">
-                    + Add
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {(data.associated_companies || []).length > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
-          <p className="text-sm font-semibold text-blue-900">Associated Companies to Add ({data.associated_companies.length})</p>
+          <p className="text-sm font-semibold text-blue-900">Associated Companies ({data.associated_companies.length})</p>
           {data.associated_companies.map((c, idx) => (
             <div key={idx} className="flex items-center justify-between text-sm">
               <span className="text-blue-800 font-medium">{c.company_name}</span>
               <Button size="sm" variant="ghost" onClick={() => onChange({ ...data, associated_companies: (data.associated_companies || []).filter((_, i) => i !== idx) })}>
                 ✕
               </Button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Or search for other company directors</p>
-          <div className="flex gap-2">
-            <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchAdditionalCompanies()} placeholder="Company name or number" className="flex-1" />
-            <Button onClick={searchAdditionalCompanies} disabled={searchingAdditional} variant="outline" className="gap-2">
-              {searchingAdditional ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              Search
-            </Button>
-          </div>
-        </div>
-
-        {additionalResults.length > 0 && (
-          <div className="border rounded-xl p-4 bg-blue-50 space-y-3">
-            <p className="text-xs font-semibold text-blue-900">Found {additionalResults.length} company/companies with directors</p>
-            {additionalResults.map((company, idx) => (
-              <div key={idx} className="bg-white border border-blue-200 rounded-lg p-3">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="font-medium text-slate-900">{company.company_name}</p>
-                    <p className="text-xs text-muted-foreground">{company.company_number}</p>
-                  </div>
-                  <Button size="sm" onClick={() => addDirectorsFromCompany(company.directors || [])} className="gap-1">
-                    + Add {company.directors?.length || 0} directors
-                  </Button>
-                </div>
-                {company.directors && company.directors.length > 0 && (
-                  <div className="text-xs space-y-1 mt-2">
-                    {company.directors.map((d, didx) => (
-                      <div key={didx} className="text-muted-foreground">{d.name} · {d.role}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <Button variant="outline" size="sm" onClick={addDirector} className="gap-2">
-        + Add director manually
-      </Button>
-
-      {directors.length === 0 && (
-        <div className="space-y-2 border rounded-xl p-4 bg-slate-50">
-          {(data.manual_directors || [{ name: '', role: 'Director' }]).map((d, i) => (
-            <div key={i} className="flex gap-2">
-              <Input placeholder="Full name" value={d.name} onChange={e => { const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])]; next[i] = { ...next[i], name: e.target.value }; onChange({ ...data, manual_directors: next, directors: next }); }} />
-              <Input placeholder="Role" value={d.role} onChange={e => { const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])]; next[i] = { ...next[i], role: e.target.value }; onChange({ ...data, manual_directors: next, directors: next }); }} className="w-36" />
             </div>
           ))}
         </div>
@@ -841,19 +713,6 @@ function StepBankingSetup({ data, onChange }) {
           })}
         </div>
       </div>
-
-      {(connectedSoftware.length > 0 || selectedBanks.length > 0) && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
-          <p className="text-sm font-semibold text-blue-900">✓ Integrations to configure</p>
-          <ul className="text-xs text-blue-800 space-y-1">
-            {connectedSoftware.includes('xero') && <li>• Xero API: Real-time chart of accounts, invoices, and transactions sync</li>}
-            {connectedSoftware.includes('sage') && <li>• Sage API: Monthly reconciliation of GL accounts</li>}
-            {connectedSoftware.includes('quickbooks') && <li>• QuickBooks API: Automated transaction import</li>}
-            {bankDataLocations.includes('bank_csv') && <li>• Bank CSV import: Monthly statement parsing and reconciliation</li>}
-            {bankDataLocations.includes('cloud_storage') && <li>• Cloud storage: Connect Google Drive, OneDrive for automated file retrieval</li>}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
@@ -1022,6 +881,93 @@ function StepDeduplicate({ data, onChange }) {
   );
 }
 
+function StepCleanse({ data, onChange }) {
+  const [cleansing, setCleansing] = useState(false);
+  const [cleanseResult, setCleanseResult] = useState(null);
+  const [importSessionId] = useState(data.import_session_id || `session-${Date.now()}`);
+
+  const runCleanse = async () => {
+    setCleansing(true);
+    try {
+      const result = await base44.functions.invoke('cleanseAndStageData', {
+        import_session_id: importSessionId,
+        company_id: data.company_id || data.company_number,
+        extracted_records: data.classified_files?.map(f => ({
+          ...f.classification,
+          source_file: f.name,
+          extracted_data: f.classification,
+        })) || [],
+        deduplication_analysis: data.deduplication_analysis,
+        deduplication_decisions: data.deduplication_decisions,
+      });
+      setCleanseResult(result);
+      onChange({ ...data, import_session_id: importSessionId, staging_ready: true, cleanse_result: result });
+    } catch (error) {
+      console.error('Cleanse error:', error);
+    } finally {
+      setCleansing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Cleanse & Stage Data</h2>
+        <p className="text-sm text-muted-foreground mt-1">AI will standardize your data (phone formats, addresses, postcodes, dates, etc.) and create a risk-free staging area before importing to production.</p>
+      </div>
+
+      {!cleanseResult && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
+          <p className="text-sm text-blue-900">{(data.classified_files || []).length} files will be cleansed and staged</p>
+          <Button onClick={runCleanse} disabled={cleansing} className="w-full gap-2">
+            {cleansing ? <><Loader2 className="w-4 h-4 animate-spin" /> Cleansing...</> : <>\u2728 Start Cleansing</>}
+          </Button>
+        </div>
+      )}
+
+      {cleanseResult && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <p className="font-semibold text-green-800">Cleansing Complete</p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="bg-white rounded p-2 border border-green-200">
+              <p className="text-muted-foreground">Staged</p>
+              <p className="font-bold text-green-700">{cleanseResult.stats?.staged}</p>
+            </div>
+            <div className="bg-white rounded p-2 border border-green-200">
+              <p className="text-muted-foreground">Failed</p>
+              <p className="font-bold text-red-700">{cleanseResult.stats?.failed}</p>
+            </div>
+            <div className="bg-white rounded p-2 border border-green-200">
+              <p className="text-muted-foreground">Avg Quality</p>
+              <p className="font-bold text-blue-700">{cleanseResult.stats?.avg_quality_score}%</p>
+            </div>
+          </div>
+          <p className="text-xs text-green-700 mt-2">✓ Data ready for review. Click Continue to approve and import records.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StepStageReview({ data, onChange }) {
+  const handleCommit = (commitResult) => {
+    onChange({ ...data, commit_result: commitResult, import_complete: true });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Approve & Commit Records</h2>
+        <p className="text-sm text-muted-foreground mt-1">Review cleansed records, check for warnings, then approve to import into production. Nothing is permanent until you approve.</p>
+      </div>
+      <DataStagingReview importSessionId={data.import_session_id} onCommit={handleCommit} />
+    </div>
+  );
+}
+
 function StepReview({ data, onBuild, building, buildResult }) {
   const counts = data.data_counts || {};
   const hasFiles = (data.classified_files || []).filter(f => f.classification?.document_type !== 'unknown').length;
@@ -1030,7 +976,7 @@ function StepReview({ data, onBuild, building, buildResult }) {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-slate-900">Review & Create</h2>
-        <p className="text-sm text-muted-foreground mt-1">Here's everything we've collected. When you're ready, we'll build your Premiso environment.</p>
+        <p className="text-sm text-muted-foreground mt-1">Here's everything we've collected. Your data is staged and approved. When you're ready, we'll finalize your Premiso environment.</p>
       </div>
 
       <div className="space-y-3">
@@ -1038,29 +984,16 @@ function StepReview({ data, onBuild, building, buildResult }) {
        <ReviewRow label="Registered Address" value={data.registered_address} />
        <ReviewRow label="Officers Selected" value={`${(data.selected_officer_ids || []).length} officer(s)`} />
        {(data.associated_companies || []).length > 0 && (
-         <ReviewRow label="Associated Companies" value={`${data.associated_companies.length} companies to add`}
-           sub={data.associated_companies.map(c => `${c.company_name} (${c.company_number})`).join(', ')} />
+         <ReviewRow label="Associated Companies" value={`${data.associated_companies.length} companies`} />
        )}
-       <ReviewRow label="Branch addresses" value={`${(data.branches || []).filter(Boolean).length} address(es)`} />
        <ReviewRow label="Services" value={`${(data.services || []).length} service types`} />
-       <ReviewRow label="Existing software" value={(data.software || []).join(', ') || 'None selected'} />
-       <ReviewRow label="Banks" value={`${(data.banks || []).length} bank(s)`} />
-       <ReviewRow label="Bank data location" value={(data.bank_data_locations || []).join(', ') || 'Not specified'} />
-       <ReviewRow label="Data types" value={`${(data.data_types || []).length} categories`}
-         sub={Object.entries(counts).filter(([,v]) => v).map(([k,v]) => `${k.replace(/_/g,' ')}: ~${v}`).join(', ')} />
-       <ReviewRow label="Files uploaded" value={`${(data.classified_files || []).length} files (${hasFiles} classified by AI)`} />
-       {Object.keys(data.data_gleans || {}).length > 0 && (
-         <ReviewRow label="Data sources classified" value={Object.entries(data.data_gleans).filter(([,v]) => v.length > 0).map(([k]) => k.replace(/_/g, ' ')).join(', ')} />
-       )}
+       <ReviewRow label="Data imported" value={data.import_complete ? '✓ Completed' : 'Pending'} />
        </div>
 
       {!buildResult && (
-       <Button onClick={onBuild} disabled={building || !data.company_name} size="lg" className="w-full gap-2">
+       <Button onClick={onBuild} disabled={building || !data.company_name || !data.import_complete} size="lg" className="w-full gap-2">
          {building ? <><Loader2 className="w-4 h-4 animate-spin" /> Building your environment…</> : <><Sparkles className="w-4 h-4" /> Create Premiso Environment</>}
        </Button>
-      )}
-      {!buildResult && (data.associated_companies || []).length > 0 && (
-       <p className="text-xs text-center text-slate-600">✓ {data.associated_companies.length} associated companies will be provisioned alongside main company</p>
       )}
 
       {buildResult && (
@@ -1070,24 +1003,6 @@ function StepReview({ data, onBuild, building, buildResult }) {
        <p className="font-bold text-green-800 text-lg">Environment Created!</p>
       </div>
       <p className="text-sm text-green-700">{buildResult.summary}</p>
-      {buildResult.created && (
-       <div className="grid grid-cols-2 gap-2 text-xs">
-         {Object.entries(buildResult.created).map(([k, v]) => (
-           <div key={k} className="flex justify-between bg-white rounded px-2 py-1.5 border border-green-200">
-             <span className="capitalize text-slate-600">{k.replace(/_/g,' ')}</span>
-             <span className="font-bold text-green-700">{v}</span>
-           </div>
-         ))}
-       </div>
-      )}
-      {buildResult.recommended_workflows && buildResult.recommended_workflows.length > 0 && (
-       <div className="bg-white rounded px-3 py-2 border border-green-200 text-xs">
-         <p className="font-semibold text-slate-800 mb-1">Recommended workflows activated:</p>
-         <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-           {buildResult.recommended_workflows.map((w, i) => <li key={i}>{w}</li>)}
-         </ul>
-       </div>
-      )}
       <Button asChild className="w-full" variant="default">
        <a href="/">Go to Dashboard</a>
       </Button>
@@ -1114,6 +1029,7 @@ export default function SubscriberOnboarding() {
   const [formData, setFormData] = useState({
     company_number: '',
     company_name: '',
+    company_id: '',
     directors: [],
     officers: [],
     persons_with_control: [],
@@ -1125,6 +1041,8 @@ export default function SubscriberOnboarding() {
     data_audit_scope: [],
     data_sources: [],
     document_urls: [],
+    import_session_id: '',
+    import_complete: false,
   });
   const [building, setBuilding] = useState(false);
   const [buildResult, setBuildResult] = useState(null);
@@ -1151,28 +1069,18 @@ Primary Company:
 - Number: ${formData.company_number || 'N/A'}
 - Address: ${formData.registered_address || 'N/A'}
 
-Officers Selected:
-- Officers: ${selectedOfficerNames.join(', ') || 'None'}
-
-Associated Companies to Provision:
-${(formData.associated_companies || []).map(c => `- ${c.company_name} (${c.company_number})`).join('\n') || '- None'}
-
+Officers: ${selectedOfficerNames.join(', ') || 'None'}
+Associated Companies: ${(formData.associated_companies || []).length > 0 ? formData.associated_companies.map(c => c.company_name).join(', ') : 'None'}
 Services: ${(formData.services || []).join(', ')}
-Software: ${(formData.software || []).join(', ')}
-Banks: ${(formData.banks || []).join(', ')}
-Bank data locations: ${(formData.bank_data_locations || []).join(', ')}
-Accounting features: ${(formData.accounting_features || []).join(', ')}
-Data types available: ${JSON.stringify(formData.data_counts || {})}
-Files uploaded: ${(formData.classified_files || []).map(f => f.classification?.document_type).join(', ')}
+Data imported: ${formData.import_complete ? 'Yes - records committed to production' : 'No'}
 
-Generate a realistic onboarding summary: what records would be created, what workflows to activate, what integrations to configure. Include the multi-company structure setup. Return a summary paragraph and a "created" object with counts of entities that would be set up.`,
+Generate a realistic summary of what's been created and configured.`,
         response_json_schema: {
           type: 'object',
           properties: {
             summary: { type: 'string' },
             created: { type: 'object' },
             recommended_workflows: { type: 'array', items: { type: 'string' } },
-            recommended_integrations: { type: 'array', items: { type: 'string' } },
           },
         },
       });
@@ -1191,7 +1099,7 @@ Generate a realistic onboarding summary: what records would be created, what wor
             <Sparkles className="w-4 h-4" /> Premiso Setup Wizard
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Welcome to Premiso</h1>
-          <p className="text-muted-foreground mt-1">Let's get your property management platform configured in a few simple steps.</p>
+          <p className="text-muted-foreground mt-1">Complete end-to-end data import with cleansing, staging, and approval.</p>
         </div>
 
         {/* Step progress */}
@@ -1230,7 +1138,9 @@ Generate a realistic onboarding summary: what records would be created, what wor
             {step === 8 && <StepImportPipeline data={formData} onChange={setFormData} />}
             {step === 9 && <StepUpload data={formData} onChange={setFormData} />}
             {step === 10 && <StepDeduplicate data={formData} onChange={setFormData} />}
-            {step === 11 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
+            {step === 11 && <StepCleanse data={formData} onChange={setFormData} />}
+            {step === 12 && <StepStageReview data={formData} onChange={setFormData} />}
+            {step === 13 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
           </div>
 
           {/* Navigation */}
