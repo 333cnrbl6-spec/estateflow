@@ -7,6 +7,7 @@ import SmartDropZone from '@/components/onboarding/SmartDropZone';
 import DataImportPipelineConfig from '@/components/onboarding/DataImportPipelineConfig';
 import DataSourceGuidedGlean from '@/components/onboarding/DataSourceGuidedGlean';
 import DataImportMappingGuidance from '@/components/onboarding/DataImportMappingGuidance';
+import DataDeduplicationReview from '@/components/onboarding/DataDeduplicationReview';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
@@ -27,6 +28,7 @@ const STEPS = [
   { id: 'data_source',label: 'Data Sources',    icon: HardDrive },
   { id: 'import_pipeline', label: 'Configure Import', icon: Loader2 },
   { id: 'upload',     label: 'Import Data',     icon: FileText },
+  { id: 'deduplicate', label: 'Review Duplicates', icon: AlertCircle },
   { id: 'review',     label: 'Review & Create', icon: CheckCircle2 },
 ];
 
@@ -1004,6 +1006,22 @@ function StepUpload({ data, onChange }) {
   );
 }
 
+function StepDeduplicate({ data, onChange }) {
+  const handleReviewComplete = (reviewData) => {
+    onChange({ ...data, deduplication_decisions: reviewData.decisions, deduplication_analysis: reviewData.analysis });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Review Data Quality</h2>
+        <p className="text-sm text-muted-foreground mt-1">Our AI has analyzed your data for duplicates, missing fields, and quality issues. Review and approve merge suggestions.</p>
+      </div>
+      <DataDeduplicationReview classifiedFiles={data.classified_files || []} onReview={handleReviewComplete} />
+    </div>
+  );
+}
+
 function StepReview({ data, onBuild, building, buildResult }) {
   const counts = data.data_counts || {};
   const hasFiles = (data.classified_files || []).filter(f => f.classification?.document_type !== 'unknown').length;
@@ -1211,7 +1229,8 @@ Generate a realistic onboarding summary: what records would be created, what wor
             {step === 7 && <StepDataSource data={formData} onChange={setFormData} />}
             {step === 8 && <StepImportPipeline data={formData} onChange={setFormData} />}
             {step === 9 && <StepUpload data={formData} onChange={setFormData} />}
-            {step === 10 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
+            {step === 10 && <StepDeduplicate data={formData} onChange={setFormData} />}
+            {step === 11 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
           </div>
 
           {/* Navigation */}
