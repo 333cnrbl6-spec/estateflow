@@ -1,0 +1,122 @@
+{
+  "name": "MaintenanceRequest",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant who reported the issue"
+    },
+    "title": {
+      "type": "string",
+      "description": "Maintenance issue title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the issue"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "plumbing",
+        "electrical",
+        "structural",
+        "roofing",
+        "heating",
+        "decorating",
+        "cleaning",
+        "fire_safety",
+        "general",
+        "other"
+      ],
+      "description": "Category of maintenance"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "standard",
+        "urgent",
+        "emergency"
+      ],
+      "default": "standard",
+      "description": "Priority level"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "reported",
+        "assigned",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "reported",
+      "description": "Current status of the request"
+    },
+    "assigned_contractor_id": {
+      "type": "string",
+      "description": "Reference to Contact (contractor)"
+    },
+    "assigned_contractor_name": {
+      "type": "string",
+      "description": "Name of assigned contractor"
+    },
+    "assigned_contractor_email": {
+      "type": "string",
+      "description": "Email of assigned contractor"
+    },
+    "assigned_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When contractor was assigned"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled date for contractor visit"
+    },
+    "estimated_cost": {
+      "type": "number",
+      "description": "Estimated cost in GBP"
+    },
+    "actual_cost": {
+      "type": "number",
+      "description": "Actual cost incurred"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the work was completed"
+    },
+    "completion_notes": {
+      "type": "string",
+      "description": "Notes on work completed"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to uploaded photos"
+    },
+    "internal_notes": {
+      "type": "string",
+      "description": "Internal notes not visible to tenant"
+    }
+  },
+  "required": [
+    "property_id",
+    "title",
+    "description",
+    "category",
+    "status"
+  ]
+}
