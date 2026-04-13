@@ -1,0 +1,72 @@
+{
+  "name": "RentPaymentReminder",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "grace_period_days": {
+      "type": "number",
+      "default": 3,
+      "description": "Days after due date before sending first reminder"
+    },
+    "reminder_frequency_days": {
+      "type": "number",
+      "default": 7,
+      "description": "Days between subsequent reminders"
+    },
+    "notification_method": {
+      "type": "string",
+      "enum": [
+        "email",
+        "sms",
+        "both"
+      ],
+      "default": "email",
+      "description": "How to send notifications"
+    },
+    "max_reminders": {
+      "type": "number",
+      "default": 3,
+      "description": "Maximum number of reminders before escalation"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether reminders are enabled for this tenant"
+    },
+    "last_reminder_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last reminder was sent"
+    },
+    "reminder_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of reminders sent for current arrears"
+    },
+    "escalation_triggered": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether escalation has been triggered"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about reminder settings"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "property_id",
+    "unit_id"
+  ]
+}
