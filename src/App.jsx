@@ -67,6 +67,7 @@ import VirtualCallCenterSetup from './pages/VirtualCallCenterSetup';
 import SalesBrochure from './pages/SalesBrochure';
 import SalesOnePageSummary from './pages/SalesOnePageSummary';
 import OwnerFinancialDashboard from './pages/OwnerFinancialDashboard';
+import SalesDemoSetup from './pages/SalesDemoSetup';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -150,6 +151,7 @@ const AuthenticatedApp = () => {
         <Route path="/sales-brochure" element={<SalesBrochure />} />
         <Route path="/sales-one-pager" element={<SalesOnePageSummary />} />
         <Route path="/owner-financials" element={<OwnerFinancialDashboard />} />
+        <Route path="/sales-demo-setup" element={<SalesDemoSetup />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

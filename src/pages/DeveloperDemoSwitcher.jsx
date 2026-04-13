@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Code2, Zap, Play, Check, AlertCircle, Loader } from 'lucide-react';
+import { Code2, Zap, Play, Check, AlertCircle, Loader, Sparkles } from 'lucide-react';
 
 const DEMO_PROFILES = [
   {
@@ -133,6 +133,22 @@ export default function DeveloperDemoSwitcher() {
             Admin-only tool for rapidly creating fully populated demo profiles with realistic data
           </p>
         </div>
+
+        {/* Sales Demo Builder CTA */}
+        <Card className="mb-6 border-amber-600 bg-amber-950/40 cursor-pointer hover:bg-amber-950/60 transition-colors" onClick={() => navigate('/sales-demo-setup')}>
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-amber-400" />
+                <div>
+                  <p className="text-white font-semibold">Sales Demo Builder (Horwich Agents)</p>
+                  <p className="text-amber-300 text-sm">Research a real letting agent and auto-build a tailored demo — Redman Casey, Regency, Lancasters</p>
+                </div>
+              </div>
+              <Play className="w-5 h-5 text-amber-400" />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Alert */}
         <Alert className="mb-8 bg-amber-950 border-amber-700">

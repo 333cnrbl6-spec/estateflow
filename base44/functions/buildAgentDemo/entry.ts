@@ -1,0 +1,295 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const body = await req.json();
+    const { action, agent_name, agent_location, search_query, research } = body;
+
+    // ── STEP 1: RESEARCH ───────────────────────────────────────────────
+    if (action === 'research') {
+      const prompt = `
+You are a property industry researcher. Search for and compile factual, publicly available information about the letting/estate agency called "${agent_name}" based in ${agent_location}, UK.
+
+Find and return all available information including:
+- Their official trading name and any legal company name
+- Companies House registration number (if available)
+- Registered/trading address
+- Year founded or established
+- Website URL
+- Phone number
+- Services offered (e.g. lettings, property management, block management, sales, surveying)
+- Key directors or partners by name and role
+- Background narrative (2-3 sentences about the company history and focus)
+- Typical portfolio size (residential lettings, block management units etc)
+
+Based on the scale of this agency, recommend realistic demo data numbers:
+- demo_properties: how many properties to create (3-8)
+- demo_units: how many units total across those properties (10-40)  
+- demo_tenants: how many tenants (8-30)
+
+If certain details are not publicly available, use "Not publicly available" or a reasonable estimate.
+
+Return as JSON matching this schema:
+{
+  "trading_name": string,
+  "legal_entity": string,
+  "company_number": string or null,
+  "registered_address": string,
+  "founded": string,
+  "website": string or null,
+  "phone": string or null,
+  "services": array of strings,
+  "services_description": string,
+  "key_people": [{"name": string, "role": string}],
+  "background_notes": string,
+  "demo_properties": number,
+  "demo_units": number,
+  "demo_tenants": number,
+  "portfolio_notes": string
+}
+`;
+
+      const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            trading_name: { type: 'string' },
+            legal_entity: { type: 'string' },
+            company_number: { type: 'string' },
+            registered_address: { type: 'string' },
+            founded: { type: 'string' },
+            website: { type: 'string' },
+            phone: { type: 'string' },
+            services: { type: 'array', items: { type: 'string' } },
+            services_description: { type: 'string' },
+            key_people: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  role: { type: 'string' }
+                }
+              }
+            },
+            background_notes: { type: 'string' },
+            demo_properties: { type: 'number' },
+            demo_units: { type: 'number' },
+            demo_tenants: { type: 'number' },
+            portfolio_notes: { type: 'string' }
+          }
+        }
+      });
+
+      return Response.json({ success: true, research: result });
+    }
+
+    // ── STEP 2: BUILD ──────────────────────────────────────────────────
+    if (action === 'build') {
+      const r = research;
+      const agentName = agent_name;
+      const location = agent_location || 'Horwich, Bolton';
+
+      // Generate realistic property/tenant data using LLM seeded with research
+      const dataPrompt = `
+You are building realistic demo data for a property management platform for the letting agency "${agentName}" based in ${location}.
+
+Agency background: ${r.background_notes || 'Local letting agency'}
+Services: ${(r.services || []).join(', ')}
+Portfolio notes: ${r.portfolio_notes || 'Mix of residential and HMO properties'}
+
+Generate a complete but realistic demo dataset with:
+- ${r.demo_properties || 3} properties (realistic Bolton/Horwich street names and postcodes BL6/BL1/BL3)
+- Each property has 2-8 units
+- ${r.demo_tenants || 10} tenants with realistic UK names
+- Postcodes must be valid Bolton area (BL6 for Horwich, BL1/BL2/BL3 for Bolton)
+
+Return as JSON:
+{
+  "company": {
+    "name": string,
+    "company_number": string,
+    "registered_address": string,
+    "category": "management",
+    "region": "lancashire",
+    "sic_code": "68320",
+    "sic_description": "Management of real estate on a fee or contract basis",
+    "notes": string
+  },
+  "properties": [
+    {
+      "name": string,
+      "address_line_1": string,
+      "city": "Bolton",
+      "postcode": string,
+      "region": "lancashire",
+      "property_type": "freehold_block or house",
+      "ownership_type": "freehold or leasehold",
+      "total_units": number,
+      "notes": string
+    }
+  ],
+  "units": [
+    {
+      "unit_reference": string,
+      "property_index": number,
+      "floor": string,
+      "bedrooms": number,
+      "unit_type": "flat or house",
+      "tenure": "assured_shorthold",
+      "status": "occupied or vacant",
+      "monthly_rent": number
+    }
+  ],
+  "tenants": [
+    {
+      "full_name": string,
+      "email": string,
+      "phone": string,
+      "tenant_type": "assured_shorthold",
+      "unit_index": number,
+      "status": "active",
+      "deposit_amount": number
+    }
+  ],
+  "contacts": [
+    {
+      "full_name": string,
+      "contact_type": "director or contractor",
+      "company_name": string,
+      "notes": string
+    }
+  ]
+}
+`;
+
+      const demoData = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt: dataPrompt,
+        add_context_from_internet: false,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            company: { type: 'object' },
+            properties: { type: 'array', items: { type: 'object' } },
+            units: { type: 'array', items: { type: 'object' } },
+            tenants: { type: 'array', items: { type: 'object' } },
+            contacts: { type: 'array', items: { type: 'object' } }
+          }
+        }
+      });
+
+      // Insert Company
+      const company = await base44.asServiceRole.entities.Company.create({
+        ...demoData.company,
+        name: demoData.company?.name || agentName,
+        directors: (r.key_people || []).map(p => ({
+          name: p.name,
+          role: p.role,
+          appointed_date: '2015-01-01'
+        }))
+      });
+
+      // Insert Properties and track IDs
+      const propertyIds = [];
+      for (const prop of (demoData.properties || [])) {
+        const created = await base44.asServiceRole.entities.Property.create({
+          ...prop,
+          owning_company: company.id
+        });
+        propertyIds.push(created.id);
+      }
+
+      // Insert Units and track IDs
+      const unitIds = [];
+      for (const unit of (demoData.units || [])) {
+        const propId = propertyIds[unit.property_index] || propertyIds[0];
+        const { property_index, ...unitData } = unit;
+        const created = await base44.asServiceRole.entities.Unit.create({
+          ...unitData,
+          property_id: propId
+        });
+        unitIds.push(created.id);
+      }
+
+      // Insert Tenants
+      const tenantIds = [];
+      for (const tenant of (demoData.tenants || [])) {
+        const unitId = unitIds[tenant.unit_index] || unitIds[0];
+        const { unit_index, ...tenantData } = tenant;
+        const created = await base44.asServiceRole.entities.Tenant.create({
+          ...tenantData,
+          unit_id: unitId,
+          property_id: propertyIds[0]
+        });
+        tenantIds.push(created.id);
+      }
+
+      // Insert Contacts (key people + contractors from research)
+      const allContacts = [
+        ...(r.key_people || []).map(p => ({
+          full_name: p.name,
+          contact_type: 'director',
+          company_name: agentName,
+          notes: p.role
+        })),
+        ...(demoData.contacts || []).filter(c => c.contact_type !== 'director')
+      ];
+      for (const contact of allContacts) {
+        await base44.asServiceRole.entities.Contact.create(contact);
+      }
+
+      // Create sample financial transactions
+      const now = new Date();
+      for (let i = 0; i < Math.min(tenantIds.length, 8); i++) {
+        await base44.asServiceRole.entities.FinancialTransaction.create({
+          description: `Rent - ${(demoData.tenants || [])[i]?.full_name || 'Tenant'}`,
+          transaction_type: 'rent_payment',
+          amount: (demoData.units || [])[i]?.monthly_rent || 750,
+          direction: 'income',
+          status: 'paid',
+          paid_date: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0],
+          property_id: propertyIds[0],
+          unit_id: unitIds[i] || unitIds[0],
+          tenant_id: tenantIds[i]
+        });
+      }
+
+      // Create sample maintenance orders
+      const maintenanceItems = [
+        { title: 'Boiler service required', category: 'plumbing', priority: 'standard' },
+        { title: 'External gutter repair', category: 'structural', priority: 'urgent' },
+        { title: 'Communal lighting fault', category: 'electrical', priority: 'standard' },
+      ];
+      for (const item of maintenanceItems) {
+        await base44.asServiceRole.entities.MaintenanceOrder.create({
+          ...item,
+          description: `Reported by tenant. Action required.`,
+          property_id: propertyIds[0],
+          status: 'reported'
+        });
+      }
+
+      return Response.json({
+        success: true,
+        summary: `${agentName} demo created with ${propertyIds.length} properties, ${unitIds.length} units, ${tenantIds.length} tenants and financial records.`,
+        counts: {
+          companies: 1,
+          properties: propertyIds.length,
+          units: unitIds.length,
+          tenants: tenantIds.length
+        }
+      });
+    }
+
+    return Response.json({ error: 'Invalid action' }, { status: 400 });
+
+  } catch (error) {
+    return Response.json({ success: false, error: error.message }, { status: 500 });
+  }
+});
