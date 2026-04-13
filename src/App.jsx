@@ -75,6 +75,7 @@ import SubscriberOnboarding from './pages/SubscriberOnboarding';
 import DocumentRepository from './pages/DocumentRepository';
 import MaintenanceBoard from './pages/MaintenanceBoard';
 import LandlordPortal from './pages/LandlordPortal';
+import BankReconciliation from './pages/BankReconciliation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -166,6 +167,7 @@ const AuthenticatedApp = () => {
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/maintenance-board" element={<MaintenanceBoard />} />
         <Route path="/landlord-portal" element={<LandlordPortal />} />
+        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
