@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ export default function SalesDemoSetup() {
   const [researchData, setResearchData] = useState(null);
   const [error, setError] = useState(null);
   const [buildResult, setBuildResult] = useState(null);
+  const queryClient = useQueryClient();
 
   const handleSearch = async () => {
     if (!searchName.trim()) return;
@@ -70,6 +72,10 @@ export default function SalesDemoSetup() {
       if (res.data?.success) {
         setBuildResult(res.data);
         setStep('done');
+        // Invalidate so DemoSwitcher and other pages pick up the new demo
+        queryClient.invalidateQueries({ queryKey: ['demo-switcher-companies'] });
+        queryClient.invalidateQueries({ queryKey: ['demo-switcher-properties'] });
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       } else {
         setError(res.data?.error || 'Build failed. Please try again.');
         setStep('preview');
