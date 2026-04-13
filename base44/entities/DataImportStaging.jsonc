@@ -1,0 +1,118 @@
+{
+  "name": "DataImportStaging",
+  "type": "object",
+  "properties": {
+    "import_session_id": {
+      "type": "string",
+      "description": "Unique session for this import batch"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Target company"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "property",
+        "unit",
+        "tenant",
+        "landlord",
+        "contractor",
+        "financial_transaction",
+        "maintenance_order",
+        "service_charge",
+        "nominal"
+      ],
+      "description": "What entity type this staged record is"
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Which source file this came from"
+    },
+    "staged_data": {
+      "type": "object",
+      "description": "The cleansed data ready to import"
+    },
+    "original_data": {
+      "type": "object",
+      "description": "Original extracted data before cleansing"
+    },
+    "cleansing_applied": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "original_value": {
+            "type": "string"
+          },
+          "cleansed_value": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Track all transformations applied"
+    },
+    "duplicate_merge_id": {
+      "type": "string",
+      "description": "If this record was merged with another, reference the merge decision"
+    },
+    "quality_score": {
+      "type": "number",
+      "description": "Data quality score 0-100"
+    },
+    "validation_warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Non-critical issues found"
+    },
+    "validation_errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Critical issues that block import"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "staged",
+        "approved",
+        "rejected",
+        "committed",
+        "failed"
+      ],
+      "default": "staged",
+      "description": "Import status"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "User who approved this record"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "committed_entity_id": {
+      "type": "string",
+      "description": "ID of created entity after commit"
+    },
+    "commit_notes": {
+      "type": "string",
+      "description": "Notes about the import"
+    }
+  },
+  "required": [
+    "import_session_id",
+    "company_id",
+    "entity_type",
+    "staged_data"
+  ]
+}
