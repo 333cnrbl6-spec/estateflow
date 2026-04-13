@@ -1,0 +1,193 @@
+{
+  "name": "UserType",
+  "type": "object",
+  "properties": {
+    "type_name": {
+      "type": "string",
+      "enum": [
+        "subscriber",
+        "sales_person",
+        "developer",
+        "admin",
+        "viewer"
+      ],
+      "description": "User type identifier"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable name (e.g., 'Property Manager', 'Sales Agent')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of this user type's role and capabilities"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this user type is active"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "entities": {
+          "type": "object",
+          "description": "Entity-level permissions",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "read": {
+                "type": "boolean",
+                "default": false
+              },
+              "create": {
+                "type": "boolean",
+                "default": false
+              },
+              "update": {
+                "type": "boolean",
+                "default": false
+              },
+              "delete": {
+                "type": "boolean",
+                "default": false
+              },
+              "filter_scope": {
+                "type": "string",
+                "description": "Filter query for data scoping (e.g., 'owning_company={user.company_id}')"
+              }
+            }
+          }
+        },
+        "features": {
+          "type": "object",
+          "description": "Feature-level permissions",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "pages": {
+          "type": "object",
+          "description": "Page access permissions",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "integrations": {
+          "type": "object",
+          "description": "Integration access permissions",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "ui_config": {
+      "type": "object",
+      "properties": {
+        "default_dashboard": {
+          "type": "string",
+          "description": "Default dashboard/route for this user type"
+        },
+        "sidebar_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which sidebar groups to show"
+        },
+        "hidden_pages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Pages to hide from this user type"
+        },
+        "custom_components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom components to render for this user type"
+        },
+        "branding": {
+          "type": "object",
+          "properties": {
+            "primary_color": {
+              "type": "string"
+            },
+            "logo_url": {
+              "type": "string"
+            },
+            "theme": {
+              "type": "string",
+              "enum": [
+                "light",
+                "dark",
+                "auto"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "data_scope": {
+      "type": "object",
+      "properties": {
+        "company_filter": {
+          "type": "boolean",
+          "default": false,
+          "description": "Filter data by user's company"
+        },
+        "property_filter": {
+          "type": "boolean",
+          "default": false,
+          "description": "Filter data by user's assigned properties"
+        },
+        "region_filter": {
+          "type": "boolean",
+          "default": false,
+          "description": "Filter data by user's region"
+        },
+        "custom_scope": {
+          "type": "string",
+          "description": "Custom filter query for advanced scoping"
+        }
+      }
+    },
+    "automation_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trigger": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "object"
+          }
+        }
+      },
+      "description": "Automated actions for this user type"
+    },
+    "onboarding_flow": {
+      "type": "string",
+      "description": "Onboarding flow identifier for this user type"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type_name",
+    "display_name",
+    "permissions"
+  ]
+}

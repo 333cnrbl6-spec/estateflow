@@ -1,0 +1,123 @@
+{
+  "name": "UserRole",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to User entity"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User's email for quick lookup"
+    },
+    "user_type_id": {
+      "type": "string",
+      "description": "Reference to UserType entity"
+    },
+    "user_type": {
+      "type": "string",
+      "enum": [
+        "subscriber",
+        "sales_person",
+        "developer",
+        "admin",
+        "viewer"
+      ],
+      "description": "Cached user type for quick access"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Company this user belongs to (for data scoping)"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Cached company name"
+    },
+    "assigned_properties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Property IDs this user has access to"
+    },
+    "assigned_regions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "london",
+          "brighton",
+          "blackpool",
+          "ipswich",
+          "leeds",
+          "kettering",
+          "north_wales",
+          "lancashire",
+          "morecambe",
+          "bolton",
+          "colne",
+          "other"
+        ]
+      },
+      "description": "Regions this user has access to"
+    },
+    "permissions_override": {
+      "type": "object",
+      "description": "Custom permissions that override UserType defaults",
+      "properties": {
+        "entities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "read": {
+                "type": "boolean"
+              },
+              "create": {
+                "type": "boolean"
+              },
+              "update": {
+                "type": "boolean"
+              },
+              "delete": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this role assignment is active"
+    },
+    "activated_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deactivated_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Admin who created this role assignment"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "user_email",
+    "user_type_id",
+    "user_type"
+  ]
+}
