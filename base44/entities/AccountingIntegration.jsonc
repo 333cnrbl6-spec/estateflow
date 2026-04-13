@@ -2,68 +2,116 @@
   "name": "AccountingIntegration",
   "type": "object",
   "properties": {
-    "provider": {
-      "type": "string",
-      "enum": [
-        "quickbooks",
-        "xero"
-      ],
-      "description": "Accounting software provider"
-    },
     "company_id": {
       "type": "string",
-      "description": "Powell & Co company this integration is for"
+      "description": "Reference to Company entity"
     },
-    "status": {
+    "package_type": {
       "type": "string",
       "enum": [
-        "active",
+        "xero",
+        "sage",
+        "quickbooks",
+        "freeagent",
+        "wave",
+        "freshbooks"
+      ],
+      "description": "Accounting software package"
+    },
+    "connection_status": {
+      "type": "string",
+      "enum": [
+        "connected",
+        "pending_auth",
         "disconnected",
         "error"
       ],
-      "default": "active"
+      "default": "pending_auth",
+      "description": "Current connection status"
     },
-    "realm_id": {
+    "access_token": {
       "type": "string",
-      "description": "QuickBooks realm/company ID"
+      "description": "OAuth access token (encrypted in transit)"
+    },
+    "refresh_token": {
+      "type": "string",
+      "description": "OAuth refresh token (encrypted in transit)"
     },
     "tenant_id": {
       "type": "string",
-      "description": "Xero tenant ID"
+      "description": "Tenant/Realm ID (e.g., Xero Tenant ID, QB Realm ID)"
     },
-    "last_sync_date": {
+    "organization_id": {
       "type": "string",
-      "format": "date"
+      "description": "Organization ID for the connected account"
     },
-    "sync_interval_hours": {
+    "last_synced": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When Chart of Accounts was last synced"
+    },
+    "last_sync_error": {
+      "type": "string",
+      "description": "Error message from last failed sync"
+    },
+    "sync_frequency": {
+      "type": "string",
+      "enum": [
+        "realtime",
+        "hourly",
+        "daily",
+        "weekly",
+        "manual"
+      ],
+      "default": "daily",
+      "description": "How often to sync data"
+    },
+    "auto_create_nominals": {
+      "type": "boolean",
+      "default": true,
+      "description": "Automatically create Nominal records for new accounts"
+    },
+    "auto_sync_transactions": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically sync transactions from accounting package"
+    },
+    "auto_sync_invoices": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically sync invoices from accounting package"
+    },
+    "nominal_records_created": {
       "type": "number",
-      "default": 24,
-      "description": "Hours between automatic syncs"
+      "default": 0,
+      "description": "Count of Nominal records created from this integration"
     },
-    "auto_sync_enabled": {
-      "type": "boolean",
-      "default": true
+    "transaction_sync_date": {
+      "type": "string",
+      "format": "date",
+      "description": "From which date to sync historical transactions"
     },
-    "sync_transactions": {
-      "type": "boolean",
-      "default": true,
-      "description": "Sync rent/income transactions"
+    "authorized_by_user_id": {
+      "type": "string",
+      "description": "User ID who authorized this connection"
     },
-    "sync_expenses": {
-      "type": "boolean",
-      "default": true,
-      "description": "Sync expense transactions"
+    "authorization_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the integration was authorized"
     },
-    "sync_journal_entries": {
-      "type": "boolean",
-      "default": false
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the access token expires"
     },
     "notes": {
-      "type": "string"
+      "type": "string",
+      "description": "Additional integration notes"
     }
   },
   "required": [
-    "provider",
-    "company_id"
+    "company_id",
+    "package_type"
   ]
 }
