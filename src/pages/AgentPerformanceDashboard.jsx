@@ -524,13 +524,3 @@ function CommunicationStat({ label, value, icon: Icon }) {
     </Card>
   );
 }
-
-// Helper functions moved to top level to avoid undefined errors
-const transformMonthlyData = (monthlyData) => {
-  if (!monthlyData) return [];
-  return Object.entries(monthlyData).map(([month, count]) => ({
-    month: format(new Date(month + '-01'), 'MMM yyyy'),
-    leads: count,
-    sales: Math.round(count * 0.3), // Approximation
-  }));
-};
