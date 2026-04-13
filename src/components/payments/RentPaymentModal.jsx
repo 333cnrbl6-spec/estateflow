@@ -5,15 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import {
-  Loader2, Lock, CheckCircle2, AlertTriangle, Download, X
+  Loader2, Lock, CheckCircle2, AlertTriangle, Download, X, Repeat, Calendar, CreditCard
 } from 'lucide-react';
 
-export default function RentPaymentModal({ open, onOpenChange, amount, propertyName, dueDate, transactionId, onSuccess }) {
+export default function RentPaymentModal({ open, onOpenChange, amount, propertyName, dueDate, transactionId, tenantId, propertyId, onSuccess }) {
   const [cardDetails, setCardDetails] = useState({ number: '', expiry: '', cvc: '' });
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [setupRecurring, setSetupRecurring] = useState(false);
+  const [recurringDay, setRecurringDay] = useState(1);
 
   const processPayment = useMutation({
     mutationFn: async () => {
@@ -62,9 +67,53 @@ export default function RentPaymentModal({ open, onOpenChange, amount, propertyN
     },
   });
 
+  const setupRecurringPayment = useMutation({
+    mutationFn: async () => {
+      const stripeResponse = await fetch('https://api.stripe.com/v1/payment_methods', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          type: 'card',
+          'card[number]': cardDetails.number.replace(/\s/g, ''),
+          'card[exp_month]': cardDetails.expiry.split('/')[0],
+          'card[exp_year]': '20' + cardDetails.expiry.split('/')[1],
+          'card[cvc]': cardDetails.cvc,
+          key: 'pk_test_YOUR_PUBLISHABLE_KEY',
+        }),
+      });
+
+      if (!stripeResponse.ok) throw new Error('Failed to create payment method');
+      const pmData = await stripeResponse.json();
+
+      const startDate = new Date();
+      startDate.setDate(recurringDay);
+      if (startDate < new Date()) startDate.setMonth(startDate.getMonth() + 1);
+
+      const res = await base44.functions.invoke('setupRecurringPayment', {
+        tenant_id: tenantId,
+        payment_method_id: pmData.id,
+        amount,
+        start_date: startDate.toISOString().split('T')[0],
+        day_of_month: recurringDay,
+        property_id: propertyId,
+      });
+
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setSuccess({ ...data, recurring: true });
+      if (onSuccess) setTimeout(() => onSuccess(data), 2000);
+    },
+    onError: (err) => setError(err.message),
+  });
+
   const handlePaymentSubmit = () => {
     setError(null);
-    processPayment.mutate();
+    if (setupRecurring && tenantId) {
+      setupRecurringPayment.mutate();
+    } else {
+      processPayment.mutate();
+    }
   };
 
   if (success) {
@@ -83,7 +132,11 @@ export default function RentPaymentModal({ open, onOpenChange, amount, propertyN
               <p><strong>Confirmed:</strong> {success.paid_date}</p>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
-              A receipt has been generated and is available in your Documents.
+            {success.recurring ? (
+              <>A receipt has been generated. You'll receive email confirmations for all future automatic payments.</>
+            ) : (
+              <>A receipt has been generated and is available in your Documents.</>
+            )}
             </p>
             <Button
               onClick={() => {
@@ -133,6 +186,48 @@ export default function RentPaymentModal({ open, onOpenChange, amount, propertyN
               <AlertTriangle className="w-4 h-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+
+          {/* Recurring Payment Option */}
+          {tenantId && (
+            <div className="border rounded-lg p-3 bg-slate-50 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Repeat className="w-4 h-4 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium">Set up automatic monthly payments</p>
+                    <p className="text-xs text-muted-foreground">Never miss a payment - cancel anytime</p>
+                  </div>
+                </div>
+                <Switch checked={setupRecurring} onCheckedChange={setSetupRecurring} />
+              </div>
+
+              {setupRecurring && (
+                <div className="space-y-2 pt-2 border-t">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Payment day</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="31"
+                        value={recurringDay}
+                        onChange={(e) => setRecurringDay(parseInt(e.target.value) || 1)}
+                        className="h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Monthly amount</Label>
+                      <div className="h-8 flex items-center text-sm font-medium">£{amount}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 text-xs text-muted-foreground bg-blue-50 border border-blue-100 rounded p-2">
+                    <Calendar className="w-3 h-3 mt-0.5 shrink-0" />
+                    <p>Your card will be charged £{amount} on the {recurringDay}{getDaySuffix(recurringDay)} of each month. Email confirmation sent after each payment.</p>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Card Details Form */}
@@ -200,13 +295,13 @@ export default function RentPaymentModal({ open, onOpenChange, amount, propertyN
             </Button>
             <Button
               onClick={handlePaymentSubmit}
-              disabled={!cardDetails.number || !cardDetails.expiry || !cardDetails.cvc || processPayment.isPending}
+              disabled={!cardDetails.number || !cardDetails.expiry || !cardDetails.cvc || (setupRecurringPayment.isPending || processPayment.isPending)}
               className="flex-1 gap-2"
             >
-              {processPayment.isPending ? (
+              {(setupRecurringPayment.isPending || processPayment.isPending) ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
               ) : (
-                <><Lock className="w-4 h-4" /> Pay £{amount}</>
+                <><Lock className="w-4 h-4" /> {setupRecurring ? 'Set Up Auto-Pay' : 'Pay'} £{amount}</>
               )}
             </Button>
           </div>
@@ -214,4 +309,14 @@ export default function RentPaymentModal({ open, onOpenChange, amount, propertyN
       </DialogContent>
     </Dialog>
   );
+}
+
+function getDaySuffix(day) {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
+  }
 }

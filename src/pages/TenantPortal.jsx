@@ -15,6 +15,7 @@ import {
 import { format, parseISO, differenceInDays } from 'date-fns';
 import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
+import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -196,6 +197,7 @@ function PayRentModal({ open, onClose, unit, tenantId, propertyId }) {
 
 function PaymentsTab({ tenantId, unit, propertyId }) {
   const [showPayModal, setShowPayModal] = useState(false);
+  const [showRecurring, setShowRecurring] = useState(false);
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['tenant-transactions', tenantId],
     queryFn: () => base44.entities.FinancialTransaction.filter({ tenant_id: tenantId }),
@@ -209,14 +211,43 @@ function PaymentsTab({ tenantId, unit, propertyId }) {
     <div className="space-y-4">
       <PayRentModal open={showPayModal} onClose={() => setShowPayModal(false)} unit={unit} tenantId={tenantId} propertyId={propertyId} />
 
-      {/* Pay now banner */}
-      {unit?.monthly_rent && (
-        <div className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 p-4 flex items-center justify-between">
-          <div>
-            <p className="text-white font-bold text-base">Monthly Rent Due</p>
-            <p className="text-white/80 text-sm">£{unit.monthly_rent.toLocaleString()} / month</p>
+      {/* Pay now + Auto-pay banner */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {unit?.monthly_rent && (
+          <div className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 p-4 flex items-center justify-between">
+            <div>
+              <p className="text-white font-bold text-base">Monthly Rent Due</p>
+              <p className="text-white/80 text-sm">£{unit.monthly_rent.toLocaleString()} / month</p>
+            </div>
+            <Button onClick={() => setShowPayModal(true)} className="bg-white text-green-700 hover:bg-white/90 font-bold">Pay Now</Button>
           </div>
-          <Button onClick={() => setShowPayModal(true)} className="bg-white text-green-700 hover:bg-white/90 font-bold">Pay Now</Button>
+        )}
+        <div className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 p-4 flex items-center justify-between">
+          <div>
+            <p className="text-white font-bold text-base">Auto-Pay Setup</p>
+            <p className="text-white/80 text-sm">Never miss a payment</p>
+          </div>
+          <Button onClick={() => setShowRecurring(true)} variant="outline" className="bg-white text-blue-700 hover:bg-white/90 font-bold">Manage</Button>
+        </div>
+      </div>
+
+      {/* Recurring Payments Modal */}
+      {showRecurring && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <Repeat className="w-5 h-5 text-blue-600" /> Automatic Payments
+                  </h3>
+                  <p className="text-xs text-muted-foreground">Manage your recurring rent payments</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setShowRecurring(false)}>Close</Button>
+              </div>
+              <RecurringPaymentsManager tenantId={tenantId} />
+            </div>
+          </div>
         </div>
       )}
 
