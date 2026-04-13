@@ -17,7 +17,10 @@ import {
   Mail,
   MapPin,
   Database,
-  Download
+  Download,
+  Calendar,
+  MessageSquare,
+  BarChart3
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -28,6 +31,8 @@ import LeadCard from "@/components/sales/LeadCard";
 import TransactionPipeline from "@/components/sales/TransactionPipeline";
 import SalesSearchFilters from "@/components/sales/SalesSearchFilters";
 import LeadScoringPanel from "@/components/sales/LeadScoringPanel";
+import SalesMessageThread from "@/components/sales/SalesMessageThread";
+import ViewingScheduler from "@/components/sales/ViewingScheduler";
 
 export default function SalesDashboard() {
   const [leadFormOpen, setLeadFormOpen] = useState(false);
@@ -208,11 +213,19 @@ export default function SalesDashboard() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="leads">Leads ({leads.length})</TabsTrigger>
           <TabsTrigger value="listings">Listings ({listings.length})</TabsTrigger>
           <TabsTrigger value="pipeline">Pipeline ({transactions.length})</TabsTrigger>
+          <TabsTrigger value="messages">
+            <MessageSquare className="w-4 h-4 mr-1" />
+            Messages
+          </TabsTrigger>
+          <TabsTrigger value="viewings">
+            <Calendar className="w-4 h-4 mr-1" />
+            Viewings
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -363,6 +376,88 @@ export default function SalesDashboard() {
 
         <TabsContent value="pipeline">
           <TransactionPipeline transactions={transactions} isLoading={transactionsLoading} />
+        </TabsContent>
+
+        <TabsContent value="messages">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />
+                  Communication Hub
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Message buyers and sellers about properties, offers, and viewings
+                </p>
+              </CardHeader>
+              <CardContent>
+                {leads.length === 0 && listings.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                    <p>No conversations yet</p>
+                    <p className="text-sm mt-1">Add leads or listings to start messaging</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Quick access to recent conversations */}
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {leads.slice(0, 4).map((lead) => (
+                        <div key={lead.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <p className="font-medium">{lead.contact_name}</p>
+                              <p className="text-xs text-muted-foreground">{lead.lead_type} • {lead.contact_email}</p>
+                            </div>
+                            <Badge variant={lead.priority_tier === 'hot' ? 'default' : 'secondary'}>
+                              {lead.priority_tier || 'new'}
+                            </Badge>
+                          </div>
+                          <SalesMessageThread
+                            listingId={null}
+                            leadId={lead.id}
+                            threadId={`lead_${lead.id}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="viewings">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5" />
+                      Viewing Appointments
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Schedule and manage property viewings
+                    </p>
+                  </div>
+                  <Button onClick={() => window.location.href = '/viewings'}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    View All
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <Calendar className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                  <p className="text-muted-foreground mb-4">Manage viewings in the dedicated page</p>
+                  <Button onClick={() => window.location.href = '/viewings'}>
+                    Go to Viewings Page
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

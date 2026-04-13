@@ -1,0 +1,121 @@
+{
+  "name": "ViewingAppointment",
+  "type": "object",
+  "properties": {
+    "sales_listing_id": {
+      "type": "string",
+      "description": "Reference to SalesListing entity"
+    },
+    "sales_lead_id": {
+      "type": "string",
+      "description": "Reference to SalesLead entity (interested buyer)"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity (viewer)"
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Name of person viewing"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Email of viewer"
+    },
+    "contact_phone": {
+      "type": "string",
+      "description": "Phone number of viewer"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "User ID of assigned agent"
+    },
+    "agent_name": {
+      "type": "string",
+      "description": "Name of showing agent"
+    },
+    "appointment_type": {
+      "type": "string",
+      "enum": [
+        "first_viewing",
+        "second_viewing",
+        "virtual_tour",
+        "phone_consultation",
+        "property_valuation"
+      ],
+      "default": "first_viewing",
+      "description": "Type of appointment"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled appointment date/time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 30,
+      "description": "Expected duration in minutes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "requested",
+        "confirmed",
+        "completed",
+        "cancelled",
+        "no_show",
+        "rescheduled"
+      ],
+      "default": "requested",
+      "description": "Appointment status"
+    },
+    "location_type": {
+      "type": "string",
+      "enum": [
+        "in_person",
+        "virtual",
+        "phone"
+      ],
+      "default": "in_person",
+      "description": "How the viewing will be conducted"
+    },
+    "meeting_instructions": {
+      "type": "string",
+      "description": "Where to meet, access codes, etc."
+    },
+    "calendar_link": {
+      "type": "string",
+      "description": "Google Calendar or Outlook calendar event link"
+    },
+    "reminder_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether reminder was sent"
+    },
+    "reminder_sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When reminder was sent"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Viewer feedback after viewing"
+    },
+    "feedback_submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When feedback was submitted"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the viewing"
+    }
+  },
+  "required": [
+    "sales_listing_id",
+    "contact_name",
+    "contact_email",
+    "scheduled_date",
+    "agent_id"
+  ]
+}

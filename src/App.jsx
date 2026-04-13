@@ -82,6 +82,7 @@ import MaintenanceReports from './pages/MaintenanceReports';
 import SalesDashboard from './pages/SalesDashboard';
 import MarketReports from './pages/MarketReports';
 import BuyerPortal from './pages/BuyerPortal';
+import Viewings from './pages/Viewings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -180,6 +181,7 @@ const AuthenticatedApp = () => {
         <Route path="/sales" element={<SalesDashboard />} />
         <Route path="/market-reports" element={<MarketReports />} />
         <Route path="/buyer-portal" element={<BuyerPortal />} />
+        <Route path="/viewings" element={<Viewings />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

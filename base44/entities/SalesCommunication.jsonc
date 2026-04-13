@@ -1,0 +1,142 @@
+{
+  "name": "SalesCommunication",
+  "type": "object",
+  "properties": {
+    "sales_listing_id": {
+      "type": "string",
+      "description": "Reference to SalesListing entity"
+    },
+    "sales_lead_id": {
+      "type": "string",
+      "description": "Reference to SalesLead entity"
+    },
+    "offer_id": {
+      "type": "string",
+      "description": "Reference to Offer entity"
+    },
+    "thread_id": {
+      "type": "string",
+      "description": "Unique conversation thread identifier"
+    },
+    "sender_type": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "buyer",
+        "seller"
+      ],
+      "description": "Who sent the message"
+    },
+    "sender_id": {
+      "type": "string",
+      "description": "Contact ID or User ID of sender"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Display name of sender"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Email of sender"
+    },
+    "recipient_type": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "buyer",
+        "seller"
+      ],
+      "description": "Who receives the message"
+    },
+    "recipient_id": {
+      "type": "string",
+      "description": "Contact ID or User ID of recipient"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Display name of recipient"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of recipient"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Message subject"
+    },
+    "body": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "offer_update",
+        "viewing_request",
+        "viewing_confirmation",
+        "general_inquiry",
+        "negotiation",
+        "document_request",
+        "other"
+      ],
+      "default": "general_inquiry",
+      "description": "Category of message"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "delivered",
+        "read",
+        "archived"
+      ],
+      "default": "sent",
+      "description": "Message delivery status"
+    },
+    "is_sms_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether SMS notification was sent"
+    },
+    "sms_sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When SMS was sent"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "file_url": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Attached files"
+    },
+    "replied_to_message_id": {
+      "type": "string",
+      "description": "If this is a reply, reference to original message"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "thread_id",
+    "sender_type",
+    "sender_id",
+    "sender_name",
+    "recipient_type",
+    "recipient_id",
+    "recipient_name",
+    "body"
+  ]
+}
