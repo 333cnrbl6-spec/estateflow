@@ -1,0 +1,48 @@
+{
+  "name": "AgentExpansionReport",
+  "type": "object",
+  "properties": {
+    "agent_name": {
+      "type": "string"
+    },
+    "agent_location": {
+      "type": "string"
+    },
+    "agent_summary": {
+      "type": "string"
+    },
+    "services_overview": {
+      "type": "string"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "existing_software": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "competitor_software": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "integration_opportunities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommendation": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "agent_name"
+  ]
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,12 +8,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import {
   Building2, Search, CheckCircle2, Loader2, ChevronRight,
-  MapPin, Globe, Phone, Users, Home, FileText, Zap, ArrowLeft
+  MapPin, Globe, Phone, Users, Home, FileText, Zap, ArrowLeft, Lightbulb
 } from 'lucide-react';
 
 const STEPS = ['choose', 'researching', 'preview', 'building', 'done'];
 
 export default function SalesDemoSetup() {
+  const navigate = useNavigate();
   const [step, setStep] = useState('choose');
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [searchName, setSearchName] = useState('');
@@ -335,7 +337,8 @@ export default function SalesDemoSetup() {
               <Loader2 className="w-12 h-12 text-green-400 animate-spin mx-auto mb-4" />
               <h2 className="text-xl font-bold text-white mb-2">Building Demo…</h2>
               <p className="text-slate-400 text-sm">
-                Creating company, properties, units, tenants, financial records and compliance data.
+                Creating company, properties, units, tenants, financial records, compliance data
+                <br />and running expansion opportunity research.
               </p>
             </CardContent>
           </Card>
@@ -363,12 +366,34 @@ export default function SalesDemoSetup() {
                   </div>
                 ))}
               </div>
-              <div className="flex gap-3 justify-center">
+              {buildResult.expansion_included && (
+                <Card className="bg-amber-950/40 border-amber-800 text-left mb-6 mx-auto max-w-md">
+                  <CardContent className="pt-3 pb-3">
+                    <div className="flex items-start gap-2">
+                      <Lightbulb className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                      <div className="text-xs text-amber-200">
+                        <span className="font-semibold text-amber-400">Expansion report included — </span>
+                        {buildResult.expansion_summary?.buildable_count || 0} buildable services,{' '}
+                        {buildResult.expansion_summary?.software_detected || 0} software detected,{' '}
+                        {buildResult.expansion_summary?.integrations_count || 0} integration opportunities.
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              <div className="flex gap-3 justify-center flex-wrap">
                 <Button
                   onClick={() => window.location.href = '/'}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   Go to Dashboard
+                </Button>
+                <Button
+                  onClick={() => navigate('/expansion-opportunities')}
+                  className="bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  <Lightbulb className="w-4 h-4 mr-1" />
+                  View Expansion Opportunities
                 </Button>
                 <Button variant="outline" onClick={handleReset} className="border-green-700 text-green-300 hover:bg-green-900">
                   Build Another Demo

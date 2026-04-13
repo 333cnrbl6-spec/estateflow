@@ -260,6 +260,76 @@ Return as JSON:
         });
       }
 
+      // ── Run expansion research in parallel ────────────────────────
+      let expansionReport = null;
+      try {
+        const expansionPrompt = `
+You are a property technology analyst and sales consultant for Premiso, a UK property management SaaS platform.
+
+Research the letting/estate agent or property company called "${agentName}" based in ${location}.
+
+Premiso's CURRENT SCOPE includes:
+- Portfolio management (companies, properties, units, leases)
+- Residential lettings & tenancy management
+- Block management & service charges
+- RTM (Right to Manage) processes
+- Compliance tracking (gas safety, EPC, EICR, fire safety, building safety)
+- Maintenance order management
+- Financial management (rent ledger, ground rent, service charges, banking)
+- Document generation & templates
+- CRM & contact management
+- Out-of-hours call handling
+- Tenant & leaseholder portals
+
+OUTSIDE current scope (but potentially buildable): residential property SALES, mortgage referrals, conveyancing, property surveys/valuations, auction management, holiday lets, commercial property management, student accommodation platforms, build-to-rent platforms, HMO licensing management, energy performance certification issuance.
+
+Agent services: ${(r.services || []).join(', ')}
+Agent background: ${r.background_notes || ''}
+
+Your task:
+1. For each service, classify as: in_scope, buildable, integration, or out_of_scope
+2. Identify software/CRM/platforms they likely already use
+3. For out-of-scope/buildable services, identify main competitor software in the UK market
+4. For competitor software with APIs, assess integration feasibility
+5. Recommend integration/build opportunities prioritised by business value
+
+Return JSON matching this schema.
+`;
+        expansionReport = await base44.asServiceRole.integrations.Core.InvokeLLM({
+          prompt: expansionPrompt,
+          add_context_from_internet: true,
+          model: 'gemini_3_flash',
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              agent_name: { type: 'string' },
+              agent_summary: { type: 'string' },
+              services_overview: { type: 'string' },
+              services: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, scope: { type: 'string' }, build_notes: { type: 'string' } } } },
+              existing_software: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, category: { type: 'string' }, description: { type: 'string' }, pricing: { type: 'string' }, has_api: { type: 'boolean' }, integration_type: { type: 'string' }, website: { type: 'string' }, confidence: { type: 'string' } } } },
+              competitor_software: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, vendor: { type: 'string' }, covers: { type: 'string' }, pricing: { type: 'string' }, has_api: { type: 'boolean' }, integration_feasibility: { type: 'string' }, api_notes: { type: 'string' } } } },
+              integration_opportunities: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, description: { type: 'string' }, priority: { type: 'string' }, technical_approach: { type: 'string' }, effort: { type: 'string' } } } },
+              recommendation: { type: 'string' }
+            }
+          }
+        });
+
+        // Save expansion report as entity
+        await base44.asServiceRole.entities.AgentExpansionReport.create({
+          agent_name: agentName,
+          agent_location: location,
+          agent_summary: expansionReport.agent_summary || '',
+          services_overview: expansionReport.services_overview || '',
+          services: expansionReport.services || [],
+          existing_software: expansionReport.existing_software || [],
+          competitor_software: expansionReport.competitor_software || [],
+          integration_opportunities: expansionReport.integration_opportunities || [],
+          recommendation: expansionReport.recommendation || ''
+        });
+      } catch (expErr) {
+        console.error('Expansion research failed (non-blocking):', expErr.message);
+      }
+
       // Create sample maintenance orders
       const maintenanceItems = [
         { title: 'Boiler service required', category: 'plumbing', priority: 'standard' },
@@ -269,7 +339,7 @@ Return as JSON:
       for (const item of maintenanceItems) {
         await base44.asServiceRole.entities.MaintenanceOrder.create({
           ...item,
-          description: `Reported by tenant. Action required.`,
+          description: 'Reported by tenant. Action required.',
           property_id: propertyIds[0],
           status: 'reported'
         });
@@ -283,7 +353,14 @@ Return as JSON:
           properties: propertyIds.length,
           units: unitIds.length,
           tenants: tenantIds.length
-        }
+        },
+        expansion_included: !!expansionReport,
+        expansion_summary: expansionReport ? {
+          services_count: (expansionReport.services || []).length,
+          buildable_count: (expansionReport.services || []).filter(s => s.scope === 'buildable').length,
+          integrations_count: (expansionReport.integration_opportunities || []).length,
+          software_detected: (expansionReport.existing_software || []).length
+        } : null
       });
     }
 
