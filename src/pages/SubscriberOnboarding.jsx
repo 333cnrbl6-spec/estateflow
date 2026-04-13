@@ -20,6 +20,7 @@ const STEPS = [
   { id: 'addresses',  label: 'Addresses',       icon: Home },
   { id: 'services',   label: 'Services',        icon: Key },
   { id: 'software',   label: 'Software & Integrations', icon: Globe },
+  { id: 'banking',    label: 'Banking & Accounting',   icon: Receipt },
   { id: 'data_audit', label: 'Your Data',       icon: Database },
   { id: 'data_source',label: 'Data Sources',    icon: HardDrive },
   { id: 'import_pipeline', label: 'Configure Import', icon: Loader2 },
@@ -90,7 +91,8 @@ const DATA_SOURCES = [
 ];
 
 // ─────────────────────────────────────────────────────────────────
-// Step components
+// Step components (StepCompany, StepDirectors, StepAddresses, StepServices, StepSoftware)
+// ... [keeping all existing step functions from before] ...
 // ─────────────────────────────────────────────────────────────────
 
 function StepCompany({ data, onChange }) {
@@ -211,7 +213,6 @@ function StepCompany({ data, onChange }) {
         </div>
       )}
 
-      {/* Manual fallback */}
       {!data.confirmed && (
         <div className="space-y-3 border rounded-xl p-4 bg-slate-50">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Or enter manually</p>
@@ -422,11 +423,6 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
     setSearchQuery('');
   };
 
-  const toggle = (name) => {
-    const confirmed = data.confirmed_directors || [];
-    const next = confirmed.includes(name) ? confirmed.filter(d => d !== name) : [...confirmed, name];
-    onChange({ ...data, confirmed_directors: next });
-  };
   const addDirector = () => onChange({ ...data, directors: [...directors, { name: '', role: 'Director' }] });
 
   return (
@@ -448,67 +444,63 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
           {directors.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Directors</p>
-
-
-
-      <div className="space-y-2">
-        {directors.map((d, i) => {
-          const selected = selectedOfficers.includes(i);
-          return (
-            <div key={i} onClick={() => toggleOfficer(i)}
-              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
-              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
-              <div className="flex-1">
-                <p className="font-medium text-slate-800">{d.name}</p>
-                <p className="text-xs text-muted-foreground">Director {d.appointed_date ? `· Appointed ${d.appointed_date}` : ''}</p>
-              </div>
+              {directors.map((d, i) => {
+                const selected = selectedOfficers.includes(i);
+                return (
+                  <div key={i} onClick={() => toggleOfficer(i)}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+                    {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-800">{d.name}</p>
+                      <p className="text-xs text-muted-foreground">Director {d.appointed_date ? `· Appointed ${d.appointed_date}` : ''}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-        </div>
-        )}
+          )}
 
-        {officers.length > 0 && (
-        <div className="space-y-2">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Other Officers</p>
-        {officers.map((o, i) => {
-          const idx = directors.length + i;
-          const selected = selectedOfficers.includes(idx);
-          return (
-            <div key={idx} onClick={() => toggleOfficer(idx)}
-              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
-              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
-              <div className="flex-1">
-                <p className="font-medium text-slate-800">{o.name}</p>
-                <p className="text-xs text-muted-foreground">{o.role}</p>
-              </div>
+          {officers.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Other Officers</p>
+              {officers.map((o, i) => {
+                const idx = directors.length + i;
+                const selected = selectedOfficers.includes(idx);
+                return (
+                  <div key={idx} onClick={() => toggleOfficer(idx)}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+                    {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-800">{o.name}</p>
+                      <p className="text-xs text-muted-foreground">{o.role}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-        </div>
-        )}
+          )}
 
-        {psc.length > 0 && (
-        <div className="space-y-2">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Persons with Significant Control</p>
-        {psc.map((p, i) => {
-          const idx = directors.length + officers.length + i;
-          const selected = selectedOfficers.includes(idx);
-          return (
-            <div key={idx} onClick={() => toggleOfficer(idx)}
-              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
-              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
-              <div className="flex-1">
-                <p className="font-medium text-slate-800">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.control_type}</p>
-              </div>
+          {psc.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Persons with Significant Control</p>
+              {psc.map((p, i) => {
+                const idx = directors.length + officers.length + i;
+                const selected = selectedOfficers.includes(idx);
+                return (
+                  <div key={idx} onClick={() => toggleOfficer(idx)}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+                    {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-800">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.control_type}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          )}
         </div>
-        )}
-        </div>
-      </div>
+      )}
 
       {selectedOfficers.length > 0 && (
         <div className="space-y-3 bg-green-50 border border-green-200 rounded-xl p-4">
@@ -539,11 +531,7 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
                       <p className="text-xs text-slate-600 mt-1">Roles: {company.officer_roles.join(', ')}</p>
                     )}
                   </div>
-                  <Button
-                    size="sm"
-                    onClick={() => addAssociatedCompanies([company])}
-                    className="gap-1"
-                  >
+                  <Button size="sm" onClick={() => addAssociatedCompanies([company])} className="gap-1">
                     + Add
                   </Button>
                 </div>
@@ -559,11 +547,7 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
           {data.associated_companies.map((c, idx) => (
             <div key={idx} className="flex items-center justify-between text-sm">
               <span className="text-blue-800 font-medium">{c.company_name}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onChange({ ...data, associated_companies: (data.associated_companies || []).filter((_, i) => i !== idx) })}
-              >
+              <Button size="sm" variant="ghost" onClick={() => onChange({ ...data, associated_companies: (data.associated_companies || []).filter((_, i) => i !== idx) })}>
                 ✕
               </Button>
             </div>
@@ -575,13 +559,7 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Or search for other company directors</p>
           <div className="flex gap-2">
-            <Input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && searchAdditionalCompanies()}
-              placeholder="Company name or number"
-              className="flex-1"
-            />
+            <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchAdditionalCompanies()} placeholder="Company name or number" className="flex-1" />
             <Button onClick={searchAdditionalCompanies} disabled={searchingAdditional} variant="outline" className="gap-2">
               {searchingAdditional ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               Search
@@ -599,20 +577,14 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
                     <p className="font-medium text-slate-900">{company.company_name}</p>
                     <p className="text-xs text-muted-foreground">{company.company_number}</p>
                   </div>
-                  <Button
-                    size="sm"
-                    onClick={() => addDirectorsFromCompany(company.directors || [])}
-                    className="gap-1"
-                  >
+                  <Button size="sm" onClick={() => addDirectorsFromCompany(company.directors || [])} className="gap-1">
                     + Add {company.directors?.length || 0} directors
                   </Button>
                 </div>
                 {company.directors && company.directors.length > 0 && (
                   <div className="text-xs space-y-1 mt-2">
                     {company.directors.map((d, didx) => (
-                      <div key={didx} className="text-muted-foreground">
-                        {d.name} · {d.role}
-                      </div>
+                      <div key={didx} className="text-muted-foreground">{d.name} · {d.role}</div>
                     ))}
                   </div>
                 )}
@@ -630,18 +602,8 @@ Return as JSON with fields: directors (array), officers (array), persons_with_co
         <div className="space-y-2 border rounded-xl p-4 bg-slate-50">
           {(data.manual_directors || [{ name: '', role: 'Director' }]).map((d, i) => (
             <div key={i} className="flex gap-2">
-              <Input placeholder="Full name" value={d.name}
-                onChange={e => {
-                  const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])];
-                  next[i] = { ...next[i], name: e.target.value };
-                  onChange({ ...data, manual_directors: next, directors: next });
-                }} />
-              <Input placeholder="Role" value={d.role}
-                onChange={e => {
-                  const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])];
-                  next[i] = { ...next[i], role: e.target.value };
-                  onChange({ ...data, manual_directors: next, directors: next });
-                }} className="w-36" />
+              <Input placeholder="Full name" value={d.name} onChange={e => { const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])]; next[i] = { ...next[i], name: e.target.value }; onChange({ ...data, manual_directors: next, directors: next }); }} />
+              <Input placeholder="Role" value={d.role} onChange={e => { const next = [...(data.manual_directors || [{ name: '', role: 'Director' }])]; next[i] = { ...next[i], role: e.target.value }; onChange({ ...data, manual_directors: next, directors: next }); }} className="w-36" />
             </div>
           ))}
         </div>
@@ -660,30 +622,18 @@ function StepAddresses({ data, onChange }) {
 
       <div className="space-y-3 border rounded-xl p-4 bg-slate-50">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Registered Address</p>
-        <Input value={data.registered_address || ''} placeholder="Registered address"
-          onChange={e => onChange({ ...data, registered_address: e.target.value })} />
+        <Input value={data.registered_address || ''} placeholder="Registered address" onChange={e => onChange({ ...data, registered_address: e.target.value })} />
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Branch / Trading Addresses</p>
-          <Button variant="outline" size="sm" onClick={() => {
-            const branches = [...(data.branches || []), ''];
-            onChange({ ...data, branches });
-          }}>+ Add branch</Button>
+          <Button variant="outline" size="sm" onClick={() => { const branches = [...(data.branches || []), '']; onChange({ ...data, branches }); }}>+ Add branch</Button>
         </div>
         {(data.branches || ['']).map((b, i) => (
           <div key={i} className="flex gap-2">
-            <Input value={b} placeholder={`Branch ${i + 1} address`}
-              onChange={e => {
-                const branches = [...(data.branches || [''])];
-                branches[i] = e.target.value;
-                onChange({ ...data, branches });
-              }} />
-            <Button variant="ghost" size="icon" onClick={() => {
-              const branches = (data.branches || ['']).filter((_, j) => j !== i);
-              onChange({ ...data, branches });
-            }}><X className="w-4 h-4" /></Button>
+            <Input value={b} placeholder={`Branch ${i + 1} address`} onChange={e => { const branches = [...(data.branches || [''])]; branches[i] = e.target.value; onChange({ ...data, branches }); }} />
+            <Button variant="ghost" size="icon" onClick={() => { const branches = (data.branches || ['']).filter((_, j) => j !== i); onChange({ ...data, branches }); }}><X className="w-4 h-4" /></Button>
           </div>
         ))}
       </div>
@@ -724,9 +674,7 @@ function StepServices({ data, onChange }) {
         <p className="text-sm text-muted-foreground mt-1">Select all that apply. This helps us configure your dashboard and workflows.</p>
       </div>
       <MultiSelect items={SERVICES} selected={selected} onToggle={toggle} columns={2} />
-      {selected.length > 0 && (
-        <p className="text-xs text-primary font-medium">{selected.length} service{selected.length > 1 ? 's' : ''} selected</p>
-      )}
+      {selected.length > 0 && (<p className="text-xs text-primary font-medium">{selected.length} service{selected.length > 1 ? 's' : ''} selected</p>)}
     </div>
   );
 }
@@ -768,6 +716,144 @@ function StepSoftware({ data, onChange }) {
   );
 }
 
+function StepBankingSetup({ data, onChange }) {
+  const accountingSoftware = data.software || [];
+  const selectedBanks = data.banks || [];
+  const bankDataLocations = data.bank_data_locations || [];
+
+  const banks = [
+    { id: 'hsbc', label: 'HSBC' },
+    { id: 'lloyds', label: 'Lloyds' },
+    { id: 'barclays', label: 'Barclays' },
+    { id: 'santander', label: 'Santander' },
+    { id: 'natwest', label: 'NatWest' },
+    { id: 'metro', label: 'Metro Bank' },
+    { id: 'business_bank', label: 'Business Bank' },
+    { id: 'other', label: 'Other UK Bank' },
+  ];
+
+  const accountingFeatures = [
+    { id: 'multi_currency', label: 'Multi-currency transactions' },
+    { id: 'vat_tracking', label: 'VAT tracking & returns' },
+    { id: 'expense_tracking', label: 'Expense tracking' },
+    { id: 'invoicing', label: 'Invoicing' },
+    { id: 'payroll', label: 'Payroll' },
+    { id: 'recurring_billing', label: 'Recurring billing / subscriptions' },
+  ];
+
+  const handleBankToggle = (bankId) => {
+    const next = selectedBanks.includes(bankId) ? selectedBanks.filter(b => b !== bankId) : [...selectedBanks, bankId];
+    onChange({ ...data, banks: next });
+  };
+
+  const handleLocationToggle = (locId) => {
+    const next = bankDataLocations.includes(locId) ? bankDataLocations.filter(l => l !== locId) : [...bankDataLocations, locId];
+    onChange({ ...data, bank_data_locations: next });
+  };
+
+  const connectedSoftware = accountingSoftware.filter(s => ['xero', 'sage', 'quickbooks', 'freeagent'].includes(s));
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Banking & Accounting Setup</h2>
+        <p className="text-sm text-muted-foreground mt-1">Tell us about your banking and how you manage accounting. This helps us integrate directly with your systems and sync data automatically.</p>
+      </div>
+
+      {connectedSoftware.length > 0 && (
+        <div className="space-y-3 bg-green-50 border border-green-200 rounded-xl p-4">
+          <p className="text-sm font-semibold text-green-800">✓ Accounting software detected</p>
+          <div className="flex flex-wrap gap-2">
+            {connectedSoftware.map(s => (
+              <div key={s} className="bg-white rounded px-3 py-1.5 text-xs font-medium text-green-700 border border-green-200">
+                {s.toUpperCase()}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-green-700 mt-2">We'll configure real-time data sync from these systems. Historical data can be imported via CSV exports.</p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Which banks do you use for business?</p>
+        <div className="grid grid-cols-2 gap-2">
+          {banks.map(bank => {
+            const selected = selectedBanks.includes(bank.id);
+            return (
+              <div key={bank.id} onClick={() => handleBankToggle(bank.id)}
+                className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all text-sm font-medium ${
+                  selected ? 'border-primary bg-primary/5 text-primary' : 'border-border hover:border-primary/40 text-slate-700'
+                }`}>
+                {selected ? <Check className="w-4 h-4 shrink-0" /> : <Circle className="w-4 h-4 shrink-0" />}
+                {bank.label}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Where do you currently keep bank statements & data?</p>
+        {[
+          { id: 'bank_csv', label: 'Bank CSV exports', desc: 'Downloaded monthly from online banking' },
+          { id: 'accounting_software', label: 'In accounting software (Xero/Sage/QB)', desc: 'Data synced from banks already' },
+          { id: 'spreadsheet', label: 'Spreadsheets (Excel/Sheets)', desc: 'Manual entry or bank imports' },
+          { id: 'cloud_storage', label: 'Cloud storage (Google Drive, OneDrive)', desc: 'Shared folder with statements' },
+          { id: 'email', label: 'Email attachments', desc: 'Bank statements emailed' },
+          { id: 'accounting_agent', label: 'Accountant / Bookkeeper', desc: 'Managed by external party' },
+        ].map(loc => {
+          const selected = bankDataLocations.includes(loc.id);
+          return (
+            <div key={loc.id} onClick={() => handleLocationToggle(loc.id)}
+              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+              }`}>
+              {selected ? <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> : <Circle className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-medium ${selected ? 'text-primary' : 'text-slate-900'}`}>{loc.label}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{loc.desc}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Which accounting features do you use?</p>
+        <div className="space-y-2">
+          {accountingFeatures.map(feat => {
+            const selected = (data.accounting_features || []).includes(feat.id);
+            return (
+              <div key={feat.id} onClick={() => {
+                const next = selected ? (data.accounting_features || []).filter(f => f !== feat.id) : [...(data.accounting_features || []), feat.id];
+                onChange({ ...data, accounting_features: next });
+              }} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+              }`}>
+                {selected ? <Check className="w-4 h-4 text-primary" /> : <Circle className="w-4 h-4 text-muted-foreground" />}
+                <span className={`text-sm font-medium ${selected ? 'text-primary' : 'text-slate-700'}`}>{feat.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {(connectedSoftware.length > 0 || selectedBanks.length > 0) && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-blue-900">✓ Integrations to configure</p>
+          <ul className="text-xs text-blue-800 space-y-1">
+            {connectedSoftware.includes('xero') && <li>• Xero API: Real-time chart of accounts, invoices, and transactions sync</li>}
+            {connectedSoftware.includes('sage') && <li>• Sage API: Monthly reconciliation of GL accounts</li>}
+            {connectedSoftware.includes('quickbooks') && <li>• QuickBooks API: Automated transaction import</li>}
+            {bankDataLocations.includes('bank_csv') && <li>• Bank CSV import: Monthly statement parsing and reconciliation</li>}
+            {bankDataLocations.includes('cloud_storage') && <li>• Cloud storage: Connect Google Drive, OneDrive for automated file retrieval</li>}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StepDataAudit({ data, onChange }) {
   const selected = data.data_types || [];
   const toggle = (id) => onChange({ ...data, data_types: selected.includes(id) ? selected.filter(s => s !== id) : [...selected, id] });
@@ -790,15 +876,7 @@ function StepDataAudit({ data, onChange }) {
                 <span className={`text-sm font-medium ${active ? 'text-primary' : 'text-slate-700'}`}>{item.label}</span>
               </div>
               {active && (
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder="Count?"
-                  className="w-24 h-8 text-xs"
-                  value={counts[item.id] || ''}
-                  onChange={e => onChange({ ...data, data_counts: { ...counts, [item.id]: e.target.value } })}
-                  onClick={e => e.stopPropagation()}
-                />
+                <Input type="number" min="0" placeholder="Count?" className="w-24 h-8 text-xs" value={counts[item.id] || ''} onChange={e => onChange({ ...data, data_counts: { ...counts, [item.id]: e.target.value } })} onClick={e => e.stopPropagation()} />
               )}
             </div>
           );
@@ -929,6 +1007,8 @@ function StepReview({ data, onBuild, building, buildResult }) {
        <ReviewRow label="Branch addresses" value={`${(data.branches || []).filter(Boolean).length} address(es)`} />
        <ReviewRow label="Services" value={`${(data.services || []).length} service types`} />
        <ReviewRow label="Existing software" value={(data.software || []).join(', ') || 'None selected'} />
+       <ReviewRow label="Banks" value={`${(data.banks || []).length} bank(s)`} />
+       <ReviewRow label="Bank data location" value={(data.bank_data_locations || []).join(', ') || 'Not specified'} />
        <ReviewRow label="Data types" value={`${(data.data_types || []).length} categories`}
          sub={Object.entries(counts).filter(([,v]) => v).map(([k,v]) => `${k.replace(/_/g,' ')}: ~${v}`).join(', ')} />
        <ReviewRow label="Files uploaded" value={`${(data.classified_files || []).length} files (${hasFiles} classified by AI)`} />
@@ -989,9 +1069,6 @@ function ReviewRow({ label, value, sub }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Main page
-// ─────────────────────────────────────────────────────────────────
 export default function SubscriberOnboarding() {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -1042,6 +1119,9 @@ ${(formData.associated_companies || []).map(c => `- ${c.company_name} (${c.compa
 
 Services: ${(formData.services || []).join(', ')}
 Software: ${(formData.software || []).join(', ')}
+Banks: ${(formData.banks || []).join(', ')}
+Bank data locations: ${(formData.bank_data_locations || []).join(', ')}
+Accounting features: ${(formData.accounting_features || []).join(', ')}
 Data types available: ${JSON.stringify(formData.data_counts || {})}
 Files uploaded: ${(formData.classified_files || []).map(f => f.classification?.document_type).join(', ')}
 
@@ -1061,8 +1141,6 @@ Generate a realistic onboarding summary: what records would be created, what wor
       setBuilding(false);
     }
   };
-
-  const currentStep = STEPS[step];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
@@ -1106,11 +1184,12 @@ Generate a realistic onboarding summary: what records would be created, what wor
             {step === 2 && <StepAddresses data={formData} onChange={setFormData} />}
             {step === 3 && <StepServices data={formData} onChange={setFormData} />}
             {step === 4 && <StepSoftware data={formData} onChange={setFormData} />}
-            {step === 5 && <StepDataAudit data={formData} onChange={setFormData} />}
-            {step === 6 && <StepDataSource data={formData} onChange={setFormData} />}
-            {step === 7 && <StepImportPipeline data={formData} onChange={setFormData} />}
-            {step === 8 && <StepUpload data={formData} onChange={setFormData} />}
-            {step === 9 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
+            {step === 5 && <StepBankingSetup data={formData} onChange={setFormData} />}
+            {step === 6 && <StepDataAudit data={formData} onChange={setFormData} />}
+            {step === 7 && <StepDataSource data={formData} onChange={setFormData} />}
+            {step === 8 && <StepImportPipeline data={formData} onChange={setFormData} />}
+            {step === 9 && <StepUpload data={formData} onChange={setFormData} />}
+            {step === 10 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
           </div>
 
           {/* Navigation */}
