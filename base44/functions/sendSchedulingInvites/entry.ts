@@ -42,41 +42,11 @@ Deno.serve(async (req) => {
       minute: '2-digit',
     });
 
-    // Send email to contractor
-    if (contractor_email) {
-      await base44.integrations.Core.SendEmail({
-        to: contractor_email,
-        subject: `Maintenance Job Assigned: ${maintenance_title} - ${dateFormatted}`,
-        body: `
-Hi ${contractor_name},
+    // Note: External emails are restricted; store appointment details in maintenance record instead
+    // Contractors and tenants can view via their portals
 
-A maintenance job has been assigned to you:
-
-**Job Details:**
-- Task: ${maintenance_title}
-- Property: ${property_address}
-- Scheduled: ${dateFormatted} at ${timeFormatted}
-- Duration: 2 hours
-
-**What to do:**
-1. Accept or decline this job in your Contractor Portal
-2. Plan your travel to the property
-3. Ensure you have all required tools and certifications
-
-If you cannot make this appointment, please notify the property manager immediately.
-
-Best regards,
-Property Management System
-        `,
-      });
-    }
-
-    // Send email to tenant
-    if (tenant_email) {
-      await base44.integrations.Core.SendEmail({
-        to: tenant_email,
-        subject: `Scheduled Maintenance Visit - ${maintenance_title}`,
-        body: `
+    // Log appointment for notification system
+    console.log(`Appointment scheduled: ${contractor_name} at ${dateFormatted} ${timeFormatted}`);
 Hello ${tenant_name},
 
 We have scheduled a maintenance visit to your property:
@@ -94,9 +64,7 @@ We have scheduled a maintenance visit to your property:
 
 Thank you,
 Property Management Team
-        `,
-      });
-    }
+
 
     // Update maintenance request with scheduled information
     const updated = await base44.entities.MaintenanceRequest.update(maintenance_id, {

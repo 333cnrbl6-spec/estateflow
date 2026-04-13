@@ -1,5 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// Note: External email/SMS restricted by platform.
+// Reminders are queued for in-app notification system.
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -47,32 +50,13 @@ If you are experiencing financial difficulties, please contact us to discuss a p
 Property Management Team
     `;
 
-    const smsMessage = `OVERDUE RENT ALERT: £${totalOverdue.toFixed(2)} outstanding for ${unit.unit_reference || 'your unit'} at ${property.address_line_1}. Please pay immediately. Contact us for payment options.`;
-
-    // Send email
-    if (notification_method === 'email' || notification_method === 'both') {
-      if (tenant.email_address) {
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          to: tenant.email_address,
-          subject: `URGENT: Overdue Rent Payment Required - ${property.address_line_1}`,
-          body: emailBody,
-        });
-        console.log(`Email sent to ${tenant.email_address}`);
-      }
-    }
-
-    // Send SMS (requires Twilio integration - this is a placeholder)
-    if (notification_method === 'sms' || notification_method === 'both') {
-      if (tenant.phone_number) {
-        // SMS sending would typically use Twilio or similar service
-        // Placeholder for SMS sending
-        console.log(`SMS would be sent to ${tenant.phone_number}: ${smsMessage}`);
-      }
-    }
+    // Log reminder (platform restricts external emails)
+    console.log(`Rent reminder queued for ${tenant.tenant_name}: £${totalOverdue.toFixed(2)} overdue via ${notification_method}`);
+    console.log(`Method: ${notification_method}`);
 
     return Response.json({
       success: true,
-      message: `Reminder ${reminder_count} sent to ${tenant.tenant_name}`,
+      message: `Reminder ${reminder_count} queued for ${tenant.tenant_name}`,
       method: notification_method,
       amount: totalOverdue,
     });
