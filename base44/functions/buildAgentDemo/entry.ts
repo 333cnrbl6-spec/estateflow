@@ -117,7 +117,7 @@ Return as JSON:
     "company_number": string,
     "registered_address": string,
     "category": "management",
-    "region": "lancashire",
+    "region": string,
     "sic_code": "68320",
     "sic_description": "Management of real estate on a fee or contract basis",
     "notes": string
@@ -225,10 +225,13 @@ Return as JSON:
       for (const tenant of (demoData.tenants || [])) {
         const unitId = unitIds[tenant.unit_index] || unitIds[0];
         const { unit_index, ...tenantData } = tenant;
+        // Find the unit's property so each tenant is linked to the correct property
+        const unitRecord = demoData.units?.[tenant.unit_index];
+        const unitPropId = unitRecord ? (propertyIds[unitRecord.property_index] || propertyIds[0]) : propertyIds[0];
         const created = await base44.asServiceRole.entities.Tenant.create({
           ...tenantData,
           unit_id: unitId,
-          property_id: propertyIds[0]
+          property_id: unitPropId
         });
         tenantIds.push(created.id);
       }
