@@ -107,7 +107,7 @@ export default function HelperBot() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 max-w-sm">
+    <div className="fixed bottom-6 right-6 z-[9999] max-w-sm">
       {open ? (
         <Card className="shadow-2xl border-slate-200">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
