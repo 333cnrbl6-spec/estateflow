@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import Papa from 'papaparse';
 
 const REQUIRED_FIELDS = {
   property: ['name', 'postcode', 'property_type', 'ownership_type'],
@@ -49,40 +48,75 @@ export default function DataCSVUploadAndMapping({ onComplete }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
 
+  const parseCSV = (text) => {
+    const lines = text.trim().split('\n');
+    if (lines.length === 0) return { headers: [], rows: [] };
+    
+    const headers = lines[0]
+      .split(',')
+      .map(h => h.trim().replace(/^"|"$/g, ''));
+    
+    const rows = lines.slice(1).map(line => {
+      const matches = line.match(/(?:^|,)(?:"(?:[^"])*"|[^,]*)(?:,|$)/g);
+      if (!matches) return [];
+      
+      return matches.map(cell => 
+        cell
+          .replace(/^[,]|[,]$/g, '')
+          .trim()
+          .replace(/^"|"$/g, '')
+      );
+    });
+    
+    return { headers, rows };
+  };
+
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setCsvFile(file);
     setError(null);
-    Papa.parse(file, {
-      complete: (results) => {
-        if (results.data.length > 0) {
-          const detectedHeaders = results.data[0];
-          setHeaders(detectedHeaders);
-          setCsvData(results.data.slice(1));
-          
-          // Auto-map headers
-          const autoMapping = {};
-          detectedHeaders.forEach((header) => {
-            const suggestions = FIELD_SUGGESTIONS[selectedType] || {};
-            for (const [targetField, possibleNames] of Object.entries(suggestions)) {
-              if (possibleNames.some(name => 
-                header.toLowerCase().includes(name.toLowerCase()) ||
-                name.toLowerCase().includes(header.toLowerCase())
-              )) {
-                autoMapping[header] = targetField;
-                break;
-              }
-            }
-          });
-          setMapping(autoMapping);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target.result;
+        const { headers, rows } = parseCSV(text);
+        
+        if (headers.length === 0) {
+          setError('CSV file is empty');
+          return;
         }
-      },
-      error: (error) => {
+
+        setHeaders(headers);
+        setCsvData(rows);
+        
+        // Auto-map headers
+        const autoMapping = {};
+        headers.forEach((header) => {
+          const suggestions = FIELD_SUGGESTIONS[selectedType] || {};
+          for (const [targetField, possibleNames] of Object.entries(suggestions)) {
+            if (possibleNames.some(name => 
+              header.toLowerCase().includes(name.toLowerCase()) ||
+              name.toLowerCase().includes(header.toLowerCase())
+            )) {
+              autoMapping[header] = targetField;
+              break;
+            }
+          }
+        });
+        setMapping(autoMapping);
+      } catch (error) {
         setError(`CSV parsing failed: ${error.message}`);
-      },
-    });
+      }
+    };
+    
+    reader.onerror = () => {
+      setError('Failed to read file');
+    };
+    
+    reader.readAsText(file);
   };
 
   const handleMappingChange = (csvHeader, targetField) => {
