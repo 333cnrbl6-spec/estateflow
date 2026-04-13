@@ -237,15 +237,25 @@ function StepDirectors({ data, onChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchingAdditional, setSearchingAdditional] = useState(false);
   const [additionalResults, setAdditionalResults] = useState([]);
+  const [searchingAssociated, setSearchingAssociated] = useState(false);
+  const [associatedCompanies, setAssociatedCompanies] = useState([]);
+  const [selectedOfficers, setSelectedOfficers] = useState(data.selected_officer_ids || []);
 
   const directors = data.directors || [];
+  const officers = data.officers || [];
+  const psc = data.persons_with_control || [];
+  const allOfficers = [...directors, ...officers, ...psc];
 
   const fetchDirectorsFromCompaniesHouse = async () => {
     if (!data.company_number) return;
     setFetching(true);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `Fetch all directors from Companies House for company number: ${data.company_number}. Return their full names, appointment dates, and roles. Return as a JSON array of objects with fields: name, appointed_date, role, nationality.`,
+        prompt: `From Companies House for company number ${data.company_number}, fetch:
+1. All directors/officers (role, appointment_date, nationality)
+2. All officers beyond directors
+3. All persons with significant control (PSC) - name, control type, date notified
+Return as JSON with fields: directors (array), officers (array), persons_with_control (array). Each person should have: name, role/type, appointed_date, nationality (if available).`,
         add_context_from_internet: true,
         response_json_schema: {
           type: 'object',
@@ -258,21 +268,103 @@ function StepDirectors({ data, onChange }) {
                   name: { type: 'string' },
                   appointed_date: { type: 'string' },
                   role: { type: 'string' },
-                  nationality: { type: 'string' }
+                  nationality: { type: 'string' },
+                  type: { type: 'string', enum: ['director'] }
+                }
+              }
+            },
+            officers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  role: { type: 'string' },
+                  appointed_date: { type: 'string' },
+                  type: { type: 'string', enum: ['officer'] }
+                }
+              }
+            },
+            persons_with_control: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  control_type: { type: 'string' },
+                  date_notified: { type: 'string' },
+                  type: { type: 'string', enum: ['psc'] }
                 }
               }
             }
           }
         }
       });
-      if (res.directors && res.directors.length > 0) {
-        onChange({ ...data, directors: res.directors });
-      }
+      onChange({
+        ...data,
+        directors: res.directors || [],
+        officers: res.officers || [],
+        persons_with_control: res.persons_with_control || []
+      });
     } catch (error) {
       console.error('Error fetching directors:', error);
     } finally {
       setFetching(false);
     }
+  };
+
+  const toggleOfficer = (officerId) => {
+    const next = selectedOfficers.includes(officerId)
+      ? selectedOfficers.filter(id => id !== officerId)
+      : [...selectedOfficers, officerId];
+    setSelectedOfficers(next);
+    onChange({ ...data, selected_officer_ids: next });
+  };
+
+  const searchAssociatedCompanies = async () => {
+    if (selectedOfficers.length === 0) return;
+    setSearchingAssociated(true);
+    try {
+      const officerNames = allOfficers
+        .filter((_, idx) => selectedOfficers.includes(idx))
+        .map(o => o.name)
+        .join(', ');
+
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `From Companies House, find all companies where ANY of these officers/directors are also involved: ${officerNames}. Return up to 10 most relevant companies (excluding their main company). For each company return: company_name, company_number, status, registered_address, officer_roles_in_company.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            associated_companies: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  company_name: { type: 'string' },
+                  company_number: { type: 'string' },
+                  status: { type: 'string' },
+                  registered_address: { type: 'string' },
+                  officer_roles: { type: 'array', items: { type: 'string' } }
+                }
+              }
+            }
+          }
+        }
+      });
+      setAssociatedCompanies(res.associated_companies || []);
+    } finally {
+      setSearchingAssociated(false);
+    }
+  };
+
+  const addAssociatedCompanies = (companies) => {
+    const existingCompanies = data.associated_companies || [];
+    const newCompanies = companies.filter(
+      c => !existingCompanies.some(ec => ec.company_number === c.company_number)
+    );
+    onChange({ ...data, associated_companies: [...existingCompanies, ...newCompanies] });
+    setAssociatedCompanies([]);
   };
 
   const searchAdditionalCompanies = async () => {
@@ -338,44 +430,148 @@ function StepDirectors({ data, onChange }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Confirm directors</h2>
-        <p className="text-sm text-muted-foreground mt-1">Fetch from Companies House or search for additional company directors to add.</p>
+        <h2 className="text-xl font-bold text-slate-900">Officers & Control</h2>
+        <p className="text-sm text-muted-foreground mt-1">Fetch all directors, officers, and persons with significant control from Companies House. Then discover associated companies.</p>
       </div>
 
-      {data.company_number && !directors.length && (
+      {data.company_number && !allOfficers.length && (
         <Button onClick={fetchDirectorsFromCompaniesHouse} disabled={fetching} className="w-full gap-2" variant="outline">
           {fetching ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-          Fetch Directors from Companies House
+          Fetch Officers from Companies House
         </Button>
       )}
 
-      {directors.length > 0 && (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Company Directors</p>
+      {allOfficers.length > 0 && (
+        <div className="space-y-4">
+          {directors.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Directors</p>
 
 
 
       <div className="space-y-2">
         {directors.map((d, i) => {
-          const confirmed = (data.confirmed_directors || []).includes(d.name);
+          const selected = selectedOfficers.includes(i);
           return (
-            <div key={i} onClick={() => toggle(d.name)}
-              className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                confirmed ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
-              }`}>
-              {confirmed ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+            <div key={i} onClick={() => toggleOfficer(i)}
+              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
               <div className="flex-1">
                 <p className="font-medium text-slate-800">{d.name}</p>
-                <p className="text-xs text-muted-foreground">{d.role} {d.appointed_date ? `· Appointed ${d.appointed_date}` : ''}</p>
+                <p className="text-xs text-muted-foreground">Director {d.appointed_date ? `· Appointed ${d.appointed_date}` : ''}</p>
               </div>
             </div>
           );
         })}
+        </div>
+        )}
+
+        {officers.length > 0 && (
+        <div className="space-y-2">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Other Officers</p>
+        {officers.map((o, i) => {
+          const idx = directors.length + i;
+          const selected = selectedOfficers.includes(idx);
+          return (
+            <div key={idx} onClick={() => toggleOfficer(idx)}
+              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">{o.name}</p>
+                <p className="text-xs text-muted-foreground">{o.role}</p>
+              </div>
+            </div>
+          );
+        })}
+        </div>
+        )}
+
+        {psc.length > 0 && (
+        <div className="space-y-2">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Persons with Significant Control</p>
+        {psc.map((p, i) => {
+          const idx = directors.length + officers.length + i;
+          const selected = selectedOfficers.includes(idx);
+          return (
+            <div key={idx} onClick={() => toggleOfficer(idx)}
+              className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${selected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'}`}>
+              {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-muted-foreground shrink-0" />}
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">{p.name}</p>
+                <p className="text-xs text-muted-foreground">{p.control_type}</p>
+              </div>
+            </div>
+          );
+        })}
+        </div>
+        )}
+        </div>
       </div>
+
+      {selectedOfficers.length > 0 && (
+        <div className="space-y-3 bg-green-50 border border-green-200 rounded-xl p-4">
+          <p className="text-sm font-semibold text-green-900">{selectedOfficers.length} officer(s) selected</p>
+          <Button onClick={searchAssociatedCompanies} disabled={searchingAssociated} className="w-full gap-2" variant="outline">
+            {searchingAssociated ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+            Search for Associated Companies
+          </Button>
+        </div>
+      )}
+
+      {associatedCompanies.length > 0 && (
+        <div className="border rounded-xl p-4 bg-amber-50 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-amber-900">Found {associatedCompanies.length} associated companies</p>
+            <Button size="sm" onClick={() => addAssociatedCompanies(associatedCompanies)} className="gap-1">
+              + Add All
+            </Button>
+          </div>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {associatedCompanies.map((company, idx) => (
+              <div key={idx} className="bg-white border border-amber-200 rounded-lg p-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-medium text-slate-900">{company.company_name}</p>
+                    <p className="text-xs text-muted-foreground">{company.company_number} · {company.status}</p>
+                    {company.officer_roles && company.officer_roles.length > 0 && (
+                      <p className="text-xs text-slate-600 mt-1">Roles: {company.officer_roles.join(', ')}</p>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => addAssociatedCompanies([company])}
+                    className="gap-1"
+                  >
+                    + Add
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(data.associated_companies || []).length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-blue-900">Associated Companies to Add ({data.associated_companies.length})</p>
+          {data.associated_companies.map((c, idx) => (
+            <div key={idx} className="flex items-center justify-between text-sm">
+              <span className="text-blue-800 font-medium">{c.company_name}</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onChange({ ...data, associated_companies: (data.associated_companies || []).filter((_, i) => i !== idx) })}
+              >
+                ✕
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-4">
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Search for directors from other companies</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Or search for other company directors</p>
           <div className="flex gap-2">
             <Input
               value={searchQuery}
