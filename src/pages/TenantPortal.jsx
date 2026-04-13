@@ -17,6 +17,7 @@ import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
 import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';
 import MessageHub from '@/components/messaging/MessageHub';
+import TenantDocumentUpload from '@/components/tenants/TenantDocumentUpload';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -484,7 +485,7 @@ function NotificationsTab({ tenantId }) {
 
 // ── Tab: Documents ─────────────────────────────────────────────────────────────
 
-function DocumentsTab({ tenantId, propertyId }) {
+function DocumentsTab({ tenantId, propertyId, unitId }) {
   const { data: docs = [], isLoading } = useQuery({
     queryKey: ['tenant-documents', tenantId, propertyId],
     queryFn: async () => {
@@ -496,10 +497,11 @@ function DocumentsTab({ tenantId, propertyId }) {
     enabled: !!(tenantId || propertyId),
   });
 
-  const DOC_ICONS = { welcome_pack: '👋', emergency_contacts: '🆘', tenancy_agreement: '📋', inspection: '🔍', other: '📄' };
+  const DOC_ICONS = { welcome_pack: '👋', emergency_contacts: '🆘', tenancy_agreement: '📋', inspection: '🔍', 'ID Document': '🪪', 'Proof of Residency': '🏠', 'Signed Agreement': '✍️', 'Bank Statement': '🏦', 'Employment Letter': '💼', other: '📄' };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
+      <TenantDocumentUpload tenantId={tenantId} propertyId={propertyId} unitId={unitId} />
       <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
         <Lock className="w-3.5 h-3.5" /> Documents are securely stored. Only documents shared with you are visible here.
       </div>
@@ -665,7 +667,7 @@ export default function TenantPortal() {
           <TabsContent value="payments"><PaymentsTab tenantId={tenantId} unit={unit} propertyId={tenant.property_id} /></TabsContent>
           <TabsContent value="maintenance"><MaintenanceTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab tenantId={tenantId} /></TabsContent>
-          <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} /></TabsContent>
+          <TabsContent value="documents"><DocumentsTab tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
           <TabsContent value="messages"><MessageHub tenantId={tenantId} propertyId={tenant.property_id} unitId={tenant.unit_id} /></TabsContent>
         </Tabs>
       </div>
