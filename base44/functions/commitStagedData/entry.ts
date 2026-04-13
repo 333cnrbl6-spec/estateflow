@@ -19,15 +19,15 @@ Deno.serve(async (req) => {
     // Get approved staging records
     const approvedRecords = await base44.entities.DataImportStaging.filter({
       import_session_id,
-      id: { $in: approved_ids },
       status: 'approved',
     });
+    const recordsToCommit = approvedRecords.filter(r => approved_ids.includes(r.id));
 
     const committed = { properties: 0, units: 0, tenants: 0, transactions: 0, other: 0 };
     const failures = [];
 
     // Commit each record by entity type
-    for (const stagingRecord of approvedRecords) {
+    for (const stagingRecord of recordsToCommit) {
       try {
         const { entity_type, staged_data, company_id } = stagingRecord;
         let createdId = null;
@@ -41,6 +41,11 @@ Deno.serve(async (req) => {
           createdId = result.id;
           committed.units++;
         } else if (entity_type === 'tenant') {
+          // Validate unit exists
+          if (staged_data.unit_id) {
+            const unit = await base44.entities.Unit.get(staged_data.unit_id).catch(() => null);
+            if (!unit) throw new Error(`Unit ${staged_data.unit_id} not found`);
+          }
           const result = await base44.entities.Tenant.create(staged_data);
           createdId = result.id;
           committed.tenants++;
@@ -79,12 +84,14 @@ Deno.serve(async (req) => {
 
     return Response.json({
       success: failures.length === 0,
-      message: `Committed ${approvedRecords.length - failures.length} records`,
+      message: `Committed ${recordsToCommit.length - failures.length} of ${recordsToCommit.length} records`,
       committed,
       failures,
       stats: {
-        total_approved: approvedRecords.length,
-        successfully_committed: approvedRecords.length - failures.length,
+        total_requested: approved_ids.length,
+        total_found: approvedRecords.length,
+        total_processed: recordsToCommit.length,
+        successfully_committed: recordsToCommit.length - failures.length,
         failed: failures.length,
       },
     });

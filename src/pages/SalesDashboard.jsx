@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { useState } from "react";
 import StatCard from "@/components/shared/StatCard";
 import SalesLeadFormDialog from "@/components/sales/SalesLeadFormDialog";
 import SalesListingCard from "@/components/sales/SalesListingCard";

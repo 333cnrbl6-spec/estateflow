@@ -394,10 +394,11 @@ test.describe('Human User Journeys - Core Management', () => {
           // Upload file (mock)
           const fileInput = page.locator('input[type="file"]');
           if (await fileInput.isVisible()) {
+            const mockBuffer = new TextEncoder().encode('mock pdf content');
             await fileInput.setInputFiles({
               name: 'gas_certificate.pdf',
               mimeType: 'application/pdf',
-              buffer: Buffer.from('mock pdf content')
+              buffer: mockBuffer
             });
           }
           

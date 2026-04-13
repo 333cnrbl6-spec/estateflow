@@ -93,7 +93,7 @@ Cleansing rules:
       staged: created.filter(r => r.status === 'staged').length,
       failed: created.filter(r => r.status === 'failed').length,
       total: created.length,
-      avg_quality_score: (created.reduce((sum, r) => sum + (r.quality_score || 0), 0) / created.length).toFixed(1),
+      avg_quality_score: created.length > 0 ? (created.reduce((sum, r) => sum + (r.quality_score || 0), 0) / created.length).toFixed(1) : 0,
     };
 
     return Response.json({

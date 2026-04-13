@@ -58,13 +58,32 @@ Deno.serve(async (req) => {
     // Prepare Nominal records for bulk creation/update
     const nominalRecords = chartOfAccounts.map(account => mapToNominal(account, company_id, accounting_package));
 
-    // Bulk create Nominal records
-    const created = await base44.entities.Nominal.bulkCreate(nominalRecords);
+    // Check for existing accounts by code to avoid duplicates
+    const existingCodes = new Set();
+    const existingNominals = await base44.entities.Nominal.filter({ company_id });
+    existingNominals.forEach(n => existingCodes.add(n.account_code));
+
+    // Filter out duplicates
+    const newRecords = nominalRecords.filter(r => !existingCodes.has(r.account_code));
+    
+    if (newRecords.length === 0) {
+      return Response.json({
+        success: true,
+        message: `All ${nominalRecords.length} accounts already exist`,
+        accounts_synced: 0,
+        accounts_skipped: nominalRecords.length,
+      });
+    }
+
+    // Bulk create only new Nominal records
+    const created = await base44.entities.Nominal.bulkCreate(newRecords);
 
     return Response.json({
       success: true,
-      message: `Synced ${created.length} accounts from ${accounting_package}`,
+      message: `Synced ${created.length} new accounts from ${accounting_package} (${nominalRecords.length - created.length} duplicates skipped)`,
       accounts_synced: created.length,
+      accounts_skipped: nominalRecords.length - created.length,
+      total_in_system: existingNominals.length + created.length,
       sample_accounts: created.slice(0, 3),
     });
   } catch (error) {
