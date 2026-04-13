@@ -166,7 +166,7 @@ export default function SalesListingCard({ listing }) {
           </div>
         </div>
       </CardContent>
-      
+
       {/* Valuation Dialog */}
       {showValuation && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -185,7 +185,6 @@ export default function SalesListingCard({ listing }) {
           </div>
         </div>
       )}
-    </CardContent>
-  </Card>
+    </Card>
   );
 }
