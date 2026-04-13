@@ -18,6 +18,7 @@ import {
 import SmartDropZone from '@/components/onboarding/SmartDropZone';
 import DocumentAIProcessor from '@/components/documents/DocumentAIProcessor';
 import ComplianceAlertsPanel from '@/components/documents/ComplianceAlertsPanel';
+import ComplianceGapAudit from '@/components/documents/ComplianceGapAudit';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 const DOC_CATEGORIES = {
@@ -458,6 +459,9 @@ export default function DocumentRepository() {
 
         <span className="text-xs text-muted-foreground ml-auto">{filtered.length} document{filtered.length !== 1 ? 's' : ''}</span>
       </div>
+
+      {/* AI Compliance Gap Audit */}
+      <ComplianceGapAudit />
 
       {/* Compliance Alerts */}
       <ComplianceAlertsPanel documents={documents} propertyMap={propertyMap} />
