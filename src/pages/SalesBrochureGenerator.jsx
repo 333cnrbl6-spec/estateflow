@@ -160,7 +160,7 @@ export default function SalesBrochureGenerator() {
   return (
     <>
       <style>{`
-        @media print { .no-print { display:none!important; } @page { size:A4; margin:0; } body { margin:0; padding:0; } .brochure-page { box-shadow:none!important; page-break-after:always; } }
+        @media print { .no-print { display:none!important; } @page { size:A4; margin:0; } body { margin:0; padding:0; } .brochure-page { box-shadow:none!important; page-break-after:always; margin:0!important; } .print-wrapper { padding:0!important; } }
         .brochure-page { width:210mm; min-height:297mm; margin:0 auto 28px; background:#fff; overflow:hidden; position:relative; display:flex; flex-direction:column; font-family:${brand.font_hint ? `'${brand.font_hint}',` : ''}Inter,sans-serif; box-shadow:0 6px 32px rgba(0,0,0,0.18); }
       `}</style>
 
@@ -220,7 +220,7 @@ export default function SalesBrochureGenerator() {
       )}
 
       {content && (
-        <div style={{ background: '#d1d5db', paddingTop: 36, paddingBottom: 60 }}>
+        <div style={{ background: '#d1d5db', paddingTop: 0, paddingBottom: 60 }}>
 
           {/* ══ PAGE 1: COVER ══════════════════════════════════════════════════ */}
           <div className="brochure-page" style={{ background: PRIMARY }}>
