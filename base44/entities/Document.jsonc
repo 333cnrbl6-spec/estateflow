@@ -5,24 +5,37 @@
     "title": {
       "type": "string"
     },
-    "template_id": {
-      "type": "string",
-      "description": "Reference to DocumentTemplate"
-    },
     "document_type": {
       "type": "string",
       "enum": [
-        "eviction_notice",
         "tenancy_agreement",
+        "lease",
         "deposit_protection_notice",
         "gas_safety_cert",
+        "eicr",
         "epc",
+        "fire_safety_cert",
+        "asbestos_report",
+        "service_charge_statement",
+        "invoice",
+        "rent_statement",
+        "ground_rent_demand",
         "inventory",
         "inspection_report",
         "maintenance_notice",
+        "eviction_notice",
         "rent_increase",
+        "section_21",
+        "section_8",
+        "rtm_notice",
+        "s20_notice",
+        "company_document",
+        "bank_statement",
         "other"
       ]
+    },
+    "template_id": {
+      "type": "string"
     },
     "property_id": {
       "type": "string"
@@ -31,15 +44,41 @@
       "type": "string"
     },
     "tenant_id": {
+      "type": "string",
+      "description": "Tenant who can access this document"
+    },
+    "landlord_contact_id": {
+      "type": "string",
+      "description": "Landlord/contact who can access this document"
+    },
+    "company_id": {
       "type": "string"
     },
     "pipeline_id": {
+      "type": "string"
+    },
+    "access_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "tenant",
+          "landlord",
+          "contractor"
+        ]
+      },
+      "description": "Who can view this document",
+      "default": [
+        "admin"
+      ]
+    },
+    "access_token_id": {
       "type": "string",
-      "description": "Reference to TenancyPipeline if applicable"
+      "description": "TenantAccessToken id if shared via secure link"
     },
     "content": {
-      "type": "string",
-      "description": "Generated document content"
+      "type": "string"
     },
     "status": {
       "type": "string",
@@ -56,9 +95,38 @@
       "type": "string",
       "format": "date"
     },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "For certificates \u2014 expiry date"
+    },
     "file_url": {
       "type": "string",
       "description": "URL to PDF/document file"
+    },
+    "file_size_bytes": {
+      "type": "number"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "uploaded_by": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "uploaded",
+        "generated",
+        "imported"
+      ],
+      "default": "generated"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "notes": {
       "type": "string"
