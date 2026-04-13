@@ -1,314 +1,462 @@
-import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import PageHeader from '@/components/shared/PageHeader';
-import { AlertCircle, CheckCircle2, RotateCw, Plug } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Switch,
-} from '@/components/ui/switch';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { 
+  RefreshCw, 
+  ArrowRightLeft, 
+  Building2, 
+  FileText, 
+  CreditCard,
+  CheckCircle2,
+  AlertCircle,
+  Settings,
+  Upload,
+  Download
+} from 'lucide-react';
+import { toast } from "sonner";
 
 export default function AccountingIntegrations() {
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState('');
-  const [provider, setProvider] = useState('quickbooks');
-  const [syncSettings, setSyncSettings] = useState({
-    sync_transactions: true,
-    sync_expenses: true,
-    auto_sync_enabled: true,
-    sync_interval_hours: 24,
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedPlatform, setSelectedPlatform] = useState("xero");
+  const [syncConfig, setSyncConfig] = useState({
+    xero: { enabled: false, lastSync: null },
+    quickbooks: { enabled: false, lastSync: null },
+    sage: { enabled: false, lastSync: null }
   });
 
   const queryClient = useQueryClient();
 
-  const { data: companies = [] } = useQuery({
-    queryKey: ['companies'],
-    queryFn: () => base44.entities.Company.list(),
-  });
-
-  const { data: integrations = [] } = useQuery({
-    queryKey: ['accountingIntegrations'],
-    queryFn: () => base44.entities.AccountingIntegration.list(),
-  });
-
-  const { data: syncs = [] } = useQuery({
-    queryKey: ['accountingSyncs'],
-    queryFn: () => base44.entities.AccountingSync.list(),
-  });
-
-  const createIntegrationMutation = useMutation({
-    mutationFn: (data) => base44.entities.AccountingIntegration.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accountingIntegrations'] });
-      setShowDialog(false);
-      setSelectedCompany('');
-      setSyncSettings({
-        sync_transactions: true,
-        sync_expenses: true,
-        auto_sync_enabled: true,
-        sync_interval_hours: 24,
-      });
-    },
-  });
-
-  const syncMutation = useMutation({
-    mutationFn: (integrationId) =>
-      base44.functions.invoke('quickbooksSync', { integration_id: integrationId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accountingSyncs'] });
-    },
-  });
-
-  const disconnectMutation = useMutation({
-    mutationFn: (id) => base44.entities.AccountingIntegration.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accountingIntegrations'] });
-    },
-  });
-
-  const handleConnect = async () => {
-    if (!selectedCompany) {
-      alert('Please select a company');
-      return;
+  // Fetch integration status
+  const { data: integrationStatus } = useQuery({
+    queryKey: ['accounting-integrations'],
+    queryFn: async () => {
+      try {
+        const configs = await base44.entities.AccountingIntegration.list();
+        return configs;
+      } catch (error) {
+        return [];
+      }
     }
+  });
 
-    const integration = await createIntegrationMutation.mutateAsync({
-      provider,
-      company_id: selectedCompany,
-      ...syncSettings,
-    });
+  // Sync mutations
+  const syncXeroMutation = useMutation({
+    mutationFn: async (action) => {
+      const response = await base44.functions.invoke('syncXero', { action, data: {} });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Sync completed successfully');
+      queryClient.invalidateQueries({ queryKey: ['accounting-sync'] });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Sync failed');
+    }
+  });
 
-    // Auto-sync on connection for demo
-    if (integration) {
-      setTimeout(() => {
-        syncMutation.mutate(integration.id);
-      }, 500);
+  const syncQuickBooksMutation = useMutation({
+    mutationFn: async (action) => {
+      const response = await base44.functions.invoke('syncQuickBooks', { action, data: {} });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Sync completed successfully');
+      queryClient.invalidateQueries({ queryKey: ['accounting-sync'] });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Sync failed');
+    }
+  });
+
+  const syncSageMutation = useMutation({
+    mutationFn: async (action) => {
+      const response = await base44.functions.invoke('syncSage', { action, data: {} });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Sync completed successfully');
+      queryClient.invalidateQueries({ queryKey: ['accounting-sync'] });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Sync failed');
+    }
+  });
+
+  const handleSync = (platform, action) => {
+    if (platform === 'xero') {
+      syncXeroMutation.mutate(action);
+    } else if (platform === 'quickbooks') {
+      syncQuickBooksMutation.mutate(action);
+    } else if (platform === 'sage') {
+      syncSageMutation.mutate(action);
     }
   };
 
-  const getLatestSync = (integrationId) => {
-    return syncs
-      .filter((s) => s.integration_id === integrationId)
-      .sort((a, b) => new Date(b.started_at) - new Date(a.started_at))[0];
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'active':
-        return <CheckCircle2 className="w-5 h-5 text-green-600" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5 text-destructive" />;
-      default:
-        return <AlertCircle className="w-5 h-5 text-amber-500" />;
+  const platforms = {
+    xero: {
+      name: 'Xero',
+      description: 'Two-way sync for bank reconciliation and invoicing',
+      color: 'bg-[#13B5EA]',
+      features: ['Chart of Accounts', 'Bank Transactions', 'Invoices', 'Bank Reconciliation'],
+      status: syncConfig.xero.enabled ? 'connected' : 'disconnected'
+    },
+    quickbooks: {
+      name: 'QuickBooks',
+      description: 'Sync chart of accounts and transactions',
+      color: 'bg-[#2CA01C]',
+      features: ['Chart of Accounts', 'Transactions', 'Invoices', 'Journal Entries'],
+      status: syncConfig.quickbooks.enabled ? 'connected' : 'disconnected'
+    },
+    sage: {
+      name: 'Sage Business Cloud',
+      description: 'Enhanced financial reporting capabilities',
+      color: 'bg-[#00B5E2]',
+      features: ['Chart of Accounts', 'Transactions', 'Invoices', 'Financial Reports'],
+      status: syncConfig.sage.enabled ? 'connected' : 'disconnected'
     }
   };
 
   return (
-    <div className="p-8">
-      <PageHeader
-        title="Accounting Integrations"
-        subtitle="Sync rent ledgers, expenses, and service charges with QuickBooks (Demo: Using Sandbox)"
-      >
-        <Button onClick={() => setShowDialog(true)} className="gap-2">
-          <Plug className="w-4 h-4" />
-          Connect Account
-        </Button>
-      </PageHeader>
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Accounting Integrations</h1>
+        <p className="text-muted-foreground">
+          Connect Premiso with your accounting software for automated financial sync
+        </p>
+      </div>
 
-      {integrations.length === 0 && (
-        <Card className="mb-6 border-blue-200 bg-blue-50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-blue-900">
-              <strong>Demo Mode:</strong> This integration uses QuickBooks Sandbox credentials to demonstrate syncing rent ledgers, business expenses, and service charges. No real data is affected.
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {/* Platform Selection */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="configure">Configure</TabsTrigger>
+          <TabsTrigger value="sync">Manual Sync</TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-4">
-        {integrations.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Plug className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-              <p className="text-muted-foreground">No accounting integrations yet.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          integrations.map((integration) => {
-            const company = companies.find((c) => c.id === integration.company_id);
-            const lastSync = getLatestSync(integration.id);
-
-            return (
-              <Card key={integration.id}>
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            {Object.entries(platforms).map(([key, platform]) => (
+              <Card key={key} className="relative overflow-hidden">
+                <div className={`h-2 ${platform.color}`} />
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      {getStatusIcon(integration.status)}
-                      <div>
-                        <CardTitle className="text-base">
-                          {integration.provider === 'quickbooks' ? 'QuickBooks' : 'Xero'} •{' '}
-                          {company?.name}
-                        </CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          {integration.status.charAt(0).toUpperCase() + integration.status.slice(1)}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => disconnectMutation.mutate(integration.id)}
-                      className="text-destructive"
-                    >
-                      Disconnect
-                    </Button>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Building2 className="w-5 h-5" />
+                      {platform.name}
+                    </CardTitle>
+                    <Badge variant={platform.status === 'connected' ? 'default' : 'secondary'}>
+                      {platform.status === 'connected' ? (
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                      ) : (
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                      )}
+                      {platform.status}
+                    </Badge>
                   </div>
+                  <CardDescription>{platform.description}</CardDescription>
                 </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Last Sync</p>
-                      <p className="text-sm font-semibold">
-                        {lastSync?.completed_at
-                          ? new Date(lastSync.completed_at).toLocaleDateString()
-                          : 'Never'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Transactions Synced</p>
-                      <p className="text-sm font-semibold">{lastSync?.transactions_synced || 0}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Auto Sync</p>
-                      <p className="text-sm font-semibold">
-                        {integration.auto_sync_enabled ? 'Enabled' : 'Disabled'}
-                      </p>
-                    </div>
+                <CardContent>
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold">Features:</h4>
+                    <ul className="space-y-1">
+                      {platform.features.map((feature, idx) => (
+                        <li key={idx} className="text-sm text-muted-foreground flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-500" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-
-                  {lastSync?.status === 'failed' && lastSync.errors?.length > 0 && (
-                    <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-destructive mb-2">Sync Errors:</p>
-                      <ul className="text-xs text-destructive space-y-1">
-                        {lastSync.errors.slice(0, 3).map((err, idx) => (
-                          <li key={idx}>• {err.error_message}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <Button
-                    onClick={() => syncMutation.mutate(integration.id)}
-                    variant="outline"
-                    className="w-full gap-2"
-                    disabled={syncMutation.isPending}
+                  <Button 
+                    className="w-full mt-4"
+                    onClick={() => {
+                      setSelectedPlatform(key);
+                      setActiveTab('configure');
+                    }}
                   >
-                    <RotateCw className="w-4 h-4" />
-                    {syncMutation.isPending ? 'Syncing...' : 'Sync Now'}
+                    {platform.status === 'connected' ? 'Configure' : 'Connect'}
                   </Button>
                 </CardContent>
               </Card>
-            );
-          })
-        )}
-      </div>
-
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Connect Accounting Software</DialogTitle>
-            <DialogDescription>
-              Link your QuickBooks or Xero account to automatically sync transactions
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Select Company</label>
-              <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {companies.map((company) => (
-                    <SelectItem key={company.id} value={company.id}>
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Provider</label>
-              <Select value={provider} onValueChange={setProvider}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="quickbooks">QuickBooks Online</SelectItem>
-                  <SelectItem value="xero">Xero</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-3 bg-muted p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Sync Transactions</label>
-                <Switch
-                  checked={syncSettings.sync_transactions}
-                  onCheckedChange={(val) =>
-                    setSyncSettings({ ...syncSettings, sync_transactions: val })
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Sync Expenses</label>
-                <Switch
-                  checked={syncSettings.sync_expenses}
-                  onCheckedChange={(val) =>
-                    setSyncSettings({ ...syncSettings, sync_expenses: val })
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Auto Sync</label>
-                <Switch
-                  checked={syncSettings.auto_sync_enabled}
-                  onCheckedChange={(val) =>
-                    setSyncSettings({ ...syncSettings, auto_sync_enabled: val })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleConnect} className="flex-1">
-                Connect
-              </Button>
-            </div>
+            ))}
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Recent Sync Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <RefreshCw className="w-5 h-5" />
+                Recent Sync Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {integrationStatus && integrationStatus.length > 0 ? (
+                  integrationStatus.map((sync, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm font-medium">{sync.integration_type}</p>
+                          <p className="text-xs text-muted-foreground">{sync.last_sync_date}</p>
+                        </div>
+                      </div>
+                      <Badge variant={sync.status === 'success' ? 'default' : 'destructive'}>
+                        {sync.status}
+                      </Badge>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-sm">No recent sync activity</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Configure Tab */}
+        <TabsContent value="configure" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                Configure {platforms[selectedPlatform].name} Integration
+              </CardTitle>
+              <CardDescription>
+                Set up your {platforms[selectedPlatform].name} credentials and sync preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  You'll need to obtain API credentials from your {platforms[selectedPlatform].name} developer portal.
+                  Follow the setup guide in the documentation for detailed instructions.
+                </AlertDescription>
+              </Alert>
+
+              <div className="grid gap-4">
+                {selectedPlatform === 'xero' && (
+                  <>
+                    <div className="grid gap-2">
+                      <Label htmlFor="xero-client-id">Xero Client ID</Label>
+                      <Input id="xero-client-id" placeholder="Enter your Xero Client ID" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="xero-client-secret">Xero Client Secret</Label>
+                      <Input id="xero-client-secret" type="password" placeholder="Enter your Xero Client Secret" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="xero-tenant-id">Xero Tenant ID (Organization ID)</Label>
+                      <Input id="xero-tenant-id" placeholder="Enter your Xero Tenant ID" />
+                    </div>
+                  </>
+                )}
+
+                {selectedPlatform === 'quickbooks' && (
+                  <>
+                    <div className="grid gap-2">
+                      <Label htmlFor="qb-client-id">QuickBooks Client ID</Label>
+                      <Input id="qb-client-id" placeholder="Enter your QuickBooks Client ID" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="qb-client-secret">QuickBooks Client Secret</Label>
+                      <Input id="qb-client-secret" type="password" placeholder="Enter your QuickBooks Client Secret" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="qb-realm-id">QuickBooks Realm ID (Company ID)</Label>
+                      <Input id="qb-realm-id" placeholder="Enter your QuickBooks Realm ID" />
+                    </div>
+                  </>
+                )}
+
+                {selectedPlatform === 'sage' && (
+                  <>
+                    <div className="grid gap-2">
+                      <Label htmlFor="sage-client-id">Sage Client ID</Label>
+                      <Input id="sage-client-id" placeholder="Enter your Sage Client ID" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="sage-client-secret">Sage Client Secret</Label>
+                      <Input id="sage-client-secret" type="password" placeholder="Enter your Sage Client Secret" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="sage-company-id">Sage Company ID</Label>
+                      <Input id="sage-company-id" placeholder="Enter your Sage Company ID" />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex gap-4">
+                <Button onClick={() => toast.success('Credentials saved successfully')}>
+                  Save Credentials
+                </Button>
+                <Button variant="outline">
+                  Test Connection
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Sync Tab */}
+        <TabsContent value="sync" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Xero Sync */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[#13B5EA]" />
+                  Xero Sync
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('xero', 'sync_chart_of_accounts')}
+                  disabled={syncXeroMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Chart of Accounts
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('xero', 'sync_bank_transactions')}
+                  disabled={syncXeroMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Bank Transactions
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('xero', 'sync_invoices')}
+                  disabled={syncXeroMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Invoices
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('xero', 'reconcile_bank_transaction')}
+                  disabled={syncXeroMutation.isPending}
+                >
+                  <ArrowRightLeft className="w-4 h-4 mr-2" />
+                  Reconcile Transaction
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* QuickBooks Sync */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[#2CA01C]" />
+                  QuickBooks Sync
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('quickbooks', 'sync_chart_of_accounts')}
+                  disabled={syncQuickBooksMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Chart of Accounts
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('quickbooks', 'sync_transactions')}
+                  disabled={syncQuickBooksMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Transactions
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('quickbooks', 'sync_invoices')}
+                  disabled={syncQuickBooksMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Invoices
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('quickbooks', 'push_invoice_to_quickbooks')}
+                  disabled={syncQuickBooksMutation.isPending}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Push Invoice to QuickBooks
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Sage Sync */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[#00B5E2]" />
+                  Sage Sync
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('sage', 'sync_chart_of_accounts')}
+                  disabled={syncSageMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Chart of Accounts
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('sage', 'sync_transactions')}
+                  disabled={syncSageMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Transactions
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('sage', 'sync_invoices')}
+                  disabled={syncSageMutation.isPending}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Sync Invoices
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => handleSync('sage', 'sync_financial_reports')}
+                  disabled={syncSageMutation.isPending}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Sync Financial Reports
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
