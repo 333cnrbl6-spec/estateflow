@@ -4,7 +4,7 @@ import { applyDemoBrand, clearDemoBrand } from '@/lib/brandConfig';
 
 export const RBMBrandingProvider = ({ children }) => {
   useEffect(() => {
-    const applyBrandingIfNeeded = async () => {
+    const apply = async () => {
       try {
         const user = await base44.auth.me();
         if (user?.demo_brand) {
@@ -13,10 +13,10 @@ export const RBMBrandingProvider = ({ children }) => {
           clearDemoBrand();
         }
       } catch (e) {
-        // not authenticated, skip
+        // not authenticated
       }
     };
-    applyBrandingIfNeeded();
+    apply();
   }, []);
 
   return children;

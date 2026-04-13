@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCurrentDemoBrand } from '@/lib/brandConfig';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import {
@@ -84,6 +85,15 @@ export default function Sidebar({ onCollapsedChange }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
+  const [demoBrand, setDemoBrand] = useState(null);
+
+  useEffect(() => {
+    // Pick up brand set by RBMBrandingProvider (may run slightly after mount)
+    const check = () => setDemoBrand(user?.demo_brand || getCurrentDemoBrand() || null);
+    check();
+    const timer = setTimeout(check, 800);
+    return () => clearTimeout(timer);
+  }, [user]);
 
   const handleCollapse = (newState) => {
     setCollapsed(newState);
@@ -99,14 +109,25 @@ export default function Sidebar({ onCollapsedChange }) {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-[72px] border-b border-sidebar-border shrink-0">
-        <div className="w-8 h-8 rounded-xl bg-sidebar-primary flex items-center justify-center shrink-0 shadow-md">
-          <Crown className="w-4 h-4 text-sidebar-primary-foreground" />
-        </div>
+        {demoBrand?.logo_url ? (
+          <img
+            src={demoBrand.logo_url}
+            alt={demoBrand.company_name || 'Logo'}
+            className="h-8 w-8 object-contain rounded shrink-0"
+            onError={e => { e.target.style.display='none'; }}
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-xl bg-sidebar-primary flex items-center justify-center shrink-0 shadow-md">
+            <Crown className="w-4 h-4 text-sidebar-primary-foreground" />
+          </div>
+        )}
         {!collapsed && (
           <div className="overflow-hidden">
-            <h1 className="font-bold text-[15px] tracking-tight text-sidebar-foreground truncate">Premiso</h1>
+            <h1 className="font-bold text-[15px] tracking-tight text-sidebar-foreground truncate">
+              {demoBrand?.company_name || 'Premiso'}
+            </h1>
             <p className="text-[10px] uppercase tracking-[0.12em] text-sidebar-foreground/40">
-              {user?.business_name || 'Property Software'}
+              {demoBrand?.tagline || user?.business_name || 'Property Software'}
             </p>
           </div>
         )}

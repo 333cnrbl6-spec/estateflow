@@ -26,14 +26,14 @@ Find and return all available information including:
 - Background narrative (2-3 sentences about the company history and focus)
 - Typical portfolio size (residential lettings, block management units etc)
 
-Also extract brand identity from their website:
-- primary_color: their dominant brand colour as a hex code (e.g. #1a3a52) — look at their header, logo, buttons
-- secondary_color: secondary brand colour as hex
-- accent_color: accent/highlight colour as hex
-- logo_url: direct URL to their logo image if publicly available
-- tagline: their strapline or tagline if visible on the site
-- font_hint: the primary font name they appear to use (e.g. 'Montserrat', 'Open Sans') if determinable
-- brand_tone: one of 'professional', 'modern', 'traditional', 'friendly'
+CRITICAL - Also extract brand identity by visiting their actual website:
+- primary_color: the dominant brand colour as a precise hex code (e.g. #1a3a52) — inspect their header background, logo, primary buttons, nav bar. Do NOT guess; examine the actual page.
+- secondary_color: the secondary/supporting brand colour as hex — look at secondary buttons, subheadings, hover states
+- accent_color: the accent/highlight/CTA colour as hex — look at calls-to-action, highlights, badges
+- logo_url: the direct image URL of their logo from the website (src of the <img> tag in the header). Must be a real, accessible URL.
+- tagline: their actual strapline or tagline as text from the website homepage
+- font_hint: the primary Google Font or web font family name they use (check CSS font-family on body or headings)
+- brand_tone: one of 'professional', 'modern', 'traditional', 'friendly' based on the website tone
 
 Based on the scale of this agency, recommend realistic demo data numbers:
 - demo_properties: how many properties to create (3-8)
