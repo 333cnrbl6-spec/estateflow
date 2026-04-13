@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import SmartDropZone from '@/components/onboarding/SmartDropZone';
 import DataImportPipelineConfig from '@/components/onboarding/DataImportPipelineConfig';
 import DataSourceGuidedGlean from '@/components/onboarding/DataSourceGuidedGlean';
+import DataImportMappingGuidance from '@/components/onboarding/DataImportMappingGuidance';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
   Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
@@ -943,10 +944,14 @@ function StepImportPipeline({ data, onChange }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Configure Data Import</h2>
-        <p className="text-sm text-muted-foreground mt-1">Automated pipelines to fetch historical data from your software integrations.</p>
+        <h2 className="text-xl font-bold text-slate-900">AI-Guided Data Import Strategy</h2>
+        <p className="text-sm text-muted-foreground mt-1">Let AI analyze your data sources and recommend how to structure, map, and import everything into Premiso.</p>
       </div>
-      <DataImportPipelineConfig data={data} onImportStart={handleImportStart} />
+      <DataImportMappingGuidance data={data} onChange={onChange} />
+      <div className="border-t pt-4 mt-4">
+        <p className="text-xs text-muted-foreground mb-3">Once mappings are ready, we'll generate realistic data and import it directly into your environment.</p>
+        <DataImportPipelineConfig data={data} onImportStart={handleImportStart} />
+      </div>
     </div>
   );
 }
