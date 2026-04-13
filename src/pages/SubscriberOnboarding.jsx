@@ -901,44 +901,59 @@ function StepReview({ data, onBuild, building, buildResult }) {
       </div>
 
       <div className="space-y-3">
-        <ReviewRow label="Company" value={data.company_name} sub={data.company_number} />
-        <ReviewRow label="Registered Address" value={data.registered_address} />
-        <ReviewRow label="Directors confirmed" value={`${(data.confirmed_directors || data.directors || []).length} director(s)`} />
-        <ReviewRow label="Branch addresses" value={`${(data.branches || []).filter(Boolean).length} address(es)`} />
-        <ReviewRow label="Services" value={`${(data.services || []).length} service types`} />
-        <ReviewRow label="Existing software" value={(data.software || []).join(', ') || 'None selected'} />
-        <ReviewRow label="Data types" value={`${(data.data_types || []).length} categories`}
-          sub={Object.entries(counts).filter(([,v]) => v).map(([k,v]) => `${k.replace(/_/g,' ')}: ~${v}`).join(', ')} />
-        <ReviewRow label="Files uploaded" value={`${(data.classified_files || []).length} files (${hasFiles} classified by AI)`} />
+       <ReviewRow label="Primary Company" value={data.company_name} sub={data.company_number} />
+       <ReviewRow label="Registered Address" value={data.registered_address} />
+       <ReviewRow label="Officers Selected" value={`${(data.selected_officer_ids || []).length} officer(s)`} />
+       {(data.associated_companies || []).length > 0 && (
+         <ReviewRow label="Associated Companies" value={`${data.associated_companies.length} companies to add`}
+           sub={data.associated_companies.map(c => `${c.company_name} (${c.company_number})`).join(', ')} />
+       )}
+       <ReviewRow label="Branch addresses" value={`${(data.branches || []).filter(Boolean).length} address(es)`} />
+       <ReviewRow label="Services" value={`${(data.services || []).length} service types`} />
+       <ReviewRow label="Existing software" value={(data.software || []).join(', ') || 'None selected'} />
+       <ReviewRow label="Data types" value={`${(data.data_types || []).length} categories`}
+         sub={Object.entries(counts).filter(([,v]) => v).map(([k,v]) => `${k.replace(/_/g,' ')}: ~${v}`).join(', ')} />
+       <ReviewRow label="Files uploaded" value={`${(data.classified_files || []).length} files (${hasFiles} classified by AI)`} />
       </div>
 
       {!buildResult && (
-        <Button onClick={onBuild} disabled={building || !data.company_name} size="lg" className="w-full gap-2">
-          {building ? <><Loader2 className="w-4 h-4 animate-spin" /> Building your environment…</> : <><Sparkles className="w-4 h-4" /> Create My Premiso Environment</>}
-        </Button>
+       <Button onClick={onBuild} disabled={building || !data.company_name} size="lg" className="w-full gap-2">
+         {building ? <><Loader2 className="w-4 h-4 animate-spin" /> Building your environment…</> : <><Sparkles className="w-4 h-4" /> Create Premiso Environment</>}
+       </Button>
+      )}
+      {!buildResult && (data.associated_companies || []).length > 0 && (
+       <p className="text-xs text-center text-slate-600">✓ {data.associated_companies.length} associated companies will be provisioned alongside main company</p>
       )}
 
       {buildResult && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 space-y-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-6 h-6 text-green-600" />
-            <p className="font-bold text-green-800 text-lg">Environment Created!</p>
-          </div>
-          <p className="text-sm text-green-700">{buildResult.summary}</p>
-          {buildResult.created && (
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              {Object.entries(buildResult.created).map(([k, v]) => (
-                <div key={k} className="flex justify-between bg-white rounded px-2 py-1.5 border border-green-200">
-                  <span className="capitalize text-slate-600">{k.replace(/_/g,' ')}</span>
-                  <span className="font-bold text-green-700">{v}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          <Button asChild className="w-full" variant="default">
-            <a href="/">Go to Dashboard</a>
-          </Button>
-        </div>
+      <div className="bg-green-50 border border-green-200 rounded-xl p-5 space-y-3">
+      <div className="flex items-center gap-2">
+       <CheckCircle2 className="w-6 h-6 text-green-600" />
+       <p className="font-bold text-green-800 text-lg">Environment Created!</p>
+      </div>
+      <p className="text-sm text-green-700">{buildResult.summary}</p>
+      {buildResult.created && (
+       <div className="grid grid-cols-2 gap-2 text-xs">
+         {Object.entries(buildResult.created).map(([k, v]) => (
+           <div key={k} className="flex justify-between bg-white rounded px-2 py-1.5 border border-green-200">
+             <span className="capitalize text-slate-600">{k.replace(/_/g,' ')}</span>
+             <span className="font-bold text-green-700">{v}</span>
+           </div>
+         ))}
+       </div>
+      )}
+      {buildResult.recommended_workflows && buildResult.recommended_workflows.length > 0 && (
+       <div className="bg-white rounded px-3 py-2 border border-green-200 text-xs">
+         <p className="font-semibold text-slate-800 mb-1">Recommended workflows activated:</p>
+         <ul className="list-disc list-inside text-slate-600 space-y-0.5">
+           {buildResult.recommended_workflows.map((w, i) => <li key={i}>{w}</li>)}
+         </ul>
+       </div>
+      )}
+      <Button asChild className="w-full" variant="default">
+       <a href="/">Go to Dashboard</a>
+      </Button>
+      </div>
       )}
     </div>
   );
@@ -961,7 +976,21 @@ function ReviewRow({ label, value, sub }) {
 // ─────────────────────────────────────────────────────────────────
 export default function SubscriberOnboarding() {
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    company_number: '',
+    company_name: '',
+    directors: [],
+    officers: [],
+    persons_with_control: [],
+    selected_officer_ids: [],
+    associated_companies: [],
+    addresses: [],
+    services: [],
+    software_integrations: [],
+    data_audit_scope: [],
+    data_sources: [],
+    document_urls: [],
+  });
   const [building, setBuilding] = useState(false);
   const [buildResult, setBuildResult] = useState(null);
 
@@ -974,19 +1003,31 @@ export default function SubscriberOnboarding() {
   const build = async () => {
     setBuilding(true);
     try {
+      const selectedOfficerNames = (formData.selected_officer_ids || []).map(idx => {
+        const allOfficers = [...(formData.directors || []), ...(formData.officers || []), ...(formData.persons_with_control || [])];
+        return allOfficers[idx]?.name;
+      }).filter(Boolean);
+
       const res = await base44.integrations.Core.InvokeLLM({
         prompt: `You are setting up a new property management company called "${formData.company_name}" on the Premiso platform.
 
-Company details:
+Primary Company:
 - Name: ${formData.company_name}
 - Number: ${formData.company_number || 'N/A'}
 - Address: ${formData.registered_address || 'N/A'}
-- Services: ${(formData.services || []).join(', ')}
-- Software: ${(formData.software || []).join(', ')}
-- Data types available: ${JSON.stringify(formData.data_counts || {})}
-- Files uploaded: ${(formData.classified_files || []).map(f => f.classification?.document_type).join(', ')}
 
-Generate a realistic onboarding summary: what records would be created, what workflows to activate, what integrations to configure. Return a summary paragraph and a "created" object with counts of entities that would be set up.`,
+Officers Selected:
+- Officers: ${selectedOfficerNames.join(', ') || 'None'}
+
+Associated Companies to Provision:
+${(formData.associated_companies || []).map(c => `- ${c.company_name} (${c.company_number})`).join('\n') || '- None'}
+
+Services: ${(formData.services || []).join(', ')}
+Software: ${(formData.software || []).join(', ')}
+Data types available: ${JSON.stringify(formData.data_counts || {})}
+Files uploaded: ${(formData.classified_files || []).map(f => f.classification?.document_type).join(', ')}
+
+Generate a realistic onboarding summary: what records would be created, what workflows to activate, what integrations to configure. Include the multi-company structure setup. Return a summary paragraph and a "created" object with counts of entities that would be set up.`,
         response_json_schema: {
           type: 'object',
           properties: {
