@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +12,7 @@ import {
   Upload, CheckCircle2, Clock, AlertTriangle, ChevronRight, Loader2, Phone, Download, MessageCircle, Repeat
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import TenantMessageThread from '@/components/messaging/TenantMessageThread';
 import RentPaymentModal from '@/components/payments/RentPaymentModal';
 import RecurringPaymentsManager from '@/components/payments/RecurringPaymentsManager';
@@ -411,7 +410,7 @@ function MaintenanceTab({ tenantId, propertyId, unitId }) {
                   {/* Progress bar */}
                   <div className="flex items-center gap-1 mt-2">
                     {STEPS.map((s, i) => (
-                      <React.Fragment key={s}>
+                      <div key={s}>
                         <div className={`flex flex-col items-center`}>
                           <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold
                             ${i < stepIdx ? 'bg-emerald-500 text-white' : i === stepIdx ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
@@ -420,7 +419,7 @@ function MaintenanceTab({ tenantId, propertyId, unitId }) {
                           <span className="text-[9px] text-muted-foreground mt-0.5 text-center leading-tight w-12">{s.replace(/_/g, ' ')}</span>
                         </div>
                         {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 mb-3 ${i < stepIdx ? 'bg-emerald-400' : 'bg-muted'}`} />}
-                      </React.Fragment>
+                      </div>
                     ))}
                   </div>
                   {o.assigned_contractor_name && (
