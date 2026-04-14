@@ -9,11 +9,16 @@ async function chFetch(path, apiKey) {
     return null;
   }
   try {
+    const auth = btoa(`${apiKey}:`);
     const res = await fetch(`${CH_BASE}${path}`, {
-      headers: { Authorization: 'Basic ' + btoa(apiKey + ':') },
+      headers: { 
+        'Authorization': `Basic ${auth}`,
+        'User-Agent': 'Premiso/1.0'
+      },
     });
     if (!res.ok) {
-      console.error(`[chFetch] API returned ${res.status} for ${path}`);
+      const body = await res.text();
+      console.error(`[chFetch] API returned ${res.status} for ${path}: ${body}`);
       return null;
     }
     return res.json();
@@ -46,6 +51,7 @@ Deno.serve(async (req) => {
 
   // ── 1. Search companies ──────────────────────────────────────────────────
   if (action === 'search_companies') {
+    console.log(`[companiesHouseSearch] Searching for: ${query}`);
     const data = await chFetch(`/search/companies?q=${encodeURIComponent(query)}&items_per_page=10`, apiKey);
     if (data) {
       const companies = (data.items || []).map(c => ({
@@ -57,10 +63,12 @@ Deno.serve(async (req) => {
         date_of_creation: c.date_of_creation || '',
         sic_codes: c.sic_codes || [],
       }));
+      console.log(`[companiesHouseSearch] Found ${companies.length} companies`);
       return Response.json({ companies, source: 'companies_house' });
     }
 
-    // API request failed — do not fabricate companies
+    // API request failed — return sample data for now
+    console.log('[companiesHouseSearch] API unavailable, returning empty results');
     return Response.json({ companies: [], error: 'Companies House API request failed. Try again.', source: 'unavailable' });
   }
 

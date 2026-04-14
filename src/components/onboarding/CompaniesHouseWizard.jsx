@@ -796,8 +796,8 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
     <div className="w-full">
       {/* Progress stepper */}
       <div className="flex items-center gap-1 mb-8 overflow-x-auto">
-        {STEPS.map((s, i) => (
-          <React.Fragment key={s.id}>
+         {STEPS.map((s, i) => (
+           <React.Fragment key={s.id}>
             <div className={`flex items-center gap-1.5 shrink-0 ${i <= step ? 'text-primary' : 'text-slate-300'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
                 i < step ? 'bg-primary border-primary text-white' :
