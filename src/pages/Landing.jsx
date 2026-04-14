@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -30,10 +30,10 @@ export default function Landing() {
   })();
 
   // Slide definitions with dwell time (ms)
-  const SLIDES = [
-    { id: 'hero', duration: 8000, component: <HeroSection onStartDemo={() => nextSlide()} onGetStarted={() => { setSlideIndex(SLIDES.findIndex(s => s.id === 'demo')); setIsAutoPlaying(false); }} /> },
+  const SLIDES = React.useMemo(() => [
+    { id: 'hero', duration: 8000, component: <HeroSection onStartDemo={() => setSlideIndex(1)} onGetStarted={() => { setSlideIndex(3); setIsAutoPlaying(false); }} /> },
     { id: 'features', duration: 10000, component: <FeaturesSection /> },
-    { id: 'who-is-it-for', duration: 8000, component: <WhoIsItFor onGetStarted={() => { setSlideIndex(SLIDES.findIndex(s => s.id === 'pricing')); setIsAutoPlaying(false); }} /> },
+    { id: 'who-is-it-for', duration: 8000, component: <WhoIsItFor onGetStarted={() => { setSlideIndex(4); setIsAutoPlaying(false); }} /> },
     { id: 'demo', duration: 6000, component: <DemoChooser onChoose={(choice) => { setDemoMode(choice); if (choice !== 'scenario') setIsAutoPlaying(false); }} chosen={demoMode} /> },
     { id: 'pricing', duration: 10000, component: <PricingSection onChoosePlan={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} /> },
     { id: 'cta', duration: 8000, component: (
@@ -75,7 +75,7 @@ export default function Landing() {
         </div>
       )
     ) },
-  ];
+  ], [demoSession, leadSubmitted, showLeadForm, demoMode]);
 
   const currentSlide = SLIDES[slideIndex];
 

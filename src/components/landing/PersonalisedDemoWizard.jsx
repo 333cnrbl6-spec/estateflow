@@ -332,7 +332,7 @@ function StepDirectors({ selectedCompanies, selected, onToggle, onNext, onBack }
     if (!fetched && selectedCompanies.length > 0) {
       fetchAll();
     }
-  }, [selectedCompanies]);
+  }, [selectedCompanies, fetched]);
 
   const fetchAll = async () => {
     setLoading(true);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Loader } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function LeadCaptureForm({ demoType, onSubmitted }) {
   const [name, setName] = useState('');
@@ -128,7 +128,7 @@ export default function LeadCaptureForm({ demoType, onSubmitted }) {
           className="w-full py-4 text-lg bg-primary"
         >
           {submitting ? (
-            <><Loader className="w-4 h-4 animate-spin" /> Submitting...</>
+            <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
           ) : (
             'Request Early Access →'
           )}
