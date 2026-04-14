@@ -14,6 +14,7 @@ import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
+import ErrorAnalyticsWidget from '@/components/dashboard/ErrorAnalyticsWidget';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -159,6 +160,11 @@ export default function Dashboard() {
           <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="demo data — import actuals" colorIndex={4} />
           <StatCard title="Overdue Items" value={overdueCount} icon={AlertTriangle} colorIndex={4} />
           <StatCard title="Open Maintenance" value={activeMaintenance} icon={Wrench} colorIndex={1} />
+        </div>
+
+        {/* Error Monitoring */}
+        <div className="mb-8">
+          <ErrorAnalyticsWidget />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

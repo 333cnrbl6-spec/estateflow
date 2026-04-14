@@ -105,6 +105,7 @@ import FinancialReportingModule from './pages/FinancialReportingModule';
 import ComplianceHub from './pages/ComplianceHub';
 import FinancialReconciliation from './pages/FinancialReconciliation';
 import Billing from './pages/Billing';
+import ErrorMonitoring from './pages/ErrorMonitoring';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -216,6 +217,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />
+        <Route path="/errors" element={<ErrorMonitoring />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
         <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
         <Route path="/bulk-import-tester" element={<BulkImportTester />} />

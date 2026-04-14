@@ -1,160 +1,102 @@
+import { base44 } from '@/api/base44Client';
+
 /**
- * Client-side error tracking integration
- * Captures runtime errors, API failures, and user actions
- * Configure with Sentry, Rollbar, or similar
+ * Frontend Error Tracking & Logging
  */
 
-class ErrorTracker {
-  constructor() {
-    this.isProduction = window.location.hostname !== 'localhost';
-    this.queue = [];
-    this.maxQueueSize = 100;
-  }
+let errorBuffer = [];
+const BUFFER_SIZE = 50;
 
-  initialize(config) {
-    this.config = config;
-    this.setupGlobalHandlers();
-    this.setupAPIInterceptors();
-  }
-
-  setupGlobalHandlers() {
-    // Uncaught errors
-    window.addEventListener('error', (event) => {
-      this.captureException({
-        type: 'uncaught_error',
-        message: event.message,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-        stack: event.error?.stack,
-      });
-    });
-
-    // Unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      this.captureException({
-        type: 'unhandled_rejection',
-        message: event.reason?.message || String(event.reason),
-        stack: event.reason?.stack,
-      });
-    });
-  }
-
-  setupAPIInterceptors() {
-    // Track failed API calls
-    const originalFetch = window.fetch;
-    window.fetch = async (...args) => {
-      const [resource, config] = args;
-      const startTime = performance.now();
-
-      try {
-        const response = await originalFetch(...args);
-        
-        if (!response.ok) {
-          const duration = performance.now() - startTime;
-          this.captureException({
-            type: 'api_error',
-            status: response.status,
-            url: resource,
-            duration,
-            message: `API Error: ${response.status} ${response.statusText}`,
-          });
-        }
-
-        return response;
-      } catch (error) {
-        const duration = performance.now() - startTime;
-        this.captureException({
-          type: 'network_error',
-          message: error.message,
-          url: resource,
-          duration,
-          stack: error.stack,
-        });
-        throw error;
-      }
-    };
-  }
-
-  captureException(error) {
-    const errorData = {
-      ...error,
+export async function logError(errorData) {
+  try {
+    const user = await base44.auth.me().catch(() => null);
+    
+    const payload = {
+      user_id: user?.id || null,
+      user_email: user?.email || 'anonymous',
+      error_type: errorData.type || 'uncaught_error',
+      message: errorData.message || 'Unknown error',
+      severity: errorData.severity || 'error',
+      url: errorData.url || window.location.href,
+      stack_trace: errorData.stack || '',
+      user_agent: navigator.userAgent,
+      environment: import.meta.env.MODE || 'production',
       timestamp: new Date().toISOString(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
-      environment: this.isProduction ? 'production' : 'development',
+      ...errorData.metadata
     };
 
-    // Queue locally
-    this.queue.push(errorData);
-    if (this.queue.length > this.maxQueueSize) {
-      this.queue.shift();
-    }
-
-    // Send to server (batch every 30 seconds or on error count > 5)
-    this.flushIfNeeded();
-  }
-
-  captureMessage(message, level = 'info') {
-    const messageData = {
-      type: 'message',
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      url: window.location.href,
-    };
-
-    this.queue.push(messageData);
-    this.flushIfNeeded();
-  }
-
-  async flushIfNeeded() {
-    if (this.queue.length === 0) return;
-
-    // Batch send if > 5 errors or queue growing
-    if (this.queue.length >= 5 || this.queue.length > this.maxQueueSize * 0.8) {
-      const batch = [...this.queue];
-      this.queue = [];
-
-      try {
-        await fetch('/api/errors', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ errors: batch }),
-        });
-      } catch (err) {
-        // Silent fail - don't create recursive error loop
-        console.error('[ErrorTracker] Failed to send batch:', err);
-        this.queue = [...batch, ...this.queue].slice(0, this.maxQueueSize);
-      }
-    }
-  }
-
-  setUser(userId, email) {
-    this.userId = userId;
-    this.userEmail = email;
-  }
-
-  addBreadcrumb(message, category = 'user-action') {
-    if (!this.breadcrumbs) this.breadcrumbs = [];
-    this.breadcrumbs.push({
-      timestamp: new Date().toISOString(),
-      message,
-      category,
-    });
-    if (this.breadcrumbs.length > 50) {
-      this.breadcrumbs.shift();
-    }
-  }
-
-  getSessionData() {
-    return {
-      userId: this.userId,
-      userEmail: this.userEmail,
-      errors: this.queue.length,
-      breadcrumbs: this.breadcrumbs || [],
-    };
+    // Invoke backend function to log error
+    await base44.functions.invoke('logErrorToDatabase', payload);
+    
+    console.log('[Error Tracker] Logged:', errorData.message);
+  } catch (err) {
+    console.error('[Error Tracker] Failed to log error:', err);
   }
 }
 
-export const errorTracker = new ErrorTracker();
+/**
+ * Capture unhandled errors
+ */
+export function initializeErrorTracking() {
+  // Catch uncaught exceptions
+  window.addEventListener('error', (event) => {
+    logError({
+      type: 'uncaught_error',
+      message: event.message || 'Uncaught Error',
+      stack: event.error?.stack || '',
+      severity: 'error',
+      metadata: {
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+      }
+    });
+  });
+
+  // Catch unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    logError({
+      type: 'unhandled_rejection',
+      message: event.reason?.message || String(event.reason) || 'Unhandled Promise Rejection',
+      stack: event.reason?.stack || '',
+      severity: 'error'
+    });
+  });
+
+  console.log('[Error Tracker] Initialized');
+}
+
+/**
+ * Manual error logging for API/validation errors
+ */
+export async function logApiError(error, context = {}) {
+  await logError({
+    type: 'api_error',
+    message: error.message || 'API Error',
+    stack: error.stack || '',
+    severity: error.status >= 500 ? 'critical' : 'error',
+    metadata: {
+      endpoint: context.endpoint,
+      method: context.method,
+      status: error.status,
+      response: context.response
+    }
+  });
+}
+
+export async function logValidationError(message, fields = {}) {
+  await logError({
+    type: 'validation_error',
+    message,
+    severity: 'warning',
+    metadata: { invalid_fields: fields }
+  });
+}
+
+export async function logAuthError(message) {
+  await logError({
+    type: 'auth_error',
+    message,
+    severity: 'high'
+  });
+}
