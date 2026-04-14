@@ -7,15 +7,15 @@ export default function ComplianceProtectionPitch() {
   return (
     <div className="space-y-8">
       {/* Hero Message */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-600 to-emerald-600 text-white p-8 rounded-xl">
-        <h2 className="text-3xl font-bold mb-3">Compliance Protection That Scales With You</h2>
+      <div className="bg-gradient-to-r from-blue-600 via-emerald-600 to-teal-600 text-white p-8 rounded-xl">
+        <h2 className="text-3xl font-bold mb-3">Legislation Benefits Everyone. Premiso Makes It Accessible.</h2>
         <p className="text-lg text-blue-100 mb-4">
-          Enterprise-grade legal safeguards built into every subscription tier. Whether you manage 1 property or 1,000, you get the same automated compliance protection. No premium pricing for doing the right thing.
+          Property legislation exists to protect tenants, landlords, and society. But compliance used to require expensive lawyers. Premiso changed that: enterprise-grade legal safeguards now available at every subscription tier. Whether you manage 1 property or 1,000, you get the same automated protection. No premium pricing for doing the right thing.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Badge className="bg-white text-blue-600 px-3 py-1">Same protection at every scale</Badge>
-          <Badge className="bg-white text-blue-600 px-3 py-1">Automated legal compliance</Badge>
-          <Badge className="bg-white text-blue-600 px-3 py-1">Built-in prosecution protection</Badge>
+          <Badge className="bg-white text-blue-600 px-3 py-1">Fair protections for all</Badge>
+          <Badge className="bg-white text-blue-600 px-3 py-1">Legislation democratized</Badge>
+          <Badge className="bg-white text-blue-600 px-3 py-1">Safety built-in, not premium</Badge>
         </div>
       </div>
 

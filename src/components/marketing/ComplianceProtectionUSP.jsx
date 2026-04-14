@@ -54,11 +54,11 @@ export const DemoScriptPoints = [
 ];
 
 export const PrintMaterialBlurb = `
-Compliance Protection Built for Every Scale
+ENTERPRISE-GRADE COMPLIANCE PROTECTION AT EVERY SCALE
 
-Premiso delivers enterprise-grade legal compliance safeguards at every subscription level. Whether you manage a single rental property or a 200-property portfolio, you receive the same automated protection: 30-day compliance alerts, deposit protection audit trails with full proof, gas/electrical/EPC tracking, right-to-rent verification, vendor screening, and enforcement blocks that prevent non-compliant lettings.
+Premiso delivers the same legal compliance safeguards whether you manage 1 property or 200. Every user gets: 30-day compliance alerts, deposit protection audit trails with full proof, gas/electrical/EPC tracking, right-to-rent verification, vendor screening, and enforcement blocks.
 
-We don't believe landlords should choose between affordability and legal protection. That's why Premiso's compliance features—audit trails, automated alerts, certificate automation, and prosecution prevention—are built into the platform for all users, regardless of portfolio size.
+We don't believe landlords should choose between affordability and legal protection. Legislation was designed to benefit everyone—landlords, tenants, and society. Premiso makes those protections accessible to all.
 
-Scale your business without fragmenting your compliance. Same safeguards at every tier.
+Legislation. For everyone. That's Premiso.
 `;

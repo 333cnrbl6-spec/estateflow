@@ -5,10 +5,10 @@ import { Shield, Home, Building2, Zap } from 'lucide-react';
 export default function ScaledProtectionMessage({ variant = 'full' }) {
   if (variant === 'banner') {
     return (
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-lg">
+      <div className="bg-gradient-to-r from-blue-600 to-emerald-600 text-white p-4 rounded-lg">
         <p className="text-sm font-medium flex items-center gap-2">
           <Shield className="w-4 h-4" />
-          Same compliance protection whether you manage 1 property or 1,000—scaled to your size, not your budget.
+          Legislation benefits everyone. Premiso makes those protections accessible to all—same protection at every scale, not behind premium pricing.
         </p>
       </div>
     );
