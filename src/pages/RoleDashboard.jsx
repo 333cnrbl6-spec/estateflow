@@ -16,34 +16,68 @@ export default function RoleDashboard() {
     queryFn: () => base44.auth.me()
   });
 
+  // Call all hooks unconditionally at top level
+  const { data: companies = [] } = useQuery({
+    queryKey: ['companies'],
+    queryFn: () => base44.entities.Company.list('', 50)
+  });
+
+  const { data: errors = [] } = useQuery({
+    queryKey: ['errorLogs'],
+    queryFn: () => base44.entities.ErrorLog.list('-timestamp', 50)
+  });
+
+  const { data: profiles = [] } = useQuery({
+    queryKey: ['companyProfiles'],
+    queryFn: () => base44.entities.CompaniesHouseProfile.list('-last_synced', 30)
+  });
+
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: () => base44.entities.Property.list('', 50)
+  });
+
+  const { data: tenants = [] } = useQuery({
+    queryKey: ['tenants'],
+    queryFn: () => base44.entities.Tenant.list('', 100)
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: () => base44.entities.FinancialTransaction.list('-created_date', 100)
+  });
+
+  const { data: jobs = [] } = useQuery({
+    queryKey: ['maintenanceOrders'],
+    queryFn: () => base44.entities.MaintenanceRequest.filter({ assigned_contractor_email: user?.email }, '-created_date', 50),
+    enabled: !!user?.email
+  });
+
+  const errorsByType = useMemo(() => {
+    const grouped = errors.reduce((acc, e) => {
+      const type = e.error_type.replace(/_/g, ' ');
+      const existing = acc.find(x => x.name === type);
+      if (existing) existing.value++;
+      else acc.push({ name: type, value: 1 });
+      return acc;
+    }, []);
+    return grouped;
+  }, [errors]);
+
+  const income = useMemo(() => {
+    return transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
+  }, [transactions]);
+
+  const overdue = useMemo(() => {
+    return transactions.filter(t => t.status === 'overdue').reduce((s, t) => s + (t.amount || 0), 0);
+  }, [transactions]);
+
+  const activeJobs = useMemo(() => {
+    return jobs.filter(j => !['completed', 'cancelled'].includes(j.status));
+  }, [jobs]);
+
   // ADMIN ROLE
   if (userRole === 'admin') {
-    const { data: companies = [] } = useQuery({
-      queryKey: ['companies'],
-      queryFn: () => base44.entities.Company.list('', 50)
-    });
-
-    const { data: errors = [] } = useQuery({
-      queryKey: ['errorLogs'],
-      queryFn: () => base44.entities.ErrorLog.list('-timestamp', 50)
-    });
-
-    const { data: profiles = [] } = useQuery({
-      queryKey: ['companyProfiles'],
-      queryFn: () => base44.entities.CompaniesHouseProfile.list('-last_synced', 30)
-    });
-
-    const errorsByType = useMemo(() => {
-      const grouped = errors.reduce((acc, e) => {
-        const type = e.error_type.replace(/_/g, ' ');
-        const existing = acc.find(x => x.name === type);
-        if (existing) existing.value++;
-        else acc.push({ name: type, value: 1 });
-        return acc;
-      }, []);
-      return grouped;
-    }, [errors]);
-
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-background">
         <div className="p-8 max-w-[1400px] mx-auto">
@@ -104,29 +138,6 @@ export default function RoleDashboard() {
 
   // LANDLORD ROLE
   if (userRole === 'landlord') {
-    const { data: properties = [] } = useQuery({
-      queryKey: ['properties'],
-      queryFn: () => base44.entities.Property.list('', 50)
-    });
-
-    const { data: tenants = [] } = useQuery({
-      queryKey: ['tenants'],
-      queryFn: () => base44.entities.Tenant.list('', 100)
-    });
-
-    const { data: transactions = [] } = useQuery({
-      queryKey: ['transactions'],
-      queryFn: () => base44.entities.FinancialTransaction.list('-created_date', 100)
-    });
-
-    const income = useMemo(() => {
-      return transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
-    }, [transactions]);
-
-    const overdue = useMemo(() => {
-      return transactions.filter(t => t.status === 'overdue').reduce((s, t) => s + (t.amount || 0), 0);
-    }, [transactions]);
-
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-background">
         <div className="p-8 max-w-[1400px] mx-auto">
@@ -145,13 +156,6 @@ export default function RoleDashboard() {
 
   // CONTRACTOR ROLE
   if (userRole === 'contractor') {
-    const { data: jobs = [] } = useQuery({
-      queryKey: ['maintenanceOrders'],
-      queryFn: () => base44.entities.MaintenanceRequest.filter({ assigned_contractor_email: user?.email }, '-created_date', 50)
-    });
-
-    const activeJobs = jobs.filter(j => !['completed', 'cancelled'].includes(j.status));
-
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-background">
         <div className="p-8 max-w-[1400px] mx-auto">
