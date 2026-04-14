@@ -5,13 +5,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import SignaturePad from 'signature_pad';
 
 export default function TaskSignOff({ task, onClose, onSuccess }) {
   const [completionNotes, setCompletionNotes] = useState('');
   const [signatureData, setSignatureData] = useState(null);
+  const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef(null);
-  const padRef = useRef(null);
 
   const signOffMutation = useMutation({
     mutationFn: async () => {
@@ -31,25 +30,45 @@ export default function TaskSignOff({ task, onClose, onSuccess }) {
   });
 
   const handleClearSignature = () => {
-    if (padRef.current) {
-      padRef.current.clear();
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       setSignatureData(null);
     }
   };
 
-  const handleSignatureCapture = () => {
+  const handleMouseDown = () => {
+    setIsDrawing(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsDrawing(false);
     if (canvasRef.current) {
       const data = canvasRef.current.toDataURL('image/png');
       setSignatureData(data);
     }
   };
 
+  const handleMouseMove = (e) => {
+    if (!isDrawing || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const ctx = canvas.getContext('2d');
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
   useEffect(() => {
-    if (canvasRef.current && !padRef.current) {
-      padRef.current = new SignaturePad(canvasRef.current, {
-        backgroundColor: 'rgb(255, 255, 255)',
-        penColor: 'rgb(0, 0, 0)'
-      });
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
     }
   }, []);
 
@@ -77,28 +96,21 @@ export default function TaskSignOff({ task, onClose, onSuccess }) {
               ref={canvasRef}
               width={300}
               height={150}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
               className="border-2 border-slate-300 rounded-lg mt-1 bg-white cursor-crosshair w-full"
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={handleClearSignature}
-              variant="outline"
-              className="flex-1"
-              disabled={signOffMutation.isPending}
-            >
-              Clear Signature
-            </Button>
-            <Button
-              onClick={handleSignatureCapture}
-              variant="outline"
-              className="flex-1"
-              disabled={signOffMutation.isPending}
-            >
-              Capture
-            </Button>
-          </div>
+          <Button
+            onClick={handleClearSignature}
+            variant="outline"
+            className="w-full"
+            disabled={signOffMutation.isPending}
+          >
+            Clear Signature
+          </Button>
 
           {signatureData && (
             <div className="p-3 bg-green-50 border border-green-200 rounded flex items-center gap-2 text-sm text-green-700">
