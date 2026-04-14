@@ -1,3 +1,4 @@
+/* global process */
 import { test, expect, Page } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
