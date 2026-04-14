@@ -136,6 +136,7 @@ import CertificateComplianceTracking from './pages/CertificateComplianceTracking
 import BusinessRelationshipCompliance from './pages/BusinessRelationshipCompliance';
 import OnboardingWorkflowHub from './pages/OnboardingWorkflowHub';
 import ComplianceNotificationCenter from './pages/ComplianceNotificationCenter';
+import MaintenanceSchedulingDashboard from './pages/MaintenanceSchedulingDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -215,6 +216,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
+        <Route path="/maintenance-scheduling" element={<MaintenanceSchedulingDashboard />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />
