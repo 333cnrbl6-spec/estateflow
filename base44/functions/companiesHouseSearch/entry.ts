@@ -36,39 +36,8 @@ Deno.serve(async (req) => {
       return Response.json({ companies, source: 'companies_house' });
     }
 
-    // LLM fallback
-    try {
-      const base44svc = createClientFromRequest(req);
-      const result = await base44svc.asServiceRole.integrations.Core.InvokeLLM({
-        prompt: `You are simulating the UK Companies House search API. Search for UK companies matching: "${query}".
-Return up to 6 real or realistic matching companies. Focus on property management, letting agencies, block management companies.
-Use realistic 8-digit UK company numbers. Include the registered address, incorporation date, company type, and SIC description.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            companies: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  company_number: { type: 'string' },
-                  company_name: { type: 'string' },
-                  registered_address: { type: 'string' },
-                  status: { type: 'string' },
-                  company_type: { type: 'string' },
-                  date_of_creation: { type: 'string' },
-                  sic_description: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-      });
-      return Response.json({ companies: result.companies || [], source: 'llm' });
-    } catch (e) {
-      return Response.json({ companies: [], error: e.message });
-    }
+    // API key missing or request failed — do not fabricate companies
+    return Response.json({ companies: [], error: 'Companies House API unavailable. Please check your API key.', source: 'unavailable' });
   }
 
   // ── 2. Get officers ──────────────────────────────────────────────────────
@@ -86,36 +55,8 @@ Use realistic 8-digit UK company numbers. Include the registered address, incorp
       return Response.json({ officers, source: 'companies_house' });
     }
 
-    // LLM fallback
-    try {
-      const base44svc = createClientFromRequest(req);
-      const result = await base44svc.asServiceRole.integrations.Core.InvokeLLM({
-        prompt: `For UK company number ${company_number}, list the CURRENT active directors and officers as they appear on Companies House. Most should be currently active (no resigned_on date). Only include 1-2 resigned officers at most. Include realistic British names, their roles, appointment dates. Leave resigned_on blank for active officers.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            officers: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  role: { type: 'string' },
-                  appointed_on: { type: 'string' },
-                  resigned_on: { type: 'string' },
-                  nationality: { type: 'string' },
-                  officer_id: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-      });
-      return Response.json({ officers: result.officers || [], source: 'llm' });
-    } catch (e) {
-      return Response.json({ officers: [], error: e.message });
-    }
+    // API unavailable — return empty, do not fabricate real people
+    return Response.json({ officers: [], error: 'Companies House API unavailable. Officers could not be retrieved.', source: 'unavailable' });
   }
 
   // ── 3. Get PSC ───────────────────────────────────────────────────────────
@@ -132,35 +73,8 @@ Use realistic 8-digit UK company numbers. Include the registered address, incorp
       return Response.json({ psc, source: 'companies_house' });
     }
 
-    // LLM fallback
-    try {
-      const base44svc = createClientFromRequest(req);
-      const result = await base44svc.asServiceRole.integrations.Core.InvokeLLM({
-        prompt: `For UK company number ${company_number}, list the persons with significant control (PSC) as they appear on Companies House. Return realistic names, nature of control, and date notified.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            psc: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  name: { type: 'string' },
-                  role: { type: 'string' },
-                  nature_of_control: { type: 'string' },
-                  notified_on: { type: 'string' },
-                  nationality: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-      });
-      return Response.json({ psc: result.psc || [], source: 'llm' });
-    } catch (e) {
-      return Response.json({ psc: [], error: e.message });
-    }
+    // API unavailable — return empty, do not fabricate real people
+    return Response.json({ psc: [], source: 'unavailable' });
   }
 
   // ── 4. Search officer by name (to get officer_id for appointments) ────────
@@ -175,8 +89,7 @@ Use realistic 8-digit UK company numbers. Include the registered address, incorp
       }));
       return Response.json({ officers, source: 'companies_house' });
     }
-    // LLM fallback — generate a plausible officer_id so appointments lookup can proceed
-    return Response.json({ officers: [{ name: query, officer_id: query, appointments_count: 1 }], source: 'llm' });
+    return Response.json({ officers: [], source: 'unavailable' });
   }
 
   // ── 5. Get officer appointments (other companies) ─────────────────────────
@@ -196,35 +109,7 @@ Use realistic 8-digit UK company numbers. Include the registered address, incorp
       return Response.json({ appointments, source: 'companies_house' });
     }
 
-    // LLM fallback — find other companies for this person by name (officer_id is name here)
-    try {
-      const base44svc = createClientFromRequest(req);
-      const result = await base44svc.asServiceRole.integrations.Core.InvokeLLM({
-        prompt: `Generate 3-5 realistic UK Companies House directorship records for a person named "${officerName}". These should be other UK property management or letting agent companies (NOT company number ${company_number || 'N/A'}) where this person is a current active director. Use realistic 8-digit UK company numbers, company names, and appointment dates. Leave resigned_on blank for all of them.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            appointments: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  company_number: { type: 'string' },
-                  company_name: { type: 'string' },
-                  company_status: { type: 'string' },
-                  role: { type: 'string' },
-                  appointed_on: { type: 'string' },
-                  resigned_on: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-      });
-      return Response.json({ appointments: result.appointments || [], source: 'llm' });
-    } catch (e) {
-      return Response.json({ appointments: [], error: e.message });
-    }
+    return Response.json({ appointments: [], source: 'unavailable' });
   }
 
   return Response.json({ error: 'Unknown action' }, { status: 400 });
