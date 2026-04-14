@@ -11,6 +11,7 @@ import PersonalisedDemoWizard from '@/components/landing/PersonalisedDemoWizard'
 import LandingNav from '@/components/landing/LandingNav';
 import FooterSection from '@/components/landing/FooterSection';
 import DemoSessionBanner from '@/components/landing/DemoSessionBanner';
+import WhoIsItFor from '@/components/landing/WhoIsItFor';
 
 export default function Landing() {
   const [demoMode, setDemoMode] = useState(null); // null | 'slideshow' | 'personalised'
@@ -52,6 +53,8 @@ export default function Landing() {
       />
 
       <FeaturesSection />
+
+      <WhoIsItFor onGetStarted={() => setShowLeadForm(true)} />
 
       {/* Demo Chooser */}
       <section id="demo-chooser" className="py-20 bg-slate-50">
@@ -102,7 +105,7 @@ export default function Landing() {
             <div className="text-center text-white">
               <h2 className="text-3xl font-bold mb-4">Ready to transform your property management?</h2>
               <p className="text-xl text-primary-foreground/80 mb-8">
-                Join the letting agents and block managers already using Premiso
+                Join landlords, letting agents, freeholders and block managers already using Premiso
               </p>
               <button
                 onClick={() => setShowLeadForm(true)}

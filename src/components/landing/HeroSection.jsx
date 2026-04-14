@@ -31,9 +31,10 @@ export default function HeroSection({ onStartDemo, onGetStarted }) {
             </h1>
 
             <p className="text-xl text-white/80 mb-8 leading-relaxed">
-              Premiso is the all-in-one platform for letting agents and block managers —
-              combining financials, compliance, maintenance, tenant portals and contractor
-              management in one beautifully simple system.
+              Premiso is the all-in-one platform for everyone in the UK property industry —
+              from buy-to-let landlords and freeholders to letting agents, block management
+              companies and large property groups. Financials, compliance, maintenance,
+              tenant portals and contractor management in one beautifully simple system.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

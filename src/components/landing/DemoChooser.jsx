@@ -2,24 +2,31 @@ import React, { useState } from 'react';
 
 const USER_SCENARIOS = [
   {
-    id: 'property_manager',
+    id: 'letting_agent',
     emoji: '🏠',
-    label: 'Property Manager',
-    desc: 'Manage lettings, maintenance, compliance and financials for a portfolio of residential properties.',
+    label: 'Letting Agent',
+    desc: 'Manage your full lettings book — tenancy pipeline, rent, arrears, maintenance, compliance and landlord reporting.',
     path: '/dashboard',
   },
   {
     id: 'block_manager',
     emoji: '🏢',
-    label: 'Block / Leasehold Manager',
-    desc: 'Service charges, RTM, building safety, leaseholder communications and compliance certificates.',
+    label: 'Block Manager / Freeholder',
+    desc: 'Service charges, RTM, building safety, major works, leaseholder portal and compliance certificates.',
     path: '/block-management',
+  },
+  {
+    id: 'landlord',
+    emoji: '📋',
+    label: 'Landlord / Property Owner',
+    desc: 'See your rental income, expenses, compliance status and monthly statements across your portfolio.',
+    path: '/owner-financials',
   },
   {
     id: 'sales_agent',
     emoji: '🤝',
-    label: 'Sales Agent',
-    desc: 'Manage listings, leads, viewings, offers and buyer communications in one place.',
+    label: 'Sales & Estate Agent',
+    desc: 'Manage listings, buyer portals, viewings, offers and agent performance all in one place.',
     path: '/sales',
   },
   {
@@ -33,15 +40,8 @@ const USER_SCENARIOS = [
     id: 'contractor',
     emoji: '🔧',
     label: 'Contractor',
-    desc: 'View assigned jobs, submit quotes, upload photos and submit invoices from the field.',
+    desc: 'View assigned jobs, submit quotes, upload photos and invoices from the field — no paperwork.',
     path: '/contractor',
-  },
-  {
-    id: 'landlord',
-    emoji: '📋',
-    label: 'Landlord / Owner',
-    desc: 'See your income, expenses, compliance status and monthly statements across your portfolio.',
-    path: '/owner-financials',
   },
 ];
 

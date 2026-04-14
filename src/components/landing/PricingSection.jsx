@@ -6,7 +6,7 @@ const TIERS = [
     name: 'Starter',
     price: '£99',
     period: '/month',
-    desc: 'Perfect for independent letting agents managing a small portfolio.',
+    desc: 'Perfect for buy-to-let landlords, small letting agents and independent property owners.',
     units: 'Up to 50 units',
     highlight: false,
     features: [
@@ -24,7 +24,7 @@ const TIERS = [
     name: 'Professional',
     price: '£249',
     period: '/month',
-    desc: 'For growing agencies that need the full suite with accounting integration.',
+    desc: 'For growing letting agents, block management companies and freeholders with larger portfolios.',
     units: 'Up to 250 units',
     highlight: true,
     badge: 'Most Popular',
@@ -46,7 +46,7 @@ const TIERS = [
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    desc: 'For large agencies, block management companies and multi-branch operators.',
+    desc: 'For large property management groups, multi-branch operators and institutional landlords.',
     units: 'Unlimited units',
     highlight: false,
     features: [

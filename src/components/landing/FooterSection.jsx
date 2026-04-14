@@ -13,8 +13,8 @@ export default function FooterSection() {
               <span className="text-xl font-bold">Premiso</span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              The all-in-one property management platform built for modern letting agents
-              and block managers in the UK.
+              The all-in-one property management platform built for the whole UK property
+              industry — landlords, letting agents, freeholders, block managers, sales agents and more.
             </p>
             <div className="mt-6 space-y-1 text-sm text-slate-500">
               <p>📧 hello@premiso.co.uk</p>
@@ -23,14 +23,15 @@ export default function FooterSection() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-slate-200">Platform</h4>
+            <h4 className="font-semibold mb-4 text-slate-200">Who it's for</h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li>Portfolio Management</li>
-              <li>Compliance Hub</li>
-              <li>Financial Management</li>
-              <li>Maintenance Workflow</li>
-              <li>Document Automation</li>
-              <li>Sales CRM</li>
+              <li>Buy-to-Let Landlords</li>
+              <li>Letting Agents</li>
+              <li>Block Management Companies</li>
+              <li>Freeholders</li>
+              <li>Property Investors</li>
+              <li>Sales & Estate Agents</li>
+              <li>Contractors</li>
             </ul>
           </div>
 
