@@ -128,41 +128,43 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      {/* ── Sidebar-wrapped authenticated pages ─────────────────────────── */}
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<Dashboard />} />
+
+        {/* Core */}
         <Route path="/companies" element={<Companies />} />
         <Route path="/properties" element={<Properties />} />
         <Route path="/units" element={<Units />} />
         <Route path="/tenants" element={<Tenants />} />
-        <Route path="/financials" element={<Financials />} />
-        <Route path="/maintenance" element={<MaintenanceWorkflow />} />
         <Route path="/contacts" element={<Contacts />} />
-        <Route path="/compliance" element={<Compliance />} />
+
+        {/* For Sale */}
+        <Route path="/sales" element={<SalesDashboard />} />
+        <Route path="/viewings" element={<Viewings />} />
+        <Route path="/agent-performance" element={<AgentPerformanceDashboard />} />
+        <Route path="/market-reports" element={<MarketReports />} />
+        <Route path="/buyer-portal" element={<BuyerPortal />} />
+
+        {/* To Let */}
         <Route path="/pipeline" element={<Pipeline />} />
         <Route path="/rent-ledger" element={<RentLedger />} />
-        <Route path="/service-charges" element={<ServiceCharges />} />
-        <Route path="/ground-rent" element={<GroundRent />} />
+        <Route path="/tenant-portal" element={<TenantPortal />} />
+
+        {/* Finance */}
+        <Route path="/financials" element={<Financials />} />
+        <Route path="/financial-reporting" element={<FinancialDashboard />} />
+        <Route path="/financial-reports" element={<FinancialReportingModule />} />
         <Route path="/banking" element={<Banking />} />
         <Route path="/expenses" element={<Expenses />} />
-        <Route path="/crm" element={<CRM />} />
-        <Route path="/land-registry" element={<LandRegistry />} />
-        <Route path="/setup" element={<Setup />} />
-        <Route path="/regulatory-hub" element={<RegulatoryHub />} />
-        <Route path="/workflows" element={<Workflows />} />
-        <Route path="/integrations" element={<Integrations />} />
-        <Route path="/document-templates" element={<DocumentTemplates />} />
+        <Route path="/service-charges" element={<ServiceCharges />} />
+        <Route path="/ground-rent" element={<GroundRent />} />
+        <Route path="/owner-financials" element={<OwnerFinancialDashboard />} />
+        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+        <Route path="/reconciliation" element={<FinancialReconciliation />} />
         <Route path="/accounting" element={<AccountingIntegrations />} />
-        <Route path="/financial-reporting" element={<FinancialDashboard />} />
-        <Route path="/tenant-portal" element={<TenantPortal />} />
-        <Route path="/compliance-audit" element={<ComplianceAudit />} />
-        <Route path="/api-integrations" element={<APIIntegrationHub />} />
-        <Route path="/developer-marketing" element={<DeveloperMarketing />} />
-        <Route path="/brochure" element={<ProductBrochure />} />
-        <Route path="/tour" element={<PlatformTour />} />
-        <Route path="/comparison" element={<ProductComparison />} />
-        <Route path="/marketing" element={<MarketingCollateral />} />
-        <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
+
+        {/* Block Management */}
         <Route path="/block-management" element={<BlockManagement />} />
         <Route path="/service-charges-management" element={<ServiceChargeManagement />} />
         <Route path="/rtm-management" element={<RTMManagementPage />} />
@@ -170,56 +172,81 @@ const AuthenticatedApp = () => {
         <Route path="/block-compliance-dashboard" element={<BlockManagementComplianceDashboard />} />
         <Route path="/document-automation" element={<DocumentAutomationEngine />} />
         <Route path="/leaseholder-portal" element={<LeaseholderPortalView />} />
+
+        {/* Operations */}
+        <Route path="/maintenance" element={<MaintenanceWorkflow />} />
+        <Route path="/maintenance-board" element={<MaintenanceBoard />} />
+        <Route path="/maintenance-reports" element={<MaintenanceReports />} />
+        <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
-        <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
+        <Route path="/compliance" element={<Compliance />} />
         <Route path="/certificate-compliance" element={<CertificateCompliance />} />
+        <Route path="/compliance-audit" element={<ComplianceAudit />} />
+        <Route path="/compliance-hub" element={<ComplianceHub />} />
+        <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
+        <Route path="/regulatory-hub" element={<RegulatoryHub />} />
+        <Route path="/document-repository" element={<DocumentRepository />} />
+        <Route path="/workflows" element={<Workflows />} />
+        <Route path="/crm" element={<CRM />} />
+        <Route path="/messages" element={<MessagesAdmin />} />
+
+        {/* Out-of-Hours */}
         <Route path="/out-of-hours" element={<OutOfHoursCallCenter />} />
+        <Route path="/out-of-hours-pipeline" element={<OutOfHoursServicePipeline />} />
+        <Route path="/out-of-hours-reporting" element={<OutOfHoursReporting />} />
         <Route path="/call-center-config" element={<CallCenterConfig />} />
         <Route path="/out-of-hours-pricing" element={<OutOfHoursPricingComparison />} />
         <Route path="/out-of-hours-onboarding" element={<OutOfHoursOnboarding />} />
-        <Route path="/out-of-hours-pipeline" element={<OutOfHoursServicePipeline />} />
-        <Route path="/out-of-hours-reporting" element={<OutOfHoursReporting />} />
         <Route path="/contractor-portal" element={<ContractorMobilePortal />} />
+        <Route path="/virtual-call-center" element={<VirtualCallCenterSetup />} />
+
+        {/* Admin */}
+        <Route path="/land-registry" element={<LandRegistry />} />
+        <Route path="/setup" element={<Setup />} />
+        <Route path="/integrations" element={<Integrations />} />
+        <Route path="/api-integrations" element={<APIIntegrationHub />} />
+        <Route path="/document-templates" element={<DocumentTemplates />} />
+        <Route path="/landlord-portal" element={<LandlordPortal />} />
+        <Route path="/reporting" element={<LandlordReportingDashboard />} />
+        <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/billing" element={<BillingManagement />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
-        <Route path="/virtual-call-center" element={<VirtualCallCenterSetup />} />
-        <Route path="/sales-brochure" element={<SalesBrochure />} />
-        <Route path="/sales-one-pager" element={<SalesOnePageSummary />} />
-        <Route path="/owner-financials" element={<OwnerFinancialDashboard />} />
-        <Route path="/sales-demo-setup" element={<SalesDemoSetup />} />
-        <Route path="/expansion-opportunities" element={<ExpansionOpportunities />} />
-        <Route path="/demo-station" element={<DemoStation />} />
-        <Route path="/sales-brochure-generator" element={<SalesBrochureGenerator />} />
-        <Route path="/onboarding" element={<SubscriberOnboarding />} />
-        <Route path="/intelligent-onboarding" element={<SubscriberIntelligentOnboarding />} />
-        <Route path="/sales-targeted-demo-builder" element={<SalesTargetedDemoBuilder />} />
-        <Route path="/document-repository" element={<DocumentRepository />} />
-        <Route path="/maintenance-board" element={<MaintenanceBoard />} />
-        <Route path="/landlord-portal" element={<LandlordPortal />} />
-        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
-        <Route path="/reporting" element={<LandlordReportingDashboard />} />
-        <Route path="/messages" element={<MessagesAdmin />} />
-        <Route path="/maintenance-reports" element={<MaintenanceReports />} />
-        <Route path="/sales" element={<SalesDashboard />} />
-        <Route path="/market-reports" element={<MarketReports />} />
-        <Route path="/buyer-portal" element={<BuyerPortal />} />
-        <Route path="/viewings" element={<Viewings />} />
-        <Route path="/agent-performance" element={<AgentPerformanceDashboard />} />
-        <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
+        <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
         <Route path="/bulk-import-tester" element={<BulkImportTester />} />
         <Route path="/user-type-manager" element={<UserTypeManager />} />
-        <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
+        <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
+
+        {/* Demo & Sales */}
+        <Route path="/demo-station" element={<DemoStation />} />
+        <Route path="/sales-demo-setup" element={<SalesDemoSetup />} />
+        <Route path="/sales-brochure-generator" element={<SalesBrochureGenerator />} />
+        <Route path="/sales-targeted-demo-builder" element={<SalesTargetedDemoBuilder />} />
+        <Route path="/expansion-opportunities" element={<ExpansionOpportunities />} />
+        <Route path="/onboarding" element={<SubscriberOnboarding />} />
+        <Route path="/intelligent-onboarding" element={<SubscriberIntelligentOnboarding />} />
+
+        {/* Marketing / Collateral (sidebar-wrapped so nav is present) */}
+        <Route path="/sales-brochure" element={<SalesBrochure />} />
+        <Route path="/sales-one-pager" element={<SalesOnePageSummary />} />
+        <Route path="/brochure" element={<ProductBrochure />} />
+        <Route path="/tour" element={<PlatformTour />} />
+        <Route path="/comparison" element={<ProductComparison />} />
+        <Route path="/marketing" element={<MarketingCollateral />} />
+        <Route path="/developer-marketing" element={<DeveloperMarketing />} />
+        <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
       </Route>
-      <Route path="/contractor" element={<ContractorPortal />} />
+
+      {/* ── Standalone portals — no sidebar ─────────────────────────────── */}
+      {/* /contractor — dedicated contractor dashboard (token-auth'd) */}
+      <Route path="/contractor" element={<ContractorDashboard />} />
+      {/* /contractor-view — mobile portal for contractors */}
+      <Route path="/contractor-view" element={<ContractorPortal />} />
+      {/* /inspection — standalone inspection form */}
       <Route path="/inspection" element={<PropertyInspection />} />
-        <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
-        <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
-        <Route path="/contractor" element={<ContractorDashboard />} />
-        <Route path="/tenant-portal" element={<TenantSelfServicePortal />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/financial-reports" element={<FinancialReportingModule />} />
-        <Route path="/compliance-hub" element={<ComplianceHub />} />
-        <Route path="/reconciliation" element={<FinancialReconciliation />} />
+      {/* /tenant-self-service — token-auth'd tenant self-service */}
+      <Route path="/tenant-self-service" element={<TenantSelfServicePortal />} />
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

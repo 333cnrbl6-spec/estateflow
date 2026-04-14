@@ -103,6 +103,17 @@ const navGroups = [
     ]
   },
   {
+    label: '📊 Reporting',
+    items: [
+      { label: 'Landlord Reports', icon: TrendingUp, path: '/reporting' },
+      { label: 'Monthly Reports', icon: FileText, path: '/monthly-reports' },
+      { label: 'Financial Reports', icon: PoundSterling, path: '/financial-reports' },
+      { label: 'KPI Dashboard', icon: BarChart3, path: '/kpi-dashboard' },
+      { label: 'Maintenance Analytics', icon: Wrench, path: '/maintenance-analytics' },
+      { label: 'Reconciliation', icon: Receipt, path: '/reconciliation' },
+    ]
+  },
+  {
     label: '⚙️ Admin',
     items: [
       { label: 'Companies', icon: Building2, path: '/companies' },
@@ -112,7 +123,9 @@ const navGroups = [
       { label: 'API Hub', icon: Zap, path: '/api-integrations' },
       { label: 'Document Templates', icon: FileText, path: '/document-templates' },
       { label: 'Landlord Portal', icon: Users, path: '/landlord-portal' },
-      { label: 'Reporting', icon: TrendingUp, path: '/reporting' },
+      { label: 'Settings', icon: Settings, path: '/settings' },
+      { label: 'Compliance Hub', icon: Scale, path: '/compliance-hub' },
+      { label: 'Billing', icon: Receipt, path: '/billing' },
     ]
   },
   {

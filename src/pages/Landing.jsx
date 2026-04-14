@@ -48,7 +48,7 @@ export default function Landing() {
       </section>
 
       {/* Demo Area */}
-      {demoMode && (
+      {demoMode && demoMode !== 'scenario' && (
         <section id="demo-section" className="py-10 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             {demoMode === 'slideshow' ? (
