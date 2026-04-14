@@ -15,6 +15,7 @@ import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceW
 import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import ErrorAnalyticsWidget from '@/components/dashboard/ErrorAnalyticsWidget';
+import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -165,6 +166,10 @@ export default function Dashboard() {
         {/* Error Monitoring */}
         <div className="mb-8">
           <ErrorAnalyticsWidget />
+        </div>
+
+        <div className="mb-8">
+          <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
