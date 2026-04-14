@@ -127,6 +127,7 @@ import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
 import OwnerPortal from './pages/OwnerPortal';
+import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -208,6 +209,7 @@ const AuthenticatedApp = () => {
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
+        <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/certificates" element={<CertificateManagement />} />

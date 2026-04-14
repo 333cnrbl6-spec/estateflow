@@ -1,235 +1,200 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Loader2, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, Upload, X, Loader2, CheckCircle } from 'lucide-react';
 
-const CATEGORIES = [
-  { value: 'plumbing', label: 'Plumbing' },
-  { value: 'electrical', label: 'Electrical' },
-  { value: 'heating', label: 'Heating & Hot Water' },
-  { value: 'structural', label: 'Structural/Damage' },
-  { value: 'appliances', label: 'Appliances' },
-  { value: 'safety', label: 'Safety Hazard' },
-  { value: 'other', label: 'Other' }
-];
-
-const PRIORITIES = [
-  { value: 'routine', label: 'Routine (can wait)' },
-  { value: 'moderate', label: 'Moderate (within 2 weeks)' },
-  { value: 'urgent', label: 'Urgent (within 48 hours)' },
-  { value: 'emergency', label: 'Emergency (immediate)' }
-];
-
-export default function MaintenanceRequestForm({ tenant, property }) {
+export default function MaintenanceRequestForm({ tenant, property, onSuccess }) {
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [priority, setPriority] = useState('moderate');
   const [description, setDescription] = useState('');
-  const [photos, setPhotos] = useState([]);
-  const [photoUrls, setPhotoUrls] = useState([]);
+  const [priority, setPriority] = useState('medium');
+  const [attachments, setAttachments] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
   const queryClient = useQueryClient();
 
-  const uploadPhotoMutation = useMutation({
-    mutationFn: async (file) => {
-      const result = await base44.integrations.Core.UploadFile({ file });
-      return result.file_url;
-    }
-  });
-
-  const createRequestMutation = useMutation({
+  const submitMutation = useMutation({
     mutationFn: async () => {
-      return await base44.entities.MaintenanceRequest.create({
+      return await base44.functions.invoke('submitMaintenanceRequest', {
         tenant_id: tenant.id,
-        property_id: tenant.property_id,
+        property_id: property.id,
         title,
-        category,
-        priority,
         description,
-        photo_urls: photoUrls,
-        status: 'submitted',
-        submitted_date: new Date().toISOString()
+        priority,
+        attachment_urls: attachments
       });
     },
     onSuccess: () => {
-      // Reset form
-      setTitle('');
-      setCategory('');
-      setPriority('moderate');
-      setDescription('');
-      setPhotos([]);
-      setPhotoUrls([]);
-      queryClient.invalidateQueries({ queryKey: ['maintenance-requests', tenant.id] });
-      
-      // Show success message
-      alert('Maintenance request submitted successfully!');
+      setSubmitted(true);
+      queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] });
+      setTimeout(() => {
+        setTitle('');
+        setDescription('');
+        setPriority('medium');
+        setAttachments([]);
+        setSubmitted(false);
+        onSuccess?.();
+      }, 2000);
+    },
+    onError: (err) => {
+      setError(err.message);
     }
   });
 
-  const handlePhotoChange = async (e) => {
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files || []);
-    for (const file of files) {
-      try {
-        const url = await uploadPhotoMutation.mutateAsync(file);
-        setPhotoUrls(prev => [...prev, url]);
-        setPhotos(prev => [...prev, file.name]);
-      } catch (err) {
-        alert(`Failed to upload ${file.name}: ${err.message}`);
+    if (!files.length) return;
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const base64 = event.target.result;
+          const result = await base44.integrations.Core.UploadFile({
+            file: base64
+          });
+          setAttachments(prev => [...prev, result.file_url]);
+        };
+        reader.readAsDataURL(file);
       }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
     }
   };
 
-  const removePhoto = (index) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
-    setPhotoUrls(prev => prev.filter((_, i) => i !== index));
+  const removeAttachment = (index) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!title || !category || !description) {
-      alert('Please fill in all required fields');
+  const handleSubmit = async () => {
+    if (!title.trim()) {
+      setError('Please enter a title');
       return;
     }
-    createRequestMutation.mutate();
+    submitMutation.mutate();
   };
 
-  const isLoading = uploadPhotoMutation.isPending || createRequestMutation.isPending;
+  if (submitted) {
+    return (
+      <Card className="p-8 text-center bg-green-50 border-green-200">
+        <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-3" />
+        <p className="font-semibold text-foreground mb-1">Request Submitted!</p>
+        <p className="text-sm text-muted-foreground">A property manager will review and assign a contractor shortly.</p>
+      </Card>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6 bg-white">
-        <h2 className="text-xl font-bold text-foreground mb-6">Submit Maintenance Request</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Title */}
-          <div>
-            <label className="text-sm font-semibold text-foreground block mb-2">Issue Title *</label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Leaky tap in bathroom"
-              disabled={isLoading}
-            />
-          </div>
+    <Card className="p-6">
+      <h3 className="text-lg font-semibold mb-4 text-foreground">Submit a Maintenance Request</h3>
 
-          {/* Category & Priority Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-2">Category *</label>
-              <Select value={category} onValueChange={setCategory} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="space-y-4">
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">Issue Title *</label>
+          <input
+            type="text"
+            placeholder="e.g., Leaking tap in kitchen sink"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground"
+          />
+        </div>
 
-            <div>
-              <label className="text-sm font-semibold text-foreground block mb-2">Priority *</label>
-              <Select value={priority} onValueChange={setPriority} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRIORITIES.map(p => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">Description</label>
+          <textarea
+            placeholder="Describe the issue in detail..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows="4"
+            className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground resize-none"
+          />
+        </div>
 
-          {/* Description */}
-          <div>
-            <label className="text-sm font-semibold text-foreground block mb-2">Description *</label>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the issue in detail. What exactly needs to be fixed?"
-              rows={4}
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* Photo Upload */}
-          <div>
-            <label className="text-sm font-semibold text-foreground block mb-3">Upload Photos (optional)</label>
-            <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50 text-center hover:border-blue-400 transition-colors">
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handlePhotoChange}
-                disabled={isLoading}
-                className="hidden"
-                id="photo-upload"
-              />
-              <label htmlFor="photo-upload" className="cursor-pointer block">
-                <Upload className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-blue-900">Click to upload photos</p>
-                <p className="text-xs text-blue-700 mt-1">or drag and drop</p>
-              </label>
-            </div>
-
-            {/* Photo List */}
-            {photos.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {photos.map((photo, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-foreground">{photo}</p>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removePhoto(idx)}
-                      disabled={isLoading}
-                      className="text-red-600"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            disabled={isLoading || !title || !category || !description}
-            size="lg"
-            className="w-full"
+        {/* Priority */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">Priority</label>
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              'Submit Request'
-            )}
-          </Button>
-        </form>
-      </Card>
+            <option value="low">Low - Can wait</option>
+            <option value="medium">Medium - Soon</option>
+            <option value="high">High - Urgent</option>
+          </select>
+        </div>
 
-      {/* Info Box */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
-        <p className="text-sm text-blue-900">
-          <strong>Tip:</strong> Upload clear photos from multiple angles to help our contractors understand the issue faster.
-        </p>
-      </Card>
-    </div>
+        {/* File Upload */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">Add Photos or Videos (Optional)</label>
+          <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-blue-400 transition cursor-pointer">
+            <input
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="file-upload"
+            />
+            <label htmlFor="file-upload" className="cursor-pointer">
+              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">Drop files here or click to upload</p>
+              <p className="text-xs text-muted-foreground mt-1">Max 10MB per file</p>
+            </label>
+          </div>
+
+          {/* Attachment Preview */}
+          {attachments.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {attachments.map((url, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded border border-slate-200">
+                  <p className="text-xs text-muted-foreground truncate">{url.split('/').pop()}</p>
+                  <button
+                    onClick={() => removeAttachment(idx)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <Button
+          onClick={handleSubmit}
+          disabled={!title.trim() || submitMutation.isPending || uploading}
+          className="w-full"
+        >
+          {submitMutation.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            'Submit Request'
+          )}
+        </Button>
+      </div>
+    </Card>
   );
 }
