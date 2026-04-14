@@ -7,6 +7,7 @@ const SLIDES = [
     title: 'Your entire portfolio — at a glance',
     desc: 'A real-time command centre showing rent collection, compliance status, maintenance activity and occupancy across every property you manage. No spreadsheets. No chasing.',
     badge: '🏢 Portfolio Overview',
+    audience: 'Letting Agents · Property Managers · Group Operators',
     stats: [
       { label: 'Properties', value: '47', trend: '+3 this month', up: true },
       { label: 'Units', value: '312', trend: '96.8% occupied', up: true },
@@ -26,14 +27,47 @@ const SLIDES = [
     title: 'Never miss a certificate again',
     desc: 'Premiso tracks every Gas Safety, EICR, EPC, Fire Risk Assessment and Legionella certificate across your portfolio. Automatic reminders. Instant alerts. Full audit trail.',
     badge: '🛡️ Compliance Tracking',
+    audience: 'All property professionals — landlords to large agents',
     certs: [
-      { name: 'Gas Safety (CP12)', property: '22 Oak Avenue', unit: 'Whole property', expires: 'EXPIRED', status: 'danger', days: null },
-      { name: 'Gas Safety (CP12)', property: '14 Willow Drive', unit: 'Flat 3', expires: '7 days', status: 'warning', days: 7 },
-      { name: 'EICR Certificate', property: 'Admiral Point', unit: 'Flat 4', expires: '42 days', status: 'ok', days: 42 },
-      { name: 'EPC Certificate', property: 'Reed Close', unit: 'Flat 8', expires: '6 months', status: 'ok', days: 180 },
-      { name: 'Fire Risk Assessment', property: 'Maple Court', unit: 'Block A', expires: '11 months', status: 'ok', days: 330 },
+      { name: 'Gas Safety (CP12)', property: '22 Oak Avenue', unit: 'Whole property', expires: 'EXPIRED', status: 'danger' },
+      { name: 'Gas Safety (CP12)', property: '14 Willow Drive', unit: 'Flat 3', expires: '7 days', status: 'warning' },
+      { name: 'EICR Certificate', property: 'Admiral Point', unit: 'Flat 4', expires: '42 days', status: 'ok' },
+      { name: 'EPC Certificate', property: 'Reed Close', unit: 'Flat 8', expires: '6 months', status: 'ok' },
+      { name: 'Fire Risk Assessment', property: 'Maple Court', unit: 'Block A', expires: '11 months', status: 'ok' },
     ],
     summary: { total: 94, compliant: 88, warning: 4, expired: 2 },
+  },
+  {
+    id: 'btl',
+    subtitle: 'Buy-to-Let Landlord',
+    title: 'Your rental portfolio, professionally managed',
+    desc: 'Whether you own one flat or twenty, Premiso gives you a landlord-grade platform. Track rent, certificates, tenancy dates and maintenance — without relying on a spreadsheet or chasing your agent.',
+    badge: '🏠 Buy-to-Let & Small Portfolio',
+    audience: 'Individual landlords · Small portfolio owners · Property investors',
+    properties: [
+      { address: '14 Willow Drive, Flat 3', tenant: 'Mr J. Harrison', rent: '£1,250/mo', status: 'Paid', yield: '5.8%', cert: 'warning' },
+      { address: '8 Maple Close', tenant: 'Ms A. Patel', rent: '£975/mo', status: 'Paid', yield: '5.1%', cert: 'ok' },
+      { address: '22 Oak Avenue', tenant: 'Mrs T. Singh', rent: '£1,400/mo', status: 'Overdue', yield: '6.2%', cert: 'danger' },
+    ],
+    summary: { income: '£3,625', yield: '5.7%', arrears: '£1,400', certs: 1 },
+  },
+  {
+    id: 'block',
+    subtitle: 'Block & Leasehold Management',
+    title: 'Block management done properly',
+    desc: 'Manage service charge budgets, major works consultations, building safety compliance, RTM companies and leaseholder communications — all from one purpose-built platform.',
+    badge: '🏛️ Block Management',
+    audience: 'Freeholders · Block management agents · RTM companies',
+    blocks: [
+      { name: 'Admiral Point', units: 24, sc_budget: '£148,000', collected: '£142,400', pending: 2, safety: 'ok' },
+      { name: 'Maple Court', units: 12, sc_budget: '£72,000', collected: '£72,000', pending: 0, safety: 'warning' },
+      { name: 'Reed Close', units: 8, sc_budget: '£44,000', collected: '£38,500', pending: 1, safety: 'ok' },
+    ],
+    tasks: [
+      { label: 'Section 20 consultation open', block: 'Admiral Point', due: '14 days', type: 'warning' },
+      { label: 'Building safety report due', block: 'Maple Court', due: '30 days', type: 'info' },
+      { label: 'AGM scheduled', block: 'Reed Close', due: '6 weeks', type: 'ok' },
+    ],
   },
   {
     id: 'maintenance',
@@ -41,6 +75,7 @@ const SLIDES = [
     title: 'From tenant report to job complete',
     desc: 'Tenants submit via their portal. Photos attach automatically. Contractors receive job packs instantly. You track progress on a real-time Kanban board — from first report to invoice approval.',
     badge: '🔧 Live Job Board',
+    audience: 'Letting agents · Block managers · Property owners',
     columns: [
       {
         label: 'Reported', color: 'blue',
@@ -76,13 +111,14 @@ const SLIDES = [
     title: 'Financials you can actually understand',
     desc: 'Rent ledgers, service charges, invoicing and bank reconciliation — all in one place. Syncs with Xero, Sage and QuickBooks. Chase arrears automatically. Generate landlord statements in one click.',
     badge: '💰 Financial Dashboard',
+    audience: 'Letting agents · Block managers · Freeholders · Accountants',
     months: [
-      { month: 'Nov', collected: 109200, expected: 112000, arrears: 1 },
-      { month: 'Dec', collected: 110500, expected: 112000, arrears: 1 },
-      { month: 'Jan', collected: 108400, expected: 112000, arrears: 2 },
-      { month: 'Feb', collected: 111800, expected: 112000, arrears: 0 },
-      { month: 'Mar', collected: 112000, expected: 112000, arrears: 0 },
-      { month: 'Apr', collected: 94400, expected: 112000, arrears: 3 },
+      { month: 'Nov', collected: 109200, expected: 112000 },
+      { month: 'Dec', collected: 110500, expected: 112000 },
+      { month: 'Jan', collected: 108400, expected: 112000 },
+      { month: 'Feb', collected: 111800, expected: 112000 },
+      { month: 'Mar', collected: 112000, expected: 112000 },
+      { month: 'Apr', collected: 94400, expected: 112000 },
     ],
     breakdown: [
       { label: 'Rent Received', value: '£94,400', note: 'Month to date' },
@@ -92,11 +128,31 @@ const SLIDES = [
     ],
   },
   {
+    id: 'sales',
+    subtitle: 'Sales & Estate Agency',
+    title: 'Manage your sales pipeline end-to-end',
+    desc: 'From valuation to completion — listings, buyer portals, viewing management, offer tracking and agent leaderboards. Fully joined up with your lettings and compliance data.',
+    badge: '🤝 Sales CRM',
+    audience: 'Estate agents · Hybrid letting & sales agents',
+    listings: [
+      { address: '12 Park Lane, London', price: '£485,000', status: 'Under Offer', viewings: 8, offers: 2, agent: 'S. Whitfield' },
+      { address: '5 Brook Close, Surrey', price: '£320,000', status: 'Active', viewings: 4, offers: 0, agent: 'J. Marsden' },
+      { address: '3 Victoria Rd, Brighton', price: '£275,000', status: 'Sold STC', viewings: 11, offers: 3, agent: 'S. Whitfield' },
+    ],
+    pipeline: [
+      { stage: 'Valuations', count: 5, value: '£2.1M' },
+      { stage: 'Listed', count: 12, value: '£5.4M' },
+      { stage: 'Under Offer', count: 7, value: '£2.8M' },
+      { stage: 'Exchanged', count: 3, value: '£1.1M' },
+    ],
+  },
+  {
     id: 'portals',
     subtitle: 'Self-Service Portals',
-    title: 'Portals for tenants and landlords',
-    desc: 'Tenants pay rent, raise jobs and access documents 24/7. Landlords view live statements and portfolio performance. Cut your inbound queries by up to 70%.',
-    badge: '📱 Tenant & Landlord Portals',
+    title: 'Portals for every stakeholder',
+    desc: 'Tenants pay rent, raise jobs and access documents 24/7. Landlords view live statements and portfolio performance. Leaseholders check service charge accounts. Cut your inbound queries by up to 70%.',
+    badge: '📱 Tenant, Landlord & Leaseholder Portals',
+    audience: 'Tenants · Landlords · Leaseholders · Freeholders',
     tenant: {
       name: 'Sarah Johnson',
       unit: 'Flat 7, Admiral Point',
@@ -104,7 +160,7 @@ const SLIDES = [
       nextDue: '1st May 2026',
       status: 'Up to date',
       actions: ['Pay Rent Online', 'Report a Problem', 'View Documents', 'Message Manager'],
-      notifications: ['Your maintenance request has been assigned to a plumber', 'Rent reminder: £1,150 due in 5 days'],
+      notifications: ['Your maintenance request has been assigned to a plumber'],
     },
     landlord: {
       name: 'David Chen',
@@ -115,25 +171,60 @@ const SLIDES = [
     },
   },
   {
+    id: 'outofhours',
+    subtitle: 'Out-of-Hours Service',
+    title: '24/7 emergency cover — built in',
+    desc: 'No third-party answering service needed. Premiso handles out-of-hours calls, validates emergencies, escalates to contractors and logs every interaction — automatically. Full audit trail included.',
+    badge: '📞 Out-of-Hours Call Handling',
+    audience: 'Letting agents · Block managers · Property management companies',
+    calls: [
+      { time: '11:42pm', property: '22 Oak Avenue', type: 'Water leak', caller: 'S. Johnson', status: 'Escalated', contractor: 'A. Plumbing' },
+      { time: '02:15am', property: 'Admiral Point Flat 3', type: 'No heating', caller: 'R. Khan', status: 'Resolved', contractor: 'Boiler Co.' },
+      { time: '06:30am', property: 'Reed Close', type: 'Front door access', caller: 'M. Davies', status: 'Logged', contractor: null },
+    ],
+    stats: [
+      { label: 'Calls This Month', value: '34' },
+      { label: 'Avg Response', value: '8 min' },
+      { label: 'Escalated', value: '18' },
+      { label: 'Resolved', value: '97%' },
+    ],
+  },
+  {
+    id: 'contractor',
+    subtitle: 'Contractor Portal',
+    title: 'Jobs, quotes and invoices from the field',
+    desc: 'Contractors get a dedicated mobile portal — see assigned jobs with full details, upload before/after photos, submit quotes and invoices, and track payment status. No phone calls. No paperwork.',
+    badge: '🔧 Contractor & Supplier Portal',
+    audience: 'Tradespeople · Specialist contractors · Building surveyors',
+    jobs: [
+      { title: 'Boiler repair — Flat 3', address: '22 Oak Avenue', status: 'In Progress', due: 'Today 2pm', value: null },
+      { title: 'EICR inspection', address: 'Admiral Point', status: 'Scheduled', due: 'Thu 9am', value: null },
+      { title: 'External door replacement', address: 'Maple Court', status: 'Quote Requested', due: 'By Fri', value: null },
+      { title: 'Bathroom reseal', address: '14 Willow Drive', status: 'Invoice Submitted', due: '—', value: '£285' },
+    ],
+  },
+  {
     id: 'reporting',
-    subtitle: 'Reporting & Insights',
+    subtitle: 'Reporting & Analytics',
     title: 'Reports that impress your clients',
-    desc: "Monthly landlord statements, arrears summaries, maintenance cost breakdowns and compliance audits — all branded with your agency's logo. Delivered automatically. No manual work.",
+    desc: "Monthly landlord statements, arrears summaries, maintenance cost breakdowns, service charge accounts and compliance audits — all branded with your logo. Delivered automatically.",
     badge: '📊 Automated Reporting',
+    audience: 'All users — every role gets their own report suite',
     reports: [
       { name: 'Monthly Landlord Statement', desc: 'Income, expenses, net return per property', icon: '📄', time: 'Auto-sent 1st of month', popular: true },
+      { name: 'Service Charge Accounts', desc: 'Budget vs actual, reserve fund, S.20 notices', icon: '🏛️', time: 'Quarterly', popular: true },
       { name: 'Compliance Audit Report', desc: 'Certificate status across all properties', icon: '🛡️', time: 'Weekly digest', popular: false },
-      { name: 'Arrears & Collections Report', desc: 'Outstanding rent with chase history', icon: '💸', time: 'Real-time', popular: false },
-      { name: 'Maintenance Cost Analysis', desc: 'Spend by property, contractor and category', icon: '🔧', time: 'Monthly', popular: true },
+      { name: 'Arrears & Collections', desc: 'Outstanding rent with full chase history', icon: '💸', time: 'Real-time', popular: false },
       { name: 'Portfolio Performance', desc: 'Occupancy, yield, void periods, trends', icon: '📈', time: 'Quarterly', popular: false },
     ],
   },
   {
     id: 'getstarted',
     subtitle: 'Get Started',
-    title: 'Built for letting agents and block managers',
-    desc: "Whether you manage 50 units or 5,000, Premiso scales with you. Full onboarding support. Live from day one. No long contracts.",
+    title: 'One platform. Every role in property.',
+    desc: "From a single buy-to-let landlord to a 5,000-unit management group — Premiso scales with you. Full onboarding support. Live from day one. No long contracts.",
     badge: '🚀 Ready to Go',
+    audience: 'Landlords · Agents · Block managers · Freeholders · Investors',
     pricing: [
       { tier: 'Starter', price: '£99', units: 'Up to 50 units', features: ['Properties & unit management', 'Tenant & landlord portal', 'Maintenance workflow', 'Basic compliance certificates'] },
       { tier: 'Professional', price: '£249', units: 'Up to 250 units', features: ['Everything in Starter', 'Block & leasehold management', 'Accounting sync (Xero/Sage/QB)', 'Full compliance hub', 'Sales CRM'], highlight: true },
@@ -142,7 +233,7 @@ const SLIDES = [
   },
 ];
 
-const SLIDE_DURATION = 7000; // 7 seconds per slide
+const SLIDE_DURATION = 7000;
 
 const priorityColor = {
   emergency: 'bg-red-100 text-red-700',
@@ -174,6 +265,8 @@ const alertBg = {
   success: 'bg-green-50 border-green-200',
 };
 
+// ── Visuals ──────────────────────────────────────────────────────────────────
+
 function VisualDashboard({ slide }) {
   return (
     <div className="space-y-3">
@@ -191,9 +284,9 @@ function VisualDashboard({ slide }) {
           <div key={i} className={`flex items-center justify-between rounded-lg px-3 py-2 border text-sm ${alertBg[a.type]}`}>
             <div className="flex items-center gap-2">
               <span>{a.icon}</span>
-              <span className="text-slate-700 font-medium">{a.text}</span>
+              <span className="text-slate-700 font-medium text-xs">{a.text}</span>
             </div>
-            <span className="text-xs text-primary font-semibold whitespace-nowrap ml-2 cursor-pointer hover:underline">{a.action} →</span>
+            <span className="text-xs text-primary font-semibold whitespace-nowrap ml-2">{a.action} →</span>
           </div>
         ))}
       </div>
@@ -232,6 +325,71 @@ function VisualCompliance({ slide }) {
   );
 }
 
+function VisualBTL({ slide }) {
+  const statusColor = s => s === 'Paid' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-4 gap-2 mb-1">
+        {[
+          { label: 'Monthly Income', value: slide.summary.income, color: 'bg-green-50 text-green-800' },
+          { label: 'Avg Yield', value: slide.summary.yield, color: 'bg-blue-50 text-blue-800' },
+          { label: 'Arrears', value: slide.summary.arrears, color: 'bg-red-50 text-red-700' },
+          { label: 'Certs Due', value: `${slide.summary.certs} alert`, color: 'bg-amber-50 text-amber-800' },
+        ].map(s => (
+          <div key={s.label} className={`rounded-lg p-2 text-center border ${s.color}`}>
+            <p className="text-sm font-bold">{s.value}</p>
+            <p className="text-xs opacity-70">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      {slide.properties.map((p, i) => (
+        <div key={i} className="bg-white border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-slate-800 truncate">{p.address}</p>
+            <p className="text-xs text-slate-500">{p.tenant} · {p.rent}</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColor(p.status)}`}>{p.status}</span>
+            <span className={`text-xs px-1.5 py-0.5 rounded border font-medium ${certStatusColor[p.cert]}`}>cert</span>
+            <span className="text-xs text-slate-500">{p.yield}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VisualBlock({ slide }) {
+  const taskColor = { warning: 'bg-amber-50 border-amber-200 text-amber-800', info: 'bg-blue-50 border-blue-200 text-blue-800', ok: 'bg-green-50 border-green-200 text-green-800' };
+  return (
+    <div className="space-y-3">
+      {slide.blocks.map((b, i) => (
+        <div key={i} className="bg-white border rounded-xl px-3 py-2.5">
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="text-xs font-bold text-slate-800">{b.name} <span className="font-normal text-slate-400">· {b.units} units</span></p>
+            <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${certStatusColor[b.safety]}`}>
+              {b.safety === 'ok' ? 'Safety OK' : 'Action needed'}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div><p className="text-slate-400">Budget</p><p className="font-semibold text-slate-700">{b.sc_budget}</p></div>
+            <div><p className="text-slate-400">Collected</p><p className="font-semibold text-green-700">{b.collected}</p></div>
+            <div><p className="text-slate-400">Pending</p><p className={`font-semibold ${b.pending > 0 ? 'text-amber-600' : 'text-slate-400'}`}>{b.pending} leaseholder{b.pending !== 1 ? 's' : ''}</p></div>
+          </div>
+        </div>
+      ))}
+      <div className="space-y-1.5">
+        {slide.tasks.map((t, i) => (
+          <div key={i} className={`flex items-center justify-between rounded-lg px-3 py-2 border text-xs ${taskColor[t.type]}`}>
+            <span className="font-medium">{t.label} — {t.block}</span>
+            <span className="text-xs opacity-70 whitespace-nowrap ml-2">{t.due}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function VisualMaintenance({ slide }) {
   return (
     <div className="grid grid-cols-2 gap-2">
@@ -245,9 +403,7 @@ function VisualMaintenance({ slide }) {
               <div key={i} className="bg-white rounded-lg p-2 border border-slate-200 shadow-sm">
                 <p className="text-xs font-semibold text-slate-800 leading-tight mb-1">{job.title}</p>
                 <div className="flex items-center justify-between gap-1">
-                  <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${priorityColor[job.priority]}`}>
-                    {job.priority}
-                  </span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${priorityColor[job.priority]}`}>{job.priority}</span>
                   <span className="text-xs text-slate-400">{job.unit}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">{job.time}</p>
@@ -279,14 +435,9 @@ function VisualFinancials({ slide }) {
           {slide.months.map((m, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full flex flex-col justify-end h-14">
-                <div
-                  className="w-full rounded-t-sm bg-slate-200"
-                  style={{ height: `${(m.expected / max) * 100}%` }}
-                >
-                  <div
-                    className={`w-full rounded-t-sm transition-all ${m.collected >= m.expected ? 'bg-green-500' : 'bg-primary'}`}
-                    style={{ height: `${(m.collected / m.expected) * 100}%` }}
-                  />
+                <div className="w-full rounded-t-sm bg-slate-200" style={{ height: `${(m.expected / max) * 100}%` }}>
+                  <div className={`w-full rounded-t-sm ${m.collected >= m.expected ? 'bg-green-500' : 'bg-primary'}`}
+                    style={{ height: `${(m.collected / m.expected) * 100}%` }} />
                 </div>
               </div>
               <span className="text-xs text-slate-500">{m.month}</span>
@@ -298,15 +449,38 @@ function VisualFinancials({ slide }) {
   );
 }
 
+function VisualSales({ slide }) {
+  const statusColor = { 'Under Offer': 'bg-amber-100 text-amber-700', 'Active': 'bg-blue-100 text-blue-700', 'Sold STC': 'bg-green-100 text-green-700' };
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-4 gap-2 mb-1">
+        {slide.pipeline.map(p => (
+          <div key={p.stage} className="bg-white border rounded-lg p-2 text-center">
+            <p className="text-sm font-bold text-slate-900">{p.count}</p>
+            <p className="text-xs text-slate-500 leading-tight">{p.stage}</p>
+            <p className="text-xs font-medium text-primary">{p.value}</p>
+          </div>
+        ))}
+      </div>
+      {slide.listings.map((l, i) => (
+        <div key={i} className="bg-white border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-slate-800 truncate">{l.address}</p>
+            <p className="text-xs text-slate-500">{l.price} · {l.viewings} viewings · {l.offers} offers · {l.agent}</p>
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[l.status]}`}>{l.status}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function VisualPortals({ slide }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      {/* Tenant */}
       <div className="bg-white rounded-xl border border-slate-200 p-3 space-y-2">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-            {slide.tenant.name[0]}
-          </div>
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">{slide.tenant.name[0]}</div>
           <div>
             <p className="text-xs font-bold text-slate-800">{slide.tenant.name}</p>
             <p className="text-xs text-slate-500">{slide.tenant.unit}</p>
@@ -322,16 +496,12 @@ function VisualPortals({ slide }) {
           ))}
         </div>
         <div className="bg-blue-50 border border-blue-100 rounded p-2">
-          <p className="text-xs text-blue-700 font-medium mb-1">🔔 Latest</p>
           <p className="text-xs text-blue-600">{slide.tenant.notifications[0]}</p>
         </div>
       </div>
-      {/* Landlord */}
       <div className="bg-white rounded-xl border border-slate-200 p-3 space-y-2">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold">
-            {slide.landlord.name[0]}
-          </div>
+          <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold">{slide.landlord.name[0]}</div>
           <div>
             <p className="text-xs font-bold text-slate-800">{slide.landlord.name}</p>
             <p className="text-xs text-slate-500">{slide.landlord.portfolio}</p>
@@ -353,6 +523,61 @@ function VisualPortals({ slide }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function VisualOutOfHours({ slide }) {
+  const statusColor = { 'Escalated': 'bg-amber-100 text-amber-700', 'Resolved': 'bg-green-100 text-green-700', 'Logged': 'bg-blue-100 text-blue-700' };
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-4 gap-2 mb-1">
+        {slide.stats.map(s => (
+          <div key={s.label} className="bg-white border rounded-lg p-2 text-center">
+            <p className="text-lg font-bold text-slate-900">{s.value}</p>
+            <p className="text-xs text-slate-500 leading-tight">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Recent Calls</p>
+      {slide.calls.map((c, i) => (
+        <div key={i} className="bg-white border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-slate-800">{c.type} — {c.property}</p>
+            <p className="text-xs text-slate-500">{c.time} · {c.caller}{c.contractor ? ` · ${c.contractor}` : ''}</p>
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[c.status]}`}>{c.status}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VisualContractor({ slide }) {
+  const statusColor = {
+    'In Progress': 'bg-orange-100 text-orange-700',
+    'Scheduled': 'bg-blue-100 text-blue-700',
+    'Quote Requested': 'bg-purple-100 text-purple-700',
+    'Invoice Submitted': 'bg-green-100 text-green-700',
+  };
+  return (
+    <div className="space-y-2">
+      <div className="bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 flex items-center gap-3 mb-2">
+        <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">A</div>
+        <div>
+          <p className="text-xs font-bold text-slate-800">Ace Plumbing & Heating</p>
+          <p className="text-xs text-slate-500">4 active jobs · 2 invoices awaiting payment</p>
+        </div>
+      </div>
+      {slide.jobs.map((j, i) => (
+        <div key={i} className="bg-white border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-slate-800 truncate">{j.title}</p>
+            <p className="text-xs text-slate-500">{j.address} · {j.due}{j.value ? ` · ${j.value}` : ''}</p>
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[j.status]}`}>{j.status}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -391,10 +616,8 @@ function VisualGetStarted({ slide, onGetStarted }) {
               <li key={f} className="text-xs text-slate-600 flex gap-1"><span className="text-green-500 font-bold">✓</span>{f}</li>
             ))}
           </ul>
-          <button
-            onClick={onGetStarted}
-            className={`mt-3 w-full text-xs font-bold py-2 rounded-lg transition ${p.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}`}
-          >
+          <button onClick={onGetStarted}
+            className={`mt-3 w-full text-xs font-bold py-2 rounded-lg transition ${p.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}`}>
             Get Started
           </button>
         </div>
@@ -403,42 +626,35 @@ function VisualGetStarted({ slide, onGetStarted }) {
   );
 }
 
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function SlideshowDemo({ onGetStarted }) {
   const [slide, setSlide] = useState(0);
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState(1); // 1=forward -1=back
+  const [direction, setDirection] = useState(1);
 
   const goTo = useCallback((idx, dir = 1) => {
     if (animating) return;
     setDirection(dir);
     setAnimating(true);
-    setTimeout(() => {
-      setSlide(idx);
-      setProgress(0);
-      setAnimating(false);
-    }, 300);
+    setTimeout(() => { setSlide(idx); setProgress(0); setAnimating(false); }, 300);
   }, [animating]);
 
   const goNext = useCallback(() => {
-    if (slide < SLIDES.length - 1) goTo(slide + 1, 1);
-    else goTo(0, 1);
+    goTo(slide < SLIDES.length - 1 ? slide + 1 : 0, 1);
   }, [slide, goTo]);
 
   const goPrev = useCallback(() => {
     if (slide > 0) goTo(slide - 1, -1);
   }, [slide, goTo]);
 
-  // Auto-advance
   useEffect(() => {
     if (paused) return;
     const interval = setInterval(() => {
       setProgress(p => {
-        if (p >= 100) {
-          goNext();
-          return 0;
-        }
+        if (p >= 100) { goNext(); return 0; }
         return p + (100 / (SLIDE_DURATION / 100));
       });
     }, 100);
@@ -451,9 +667,14 @@ export default function SlideshowDemo({ onGetStarted }) {
     switch (current.id) {
       case 'dashboard': return <VisualDashboard slide={current} />;
       case 'compliance': return <VisualCompliance slide={current} />;
+      case 'btl': return <VisualBTL slide={current} />;
+      case 'block': return <VisualBlock slide={current} />;
       case 'maintenance': return <VisualMaintenance slide={current} />;
       case 'financials': return <VisualFinancials slide={current} />;
+      case 'sales': return <VisualSales slide={current} />;
       case 'portals': return <VisualPortals slide={current} />;
+      case 'outofhours': return <VisualOutOfHours slide={current} />;
+      case 'contractor': return <VisualContractor slide={current} />;
       case 'reporting': return <VisualReporting slide={current} />;
       case 'getstarted': return <VisualGetStarted slide={current} onGetStarted={onGetStarted} />;
       default: return null;
@@ -461,77 +682,54 @@ export default function SlideshowDemo({ onGetStarted }) {
   };
 
   return (
-    <div
-      className="max-w-5xl mx-auto select-none"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
+    <div className="max-w-5xl mx-auto select-none" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       {/* Progress bars */}
       <div className="flex gap-1 mb-5">
         {SLIDES.map((s, i) => (
-          <button
-            key={i}
-            onClick={() => { setPaused(false); goTo(i, i > slide ? 1 : -1); }}
-            className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden"
-            title={s.subtitle}
-          >
-            <div
-              className="h-full bg-primary rounded-full transition-none"
-              style={{
-                width: i < slide ? '100%' : i === slide ? `${progress}%` : '0%',
-                transition: i === slide ? 'width 0.1s linear' : 'none',
-              }}
-            />
+          <button key={i} onClick={() => { setPaused(false); goTo(i, i > slide ? 1 : -1); }}
+            className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden" title={s.subtitle}>
+            <div className="h-full bg-primary rounded-full"
+              style={{ width: i < slide ? '100%' : i === slide ? `${progress}%` : '0%', transition: i === slide ? 'width 0.1s linear' : 'none' }} />
           </button>
         ))}
       </div>
 
       {/* Slide */}
-      <div
-        className="transition-all duration-300"
-        style={{ opacity: animating ? 0 : 1, transform: animating ? `translateX(${direction * -24}px)` : 'translateX(0)' }}
-      >
+      <div className="transition-all duration-300"
+        style={{ opacity: animating ? 0 : 1, transform: animating ? `translateX(${direction * -24}px)` : 'translateX(0)' }}>
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Left: text */}
           <div className="flex flex-col justify-center">
-            <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-2">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-1">
               {current.badge}
             </span>
+            {current.audience && (
+              <p className="text-xs text-slate-400 mb-2">👥 {current.audience}</p>
+            )}
             <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3 leading-snug">{current.title}</h3>
             <p className="text-slate-500 leading-relaxed mb-6 text-sm lg:text-base">{current.desc}</p>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <button
-                onClick={goPrev}
-                disabled={slide === 0}
-                className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition"
-              >
+              <button onClick={goPrev} disabled={slide === 0}
+                className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
                 ← Back
               </button>
               {slide < SLIDES.length - 1 ? (
-                <button
-                  onClick={goNext}
-                  className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition"
-                >
+                <button onClick={goNext}
+                  className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition">
                   Next →
                 </button>
               ) : (
-                <button
-                  onClick={onGetStarted}
-                  className="px-6 py-2 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition"
-                >
+                <button onClick={onGetStarted}
+                  className="px-6 py-2 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition">
                   Get Started Free →
                 </button>
               )}
-              <button
-                onClick={() => setPaused(p => !p)}
-                className="ml-auto px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-500 text-xs font-medium hover:bg-slate-50 transition"
-              >
+              <button onClick={() => setPaused(p => !p)}
+                className="ml-auto px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-500 text-xs font-medium hover:bg-slate-50 transition">
                 {paused ? '▶ Play' : '⏸ Pause'}
               </button>
             </div>
-
-            {/* Slide counter */}
             <p className="text-xs text-slate-400 mt-4">{slide + 1} / {SLIDES.length} — hover to pause</p>
           </div>
 
