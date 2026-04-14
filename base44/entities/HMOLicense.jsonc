@@ -1,0 +1,255 @@
+{
+  "name": "HMOLicense",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Local authority HMO license number"
+    },
+    "license_type": {
+      "type": "string",
+      "enum": [
+        "mandatory",
+        "additional",
+        "selective"
+      ],
+      "description": "Type of HMO license required"
+    },
+    "local_authority": {
+      "type": "string",
+      "description": "Name of local authority issuing license"
+    },
+    "local_authority_contact": {
+      "type": "string",
+      "description": "Local authority contact email/phone"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date license was issued"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date license expires"
+    },
+    "renewal_deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline to apply for renewal (usually 2 months before expiry)"
+    },
+    "license_duration_years": {
+      "type": "number",
+      "default": 5,
+      "description": "Duration of license in years"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "expiring_soon",
+        "expired",
+        "renewal_pending",
+        "suspended"
+      ],
+      "default": "valid",
+      "description": "Current license status"
+    },
+    "max_occupants": {
+      "type": "number",
+      "description": "Maximum number of occupants permitted by license"
+    },
+    "current_occupants": {
+      "type": "number",
+      "description": "Current number of occupants"
+    },
+    "occupancy_compliance": {
+      "type": "boolean",
+      "description": "Whether current occupancy complies with license limit"
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "room_id": {
+            "type": "string",
+            "description": "Reference to Unit/Room"
+          },
+          "room_name": {
+            "type": "string"
+          },
+          "room_type": {
+            "type": "string",
+            "enum": [
+              "bedroom",
+              "studio",
+              "shared_space"
+            ]
+          },
+          "max_occupancy": {
+            "type": "number"
+          },
+          "current_occupants": {
+            "type": "number"
+          },
+          "fire_safety_compliant": {
+            "type": "boolean"
+          },
+          "last_check_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "description": "Room-by-room occupancy and fire safety status"
+    },
+    "conditions_of_license": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "condition_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "compliant",
+              "non_compliant",
+              "in_progress"
+            ]
+          },
+          "last_checked": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence_url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Specific conditions attached to this license"
+    },
+    "inspection_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "inspection_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "inspection_type": {
+            "type": "string",
+            "enum": [
+              "initial",
+              "compliance_check",
+              "renewal",
+              "complaint_investigation"
+            ]
+          },
+          "inspector_name": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "pass_with_conditions",
+              "fail"
+            ]
+          },
+          "findings": {
+            "type": "string"
+          },
+          "report_url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Inspection and assessment history"
+    },
+    "breach_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "breach_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "breach_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "action_taken": {
+            "type": "string"
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "resolution_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "description": "Record of any compliance breaches"
+    },
+    "renewal_application_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "submitted",
+        "approved",
+        "rejected",
+        "pending_review"
+      ],
+      "description": "Status of renewal application"
+    },
+    "renewal_application_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When renewal application was submitted"
+    },
+    "renewal_notes": {
+      "type": "string",
+      "description": "Notes on renewal process"
+    },
+    "fire_safety_certificate_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether fire safety certificate required for licensing"
+    },
+    "fire_safety_certificate_valid": {
+      "type": "boolean",
+      "description": "Whether current fire safety certificate is valid"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to license document PDF"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "license_number",
+    "license_type",
+    "local_authority",
+    "issue_date",
+    "expiry_date",
+    "status"
+  ]
+}

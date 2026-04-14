@@ -117,6 +117,7 @@ import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
 import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
 import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
 import ContractorScheduling from './pages/ContractorScheduling';
+import HMODashboard from './pages/HMODashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -260,6 +261,7 @@ const AuthenticatedApp = () => {
         <Route path="/marketing" element={<MarketingCollateral />} />
         <Route path="/developer-marketing" element={<DeveloperMarketing />} />
         <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
+        <Route path="/hmo-dashboard" element={<HMODashboard />} />
       </Route>
 
       {/* ── Standalone portals — no sidebar ─────────────────────────────── */}
