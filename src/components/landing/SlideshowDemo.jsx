@@ -1026,56 +1026,54 @@ export default function SlideshowDemo({ onGetStarted }) {
 
   return (
     <div className="w-full min-h-screen bg-white font-sans overflow-hidden flex flex-col select-none">
-      {/* Slide container - full screen */}
+      {/* Slide container - full screen single box */}
       <div className="relative flex-1 w-full overflow-hidden bg-white">
-        <div className="transition-opacity duration-1000 w-full h-full"
+        <div className="absolute inset-0 transition-opacity duration-1000"
           style={{ opacity: animating ? 0 : 1 }}>
-          <div className="h-full flex items-center px-6 py-20">
-            <div className="max-w-5xl w-full mx-auto">
-              <div className="grid lg:grid-cols-2 gap-8 items-start h-full lg:items-center">
-                {/* Left: text */}
-                <div className="flex flex-col justify-center">
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-2">
-                    {current.badge}
-                  </span>
-                  {current.audience && (
-                    <p className="text-xs text-slate-400 mb-3">👥 {current.audience}</p>
-                  )}
-                  <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-snug">{current.title}</h3>
-                  <p className="text-slate-600 leading-relaxed mb-8 text-base lg:text-lg">{current.desc}</p>
+          <div className="h-full flex items-center justify-center px-6 py-20">
+            <div className="w-full max-w-5xl">
+              <div className="bg-white rounded-2xl border-2 border-slate-200 shadow-lg p-8 md:p-12">
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-3">
+                  {current.badge}
+                </span>
+                {current.audience && (
+                  <p className="text-xs text-slate-400 mb-4">👥 {current.audience}</p>
+                )}
+                <h3 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-snug">{current.title}</h3>
+                <p className="text-slate-600 leading-relaxed mb-10 text-lg lg:text-xl max-w-2xl">{current.desc}</p>
 
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={goPrev} disabled={slide === 0}
-                      className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                      ← Back
-                    </button>
-                    {slide < SLIDES.length - 1 ? (
-                      <button onClick={goNext}
-                        className="px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition">
-                        Next →
-                      </button>
-                    ) : (
-                      <button onClick={onGetStarted}
-                        className="px-6 py-2.5 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition">
-                        Get Started Free →
-                      </button>
-                    )}
+                <div className="bg-slate-50 rounded-xl p-6 md:p-8 border border-slate-200 mb-8 min-h-[320px] flex items-center justify-center">
+                  <div className="w-full">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex gap-1">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                      </div>
+                      <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5">
+                        premiso.co.uk/{current.id}
+                      </div>
+                    </div>
+                    {renderVisual()}
                   </div>
                 </div>
 
-                {/* Right: visual */}
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-sm">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex gap-1">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                    </div>
-                    <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5">
-                      premiso.co.uk/{current.id}
-                    </div>
-                  </div>
-                  {renderVisual()}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <button onClick={goPrev} disabled={slide === 0}
+                    className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                    ← Back
+                  </button>
+                  {slide < SLIDES.length - 1 ? (
+                    <button onClick={goNext}
+                      className="px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition">
+                      Next →
+                    </button>
+                  ) : (
+                    <button onClick={onGetStarted}
+                      className="px-6 py-2.5 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition">
+                      Get Started Free →
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
