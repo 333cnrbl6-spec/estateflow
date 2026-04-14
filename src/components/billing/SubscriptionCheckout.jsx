@@ -6,7 +6,9 @@ import { Card } from '@/components/ui/card';
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY 
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+  : Promise.resolve(null);
 
 export default function SubscriptionCheckout({ tierId, billingMode, isFounder, onBack, onSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,11 @@ export default function SubscriptionCheckout({ tierId, billingMode, isFounder, o
   const stripePrice = billingMode === 'annual' ? tier.stripe_price_annual : tier.stripe_price_monthly;
 
   const handleCheckout = async () => {
+    if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+      setError('Stripe is not configured. Please contact support.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
