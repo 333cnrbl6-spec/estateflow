@@ -106,6 +106,9 @@ import ComplianceHub from './pages/ComplianceHub';
 import FinancialReconciliation from './pages/FinancialReconciliation';
 import Billing from './pages/Billing';
 import ErrorMonitoring from './pages/ErrorMonitoring';
+import CertificateManagement from './pages/CertificateManagement';
+import RoleDashboard from './pages/RoleDashboard';
+import ContractorPortalMobile from './pages/ContractorPortalMobile';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -184,7 +187,9 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
+        <Route path="/certificates" element={<CertificateManagement />} />
         <Route path="/certificate-compliance" element={<CertificateCompliance />} />
+        <Route path="/role-dashboard" element={<RoleDashboard />} />
         <Route path="/compliance-audit" element={<ComplianceAudit />} />
         <Route path="/compliance-hub" element={<ComplianceHub />} />
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
@@ -249,6 +254,8 @@ const AuthenticatedApp = () => {
       <Route path="/contractor" element={<ContractorDashboard />} />
       {/* /contractor-view — mobile portal for contractors */}
       <Route path="/contractor-view" element={<ContractorPortal />} />
+      {/* /contractor-mobile — mobile-optimized contractor portal */}
+      <Route path="/contractor-mobile" element={<ContractorPortalMobile />} />
       {/* /inspection — standalone inspection form */}
       <Route path="/inspection" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}
