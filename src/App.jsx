@@ -67,6 +67,7 @@ import OutOfHoursReporting from './pages/OutOfHoursReporting';
 import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import TenantMaintenancePortal from './pages/TenantMaintenancePortal';
 import VendorManagement from './pages/VendorManagement';
+import VendorSelfService from './pages/VendorSelfService';
 import BillingManagement from './pages/BillingManagement';
 import OperationalMetricsDashboard from './pages/OperationalMetricsDashboard';
 import VirtualCallCenterSetup from './pages/VirtualCallCenterSetup';
@@ -332,6 +333,7 @@ function App() {
                   <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/founder-launch" element={<FounderLaunch />} />
+                  <Route path="/vendor-self-service" element={<VendorSelfService />} />
                   {/* All other routes go through auth */}
                   <Route path="/*" element={<AuthenticatedApp />} />
                 </Routes>
