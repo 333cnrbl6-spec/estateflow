@@ -25,7 +25,7 @@ const SLIDES = [
     id: 'financials',
     subtitle: 'Financial Management',
     title: 'Track rent, arrears, and profitability',
-    desc: 'Real-time rent collection tracking, arrears management, expense breakdown, and financial reports. See exactly what you're earning on each property and where your money goes.',
+    desc: "Real-time rent collection tracking, arrears management, expense breakdown, and financial reports. See exactly what you're earning on each property and where your money goes.",
     badge: '💰 Financial Dashboard',
     audience: 'Property Owners · Investors · Letting Agents',
     breakdown: [
@@ -47,7 +47,7 @@ const SLIDES = [
     id: 'btl',
     subtitle: 'Buy-to-Let Landlord',
     title: 'Manage your rental properties like a pro',
-    desc: 'Track rent payments, tenancy dates, maintenance requests, and safety certificates for each property. Get monthly statements and know exactly what you're earning and owe.',
+    desc: "Track rent payments, tenancy dates, maintenance requests, and safety certificates for each property. Get monthly statements and know exactly what you're earning and owe.",
     badge: '🏠 Buy-to-Let',
     audience: 'Individual landlords · Small investors',
     properties: [
