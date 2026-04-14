@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Building2, Users, CheckCircle2, Loader2, Sparkles, FileText, Globe,
-  HardDrive, Database, AlertCircle, Check,
+  HardDrive, Database, AlertCircle, Check, Search,
   ChevronRight, ChevronLeft
 } from 'lucide-react';
 import { SCHEMAS } from '@/lib/llmSchemas';
