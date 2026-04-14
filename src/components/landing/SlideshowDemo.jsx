@@ -135,9 +135,9 @@ const SLIDES = [
     desc: "Whether you manage 50 units or 5,000, Premiso scales with you. Full onboarding support. Live from day one. No long contracts.",
     badge: '🚀 Ready to Go',
     pricing: [
-      { tier: 'Starter', price: '£149', units: 'Up to 50 units', features: ['Full compliance tracking', 'Maintenance workflow', 'Tenant portal', 'Basic reporting'] },
-      { tier: 'Professional', price: '£349', units: 'Up to 200 units', features: ['Everything in Starter', 'Landlord portals', 'Accounting sync', 'Custom reports', 'API access'], highlight: true },
-      { tier: 'Enterprise', price: 'Custom', units: 'Unlimited units', features: ['Everything in Pro', 'White-labelling', 'Dedicated onboarding', 'SLA support'] },
+      { tier: 'Starter', price: '£99', units: 'Up to 50 units', features: ['Properties & unit management', 'Tenant & landlord portal', 'Maintenance workflow', 'Basic compliance certificates'] },
+      { tier: 'Professional', price: '£249', units: 'Up to 250 units', features: ['Everything in Starter', 'Block & leasehold management', 'Accounting sync (Xero/Sage/QB)', 'Full compliance hub', 'Sales CRM'], highlight: true },
+      { tier: 'Enterprise', price: 'Custom', units: 'Unlimited units', features: ['Everything in Professional', 'White-label & custom branding', 'Dedicated onboarding', 'SLA guarantee'] },
     ],
   },
 ];
