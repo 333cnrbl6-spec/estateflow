@@ -126,6 +126,7 @@ import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
+import OwnerPortal from './pages/OwnerPortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -185,6 +186,7 @@ const AuthenticatedApp = () => {
         <Route path="/service-charges" element={<ServiceCharges />} />
         <Route path="/ground-rent" element={<GroundRent />} />
         <Route path="/owner-financials" element={<OwnerFinancialDashboard />} />
+        <Route path="/owner-portal" element={<OwnerPortal />} />
         <Route path="/bank-reconciliation" element={<BankReconciliation />} />
         <Route path="/reconciliation" element={<FinancialReconciliation />} />
         <Route path="/accounting" element={<AccountingIntegrations />} />
