@@ -5,10 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, X, Loader2, Lightbulb, ChevronDown } from 'lucide-react';
+import { Send, X, Loader2, ChevronDown } from 'lucide-react';
+
+const PremisoBotIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    {/* House base */}
+    <path d="M12 2L4 8v12h16V8l-8-6z" fill="currentColor" opacity="0.3"/>
+    <path d="M12 2L4 8v12h16V8l-8-6z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Simple human figure */}
+    <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
+    <path d="M12 11v2M10 12h4M10.5 14v2M13.5 14v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>
+);
 
 export default function HelperBot() {
   const [open, setOpen] = useState(false);
+  const [showBubble, setShowBubble] = useState(true);
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -112,7 +124,9 @@ export default function HelperBot() {
         <Card className="shadow-2xl border-slate-200">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <div className="flex items-center gap-2">
-              <Lightbulb className="w-5 h-5 text-amber-500" />
+              <div className="w-6 h-6 text-primary">
+                <PremisoBotIcon />
+              </div>
               <CardTitle className="text-base">Premiso Assistant</CardTitle>
             </div>
             <Button
@@ -122,6 +136,14 @@ export default function HelperBot() {
               className="h-6 w-6"
             >
               <X className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowBubble(!showBubble)}
+              className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              {showBubble ? 'Hide tip' : 'Show tip'}
             </Button>
           </CardHeader>
 
@@ -203,12 +225,32 @@ export default function HelperBot() {
           </CardContent>
         </Card>
       ) : (
-        <Button
-          onClick={() => setOpen(true)}
-          className="rounded-full shadow-lg h-14 w-14 p-0"
-        >
-          <MessageCircle className="w-6 h-6" />
-        </Button>
+        <div className="relative flex flex-col items-end gap-3">
+          {/* Floating tip bubble */}
+          {showBubble && (
+            <div className="bg-white border-2 border-primary rounded-2xl px-4 py-2.5 shadow-lg max-w-xs animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 text-primary shrink-0 mt-0.5">
+                  <PremisoBotIcon />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Need help?</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Ask me about features, compliance, or how to use the platform</p>
+                </div>
+              </div>
+              {/* Bubble tail */}
+              <div className="absolute bottom-0 right-0 transform translate-x-3 translate-y-full w-0 h-0 border-l-8 border-t-8 border-l-transparent border-t-white border-r-8 border-r-transparent"></div>
+            </div>
+          )}
+          
+          {/* Bot button */}
+          <Button
+            onClick={() => setOpen(true)}
+            className="rounded-full shadow-lg h-14 w-14 p-0 bg-primary hover:bg-primary/90"
+          >
+            <PremisoBotIcon />
+          </Button>
+        </div>
       )}
     </div>
   );
