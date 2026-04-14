@@ -341,106 +341,110 @@ Format as JSON array:
       }
     ];
 
-    // Create Property entities first
-    const createdProperties = [];
-    for (const prop of properties) {
-      const property = await base44.entities.Property.create({
-        name: prop.address.split(',')[0],
-        address_line_1: prop.address,
-        postcode: prop.postcode,
-        region: prop.postcode.startsWith('BN') ? 'brighton' : 
-                prop.postcode.startsWith('FY') ? 'blackpool' :
-                prop.postcode.startsWith('LS') ? 'leeds' :
-                prop.postcode.startsWith('IP') ? 'ipswich' :
-                prop.postcode.startsWith('BB') ? 'lancashire' :
-                prop.postcode.startsWith('LL') ? 'north_wales' : 'other',
-        property_type: 'freehold_block',
-        ownership_type: prop.tenure,
-        total_units: 1
-      });
-      createdProperties.push({ ...prop, entity: property });
-    }
+    // Helper to map postcode to region
+    const getRegion = (postcode) => {
+      if (postcode.startsWith('BN')) return 'brighton';
+      if (postcode.startsWith('FY')) return 'blackpool';
+      if (postcode.startsWith('LS')) return 'leeds';
+      if (postcode.startsWith('IP')) return 'ipswich';
+      if (postcode.startsWith('BB')) return 'lancashire';
+      if (postcode.startsWith('LL')) return 'north_wales';
+      return 'other';
+    };
 
-    // Create SalesListings
-    const createdListings = [];
-    for (const prop of createdProperties) {
-      const listing = await base44.entities.SalesListing.create({
-        property_id: prop.entity.id,
-        listing_type: "sale",
-        status: ["active", "active", "active", "under_offer", "sold_subject_to_contract", "active", "active", "active", "active", "draft", "active", "active"][createdListings.length % 12],
-        asking_price: prop.price,
-        marketing_text: prop.description,
-        featured_text: `${prop.bedrooms} bed ${prop.type} - £${(prop.price/1000).toFixed(0)}K`,
-        bedrooms: prop.bedrooms,
-        bathrooms: prop.bathrooms,
-        reception_rooms: Math.max(1, prop.bedrooms - 1),
-        property_type: prop.type,
-        tenure: prop.tenure,
-        council_tax_band: prop.council_tax,
-        epc_rating: prop.epc,
-        features: prop.features,
-        listing_agent_id: user.id,
-        listing_agent_name: user.full_name,
-        listed_date: new Date().toISOString().split('T')[0],
-        viewing_count: Math.floor(Math.random() * 20),
-        offer_count: Math.floor(Math.random() * 5)
-      });
-      createdListings.push({ ...prop, listing });
-    }
+    // Bulk create Properties
+    const propertyData = properties.map(prop => ({
+      name: prop.address.split(',')[0],
+      address_line_1: prop.address,
+      postcode: prop.postcode,
+      region: getRegion(prop.postcode),
+      property_type: 'freehold_block',
+      ownership_type: prop.tenure,
+      total_units: 1
+    }));
 
-    // Create Leads
-    const createdLeads = [];
-    for (const lead of leads) {
-      const created = await base44.entities.SalesLead.create({
-        ...lead,
-        assigned_agent_id: user.id,
-        assigned_agent_name: user.full_name,
-        last_contact_date: new Date().toISOString().split('T')[0]
-      });
-      createdLeads.push(created);
-    }
+    const createdProperties = await Promise.all(
+      propertyData.map(data => base44.entities.Property.create(data))
+    ).then(entities => entities.map((entity, i) => ({ ...properties[i], entity })));
 
-    // Create some Offers
-    const createdOffers = [];
-    for (let i = 0; i < 3; i++) {
-      const listing = createdListings[i]?.listing;
-      if (listing) {
-        const offer = await base44.entities.Offer.create({
+    // Bulk create SalesListings in parallel
+    const listingStatuses = ["active", "active", "active", "under_offer", "sold_subject_to_contract", "active", "active", "active", "active", "draft", "active", "active"];
+    const createdListings = await Promise.all(
+      createdProperties.map((prop, i) => 
+        base44.entities.SalesListing.create({
+          property_id: prop.entity.id,
+          listing_type: "sale",
+          status: listingStatuses[i % 12],
+          asking_price: prop.price,
+          marketing_text: prop.description,
+          featured_text: `${prop.bedrooms} bed ${prop.type} - £${(prop.price/1000).toFixed(0)}K`,
+          bedrooms: prop.bedrooms,
+          bathrooms: prop.bathrooms,
+          reception_rooms: Math.max(1, prop.bedrooms - 1),
+          property_type: prop.type,
+          tenure: prop.tenure,
+          council_tax_band: prop.council_tax,
+          epc_rating: prop.epc,
+          features: prop.features,
+          listing_agent_id: user.id,
+          listing_agent_name: user.full_name,
+          listed_date: new Date().toISOString().split('T')[0],
+          viewing_count: Math.floor(Math.random() * 20),
+          offer_count: Math.floor(Math.random() * 5)
+        })
+      )
+    ).then(entities => entities.map((listing, i) => ({ ...createdProperties[i], listing })));
+
+    // Bulk create Leads in parallel
+    const createdLeads = await Promise.all(
+      leads.map(lead =>
+        base44.entities.SalesLead.create({
+          ...lead,
+          assigned_agent_id: user.id,
+          assigned_agent_name: user.full_name,
+          last_contact_date: new Date().toISOString().split('T')[0]
+        })
+      )
+    );
+
+    // Bulk create Offers in parallel (first 3)
+    const offerStatuses = ["accepted", "pending", "counter_offered"];
+    const createdOffers = await Promise.all(
+      createdListings.slice(0, 3).map((item, i) => {
+        const listing = item.listing;
+        return base44.entities.Offer.create({
           sales_listing_id: listing.id,
           buyer_contact_id: createdLeads[i]?.id || createdLeads[0]?.id,
           buyer_name: leads[i]?.contact_name || "Anonymous Buyer",
           buyer_email: leads[i]?.contact_email || "buyer@email.com",
           offer_amount: listing.asking_price * (0.95 + Math.random() * 0.1),
           offer_date: new Date().toISOString(),
-          status: ["accepted", "pending", "counter_offered"][i],
+          status: offerStatuses[i],
           is_chain_free: i % 2 === 0,
           mortgage_status: ["agreed_in_principle", "full_offer", "pending"][i]
         });
-        createdOffers.push(offer);
-      }
-    }
+      })
+    );
 
-    // Create Transactions
-    const createdTransactions = [];
-    for (let i = 0; i < transactions.length && i < createdOffers.length; i++) {
-      const listing = createdListings[i]?.listing;
-      const offer = createdOffers[i];
-      if (listing && offer) {
-        const transaction = await base44.entities.SalesTransaction.create({
+    // Bulk create Transactions in parallel
+    const createdTransactions = await Promise.all(
+      transactions.slice(0, createdOffers.length).map((txn, i) => {
+        const listing = createdListings[i]?.listing;
+        const offer = createdOffers[i];
+        return base44.entities.SalesTransaction.create({
           sales_listing_id: listing.id,
           accepted_offer_id: offer.id,
           buyer_contact_id: offer.buyer_contact_id,
-          sale_price: transactions[i].sale_price,
-          status: transactions[i].status,
-          target_completion_date: transactions[i].target_completion_date,
-          chain_position: transactions[i].chain_position,
+          sale_price: txn.sale_price,
+          status: txn.status,
+          target_completion_date: txn.target_completion_date,
+          chain_position: txn.chain_position,
           assigned_agent_id: user.id,
           assigned_agent_name: user.full_name,
           days_on_market: Math.floor(Math.random() * 90) + 30
         });
-        createdTransactions.push(transaction);
-      }
-    }
+      })
+    );
 
     return Response.json({
       success: true,
