@@ -135,6 +135,7 @@ import TaskManagement from './pages/TaskManagement';
 import CertificateComplianceTracking from './pages/CertificateComplianceTracking';
 import BusinessRelationshipCompliance from './pages/BusinessRelationshipCompliance';
 import OnboardingWorkflowHub from './pages/OnboardingWorkflowHub';
+import ComplianceNotificationCenter from './pages/ComplianceNotificationCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -229,6 +230,7 @@ const AuthenticatedApp = () => {
         <Route path="/compliance-hub" element={<ComplianceHub />} />
         <Route path="/compliance-risk-analytics" element={<ComplianceRiskAnalytics />} />
         <Route path="/compliance-workflow-automation" element={<ComplianceWorkflowAutomation />} />
+        <Route path="/compliance-notification-center" element={<ComplianceNotificationCenter />} />
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
         <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
