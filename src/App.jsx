@@ -116,6 +116,7 @@ import InvoiceManagement from './pages/InvoiceManagement';
 import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
 import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
 import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
+import ContractorScheduling from './pages/ContractorScheduling';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -192,6 +193,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-board" element={<MaintenanceBoard />} />
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
+        <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
