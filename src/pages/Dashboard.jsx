@@ -13,6 +13,7 @@ import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
+import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -245,8 +246,9 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          <div>
+          <div className="space-y-6">
             <SetupProgressCard />
+            <DataQualityWidget />
           </div>
         </div>
       </div>

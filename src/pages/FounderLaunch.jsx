@@ -6,6 +6,8 @@ import {
   Building2, Users, Zap, CheckCircle2, Loader2, ChevronRight,
   AlertCircle, Mail, Lock, Sparkles
 } from 'lucide-react';
+import { validateCompanyName, validateCompanyNumber, validateEmail, validateFormData } from '@/lib/dataValidation';
+import FormValidationDisplay from '@/components/onboarding/FormValidationDisplay';
 
 const STEPS = [
   { id: 'welcome', label: 'Welcome', icon: Sparkles },
@@ -23,6 +25,7 @@ export default function FounderLaunch() {
     team_email: '',
     team_role: 'team_member'
   });
+  const [touched, setTouched] = useState({});
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
@@ -41,20 +44,30 @@ export default function FounderLaunch() {
 
   const handleNext = async () => {
     if (step === 1) {
-      // Validate company
-      if (!formData.company_name.trim()) {
-        setError('Company name required');
+      // Validate company step
+      const nameValidation = validateCompanyName(formData.company_name);
+      const numberValidation = validateCompanyNumber(formData.company_number);
+      
+      if (!nameValidation.valid || !numberValidation.valid) {
+        setTouched({ company_name: true, company_number: true });
+        setError(nameValidation.error || numberValidation.error);
         return;
       }
       setError(null);
+      setTouched({});
     }
     if (step === 2) {
       // Validate team email
-      if (formData.team_email && !formData.team_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-        setError('Valid email required');
-        return;
+      if (formData.team_email) {
+        const emailValidation = validateEmail(formData.team_email);
+        if (!emailValidation.valid) {
+          setTouched({ team_email: true });
+          setError(emailValidation.error);
+          return;
+        }
       }
       setError(null);
+      setTouched({});
     }
     if (step === 3) {
       // Finalize setup
@@ -183,7 +196,17 @@ export default function FounderLaunch() {
                     placeholder="e.g. Powell & Co"
                     value={formData.company_name}
                     onChange={e => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:border-primary focus:outline-none text-sm"
+                    onBlur={() => setTouched({ ...touched, company_name: true })}
+                    className={`w-full px-4 py-2.5 bg-slate-700 border rounded-lg text-white placeholder-slate-500 focus:outline-none text-sm transition-colors ${
+                      touched.company_name && !validateCompanyName(formData.company_name).valid
+                        ? 'border-red-500'
+                        : 'border-slate-600 focus:border-primary'
+                    }`}
+                  />
+                  <FormValidationDisplay
+                    errors={{ company_name: validateCompanyName(formData.company_name).error }}
+                    touched={touched}
+                    field="company_name"
                   />
                 </div>
                 <div>
@@ -193,7 +216,17 @@ export default function FounderLaunch() {
                     placeholder="e.g. 12345678"
                     value={formData.company_number}
                     onChange={e => setFormData({ ...formData, company_number: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:border-primary focus:outline-none text-sm"
+                    onBlur={() => setTouched({ ...touched, company_number: true })}
+                    className={`w-full px-4 py-2.5 bg-slate-700 border rounded-lg text-white placeholder-slate-500 focus:outline-none text-sm transition-colors ${
+                      touched.company_number && formData.company_number && !validateCompanyNumber(formData.company_number).valid
+                        ? 'border-red-500'
+                        : 'border-slate-600 focus:border-primary'
+                    }`}
+                  />
+                  <FormValidationDisplay
+                    errors={{ company_number: validateCompanyNumber(formData.company_number).error }}
+                    touched={touched}
+                    field="company_number"
                   />
                 </div>
                 <p className="text-xs text-slate-400 flex items-start gap-2">
@@ -214,7 +247,17 @@ export default function FounderLaunch() {
                     placeholder="colleague@example.com"
                     value={formData.team_email}
                     onChange={e => setFormData({ ...formData, team_email: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:border-primary focus:outline-none text-sm"
+                    onBlur={() => setTouched({ ...touched, team_email: true })}
+                    className={`w-full px-4 py-2.5 bg-slate-700 border rounded-lg text-white placeholder-slate-500 focus:outline-none text-sm transition-colors ${
+                      touched.team_email && formData.team_email && !validateEmail(formData.team_email).valid
+                        ? 'border-red-500'
+                        : 'border-slate-600 focus:border-primary'
+                    }`}
+                  />
+                  <FormValidationDisplay
+                    errors={{ team_email: validateEmail(formData.team_email).error }}
+                    touched={touched}
+                    field="team_email"
                   />
                 </div>
                 <div>
