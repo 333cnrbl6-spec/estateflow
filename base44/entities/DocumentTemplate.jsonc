@@ -2,49 +2,211 @@
   "name": "DocumentTemplate",
   "type": "object",
   "properties": {
-    "name": {
+    "template_name": {
       "type": "string",
-      "description": "Template name (e.g. Standard Tenancy Agreement)"
+      "description": "Name of template (e.g., 'Assured Shorthold Tenancy Agreement')"
     },
-    "description": {
+    "template_code": {
       "type": "string",
-      "description": "What this template is used for"
+      "description": "Unique code (e.g., 'AST-001')"
     },
-    "template_type": {
+    "document_type": {
       "type": "string",
       "enum": [
         "tenancy_agreement",
-        "maintenance_notice",
-        "service_charge_statement",
-        "compliance_notice",
+        "lease",
+        "notice_to_quit",
+        "prescribed_information",
+        "deposit_schedule",
+        "inspection_report",
+        "repair_notice",
         "eviction_notice",
         "other"
       ],
-      "description": "Category of template"
+      "description": "Type of document"
     },
-    "file_url": {
+    "jurisdiction": {
       "type": "string",
-      "description": "URL to uploaded PDF or Word document"
+      "enum": [
+        "england",
+        "wales",
+        "scotland",
+        "northern_ireland"
+      ],
+      "description": "Legal jurisdiction for template"
     },
-    "merge_fields": {
+    "template_content": {
+      "type": "string",
+      "description": "Template HTML/text with placeholder tags (e.g., {{TENANT_NAME}}, {{PROPERTY_ADDRESS}})"
+    },
+    "placeholder_fields": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "placeholder_name": {
+            "type": "string",
+            "description": "Name of placeholder (e.g., 'TENANT_NAME')"
+          },
+          "source_entity": {
+            "type": "string",
+            "description": "Entity to pull from (e.g., 'Tenant', 'Property', 'Unit')"
+          },
+          "source_field": {
+            "type": "string",
+            "description": "Field name in source entity (e.g., 'full_name')"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Human-readable name for UI"
+          },
+          "required": {
+            "type": "boolean",
+            "default": true
+          }
+        }
       },
-      "description": "Available merge fields in template (e.g. tenant_name, property_address)"
+      "description": "Map of all placeholders and their data sources"
     },
-    "company_id": {
+    "formatting_rules": {
+      "type": "object",
+      "properties": {
+        "font_family": {
+          "type": "string",
+          "default": "Arial"
+        },
+        "font_size": {
+          "type": "number",
+          "default": 11
+        },
+        "line_spacing": {
+          "type": "number",
+          "default": 1.5
+        },
+        "margins": {
+          "type": "object",
+          "properties": {
+            "top": {
+              "type": "number"
+            },
+            "bottom": {
+              "type": "number"
+            },
+            "left": {
+              "type": "number"
+            },
+            "right": {
+              "type": "number"
+            }
+          }
+        },
+        "page_size": {
+          "type": "string",
+          "enum": [
+            "A4",
+            "A5",
+            "Letter"
+          ],
+          "default": "A4"
+        }
+      }
+    },
+    "signature_blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "block_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "e.g., 'Landlord Signature'"
+          },
+          "signer_type": {
+            "type": "string",
+            "enum": [
+              "landlord",
+              "tenant",
+              "witness",
+              "agent",
+              "other"
+            ]
+          },
+          "signature_date_required": {
+            "type": "boolean",
+            "default": true
+          },
+          "digital_signature_capable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Can be signed digitally (e.g., DocuSign)"
+          }
+        }
+      },
+      "description": "Signature blocks needed for document"
+    },
+    "version": {
       "type": "string",
-      "description": "Company that owns this template"
+      "description": "Template version (e.g., '1.0', '2.1')"
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date",
+      "description": "When template becomes active"
+    },
+    "effective_until": {
+      "type": "string",
+      "format": "date",
+      "description": "When template expires (null = no expiry)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether template is available for use"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Locked templates cannot be edited"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "User email who created template"
+    },
+    "last_modified_by": {
+      "type": "string",
+      "description": "User email who last edited template"
+    },
+    "legal_review_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending_review",
+        "approved",
+        "rejected"
+      ],
+      "default": "draft",
+      "description": "Legal review status"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Email of legal reviewer"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date-time"
     },
     "notes": {
-      "type": "string"
+      "type": "string",
+      "description": "Template usage notes and instructions"
     }
   },
   "required": [
-    "name",
-    "template_type",
-    "file_url",
-    "merge_fields"
+    "template_name",
+    "template_code",
+    "document_type",
+    "jurisdiction",
+    "template_content"
   ]
 }

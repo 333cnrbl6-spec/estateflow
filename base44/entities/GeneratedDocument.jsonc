@@ -1,0 +1,153 @@
+{
+  "name": "GeneratedDocument",
+  "type": "object",
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Reference to DocumentTemplate"
+    },
+    "template_code": {
+      "type": "string",
+      "description": "Template code for reference"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit (if applicable)"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant"
+    },
+    "landlord_id": {
+      "type": "string",
+      "description": "Reference to Landlord contact"
+    },
+    "document_name": {
+      "type": "string",
+      "description": "Generated document filename"
+    },
+    "document_type": {
+      "type": "string",
+      "description": "Type of document generated"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When document was generated"
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Email of user who generated document"
+    },
+    "data_used": {
+      "type": "object",
+      "description": "Dictionary of placeholder values used in generation"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to generated PDF"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready_for_signature",
+        "sent_for_signature",
+        "signed",
+        "executed",
+        "archived"
+      ],
+      "default": "draft",
+      "description": "Document lifecycle status"
+    },
+    "signature_status": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "signer_type": {
+            "type": "string",
+            "enum": [
+              "landlord",
+              "tenant",
+              "witness",
+              "agent",
+              "other"
+            ]
+          },
+          "signer_name": {
+            "type": "string"
+          },
+          "signer_email": {
+            "type": "string"
+          },
+          "signature_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signature_method": {
+            "type": "string",
+            "enum": [
+              "digital",
+              "wet_ink",
+              "electronic",
+              "witnessed"
+            ]
+          },
+          "signed": {
+            "type": "boolean",
+            "default": false
+          },
+          "signature_url": {
+            "type": "string",
+            "description": "URL/reference to signature proof"
+          }
+        }
+      },
+      "description": "Track signature status for each required signer"
+    },
+    "digital_signature_service": {
+      "type": "string",
+      "enum": [
+        "docusign",
+        "adobe_sign",
+        "signaturely",
+        "none"
+      ],
+      "description": "Service used for digital signatures"
+    },
+    "digital_signature_reference": {
+      "type": "string",
+      "description": "Reference ID from signature service"
+    },
+    "signature_link": {
+      "type": "string",
+      "description": "Link to signature request (if sent for digital signature)"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When signature request expires (if using digital signature)"
+    },
+    "version": {
+      "type": "number",
+      "description": "Version of generated document (for re-generation)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "template_id",
+    "property_id",
+    "tenant_id",
+    "document_name",
+    "generated_date",
+    "generated_by",
+    "document_url"
+  ]
+}
