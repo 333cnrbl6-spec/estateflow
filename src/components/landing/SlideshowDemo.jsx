@@ -1025,71 +1025,96 @@ export default function SlideshowDemo({ onGetStarted }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto select-none" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {/* Progress bars */}
-      <div className="flex gap-1 mb-5">
-        {SLIDES.map((s, i) => (
-          <button key={i} onClick={() => { setPaused(false); goTo(i, i > slide ? 1 : -1); }}
-            className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden" title={s.subtitle}>
-            <div className="h-full bg-primary rounded-full"
-              style={{ width: i < slide ? '100%' : i === slide ? `${progress}%` : '0%', transition: i === slide ? 'width 0.1s linear' : 'none' }} />
+    <div className="w-full min-h-screen bg-white font-sans overflow-hidden flex flex-col select-none">
+      {/* Slide container - full screen */}
+      <div className="relative flex-1 w-full overflow-hidden bg-white">
+        <div className="transition-opacity duration-1000 w-full h-full"
+          style={{ opacity: animating ? 0 : 1 }}>
+          <div className="h-full flex items-center px-6 py-20">
+            <div className="max-w-5xl w-full mx-auto">
+              <div className="grid lg:grid-cols-2 gap-8 items-start h-full lg:items-center">
+                {/* Left: text */}
+                <div className="flex flex-col justify-center">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-2">
+                    {current.badge}
+                  </span>
+                  {current.audience && (
+                    <p className="text-xs text-slate-400 mb-3">👥 {current.audience}</p>
+                  )}
+                  <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-snug">{current.title}</h3>
+                  <p className="text-slate-600 leading-relaxed mb-8 text-base lg:text-lg">{current.desc}</p>
+
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <button onClick={goPrev} disabled={slide === 0}
+                      className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                      ← Back
+                    </button>
+                    {slide < SLIDES.length - 1 ? (
+                      <button onClick={goNext}
+                        className="px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition">
+                        Next →
+                      </button>
+                    ) : (
+                      <button onClick={onGetStarted}
+                        className="px-6 py-2.5 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition">
+                        Get Started Free →
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: visual */}
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex gap-1">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                    </div>
+                    <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5">
+                      premiso.co.uk/{current.id}
+                    </div>
+                  </div>
+                  {renderVisual()}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom controls (kiosk-friendly) */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6 flex justify-between items-center">
+          <button onClick={goPrev} disabled={slide === 0} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm disabled:opacity-30">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
-        ))}
-      </div>
 
-      {/* Slide */}
-      <div className="transition-all duration-300"
-        style={{ opacity: animating ? 0 : 1, transform: animating ? `translateX(${direction * -24}px)` : 'translateX(0)' }}>
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
-          {/* Left: text */}
-          <div className="flex flex-col justify-center">
-            <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest mb-1">
-              {current.badge}
-            </span>
-            {current.audience && (
-              <p className="text-xs text-slate-400 mb-2">👥 {current.audience}</p>
-            )}
-            <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3 leading-snug">{current.title}</h3>
-            <p className="text-slate-500 leading-relaxed mb-6 text-sm lg:text-base">{current.desc}</p>
-
-            <div className="flex items-center gap-3 flex-wrap">
-              <button onClick={goPrev} disabled={slide === 0}
-                className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                ← Back
-              </button>
-              {slide < SLIDES.length - 1 ? (
-                <button onClick={goNext}
-                  className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition">
-                  Next →
-                </button>
-              ) : (
-                <button onClick={onGetStarted}
-                  className="px-6 py-2 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-400 transition">
-                  Get Started Free →
-                </button>
-              )}
-              <button onClick={() => setPaused(p => !p)}
-                className="ml-auto px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-500 text-xs font-medium hover:bg-slate-50 transition">
-                {paused ? '▶ Play' : '⏸ Pause'}
-              </button>
-            </div>
-            <p className="text-xs text-slate-400 mt-4">{slide + 1} / {SLIDES.length} — hover to pause</p>
+          {/* Indicator dots */}
+          <div className="flex gap-2">
+            {SLIDES.map((_, i) => (
+              <button key={i} onClick={() => { setPaused(false); goTo(i, i > slide ? 1 : -1); }}
+                className={`h-2.5 rounded-full transition ${i === slide ? 'bg-white w-8' : 'bg-white/40 w-2.5'}`} />
+            ))}
           </div>
 
-          {/* Right: visual */}
-          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-sm min-h-[280px]">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex gap-1">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-              </div>
-              <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5">
-                premiso.co.uk/{current.id}
-              </div>
-            </div>
-            {renderVisual()}
-          </div>
+          {/* Play/Pause */}
+          <button onClick={() => setPaused(p => !p)} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
+            {paused ? <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg> : <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" /></svg>}
+          </button>
+
+          <button onClick={goNext} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+
+        {/* Progress bar top */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-slate-200">
+          <div className="h-full bg-primary transition-all duration-100"
+            style={{ width: `${((slide + (paused ? 0 : progress / 100)) / SLIDES.length) * 100}%` }} />
+        </div>
+
+        {/* Slide counter */}
+        <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
+          {slide + 1} / {SLIDES.length}
         </div>
       </div>
     </div>
