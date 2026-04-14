@@ -459,15 +459,12 @@ function StepDirectors({ selectedCompanies, selected, onToggle, onNext, onBack }
             </div>
           )}
           {resigned.length > 0 && (
-            <details className="group">
-              <summary className="text-xs font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-600 list-none flex items-center gap-1">
-                <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
-                Resigned Officers ({resigned.length})
-              </summary>
-              <div className="space-y-2 mt-2 opacity-60">
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resigned Officers ({resigned.length})</p>
+              <div className="space-y-2 opacity-60">
                 {resigned.map((o, i) => <PersonRow key={i} person={o} />)}
               </div>
-            </details>
+            </div>
           )}
           {active.length === 0 && allPsc.length === 0 && !apiError && (
             <div className="text-center py-8 border-2 border-dashed rounded-xl text-slate-400">
