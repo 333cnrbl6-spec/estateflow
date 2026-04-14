@@ -3,32 +3,44 @@
   "type": "object",
   "properties": {
     "tenant_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Reference to Tenant entity"
     },
-    "token": {
-      "type": "string"
+    "tenant_email": {
+      "type": "string",
+      "description": "Tenant email address"
     },
     "property_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Reference to Property entity"
     },
     "unit_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Reference to Unit entity (optional)"
+    },
+    "token": {
+      "type": "string",
+      "description": "Secure access token (SHA-256 hash)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When token was created"
     },
     "expires_at": {
       "type": "string",
-      "format": "date"
+      "format": "date-time",
+      "description": "When token expires"
+    },
+    "last_used": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time token was used to access portal"
     },
     "is_active": {
       "type": "boolean",
-      "default": true
-    },
-    "created_date": {
-      "type": "string",
-      "format": "date"
-    },
-    "last_accessed": {
-      "type": "string",
-      "format": "date"
+      "default": true,
+      "description": "Whether token is currently active"
     },
     "notes": {
       "type": "string"
@@ -36,6 +48,10 @@
   },
   "required": [
     "tenant_id",
-    "token"
+    "tenant_email",
+    "property_id",
+    "token",
+    "created_at",
+    "expires_at"
   ]
 }
