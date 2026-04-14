@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { toast } from 'sonner';
+import VendorComplianceReview from './VendorComplianceReview';
 
 export default function ServiceAgreementSigning({ vendorId, onComplete }) {
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [assessmentComplete, setAssessmentComplete] = useState(false);
 
   const handleSign = async () => {
     setLoading(true);
@@ -40,7 +42,17 @@ export default function ServiceAgreementSigning({ vendorId, onComplete }) {
 
   return (
     <div className="space-y-6">
-      {/* Agreement Preview */}
+      {/* Compliance Assessment */}
+      {!assessmentComplete && (
+        <VendorComplianceReview 
+          vendorId={vendorId} 
+          onApproved={() => setAssessmentComplete(true)}
+        />
+      )}
+
+      {assessmentComplete && (
+        <>
+          {/* Agreement Preview */}
       <Card className="p-6 bg-slate-50 border-slate-200 max-h-96 overflow-y-auto">
         <h3 className="font-semibold text-foreground mb-4">Standard Service Agreement</h3>
         
@@ -153,9 +165,11 @@ export default function ServiceAgreementSigning({ vendorId, onComplete }) {
         )}
       </Button>
 
-      <p className="text-xs text-muted-foreground text-center">
-        By signing, you agree to the terms and conditions outlined above
-      </p>
+          <p className="text-xs text-muted-foreground text-center">
+            By signing, you agree to the terms and conditions outlined above
+          </p>
+        </>
+      )}
     </div>
   );
 }
