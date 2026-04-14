@@ -10,6 +10,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { RoleProvider } from '@/lib/RoleContext';
 
 import Landing from './pages/Landing';
+import FounderLaunch from './pages/FounderLaunch';
 import AppLayout from './components/layout/AppLayout';
 import Dashboard from './pages/Dashboard';
 import Companies from './pages/Companies';
@@ -268,6 +269,7 @@ function App() {
                   {/* Fully public — no auth check at all */}
                   <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
+                  <Route path="/founder-launch" element={<FounderLaunch />} />
                   {/* All other routes go through auth */}
                   <Route path="/*" element={<AuthenticatedApp />} />
                 </Routes>
