@@ -112,6 +112,7 @@ import ContractorPortalMobile from './pages/ContractorPortalMobile';
 import DocumentationViewer from './pages/DocumentationViewer';
 import CustomizableFinancialReports from './pages/CustomizableFinancialReports';
 import DetailedComplianceReports from './pages/DetailedComplianceReports';
+import InvoiceManagement from './pages/InvoiceManagement';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -224,6 +225,7 @@ const AuthenticatedApp = () => {
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
         <Route path="/financial-reports" element={<CustomizableFinancialReports />} />
         <Route path="/compliance-reports" element={<DetailedComplianceReports />} />
+        <Route path="/invoices" element={<InvoiceManagement />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />

@@ -1,8 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// Note: External email/SMS restricted by platform.
-// Reminders are queued for in-app notification system.
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -12,57 +9,81 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const {
-      setting_id,
-      tenant,
-      unit,
-      property,
-      overdue_items,
-      notification_method,
-      reminder_count,
-    } = await req.json();
+    const body = await req.json();
+    const { invoiceId, sendEmail = true } = body;
 
-    const totalOverdue = overdue_items.reduce((sum, item) => sum + (item.amount_outstanding || 0), 0);
-    const oldestDueDate = overdue_items[0]?.due_date;
-    const daysOverdue = oldestDueDate
-      ? Math.floor((new Date() - new Date(oldestDueDate)) / (1000 * 60 * 60 * 24))
-      : 0;
+    // Fetch invoice
+    const invoice = await base44.entities.Invoice.get(invoiceId);
+    if (!invoice) {
+      return Response.json({ error: 'Invoice not found' }, { status: 404 });
+    }
 
-    const emailBody = `
-Dear ${tenant.tenant_name},
+    // Fetch tenant
+    const tenant = await base44.entities.Tenant.get(invoice.contractor_id);
+    if (!tenant) {
+      return Response.json({ error: 'Tenant not found' }, { status: 404 });
+    }
 
-We are writing to notify you that your rent payment is overdue.
+    // Calculate days overdue
+    const invoiceDate = new Date(invoice.submitted_date);
+    const daysOverdue = Math.floor((new Date() - invoiceDate) / (1000 * 60 * 60 * 24));
 
-PAYMENT DETAILS:
-- Property: ${property.address_line_1}
-- Unit: ${unit.unit_reference || 'Unit'}
-- Outstanding Amount: £${totalOverdue.toFixed(2)}
-- Days Overdue: ${daysOverdue}
-- Payment Due Date: ${new Date(oldestDueDate).toLocaleDateString('en-GB')}
+    // Send reminder email
+    if (sendEmail && tenant.email) {
+      const emailSubject = daysOverdue > 30 
+        ? `URGENT: Overdue Rent Payment - £${invoice.amount}`
+        : `Rent Payment Reminder - £${invoice.amount}`;
 
-PLEASE PAY IMMEDIATELY:
-Failure to pay may result in further action including legal proceedings.
+      const emailBody = `
+Dear ${tenant.name},
 
-If you have already made this payment, please disregard this notice.
+${daysOverdue > 30 
+  ? `Your rent payment is now ${daysOverdue} days overdue.` 
+  : `This is a friendly reminder that your rent payment is due.`}
 
-If you are experiencing financial difficulties, please contact us to discuss a payment plan.
+Invoice Details:
+- Amount: £${invoice.amount}
+- Due Date: ${new Date(invoice.submitted_date).toLocaleDateString()}
+- Days Outstanding: ${daysOverdue}
+- Invoice: ${invoiceId.slice(0, 8)}
 
+Please arrange payment immediately to avoid further action.
+
+If you have already paid, please disregard this notice.
+
+Best regards,
 Property Management Team
-    `;
+      `;
 
-    // Log reminder (platform restricts external emails)
-    console.log(`Rent reminder queued for ${tenant.tenant_name}: £${totalOverdue.toFixed(2)} overdue via ${notification_method}`);
-    console.log(`Method: ${notification_method}`);
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: tenant.email,
+          subject: emailSubject,
+          body: emailBody,
+        });
+      } catch (emailError) {
+        console.error('Email send error:', emailError);
+        // Continue even if email fails
+      }
+    }
+
+    // Update invoice with reminder sent
+    await base44.entities.Invoice.update(invoiceId, {
+      notes: (invoice.notes || '') + `\nReminder sent: ${new Date().toISOString()}`,
+    });
 
     return Response.json({
       success: true,
-      message: `Reminder ${reminder_count} queued for ${tenant.tenant_name}`,
-      method: notification_method,
-      amount: totalOverdue,
+      invoiceId: invoiceId,
+      daysOverdue: daysOverdue,
+      tenantEmail: tenant.email,
+      reminderSent: true,
     });
-
   } catch (error) {
-    console.error('Error sending rent reminder:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Rent reminder error:', error);
+    return Response.json(
+      { error: error.message || 'Failed to send reminder' },
+      { status: 500 }
+    );
   }
 });
