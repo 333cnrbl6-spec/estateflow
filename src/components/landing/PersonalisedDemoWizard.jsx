@@ -11,6 +11,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
+import PersonalizedDemoSlideshow from './PersonalizedDemoSlideshow';
 import {
   CheckCircle2, Building2, Loader2, ChevronRight, Search,
   Check, Circle, X, AlertCircle, Users, Star, Lock, ShieldCheck,
@@ -726,50 +727,82 @@ export default function PersonalisedDemoWizard({ onComplete }) {
     selectedAssociated: [],
   };
 
-  return (
-    <div className="max-w-2xl mx-auto">
-      <StepIndicator current={step} />
+  const [showDemoSlideshow, setShowDemoSlideshow] = useState(false);
+  const [demoSession, setDemoSession] = useState(null);
 
-      <div className="bg-white border-2 rounded-2xl p-6 md:p-8 shadow-sm min-h-[400px]">
-        {step === 0 && (
-          <StepAboutYou data={contactData} onChange={patch => setContactData(p => ({ ...p, ...patch }))} onNext={() => setStep(1)} />
-        )}
-        {step === 1 && (
-          <StepCompany
-            selectedCompanies={selectedCompanies}
-            onToggle={toggleCompany}
-            onSetPrimary={setPrimary}
-            onNext={() => setStep(2)}
-            onBack={() => setStep(0)}
-            userName={contactData.name}
-          />
-        )}
-        {step === 2 && (
-          <StepDirectors
-            selectedCompanies={selectedCompanies}
-            selected={selectedOfficers}
-            onToggle={toggleOfficer}
-            onNext={() => setStep(3)}
-            onBack={() => setStep(1)}
-          />
-        )}
-        {step === 3 && (
-          <StepPortfolio
-            data={portfolioData}
-            onChange={patch => setPortfolioData(p => ({ ...p, ...patch }))}
-            onNext={() => setStep(4)}
-            onBack={() => setStep(2)}
-          />
-        )}
-        {step === 4 && (
-          <StepBuilding
-            chData={chData}
-            contactData={contactData}
-            portfolioData={portfolioData}
-            onComplete={(session) => onComplete?.(session)}
-          />
-        )}
+  const handleDemoComplete = (session) => {
+    setDemoSession(session);
+    setShowDemoSlideshow(true);
+  };
+
+  return (
+    <>
+      <div className="max-w-2xl mx-auto">
+        <StepIndicator current={step} />
+
+        <div className="bg-white border-2 rounded-2xl p-6 md:p-8 shadow-sm min-h-[400px]">
+          {step === 0 && (
+            <StepAboutYou data={contactData} onChange={patch => setContactData(p => ({ ...p, ...patch }))} onNext={() => setStep(1)} />
+          )}
+          {step === 1 && (
+            <StepCompany
+              selectedCompanies={selectedCompanies}
+              onToggle={toggleCompany}
+              onSetPrimary={setPrimary}
+              onNext={() => setStep(2)}
+              onBack={() => setStep(0)}
+              userName={contactData.name}
+            />
+          )}
+          {step === 2 && (
+            <StepDirectors
+              selectedCompanies={selectedCompanies}
+              selected={selectedOfficers}
+              onToggle={toggleOfficer}
+              onNext={() => setStep(3)}
+              onBack={() => setStep(1)}
+            />
+          )}
+          {step === 3 && (
+            <StepPortfolio
+              data={portfolioData}
+              onChange={patch => setPortfolioData(p => ({ ...p, ...patch }))}
+              onNext={() => setStep(4)}
+              onBack={() => setStep(2)}
+            />
+          )}
+          {step === 4 && (
+            <StepBuilding
+              chData={chData}
+              contactData={contactData}
+              portfolioData={portfolioData}
+              onComplete={handleDemoComplete}
+            />
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Personalized demo slideshow gateway */}
+      {showDemoSlideshow && demoSession && (
+        <PersonalizedDemoSlideshow
+          demoData={{
+            company: selectedCompanies[0]?.company_name,
+            directors: selectedOfficers,
+            portfolioSize: portfolioData.portfolioSize,
+            propertyTypes: portfolioData.propertyTypes,
+            painPoints: portfolioData.painPoints,
+            currentSoftware: portfolioData.currentSoftware,
+          }}
+          onDismiss={() => {
+            setShowDemoSlideshow(false);
+            onComplete?.(demoSession);
+          }}
+          onStartDemo={() => {
+            setShowDemoSlideshow(false);
+            onComplete?.(demoSession);
+          }}
+        />
+      )}
+    </>
   );
 }
