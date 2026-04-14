@@ -1,0 +1,65 @@
+{
+  "name": "ComplianceAlertPreference",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email address"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "accounts_overdue",
+        "confirmation_statement_due",
+        "director_change",
+        "status_change",
+        "strike_off_notice",
+        "insolvency"
+      ],
+      "description": "Type of alert this preference applies to"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this alert type is enabled"
+    },
+    "notify_via_email": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send email notifications"
+    },
+    "notify_via_dashboard": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show dashboard alerts"
+    },
+    "days_before_due": {
+      "type": "number",
+      "default": 14,
+      "description": "Days before deadline to send first alert"
+    },
+    "email_frequency": {
+      "type": "string",
+      "enum": [
+        "immediate",
+        "daily_digest",
+        "weekly_digest"
+      ],
+      "default": "daily_digest",
+      "description": "How often to receive email notifications"
+    },
+    "last_alert_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last alert of this type was sent"
+    },
+    "notes": {
+      "type": "string",
+      "description": "User notes about this preference"
+    }
+  },
+  "required": [
+    "user_email",
+    "alert_type"
+  ]
+}

@@ -2,16 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Clock, Building2, Users, FileText, Loader2, RefreshCw, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { AlertCircle, Clock, Building2, Users, FileText, Loader2, RefreshCw, CheckCircle2, AlertTriangle, Settings } from 'lucide-react';
+import AlertPreferencesDialog from './AlertPreferencesDialog';
 
 export default function CompaniesHouseAlertWidget({ limit = 5 }) {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState({});
+  const [prefsOpen, setPrefsOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
     loadProfiles();
+    loadUserEmail();
   }, []);
+
+  const loadUserEmail = async () => {
+    try {
+      const user = await base44.auth.me();
+      if (user) setUserEmail(user.email);
+    } catch (err) {
+      console.error('Failed to load user:', err);
+    }
+  };
 
   const loadProfiles = async () => {
     try {
@@ -106,15 +119,35 @@ export default function CompaniesHouseAlertWidget({ limit = 5 }) {
             <AlertCircle className="w-5 h-5 text-red-500" />
             Companies House Alerts ({profiles.length})
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={loadProfiles}
-            className="text-xs"
-          >
-            <RefreshCw className="w-3.5 h-3.5 mr-1" />
-            Refresh
-          </Button>
+          <div className="flex gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={loadProfiles}
+              className="text-xs"
+            >
+              <RefreshCw className="w-3.5 h-3.5 mr-1" />
+              Refresh
+            </Button>
+            {userEmail && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPrefsOpen(true)}
+                  className="text-xs"
+                  title="Alert preferences"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                </Button>
+                <AlertPreferencesDialog
+                  open={prefsOpen}
+                  onOpenChange={setPrefsOpen}
+                  userEmail={userEmail}
+                />
+              </>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
