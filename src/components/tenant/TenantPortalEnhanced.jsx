@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import TenantMaintenanceForm from './TenantMaintenanceForm';
 import TenantDocumentViewer from './TenantDocumentViewer';
 import TenantMessaging from './TenantMessaging';
+import TenantRentPayment from './TenantRentPayment';
+import TenantPropertyDocuments from './TenantPropertyDocuments';
+import TenantFAQSection from './TenantFAQSection';
 
 export default function TenantPortalEnhanced() {
   const [activeTab, setActiveTab] = useState('maintenance');
@@ -90,21 +93,32 @@ export default function TenantPortalEnhanced() {
 
         {/* Tab Navigation */}
         <div className="bg-card rounded-lg border border-border mb-8">
-          <div className="flex border-b border-border">
+          <div className="flex border-b border-border overflow-x-auto">
             <button
               onClick={() => setActiveTab('maintenance')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors ${
+              className={`py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors whitespace-nowrap ${
                 activeTab === 'maintenance'
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <Wrench className="w-4 h-4" />
-              Maintenance Requests
+              Maintenance
+            </button>
+            <button
+              onClick={() => setActiveTab('payment')}
+              className={`py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors whitespace-nowrap ${
+                activeTab === 'payment'
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Wrench className="w-4 h-4" />
+              Pay Rent
             </button>
             <button
               onClick={() => setActiveTab('documents')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors ${
+              className={`py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors whitespace-nowrap ${
                 activeTab === 'documents'
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-muted-foreground hover:text-foreground'
@@ -115,7 +129,7 @@ export default function TenantPortalEnhanced() {
             </button>
             <button
               onClick={() => setActiveTab('messages')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors ${
+              className={`py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors whitespace-nowrap ${
                 activeTab === 'messages'
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-muted-foreground hover:text-foreground'
@@ -124,13 +138,26 @@ export default function TenantPortalEnhanced() {
               <MessageSquare className="w-4 h-4" />
               Messages
             </button>
+            <button
+              onClick={() => setActiveTab('faq')}
+              className={`py-4 px-6 flex items-center justify-center gap-2 font-semibold transition-colors whitespace-nowrap ${
+                activeTab === 'faq'
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
+              Help & FAQs
+            </button>
           </div>
 
           {/* Tab Content */}
           <div className="p-6">
             {activeTab === 'maintenance' && <TenantMaintenanceForm tenant={tenant} units={units} />}
-            {activeTab === 'documents' && <TenantDocumentViewer tenant={tenant} />}
+            {activeTab === 'payment' && <TenantRentPayment tenant={tenant} units={units} />}
+            {activeTab === 'documents' && <TenantPropertyDocuments tenant={tenant} units={units} />}
             {activeTab === 'messages' && <TenantMessaging tenant={tenant} />}
+            {activeTab === 'faq' && <TenantFAQSection />}
           </div>
         </div>
       </div>
