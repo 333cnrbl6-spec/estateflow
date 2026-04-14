@@ -4,12 +4,23 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 const CH_BASE = 'https://api.company-information.service.gov.uk';
 
 async function chFetch(path, apiKey) {
-  if (!apiKey) return null; // no key → return error
-  const res = await fetch(`${CH_BASE}${path}`, {
-    headers: { Authorization: 'Basic ' + btoa(apiKey + ':') },
-  });
-  if (!res.ok) return null;
-  return res.json();
+  if (!apiKey) {
+    console.error('[chFetch] No API key provided');
+    return null;
+  }
+  try {
+    const res = await fetch(`${CH_BASE}${path}`, {
+      headers: { Authorization: 'Basic ' + btoa(apiKey + ':') },
+    });
+    if (!res.ok) {
+      console.error(`[chFetch] API returned ${res.status} for ${path}`);
+      return null;
+    }
+    return res.json();
+  } catch (err) {
+    console.error(`[chFetch] Request failed: ${err.message}`);
+    return null;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -20,7 +31,9 @@ Deno.serve(async (req) => {
   
   // Get API key from environment
   const apiKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
+  console.log('[companiesHouseSearch] API key present:', !!apiKey);
   if (!apiKey) {
+    console.error('[companiesHouseSearch] API key missing');
     return Response.json({ 
       error: 'Companies House API key not configured', 
       source: 'unavailable',
