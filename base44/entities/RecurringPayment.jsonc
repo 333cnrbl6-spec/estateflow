@@ -10,66 +10,60 @@
       "type": "string",
       "description": "Reference to Property entity"
     },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
     "stripe_customer_id": {
       "type": "string",
       "description": "Stripe customer ID"
     },
-    "stripe_subscription_schedule_id": {
-      "type": "string",
-      "description": "Stripe subscription schedule ID"
-    },
     "payment_method_id": {
       "type": "string",
-      "description": "Stripe payment method ID (saved card)"
+      "description": "Stripe payment method ID"
     },
-    "amount": {
+    "monthly_amount": {
       "type": "number",
-      "description": "Monthly payment amount in GBP"
-    },
-    "currency": {
-      "type": "string",
-      "default": "gbp",
-      "description": "Currency code"
-    },
-    "day_of_month": {
-      "type": "number",
-      "description": "Day of month for payment (1-31)"
-    },
-    "start_date": {
-      "type": "string",
-      "format": "date",
-      "description": "When recurring payments start"
-    },
-    "next_payment_date": {
-      "type": "string",
-      "format": "date",
-      "description": "Next scheduled payment date"
-    },
-    "last_payment_date": {
-      "type": "string",
-      "format": "date",
-      "description": "Last successful payment date"
+      "description": "Monthly rent amount in pence"
     },
     "status": {
       "type": "string",
       "enum": [
         "active",
         "paused",
-        "cancelled",
-        "failed"
+        "cancelled"
       ],
       "default": "active",
-      "description": "Recurring payment status"
+      "description": "Status of recurring payment"
     },
-    "total_payments": {
-      "type": "number",
-      "default": 0,
-      "description": "Total number of successful payments"
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recurring payments start"
     },
-    "total_amount_paid": {
-      "type": "number",
-      "default": 0,
-      "description": "Total amount paid to date"
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recurring payment was created"
+    },
+    "last_payment_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date of last successful payment"
+    },
+    "next_payment_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled date for next payment"
+    },
+    "cancelled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recurring payment was cancelled"
     },
     "notes": {
       "type": "string"
@@ -77,8 +71,10 @@
   },
   "required": [
     "tenant_id",
-    "amount",
-    "day_of_month",
+    "property_id",
+    "stripe_subscription_id",
+    "stripe_customer_id",
+    "monthly_amount",
     "start_date"
   ]
 }

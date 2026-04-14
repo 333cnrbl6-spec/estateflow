@@ -282,6 +282,10 @@
         }
       }
     },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID for recurring payments"
+    },
     "notes": {
       "type": "string"
     }
