@@ -114,6 +114,7 @@ import CustomizableFinancialReports from './pages/CustomizableFinancialReports';
 import DetailedComplianceReports from './pages/DetailedComplianceReports';
 import InvoiceManagement from './pages/InvoiceManagement';
 import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
+import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -189,6 +190,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance" element={<MaintenanceWorkflow />} />
         <Route path="/maintenance-board" element={<MaintenanceBoard />} />
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
+        <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
