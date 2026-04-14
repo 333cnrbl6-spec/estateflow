@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
@@ -14,12 +15,13 @@ import DemoSessionBanner from '@/components/landing/DemoSessionBanner';
 import WhoIsItFor from '@/components/landing/WhoIsItFor';
 
 export default function Landing() {
-  const [demoMode, setDemoMode] = useState(null); // null | 'slideshow' | 'personalised'
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [demoMode, setDemoMode] = useState(null);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
-  const [demoSession, setDemoSession] = useState(null); // set when personalised demo completes
+  const [demoSession, setDemoSession] = useState(null);
 
-  // Check if there's a still-valid demo session token from a prior visit
   const existingToken = (() => {
     try {
       const t = JSON.parse(localStorage.getItem('premiso_demo_token') || 'null');
@@ -27,125 +29,119 @@ export default function Landing() {
     } catch { return null; }
   })();
 
-  const handleDemoChoice = (choice) => {
-    setDemoMode(choice);
-    if (choice !== 'scenario') {
-      setTimeout(() => {
-        document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
+  // Slide definitions with dwell time (ms)
+  const SLIDES = [
+    { id: 'hero', duration: 8000, component: <HeroSection onStartDemo={() => nextSlide()} onGetStarted={() => { setSlideIndex(SLIDES.findIndex(s => s.id === 'demo')); setIsAutoPlaying(false); }} /> },
+    { id: 'features', duration: 10000, component: <FeaturesSection /> },
+    { id: 'who-is-it-for', duration: 8000, component: <WhoIsItFor onGetStarted={() => { setSlideIndex(SLIDES.findIndex(s => s.id === 'pricing')); setIsAutoPlaying(false); }} /> },
+    { id: 'demo', duration: 6000, component: <DemoChooser onChoose={(choice) => { setDemoMode(choice); if (choice !== 'scenario') setIsAutoPlaying(false); }} chosen={demoMode} /> },
+    { id: 'pricing', duration: 10000, component: <PricingSection onChoosePlan={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} /> },
+    { id: 'cta', duration: 8000, component: (
+      demoSession ? (
+        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
+          <div className="text-center text-white max-w-2xl">
+            <div className="text-6xl mb-6">🎉</div>
+            <h3 className="text-3xl font-bold mb-3">Your demo is live, {demoSession.name?.split(' ')[0]}!</h3>
+            <p className="text-primary-foreground/80 mb-3">We've built a personalised Premiso environment for <strong>{demoSession.company}</strong>.</p>
+            <p className="text-sm text-primary-foreground/60 mb-8">A confirmation has been sent to <strong>{demoSession.email}</strong>. Our team will be in touch within 1 working day.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/dashboard" className="bg-white text-primary px-8 py-3 rounded-xl font-bold text-lg hover:bg-slate-100 transition">Explore the Platform →</Link>
+              <button onClick={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} className="border-2 border-white/40 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition text-lg">Start Free Trial</button>
+            </div>
+          </div>
+        </div>
+      ) : leadSubmitted ? (
+        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
+          <div className="text-center text-white">
+            <div className="text-6xl mb-4">✓</div>
+            <h3 className="text-2xl font-bold mb-2">We'll be in touch!</h3>
+            <p className="text-primary-foreground/80 mb-8">Check your inbox — a confirmation is on its way.</p>
+            <Link to="/dashboard" className="inline-block bg-white text-primary px-6 py-3 rounded-lg font-semibold">Log in to Premiso →</Link>
+          </div>
+        </div>
+      ) : showLeadForm ? (
+        <div className="min-h-screen bg-primary flex items-center justify-center px-6 py-10">
+          <div className="w-full max-w-2xl">
+            <LeadCaptureForm demoType={demoMode} onSubmitted={() => { setLeadSubmitted(true); setSlideIndex(SLIDES.length - 1); }} />
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
+          <div className="text-center text-white max-w-2xl">
+            <h2 className="text-4xl font-bold mb-4">Ready to transform your property management?</h2>
+            <p className="text-xl text-primary-foreground/80 mb-8">Join landlords, letting agents, freeholders and block managers already using Premiso</p>
+            <button onClick={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} className="bg-white text-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-100 transition">Get Early Access</button>
+          </div>
+        </div>
+      )
+    ) },
+  ];
+
+  const currentSlide = SLIDES[slideIndex];
+
+  // Autoplay effect
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setTimeout(() => {
+      setSlideIndex((i) => (i + 1) % SLIDES.length);
+    }, currentSlide.duration);
+    return () => clearTimeout(timer);
+  }, [slideIndex, isAutoPlaying, currentSlide.duration]);
+
+  const nextSlide = () => {
+    setSlideIndex((i) => (i + 1) % SLIDES.length);
+    setIsAutoPlaying(false);
   };
 
-  const handleDemoComplete = (session) => {
-    if (session?.email) {
-      // Personalised demo — lead already captured, just show CTA
-      setDemoSession(session);
-    } else {
-      // Slideshow — still show lead form
-      setShowLeadForm(true);
-    }
-    setTimeout(() => {
-      document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' });
-    }, 150);
+  const prevSlide = () => {
+    setSlideIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length);
+    setIsAutoPlaying(false);
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans overflow-hidden">
       <LandingNav onLogin={() => window.location.href = '/dashboard'} />
 
-      <HeroSection
-        onStartDemo={() => document.getElementById('demo-chooser')?.scrollIntoView({ behavior: 'smooth' })}
-        onGetStarted={() => setShowLeadForm(true)}
-      />
-
-      <FeaturesSection />
-
-      <WhoIsItFor onGetStarted={() => setShowLeadForm(true)} />
-
-      {/* Demo Chooser */}
-      <section id="demo-chooser" className="py-20 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">See Premiso in Action</h2>
-          <p className="text-lg text-slate-600 mb-10">
-            Choose how you'd like to explore the platform
-          </p>
-          <DemoChooser onChoose={handleDemoChoice} chosen={demoMode} />
+      {/* Carousel container */}
+      <div className="relative w-full min-h-[calc(100vh-64px)] bg-white overflow-hidden">
+        {/* Slide fade transition */}
+        <div className={`transition-opacity duration-1000 w-full ${slideIndex === SLIDES.findIndex(s => s.id === currentSlide.id) ? 'opacity-100' : 'opacity-0'}`}>
+          {currentSlide.component}
         </div>
-      </section>
 
-      {/* Demo Area */}
-      {demoMode && demoMode !== 'scenario' && (
-        <section id="demo-section" className="py-10 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
-            {demoMode === 'slideshow' ? (
-              <SlideshowDemo onGetStarted={handleDemoComplete} />
-            ) : (
-              <PersonalisedDemoWizard onComplete={handleDemoComplete} />
-            )}
+        {/* Navigation controls (kiosk-friendly) */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6 flex justify-between items-center">
+          <button onClick={prevSlide} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          {/* Indicator dots */}
+          <div className="flex gap-2">
+            {SLIDES.map((_, i) => (
+              <button key={i} onClick={() => { setSlideIndex(i); setIsAutoPlaying(false); }} 
+                className={`h-2.5 rounded-full transition ${i === slideIndex ? 'bg-white w-8' : 'bg-white/40 w-2.5'}`} />
+            ))}
           </div>
-        </section>
-      )}
 
-      <PricingSection onChoosePlan={() => setShowLeadForm(true)} />
+          {/* Play/Pause */}
+          <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
+            {isAutoPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+          </button>
 
-      {/* Lead Capture / Post-demo CTA */}
-      <section id="get-started" className="py-20 bg-primary">
-        <div className="max-w-2xl mx-auto px-6">
-          {demoSession ? (
-            /* Personalised demo already captured their details — no re-entry */
-            <div className="text-center text-white">
-              <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-3xl font-bold mb-2">Your demo is live, {demoSession.name?.split(' ')[0]}!</h3>
-              <p className="text-primary-foreground/80 mb-2">
-                We've built a personalised Premiso environment for <strong>{demoSession.company}</strong>.
-              </p>
-              <p className="text-sm text-primary-foreground/60 mb-8">
-                A confirmation has been sent to <strong>{demoSession.email}</strong>. Our team will be in touch within 1 working day.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/dashboard"
-                  className="bg-white text-primary px-8 py-3 rounded-xl font-bold text-lg hover:bg-slate-100 transition">
-                  Explore the Platform →
-                </Link>
-                <button onClick={() => setShowLeadForm(true)}
-                  className="border-2 border-white/40 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition text-lg">
-                  Start Free Trial
-                </button>
-              </div>
-            </div>
-          ) : leadSubmitted ? (
-            <div className="text-center text-white">
-              <div className="text-5xl mb-4">✓</div>
-              <h3 className="text-2xl font-bold mb-2">We'll be in touch!</h3>
-              <p className="text-primary-foreground/80">Check your inbox — a confirmation is on its way.</p>
-              <Link to="/dashboard" className="mt-6 inline-block bg-white text-primary px-6 py-3 rounded-lg font-semibold">
-                Log in to Premiso →
-              </Link>
-            </div>
-          ) : showLeadForm ? (
-            <LeadCaptureForm demoType={demoMode} onSubmitted={() => setLeadSubmitted(true)} />
-          ) : (
-            <div className="text-center text-white">
-              <h2 className="text-3xl font-bold mb-4">Ready to transform your property management?</h2>
-              <p className="text-xl text-primary-foreground/80 mb-8">
-                Join landlords, letting agents, freeholders and block managers already using Premiso
-              </p>
-              <button onClick={() => setShowLeadForm(true)}
-                className="bg-white text-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-100 transition">
-                Get Early Access
-              </button>
-            </div>
-          )}
+          <button onClick={nextSlide} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
-      </section>
+
+        {/* Slide counter */}
+        <div className="fixed top-20 right-6 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
+          {slideIndex + 1} / {SLIDES.length}
+        </div>
+      </div>
 
       <FooterSection />
 
-      {/* Persistent demo watermark banner if an active session exists */}
-      <DemoSessionBanner
-        session={existingToken}
-        onExpired={() => localStorage.removeItem('premiso_demo_token')}
-      />
+      <DemoSessionBanner session={existingToken} onExpired={() => localStorage.removeItem('premiso_demo_token')} />
     </div>
   );
 }
