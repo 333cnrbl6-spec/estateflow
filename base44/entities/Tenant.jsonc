@@ -66,6 +66,222 @@
     "emergency_contact_phone": {
       "type": "string"
     },
+    "screening": {
+      "type": "object",
+      "description": "Tenant screening and verification results",
+      "properties": {
+        "screening_requested_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When screening was initiated"
+        },
+        "screening_completed_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When screening was completed"
+        },
+        "overall_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall screening score"
+        },
+        "recommendation": {
+          "type": "string",
+          "enum": [
+            "approve",
+            "review",
+            "decline"
+          ],
+          "description": "Screening recommendation"
+        },
+        "credit_check": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "completed",
+                "failed"
+              ]
+            },
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Credit score (0-100)"
+            },
+            "credit_rating": {
+              "type": "string",
+              "enum": [
+                "excellent",
+                "good",
+                "fair",
+                "poor",
+                "unknown"
+              ]
+            },
+            "defaults_found": {
+              "type": "boolean",
+              "description": "Any defaults or missed payments"
+            },
+            "bankruptcy_history": {
+              "type": "boolean"
+            },
+            "ccj_found": {
+              "type": "boolean",
+              "description": "County Court Judgement found"
+            },
+            "checked_date": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "provider": {
+              "type": "string",
+              "description": "Credit check provider"
+            },
+            "report_url": {
+              "type": "string",
+              "description": "URL to credit report"
+            }
+          }
+        },
+        "reference_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reference_id": {
+                "type": "string"
+              },
+              "reference_type": {
+                "type": "string",
+                "enum": [
+                  "employer",
+                  "landlord",
+                  "personal"
+                ]
+              },
+              "contact_name": {
+                "type": "string"
+              },
+              "contact_email": {
+                "type": "string"
+              },
+              "contact_phone": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "completed",
+                  "declined"
+                ]
+              },
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "reliability": {
+                "type": "string",
+                "enum": [
+                  "excellent",
+                  "good",
+                  "fair",
+                  "poor"
+                ]
+              },
+              "payment_history": {
+                "type": "string",
+                "enum": [
+                  "excellent",
+                  "good",
+                  "fair",
+                  "poor"
+                ],
+                "description": "For landlord references"
+              },
+              "arrears": {
+                "type": "boolean",
+                "description": "Any arrears with previous landlord"
+              },
+              "damage_claims": {
+                "type": "boolean"
+              },
+              "feedback": {
+                "type": "string",
+                "description": "Reference feedback text"
+              },
+              "checked_date": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "description": "Array of reference check results"
+        },
+        "identity_verification": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "verified",
+                "failed"
+              ]
+            },
+            "verified_date": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "document_type": {
+              "type": "string",
+              "enum": [
+                "passport",
+                "driving_license",
+                "national_id"
+              ]
+            },
+            "verified_by": {
+              "type": "string",
+              "description": "Email of person who verified"
+            }
+          }
+        },
+        "right_to_rent": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "verified",
+                "failed"
+              ]
+            },
+            "verified_date": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "visa_type": {
+              "type": "string"
+            },
+            "expiry_date": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "screening_notes": {
+          "type": "string",
+          "description": "Additional notes from screening process"
+        }
+      }
+    },
     "notes": {
       "type": "string"
     }

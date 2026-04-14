@@ -123,6 +123,7 @@ import TenantCompliancePortal from './pages/TenantCompliancePortal';
 import ComplianceWorkflowAutomation from './pages/ComplianceWorkflowAutomation';
 import MaintenanceForecasting from './pages/MaintenanceForecasting';
 import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
+import TenantScreening from './pages/TenantScreening';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -171,6 +172,7 @@ const AuthenticatedApp = () => {
         <Route path="/pipeline" element={<Pipeline />} />
         <Route path="/rent-ledger" element={<RentLedger />} />
         <Route path="/tenant-portal" element={<TenantPortal />} />
+        <Route path="/tenant-screening" element={<TenantScreening />} />
 
         {/* Finance */}
         <Route path="/financials" element={<Financials />} />
