@@ -47,7 +47,7 @@ export default function HeroSection({ onStartDemo, onGetStarted }) {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white/40 text-white hover:bg-white/10 text-lg px-8 py-4"
+                className="border-white/40 text-white hover:bg-transparent text-lg px-8 py-4 pointer-events-none"
                 onClick={onStartDemo}
               >
                 See a Demo →
