@@ -304,39 +304,66 @@ function StepAssociated({
         </div>
       )}
 
-      {/* Results */}
-      {unique.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Companies found</p>
-          {unique.map((co, i) => {
-            const sel = !!selectedAssociated.find(s => s.company_number === co.company_number);
-            return (
-              <button key={i} onClick={() => onToggleAssociated(co)}
-                className={`w-full flex items-start justify-between p-3 rounded-xl border-2 text-left transition-all ${
-                  sel ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-primary/40'
-                }`}>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-slate-800 text-sm">{co.company_name}</p>
-                    <StatusBadge status={co.company_status} />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {co.company_number}
-                    {co.role ? ` · ${co.role}` : ''}
-                    {co.appointed_on ? ` · Appointed ${co.appointed_on}` : ''}
-                    {co.resigned_on ? ` · Resigned ${co.resigned_on}` : ''}
-                  </p>
+      {/* Results — active first, resigned collapsed */}
+      {unique.length > 0 && (() => {
+        const active = unique.filter(co => !co.resigned_on);
+        const resigned = unique.filter(co => !!co.resigned_on);
+        const renderCo = (co, i) => {
+          const sel = !!selectedAssociated.find(s => s.company_number === co.company_number);
+          return (
+            <button key={i} onClick={() => onToggleAssociated(co)}
+              className={`w-full flex items-start justify-between p-3 rounded-xl border-2 text-left transition-all ${
+                sel ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-primary/40'
+              }`}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-semibold text-slate-800 text-sm">{co.company_name}</p>
+                  <StatusBadge status={co.company_status || (co.resigned_on ? 'Resigned' : 'Active')} />
                 </div>
-                {sel ? <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" /> : <Circle className="w-5 h-5 text-slate-300 shrink-0 mt-0.5" />}
-              </button>
-            );
-          })}
-        </div>
-      )}
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {co.company_number}
+                  {co.role ? ` · ${co.role}` : ''}
+                  {co.appointed_on ? ` · Appointed ${co.appointed_on}` : ''}
+                  {co.resigned_on ? ` · Resigned ${co.resigned_on}` : ''}
+                </p>
+              </div>
+              {sel ? <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" /> : <Circle className="w-5 h-5 text-slate-300 shrink-0 mt-0.5" />}
+            </button>
+          );
+        };
+        return (
+          <div className="space-y-3">
+            {active.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Directorships ({active.length})</p>
+                {active.map(renderCo)}
+              </div>
+            )}
+            {resigned.length > 0 && (
+              <details className="group">
+                <summary className="text-xs font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-600 list-none flex items-center gap-1">
+                  <ChevronRight className="w-3.5 h-3.5 group-open:rotate-90 transition-transform" />
+                  Past / Resigned Directorships ({resigned.length})
+                </summary>
+                <div className="space-y-2 mt-2 opacity-70">
+                  {resigned.map(renderCo)}
+                </div>
+              </details>
+            )}
+          </div>
+        );
+      })()}
 
       {anyLoading && (
         <div className="text-center py-4 text-slate-400 text-sm flex items-center justify-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin" /> Searching Companies House...
+        </div>
+      )}
+
+      {/* Show message if searches done but nothing found */}
+      {!anyLoading && Object.keys(appointmentsMap).length > 0 && unique.length === 0 && (
+        <div className="text-center py-4 border-2 border-dashed rounded-xl text-slate-400 text-sm">
+          No other directorships found for the selected officers. Use manual search below to add companies.
         </div>
       )}
 
@@ -550,20 +577,19 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
   const searchAppointments = async (officer) => {
     setLoadingMap(prev => ({ ...prev, [officer.name]: true }));
     try {
-      // First find the officer_id via officer search
+      // Try to resolve officer_id from CH officer search first
       const searchRes = await ch('search_officer', { query: officer.name });
       const match = (searchRes.officers || []).find(o =>
-        o.name.toLowerCase().includes(officer.name.split(' ')[0].toLowerCase())
+        o.name?.toLowerCase().includes(officer.name.split(' ')[0].toLowerCase())
       );
-      if (match?.officer_id) {
-        const appRes = await ch('get_officer_appointments', {
-          officer_id: match.officer_id,
-          company_number: company?.company_number,
-        });
-        setAppointmentsMap(prev => ({ ...prev, [officer.name]: appRes.appointments || [] }));
-      } else {
-        setAppointmentsMap(prev => ({ ...prev, [officer.name]: [] }));
-      }
+      // Use real officer_id if found, otherwise pass name as query for LLM fallback
+      const officer_id = match?.officer_id || officer.name;
+      const appRes = await ch('get_officer_appointments', {
+        officer_id,
+        query: officer.name,
+        company_number: company?.company_number,
+      });
+      setAppointmentsMap(prev => ({ ...prev, [officer.name]: appRes.appointments || [] }));
     } catch {
       setAppointmentsMap(prev => ({ ...prev, [officer.name]: [] }));
     } finally {
