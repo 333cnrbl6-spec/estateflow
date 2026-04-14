@@ -1,0 +1,262 @@
+{
+  "name": "FireSafetyChecklist",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "fire_risk_assessment_id": {
+      "type": "string",
+      "description": "Reference to FireRiskAssessment entity"
+    },
+    "checklist_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When checklist was completed"
+    },
+    "conducted_by": {
+      "type": "string",
+      "description": "Name of person who conducted checklist"
+    },
+    "conducted_by_role": {
+      "type": "string",
+      "description": "Role of person conducting checklist"
+    },
+    "alarm_checks": {
+      "type": "object",
+      "properties": {
+        "alarms_present": {
+          "type": "boolean"
+        },
+        "alarms_tested": {
+          "type": "boolean"
+        },
+        "test_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "alarms_working": {
+          "type": "boolean"
+        },
+        "defects_found": {
+          "type": "string"
+        },
+        "next_test_due": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "extinguisher_checks": {
+      "type": "object",
+      "properties": {
+        "extinguishers_present": {
+          "type": "boolean"
+        },
+        "number_present": {
+          "type": "number"
+        },
+        "last_serviced": {
+          "type": "string",
+          "format": "date"
+        },
+        "service_due": {
+          "type": "string",
+          "format": "date"
+        },
+        "all_accessible": {
+          "type": "boolean"
+        },
+        "defects_found": {
+          "type": "string"
+        }
+      }
+    },
+    "emergency_lighting_checks": {
+      "type": "object",
+      "properties": {
+        "emergency_lighting_present": {
+          "type": "boolean"
+        },
+        "tested": {
+          "type": "boolean"
+        },
+        "test_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "working": {
+          "type": "boolean"
+        },
+        "next_test_due": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "fire_door_checks": {
+      "type": "object",
+      "properties": {
+        "fire_doors_present": {
+          "type": "boolean"
+        },
+        "number_of_doors": {
+          "type": "number"
+        },
+        "all_in_good_condition": {
+          "type": "boolean"
+        },
+        "doors_close_properly": {
+          "type": "boolean"
+        },
+        "seals_intact": {
+          "type": "boolean"
+        },
+        "defects_found": {
+          "type": "string"
+        }
+      }
+    },
+    "escape_route_checks": {
+      "type": "object",
+      "properties": {
+        "escape_routes_clear": {
+          "type": "boolean"
+        },
+        "signage_present": {
+          "type": "boolean"
+        },
+        "signage_condition": {
+          "type": "string",
+          "enum": [
+            "good",
+            "fair",
+            "poor"
+          ]
+        },
+        "external_routes_safe": {
+          "type": "boolean"
+        },
+        "obstructions_found": {
+          "type": "string"
+        }
+      }
+    },
+    "hazard_checks": {
+      "type": "object",
+      "properties": {
+        "electrical_hazards": {
+          "type": "boolean"
+        },
+        "combustible_items": {
+          "type": "boolean"
+        },
+        "cooking_hazards": {
+          "type": "boolean"
+        },
+        "heating_hazards": {
+          "type": "boolean"
+        },
+        "smoking_hazards": {
+          "type": "boolean"
+        },
+        "other_hazards": {
+          "type": "string"
+        }
+      }
+    },
+    "occupant_briefing": {
+      "type": "object",
+      "properties": {
+        "briefing_conducted": {
+          "type": "boolean"
+        },
+        "briefing_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "occupants_briefed": {
+          "type": "number"
+        },
+        "information_provided": {
+          "type": "boolean"
+        }
+      }
+    },
+    "remedial_actions_status": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_description": {
+            "type": "string"
+          },
+          "action_completed": {
+            "type": "boolean"
+          },
+          "completion_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "issues_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue_description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "immediate_action",
+              "urgent",
+              "non-urgent"
+            ]
+          },
+          "action_required": {
+            "type": "string"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "pass_with_actions",
+        "fail"
+      ],
+      "description": "Overall safety checklist result"
+    },
+    "next_review_due": {
+      "type": "string",
+      "format": "date",
+      "description": "When next checklist is due"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to checklist PDF"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "checklist_date",
+    "conducted_by",
+    "overall_status"
+  ]
+}

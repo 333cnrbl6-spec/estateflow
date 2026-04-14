@@ -1,0 +1,324 @@
+{
+  "name": "FireRiskAssessment",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (if applicable)"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "hmo",
+        "block_of_flats",
+        "house",
+        "bedsit",
+        "hostel",
+        "care_home"
+      ],
+      "description": "Type of property (determines FRA requirement)"
+    },
+    "assessment_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date assessment was conducted"
+    },
+    "assessor_name": {
+      "type": "string",
+      "description": "Name of qualified fire risk assessor"
+    },
+    "assessor_qualification": {
+      "type": "string",
+      "description": "Assessor qualification/accreditation"
+    },
+    "assessor_contact": {
+      "type": "string"
+    },
+    "next_review_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Date next FRA is due (usually annual for HMOs)"
+    },
+    "number_of_occupants": {
+      "type": "number",
+      "description": "Total number of occupants"
+    },
+    "fire_hazards_identified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hazard_id": {
+            "type": "string"
+          },
+          "hazard_type": {
+            "type": "string",
+            "enum": [
+              "electrical",
+              "smoking",
+              "cooking",
+              "heating",
+              "arson",
+              "decorations",
+              "combustibles",
+              "other"
+            ]
+          },
+          "location": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "people_at_risk": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Groups at risk (e.g., elderly, disabled, young children)"
+          }
+        }
+      },
+      "description": "Identified fire hazards"
+    },
+    "fire_safety_measures": {
+      "type": "object",
+      "properties": {
+        "fire_alarms": {
+          "type": "object",
+          "properties": {
+            "have_alarms": {
+              "type": "boolean"
+            },
+            "alarm_type": {
+              "type": "string",
+              "enum": [
+                "mains_powered_with_battery_backup",
+                "battery_powered",
+                "none"
+              ]
+            },
+            "locations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tested_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "next_test_due": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "fire_extinguishers": {
+          "type": "object",
+          "properties": {
+            "have_extinguishers": {
+              "type": "boolean"
+            },
+            "number_of_extinguishers": {
+              "type": "number"
+            },
+            "locations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "last_serviced": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "emergency_lighting": {
+          "type": "object",
+          "properties": {
+            "have_emergency_lighting": {
+              "type": "boolean"
+            },
+            "locations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tested_date": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "fire_doors": {
+          "type": "object",
+          "properties": {
+            "have_fire_doors": {
+              "type": "boolean"
+            },
+            "door_count": {
+              "type": "number"
+            },
+            "condition": {
+              "type": "string",
+              "enum": [
+                "good",
+                "fair",
+                "poor"
+              ]
+            }
+          }
+        },
+        "fire_escape_routes": {
+          "type": "object",
+          "properties": {
+            "routes_identified": {
+              "type": "boolean"
+            },
+            "number_of_routes": {
+              "type": "number"
+            },
+            "routes_clear": {
+              "type": "boolean"
+            },
+            "external_stairs_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "compartmentation": {
+          "type": "object",
+          "properties": {
+            "adequate": {
+              "type": "boolean"
+            },
+            "issues_identified": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "evacuation_plan": {
+      "type": "object",
+      "properties": {
+        "plan_in_place": {
+          "type": "boolean"
+        },
+        "plan_document_url": {
+          "type": "string"
+        },
+        "assembly_point_identified": {
+          "type": "boolean"
+        },
+        "assembly_point_location": {
+          "type": "string"
+        },
+        "occupants_briefed": {
+          "type": "boolean"
+        },
+        "last_briefing_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "remedial_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_id": {
+            "type": "string"
+          },
+          "action_description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "immediate",
+              "urgent",
+              "non-urgent"
+            ]
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "completion_notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Actions required to address hazards"
+    },
+    "overall_risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Overall fire risk assessment"
+    },
+    "assessment_document_url": {
+      "type": "string",
+      "description": "URL to full FRA report PDF"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "action_required",
+        "overdue",
+        "expired"
+      ],
+      "default": "valid"
+    },
+    "occupant_information_provided": {
+      "type": "boolean",
+      "description": "Whether fire safety information was provided to occupants"
+    },
+    "information_provided_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "property_type",
+    "assessment_date",
+    "assessor_name",
+    "next_review_due",
+    "overall_risk_level"
+  ]
+}

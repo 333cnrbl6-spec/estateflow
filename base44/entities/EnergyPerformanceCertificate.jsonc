@@ -1,0 +1,180 @@
+{
+  "name": "EnergyPerformanceCertificate",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (if applicable)"
+    },
+    "certificate_number": {
+      "type": "string",
+      "description": "Unique EPC reference number"
+    },
+    "assessment_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date assessment was conducted"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Certificate expiry (10 years from assessment)"
+    },
+    "assessor_name": {
+      "type": "string",
+      "description": "Name of qualified EPC assessor"
+    },
+    "assessor_accreditation": {
+      "type": "string",
+      "enum": [
+        "nher",
+        "rdsap",
+        "other"
+      ],
+      "description": "Assessor accreditation body"
+    },
+    "assessor_contact": {
+      "type": "string",
+      "description": "Assessor phone or email"
+    },
+    "current_rating": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "description": "Current energy efficiency rating"
+    },
+    "potential_rating": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "description": "Potential rating after improvements"
+    },
+    "current_energy_use": {
+      "type": "number",
+      "description": "Current annual energy use (kWh/m\u00b2/year)"
+    },
+    "estimated_annual_cost": {
+      "type": "number",
+      "description": "Estimated annual energy cost (\u00a3)"
+    },
+    "floor_area": {
+      "type": "number",
+      "description": "Property floor area (m\u00b2)"
+    },
+    "building_type": {
+      "type": "string",
+      "description": "Type of building (detached, semi-detached, bungalow, flat, etc.)"
+    },
+    "construction_year": {
+      "type": "string",
+      "description": "Estimated construction year"
+    },
+    "heating_system": {
+      "type": "string",
+      "description": "Type of heating system"
+    },
+    "hot_water_system": {
+      "type": "string",
+      "description": "Type of hot water system"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recommendation_id": {
+            "type": "string"
+          },
+          "recommendation_text": {
+            "type": "string"
+          },
+          "potential_saving": {
+            "type": "number",
+            "description": "Annual cost saving if implemented (\u00a3)"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "priority_1",
+              "priority_2",
+              "priority_3"
+            ]
+          },
+          "cost_band": {
+            "type": "string",
+            "enum": [
+              "\u00a3100-\u00a3500",
+              "\u00a3500-\u00a31000",
+              "\u00a31000-\u00a35000",
+              "\u00a35000+"
+            ]
+          }
+        }
+      },
+      "description": "Energy efficiency improvement recommendations"
+    },
+    "rental_recommendation_range": {
+      "type": "object",
+      "properties": {
+        "min_estimate": {
+          "type": "number",
+          "description": "Lower estimate for annual rent (\u00a3)"
+        },
+        "max_estimate": {
+          "type": "number",
+          "description": "Upper estimate for annual rent (\u00a3)"
+        }
+      },
+      "description": "Rental range recommendation based on EPC"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to uploaded EPC PDF"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "expiring_soon",
+        "expired"
+      ],
+      "default": "valid",
+      "description": "Current compliance status"
+    },
+    "tenant_provided_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When EPC was provided to tenant (must be \u226415 days before letting)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "certificate_number",
+    "assessment_date",
+    "expiry_date",
+    "assessor_name",
+    "current_rating",
+    "document_url"
+  ]
+}
