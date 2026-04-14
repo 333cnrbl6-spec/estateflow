@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp } from 'lucide-react';
@@ -12,6 +12,7 @@ import CompaniesHouseAlertWidget from '@/components/compliance/CompaniesHouseAle
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
+import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -20,7 +21,18 @@ import { useQueryError } from '@/hooks/useQueryError';
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 export default function Dashboard() {
+  const [showTutorial, setShowTutorial] = useState(false);
   const { demoCompanyId, propertyIds, loading: demoLoading } = useDemoFilter();
+
+  useEffect(() => {
+    // Show tutorial if this is first login and tutorial hasn't been completed
+    const isFirstLogin = localStorage.getItem('premiso_first_login') === 'true';
+    const tutorialCompleted = localStorage.getItem('premiso_tutorial_completed') === 'true';
+    if (isFirstLogin && !tutorialCompleted) {
+      setShowTutorial(true);
+      localStorage.removeItem('premiso_first_login');
+    }
+  }, []);
 
   const companiesQuery = useQuery({
     queryKey: ['companies', demoCompanyId],
@@ -109,8 +121,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background">
+      {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
       <div className="p-8 max-w-[1400px] mx-auto">
-        <div className="mb-8 border-b border-border pb-6">
+        <div className="mb-8 border-b border-border pb-6 dashboard-header">
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-4xl font-serif font-bold text-foreground mb-1">Dashboard</h1>
@@ -125,7 +138,7 @@ export default function Dashboard() {
 
         <ComplianceAlert />
         <ComplianceAlertsWidget />
-        <div className="mb-8">
+        <div className="mb-8 compliance-alerts-widget">
           <CompaniesHouseAlertWidget limit={5} />
         </div>
 

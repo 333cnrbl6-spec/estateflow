@@ -77,6 +77,18 @@ export default function FounderLaunch() {
         company_number: formData.company_number || null,
       });
 
+      // Trigger background sync if company number provided
+      if (formData.company_number) {
+        base44.functions.invoke('autoSyncCompanyCompliance', {
+          company_id: company.id,
+          company_number: formData.company_number,
+          company_name: formData.company_name
+        }).catch(err => console.warn('Compliance sync failed (non-blocking):', err));
+      }
+
+      // Mark as new user for tutorial
+      localStorage.setItem('premiso_first_login', 'true');
+
       // Invite team member if provided
       if (formData.team_email) {
         await base44.users.inviteUser(formData.team_email, formData.team_role);
