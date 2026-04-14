@@ -113,6 +113,7 @@ import DocumentationViewer from './pages/DocumentationViewer';
 import CustomizableFinancialReports from './pages/CustomizableFinancialReports';
 import DetailedComplianceReports from './pages/DetailedComplianceReports';
 import InvoiceManagement from './pages/InvoiceManagement';
+import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -267,6 +268,8 @@ const AuthenticatedApp = () => {
       <Route path="/inspection" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}
       <Route path="/tenant-self-service" element={<TenantSelfServicePortal />} />
+      {/* /tenant-portal-enhanced — enhanced tenant portal with messaging */}
+      <Route path="/tenant-portal-enhanced" element={<TenantPortalEnhancedPage />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 
