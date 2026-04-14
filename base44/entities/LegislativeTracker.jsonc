@@ -1,0 +1,184 @@
+{
+  "name": "LegislativeTracker",
+  "type": "object",
+  "properties": {
+    "bill_name": {
+      "type": "string",
+      "description": "Name of bill/proposed legislation"
+    },
+    "bill_reference": {
+      "type": "string",
+      "description": "Parliamentary bill number (e.g., 'HC Bill 123-20')"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": [
+        "england",
+        "wales",
+        "scotland",
+        "northern_ireland",
+        "uk_wide"
+      ],
+      "description": "Where this legislation applies"
+    },
+    "expected_impact_areas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tenant_protection",
+          "gas_safety",
+          "electrical_safety",
+          "fire_safety",
+          "deposit_protection",
+          "building_regulations",
+          "planning",
+          "environmental",
+          "data_protection",
+          "discrimination",
+          "rent_controls",
+          "eviction_process",
+          "landlord_licensing"
+        ]
+      },
+      "description": "Areas of property management this will affect"
+    },
+    "current_stage": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "consultation",
+        "first_reading",
+        "second_reading",
+        "committee",
+        "report",
+        "third_reading",
+        "house_of_lords",
+        "royal_assent",
+        "implementation",
+        "amended",
+        "rejected"
+      ],
+      "description": "Current progress through parliament"
+    },
+    "expected_implementation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When legislation expected to come into force"
+    },
+    "implementation_phase_in": {
+      "type": "boolean",
+      "description": "Is implementation phased over time?"
+    },
+    "phase_timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase_name": {
+            "type": "string"
+          },
+          "phase_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Phased implementation schedule"
+    },
+    "impact_assessment": {
+      "type": "object",
+      "properties": {
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "systems_affected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "development_required": {
+          "type": "boolean"
+        },
+        "estimated_effort_days": {
+          "type": "number"
+        },
+        "estimated_cost": {
+          "type": "number"
+        },
+        "business_impact_summary": {
+          "type": "string"
+        }
+      }
+    },
+    "relevant_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_name": {
+            "type": "string"
+          },
+          "document_url": {
+            "type": "string"
+          },
+          "document_type": {
+            "type": "string",
+            "enum": [
+              "bill_text",
+              "impact_assessment",
+              "consultation_response",
+              "government_guidance",
+              "news"
+            ]
+          }
+        }
+      }
+    },
+    "monitoring_owner": {
+      "type": "string",
+      "description": "Email of person responsible for tracking this"
+    },
+    "last_checked": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this legislation was last reviewed"
+    },
+    "next_check_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When to check for updates"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "monitoring",
+        "preparing",
+        "implementing",
+        "complete",
+        "not_applicable"
+      ],
+      "description": "Current tracking status"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes and analysis"
+    }
+  },
+  "required": [
+    "bill_name",
+    "jurisdiction",
+    "expected_impact_areas",
+    "current_stage"
+  ]
+}

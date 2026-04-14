@@ -1,0 +1,215 @@
+{
+  "name": "ComplianceRule",
+  "type": "object",
+  "properties": {
+    "rule_code": {
+      "type": "string",
+      "description": "Unique code (e.g., 'GSS-ANNUAL-01')"
+    },
+    "rule_name": {
+      "type": "string",
+      "description": "Human-readable rule name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Full requirement description"
+    },
+    "framework_id": {
+      "type": "string",
+      "description": "Reference to ComplianceFramework"
+    },
+    "rule_type": {
+      "type": "string",
+      "enum": [
+        "certification_required",
+        "inspection_required",
+        "documentation_required",
+        "notification_required",
+        "approval_required",
+        "prohibited_action",
+        "deadline_enforcement"
+      ],
+      "description": "Category of rule"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "on_schedule",
+        "on_event",
+        "on_creation",
+        "on_update",
+        "on_date",
+        "manual"
+      ],
+      "description": "When does this rule apply?"
+    },
+    "trigger_condition": {
+      "type": "object",
+      "description": "JSON logic for when rule triggers (extensible)",
+      "properties": {
+        "entity": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "value": {}
+      }
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "once",
+        "annual",
+        "biennial",
+        "5_yearly",
+        "custom"
+      ],
+      "description": "Compliance frequency"
+    },
+    "frequency_days": {
+      "type": "number",
+      "description": "Custom frequency in days"
+    },
+    "applicable_to": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "all_properties",
+          "residential_only",
+          "hmos",
+          "commercial_only",
+          "listed_buildings",
+          "conservation_areas"
+        ]
+      },
+      "description": "Property types this applies to"
+    },
+    "required_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Documents/records needed for compliance"
+    },
+    "alert_settings": {
+      "type": "object",
+      "properties": {
+        "enable_alerts": {
+          "type": "boolean",
+          "default": true
+        },
+        "alert_days_before": {
+          "type": "number"
+        },
+        "alert_escalation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "days_overdue": {
+                "type": "number"
+              },
+              "alert_level": {
+                "type": "string",
+                "enum": [
+                  "warning",
+                  "urgent",
+                  "critical"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "penalties": {
+      "type": "object",
+      "properties": {
+        "has_penalty": {
+          "type": "boolean"
+        },
+        "penalty_type": {
+          "type": "string",
+          "enum": [
+            "fine",
+            "criminal",
+            "unlimited",
+            "imprisonment",
+            "compensation",
+            "multiple"
+          ]
+        },
+        "min_fine": {
+          "type": "number"
+        },
+        "max_fine": {
+          "type": "number"
+        },
+        "penalty_description": {
+          "type": "string"
+        }
+      }
+    },
+    "enforcement_body": {
+      "type": "string",
+      "description": "Who enforces this (e.g., 'Gas Safe Register', 'Local Authority')"
+    },
+    "implementation_entity": {
+      "type": "string",
+      "description": "Which system entity tracks this (e.g., 'GasSafetyCertificate')"
+    },
+    "linked_template_id": {
+      "type": "string",
+      "description": "Template for documentation (if applicable)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is this rule currently enforced?"
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date",
+      "description": "When this rule becomes effective"
+    },
+    "effective_until": {
+      "type": "string",
+      "format": "date",
+      "description": "When this rule expires (if applicable)"
+    },
+    "superseded_by": {
+      "type": "string",
+      "description": "Reference to newer rule if this one is replaced"
+    },
+    "version": {
+      "type": "string",
+      "description": "Rule version for tracking amendments"
+    },
+    "last_reviewed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last review date"
+    },
+    "next_review_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When rule should be reviewed again"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Implementation notes and edge cases"
+    }
+  },
+  "required": [
+    "rule_code",
+    "rule_name",
+    "framework_id",
+    "rule_type",
+    "applicable_to"
+  ]
+}

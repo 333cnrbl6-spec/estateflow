@@ -1,0 +1,219 @@
+{
+  "name": "ComplianceFramework",
+  "type": "object",
+  "properties": {
+    "framework_name": {
+      "type": "string",
+      "description": "Name of the compliance framework (e.g., 'Gas Safety Regulations 1998', 'Energy Performance Directive')"
+    },
+    "framework_id": {
+      "type": "string",
+      "description": "Unique identifier (e.g., 'GSSR1998', 'EPD2021')"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": [
+        "england",
+        "wales",
+        "scotland",
+        "northern_ireland",
+        "uk_wide"
+      ],
+      "description": "Applicable jurisdiction"
+    },
+    "legislation_type": {
+      "type": "string",
+      "enum": [
+        "safety",
+        "financial",
+        "tenant_protection",
+        "environmental",
+        "discrimination",
+        "data_protection",
+        "fire_safety",
+        "building_regulations",
+        "planning",
+        "other"
+      ],
+      "description": "Category of legislation"
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date legislation comes into effect"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date legislation expires (if applicable)"
+    },
+    "compliance_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule_id": {
+            "type": "string"
+          },
+          "rule_name": {
+            "type": "string",
+            "description": "e.g., 'Annual Gas Safety Inspection'"
+          },
+          "requirement": {
+            "type": "string",
+            "description": "Plain English requirement"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "once",
+              "annual",
+              "biennial",
+              "5_yearly",
+              "on_event",
+              "on_change"
+            ]
+          },
+          "frequency_months": {
+            "type": "number",
+            "description": "Custom frequency in months"
+          },
+          "applicable_to": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "property_owner",
+                "property_manager",
+                "tenant",
+                "contractor",
+                "local_authority"
+              ]
+            }
+          },
+          "penalties": {
+            "type": "object",
+            "properties": {
+              "penalty_type": {
+                "type": "string",
+                "enum": [
+                  "fine",
+                  "criminal",
+                  "unlimited",
+                  "imprisonment",
+                  "compensation"
+                ]
+              },
+              "min_amount": {
+                "type": "number"
+              },
+              "max_amount": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "entity_reference": {
+            "type": "string",
+            "description": "Entity in system tracking this (e.g., 'GasSafetyCertificate', 'EICRCertificate')"
+          },
+          "required_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields required to track compliance"
+          },
+          "automated_alerts": {
+            "type": "boolean",
+            "default": true,
+            "description": "System should generate reminders"
+          },
+          "alert_days_before": {
+            "type": "number",
+            "description": "Days before deadline to alert"
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether this rule is currently enforced"
+          }
+        }
+      },
+      "description": "Compliance rules derived from legislation"
+    },
+    "enforcement_body": {
+      "type": "string",
+      "description": "Organization enforcing this (e.g., 'Gas Safe Register', 'Local Authority', 'Health & Safety Executive')"
+    },
+    "enforcement_contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        }
+      }
+    },
+    "relevant_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_name": {
+            "type": "string"
+          },
+          "document_url": {
+            "type": "string"
+          },
+          "document_type": {
+            "type": "string",
+            "enum": [
+              "guidance",
+              "regulation_text",
+              "guidance",
+              "enforcement_notice",
+              "template"
+            ]
+          }
+        }
+      },
+      "description": "Links to official guidance and regulations"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of framework (e.g., '1.0', '2.0' after amendments)"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this framework was reviewed/updated"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When framework should be reviewed for changes"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes on implementation"
+    }
+  },
+  "required": [
+    "framework_name",
+    "framework_id",
+    "jurisdiction",
+    "legislation_type",
+    "effective_date"
+  ]
+}
