@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
-// TODO: Replace all placeholder pricing with final confirmed prices before launch
 const TIERS = [
   {
     name: 'Starter',
@@ -68,13 +67,6 @@ export default function PricingSection({ onChoosePlan }) {
   return (
     <section id="pricing" className="py-24 bg-slate-50">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-6">
-          {/* TODO: Remove this banner before launch */}
-          <div className="inline-block bg-amber-100 text-amber-800 text-xs font-medium px-4 py-2 rounded-full mb-6">
-            ⚠️ Pricing is indicative — confirm before launch
-          </div>
-        </div>
-
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-slate-900 mb-4">Simple, transparent pricing</h2>
           <p className="text-xl text-slate-500">
