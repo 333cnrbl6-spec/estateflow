@@ -119,6 +119,7 @@ import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
 import ContractorScheduling from './pages/ContractorScheduling';
 import HMODashboard from './pages/HMODashboard';
 import ComplianceRiskAnalytics from './pages/ComplianceRiskAnalytics';
+import TenantCompliancePortal from './pages/TenantCompliancePortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -281,6 +282,7 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-self-service" element={<TenantSelfServicePortal />} />
       {/* /tenant-portal-enhanced — enhanced tenant portal with messaging */}
       <Route path="/tenant-portal-enhanced" element={<TenantPortalEnhancedPage />} />
+      <Route path="/tenant-compliance-portal" element={<TenantCompliancePortal />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 
