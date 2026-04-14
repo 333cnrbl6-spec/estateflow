@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { tenant_id, monthly_amount, tenant_email, tenant_name } = await req.json();
+    const { tenant_id, amount, payment_type } = await req.json();
 
     const tenant = await base44.asServiceRole.entities.Tenant.get(tenant_id);
     if (!tenant) {
@@ -24,39 +24,42 @@ Deno.serve(async (req) => {
 
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
-        email: tenant_email,
-        name: tenant_name,
+        email: tenant.email,
+        name: tenant.full_name,
         metadata: {
           tenant_id: tenant_id
         }
       });
       stripeCustomerId = customer.id;
 
+      // Update tenant with Stripe customer ID
       await base44.asServiceRole.entities.Tenant.update(tenant_id, {
         stripe_customer_id: stripeCustomerId
       });
     }
 
-    // Create setup intent for recurring payment
-    const setupIntent = await stripe.setupIntents.create({
+    // Create payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'gbp',
       customer: stripeCustomerId,
-      payment_method_types: ['card'],
       metadata: {
         tenant_id,
-        monthly_amount,
-        tenant_email
-      }
+        payment_type,
+        tenant_email: tenant.email
+      },
+      description: `Rent payment for ${tenant.full_name}`
     });
 
-    console.log(`[Stripe Recurring] Created setup intent ${setupIntent.id} for tenant ${tenant_id}`);
+    console.log(`[Stripe Payment] Created payment intent ${paymentIntent.id} for tenant ${tenant_id}`);
 
     return Response.json({
       success: true,
-      clientSecret: setupIntent.client_secret,
-      setupIntentId: setupIntent.id
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id
     });
   } catch (error) {
-    console.error('[Stripe Recurring] Error:', error);
+    console.error('[Stripe Payment] Error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

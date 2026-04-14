@@ -8,6 +8,11 @@ import { Button } from '@/components/ui/button';
 import PaymentHistoryViewer from '@/components/tenant/PaymentHistoryViewer';
 import UpcomingPaymentsSchedule from '@/components/tenant/UpcomingPaymentsSchedule';
 import RentReceiptDownloader from '@/components/tenant/RentReceiptDownloader';
+import TenantRentPayment from '@/components/tenant/TenantRentPayment';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY || '');
 
 export default function TenantPaymentPortal() {
   const [tenant, setTenant] = useState(null);
@@ -112,8 +117,12 @@ export default function TenantPaymentPortal() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="history" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+        <Tabs defaultValue="pay" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsTrigger value="pay" className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              <span className="hidden sm:inline">Pay Now</span>
+            </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               <span className="hidden sm:inline">History</span>
@@ -127,6 +136,12 @@ export default function TenantPaymentPortal() {
               <span className="hidden sm:inline">Receipts</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="pay" className="space-y-6">
+            <Elements stripe={stripePromise}>
+              <TenantRentPayment tenant={tenant} />
+            </Elements>
+          </TabsContent>
 
           <TabsContent value="history" className="space-y-6">
             <PaymentHistoryViewer tenant={tenant} />
