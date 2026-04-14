@@ -126,7 +126,6 @@ import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
-import PropertyInspection from './pages/PropertyInspection';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
