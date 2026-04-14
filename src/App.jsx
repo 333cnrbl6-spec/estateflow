@@ -128,6 +128,7 @@ import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
 import OwnerPortal from './pages/OwnerPortal';
 import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
+import DocumentAutomationEngine from './pages/DocumentAutomationEngine';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -243,6 +244,7 @@ const AuthenticatedApp = () => {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/api-integrations" element={<APIIntegrationHub />} />
         <Route path="/document-templates" element={<DocumentTemplates />} />
+        <Route path="/document-automation" element={<DocumentAutomationEngine />} />
         <Route path="/landlord-portal" element={<LandlordPortal />} />
         <Route path="/reporting" element={<LandlordReportingDashboard />} />
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />

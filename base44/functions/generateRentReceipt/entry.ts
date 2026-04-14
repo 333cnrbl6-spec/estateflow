@@ -11,126 +11,117 @@ Deno.serve(async (req) => {
 
     const { transaction_id } = await req.json();
 
-    // Fetch transaction
-    const transaction = await base44.entities.FinancialTransaction.get(transaction_id);
+    // Fetch transaction record
+    const transaction = await base44.asServiceRole.entities.FinancialTransaction.get(transaction_id);
     if (!transaction) {
       return Response.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
-    // Fetch tenant for receipt
-    const tenant = await base44.entities.Tenant.get(transaction.tenant_id);
+    // Fetch tenant and property
+    const [tenant, property] = await Promise.all([
+      base44.asServiceRole.entities.Tenant.get(transaction.tenant_id),
+      base44.asServiceRole.entities.Property.get(transaction.property_id)
+    ]);
+
     if (!tenant) {
       return Response.json({ error: 'Tenant not found' }, { status: 404 });
     }
 
-    // Fetch property
-    const property = await base44.entities.Property.get(transaction.property_id);
+    // Generate rent receipt using LLM
+    const prompt = `Generate a professional UK rent receipt/payment confirmation with the following details:
 
-    // Generate receipt HTML
-    const receiptDate = new Date(transaction.transaction_date);
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Rent Receipt</title>
-        <style>
-          body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333; }
-          .receipt-container { border: 2px solid #2563eb; border-radius: 8px; padding: 30px; background: #f9fafb; }
-          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #2563eb; padding-bottom: 20px; }
-          .header h1 { margin: 0; color: #1e40af; font-size: 28px; }
-          .receipt-number { color: #666; font-size: 12px; margin-top: 5px; }
-          .section { margin-bottom: 25px; }
-          .section-title { font-weight: bold; color: #1e40af; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; }
-          .row { display: flex; justify-content: space-between; padding: 8px 0; }
-          .row.total { border-top: 2px solid #1e40af; border-bottom: 2px solid #1e40af; font-weight: bold; font-size: 18px; padding: 15px 0; margin: 20px 0; }
-          .label { color: #666; }
-          .value { font-weight: bold; }
-          .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #666; font-size: 12px; }
-          .payment-method { background: #dbeafe; padding: 10px; border-radius: 5px; margin: 10px 0; }
-        </style>
-      </head>
-      <body>
-        <div class="receipt-container">
-          <div class="header">
-            <h1>RENT PAYMENT RECEIPT</h1>
-            <p class="receipt-number">Reference: ${transaction.reference || transaction.id.slice(0, 16).toUpperCase()}</p>
-          </div>
+Receipt Information:
+- Receipt Number: ${transaction.id}
+- Receipt Date: ${new Date(transaction.created_date).toLocaleDateString()}
+- Payment Date: ${transaction.transaction_date}
 
-          <div class="section">
-            <div class="section-title">Receipt Details</div>
-            <div class="row">
-              <span class="label">Date:</span>
-              <span class="value">${receiptDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            </div>
-            <div class="row">
-              <span class="label">Period:</span>
-              <span class="value">${receiptDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' })}</span>
-            </div>
-          </div>
+Landlord/Agent Details:
+- Company: ${property.owner_name || 'Property Management'}
+- Address: ${property.address}
+- Contact: ${property.contact_email || 'contact@property.com'}
 
-          <div class="section">
-            <div class="section-title">Tenant Information</div>
-            <div class="row">
-              <span class="label">Name:</span>
-              <span class="value">${tenant.full_name}</span>
-            </div>
-            <div class="row">
-              <span class="label">Email:</span>
-              <span class="value">${tenant.email}</span>
-            </div>
-            ${tenant.phone ? `
-              <div class="row">
-                <span class="label">Phone:</span>
-                <span class="value">${tenant.phone}</span>
-              </div>
-            ` : ''}
-          </div>
+Tenant Details:
+- Name: ${tenant.full_name}
+- Email: ${tenant.email}
+- Address: ${property.address}
 
-          <div class="section">
-            <div class="section-title">Property Information</div>
-            <div class="row">
-              <span class="label">Address:</span>
-              <span class="value">${property?.address || 'N/A'}</span>
-            </div>
-          </div>
+Payment Details:
+- Amount: £${transaction.amount / 100}
+- Payment Method: ${transaction.payment_method || 'Bank Transfer'}
+- Payment Type: ${transaction.transaction_type}
+- Rent Period: ${transaction.rent_period_start} to ${transaction.rent_period_end}
+- Reference: ${transaction.reference}
 
-          <div class="section">
-            <div class="section-title">Payment Details</div>
-            <div class="row total">
-              <span class="label">Amount Paid:</span>
-              <span class="value">£${(transaction.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2 })}</span>
-            </div>
-            ${transaction.payment_method ? `
-              <div class="payment-method">
-                <strong>Payment Method:</strong> ${transaction.payment_method.charAt(0).toUpperCase() + transaction.payment_method.slice(1)}
-              </div>
-            ` : ''}
-            ${transaction.notes ? `
-              <div class="row">
-                <span class="label">Notes:</span>
-                <span class="value">${transaction.notes}</span>
-              </div>
-            ` : ''}
-          </div>
+Generate a formal, professional rent receipt that includes:
+1. Receipt Header and Number
+2. Date of Receipt
+3. Landlord/Agent Information
+4. Tenant Information
+5. Payment Amount in words and figures
+6. Payment Method
+7. Rent Period Covered
+8. Any Balance Due (if applicable)
+9. Formal Sign-off and Company Details
+10. Tax Information (if applicable)
 
-          <div class="footer">
-            <p><strong>✓ Payment Received</strong></p>
-            <p>This receipt confirms that the above payment was received and processed.</p>
-            <p style="margin-top: 20px; color: #999; font-size: 11px;">Generated: ${new Date().toLocaleDateString('en-GB')}</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+Format as a professional document suitable for printing and filing.`;
+
+    const receiptContent = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      model: 'gpt_5'
+    });
+
+    // Save generated document
+    const generatedDoc = await base44.asServiceRole.entities.GeneratedDocument.create({
+      template_id: 'rent-receipt-001',
+      template_code: 'RENT_RECEIPT',
+      property_id: transaction.property_id,
+      tenant_id: transaction.tenant_id,
+      document_name: `Rent_Receipt_${tenant.full_name}_${transaction.transaction_date}.pdf`,
+      document_type: 'Rent Receipt',
+      generated_date: new Date().toISOString(),
+      generated_by: user.email,
+      data_used: {
+        tenant_name: tenant.full_name,
+        amount: transaction.amount,
+        payment_date: transaction.transaction_date,
+        rent_period: `${transaction.rent_period_start} to ${transaction.rent_period_end}`
+      },
+      document_url: '',
+      status: 'draft'
+    });
+
+    // Send receipt via email to tenant
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: tenant.email,
+      subject: `Rent Receipt - £${transaction.amount / 100} - ${property.address}`,
+      body: `
+        <h2>Rent Payment Confirmation</h2>
+        <p>Dear ${tenant.full_name},</p>
+        <p>Thank you for your rent payment of <strong>£${transaction.amount / 100}</strong> received on ${transaction.transaction_date}.</p>
+        <p><strong>Payment Details:</strong></p>
+        <ul>
+          <li>Receipt Number: ${transaction.id}</li>
+          <li>Property: ${property.address}</li>
+          <li>Payment Period: ${transaction.rent_period_start} to ${transaction.rent_period_end}</li>
+          <li>Payment Method: ${transaction.payment_method || 'Bank Transfer'}</li>
+        </ul>
+        <p>Your receipt is attached to this email. Please keep it for your records.</p>
+        <p>If you have any questions about your payment, please contact us.</p>
+        <p>Best regards,<br/>Property Management Team</p>
+      `
+    });
+
+    console.log(`[Document] Generated rent receipt ${generatedDoc.id} and sent to ${tenant.email}`);
 
     return Response.json({
       success: true,
-      html_content: htmlContent,
-      receipt_url: null // Would be generated by PDF service
+      documentId: generatedDoc.id,
+      receiptContent,
+      emailSent: true
     });
   } catch (error) {
-    console.error('Error generating receipt:', error);
+    console.error('[Document] Rent receipt error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
