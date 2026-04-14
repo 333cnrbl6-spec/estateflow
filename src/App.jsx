@@ -9,6 +9,7 @@ import RBMBrandingProvider from '@/components/RBMBrandingProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { RoleProvider } from '@/lib/RoleContext';
 
+import Landing from './pages/Landing';
 import AppLayout from './components/layout/AppLayout';
 import Dashboard from './pages/Dashboard';
 import Companies from './pages/Companies';
@@ -127,6 +128,8 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      {/* Public landing page — no auth required */}
+      <Route path="/landing" element={<Landing />} />
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/companies" element={<Companies />} />
