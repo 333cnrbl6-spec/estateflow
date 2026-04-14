@@ -554,9 +554,24 @@ export default function SlideshowDemo({ onGetStarted }) {
 
   const renderVisual = () => {
     switch (current.id) {
-      case 'portfolio': return <ScreenPortfolio slide={current} />;
-      case 'financials': return <ScreenFinancials slide={current} />;
-      case 'btl': return <VisualBTL slide={current} />;
+      case 'portfolio-overview':
+      case 'portfolio-compliance':
+        return <ScreenPortfolio slide={current} />;
+      case 'financials-overview':
+      case 'financials-reporting':
+        return <ScreenFinancials slide={current} />;
+      case 'maintenance-overview':
+      case 'maintenance-contractors':
+        return <VisualBTL slide={current} />;
+      case 'block-overview':
+      case 'block-compliance':
+        return <VisualFinancials slide={current} />;
+      case 'tenants-portal':
+      case 'landlord-reporting':
+        return <VisualBTL slide={current} />;
+      case 'ooh-service':
+      case 'automation':
+        return <VisualFinancials slide={current} />;
       default: return null;
     }
   };
