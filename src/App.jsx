@@ -244,7 +244,6 @@ const AuthenticatedApp = () => {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/api-integrations" element={<APIIntegrationHub />} />
         <Route path="/document-templates" element={<DocumentTemplates />} />
-        <Route path="/document-automation" element={<DocumentAutomationEngine />} />
         <Route path="/landlord-portal" element={<LandlordPortal />} />
         <Route path="/reporting" element={<LandlordReportingDashboard />} />
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
