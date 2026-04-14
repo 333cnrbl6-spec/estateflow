@@ -2,12 +2,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // Companies House REST API — requires API key (Basic auth with key as username)
 const CH_BASE = 'https://api.company-information.service.gov.uk';
-const CH_API_KEY = Deno.env.get('COMPANIES_HOUSE_API_KEY') || '';
 
-async function chFetch(path) {
-  if (!CH_API_KEY) return null; // no key → use LLM fallback
+async function chFetch(path, apiKey) {
+  if (!apiKey) return null; // no key → return error
   const res = await fetch(`${CH_BASE}${path}`, {
-    headers: { Authorization: 'Basic ' + btoa(CH_API_KEY + ':') },
+    headers: { Authorization: 'Basic ' + btoa(apiKey + ':') },
   });
   if (!res.ok) return null;
   return res.json();
@@ -17,12 +16,24 @@ Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   const body = await req.json();
   const { action, query, company_number, officer_id } = body;
-  // officer name passed as query for LLM fallback on appointments
   const officerName = query || officer_id;
+  
+  // Get API key from environment
+  const apiKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
+  if (!apiKey) {
+    return Response.json({ 
+      error: 'Companies House API key not configured', 
+      source: 'unavailable',
+      companies: [],
+      officers: [],
+      psc: [],
+      appointments: []
+    }, { status: 500 });
+  }
 
   // ── 1. Search companies ──────────────────────────────────────────────────
   if (action === 'search_companies') {
-    const data = await chFetch(`/search/companies?q=${encodeURIComponent(query)}&items_per_page=10`);
+    const data = await chFetch(`/search/companies?q=${encodeURIComponent(query)}&items_per_page=10`, apiKey);
     if (data) {
       const companies = (data.items || []).map(c => ({
         company_number: c.company_number,
@@ -36,13 +47,13 @@ Deno.serve(async (req) => {
       return Response.json({ companies, source: 'companies_house' });
     }
 
-    // API key missing or request failed — do not fabricate companies
-    return Response.json({ companies: [], error: 'Companies House API unavailable. Please check your API key.', source: 'unavailable' });
+    // API request failed — do not fabricate companies
+    return Response.json({ companies: [], error: 'Companies House API request failed. Try again.', source: 'unavailable' });
   }
 
   // ── 2. Get officers ──────────────────────────────────────────────────────
   if (action === 'get_officers') {
-    const data = await chFetch(`/company/${company_number}/officers?items_per_page=50`);
+    const data = await chFetch(`/company/${company_number}/officers?items_per_page=50`, apiKey);
     if (data) {
       const officers = (data.items || []).map(o => ({
         name: o.name,
@@ -56,12 +67,12 @@ Deno.serve(async (req) => {
     }
 
     // API unavailable — return empty, do not fabricate real people
-    return Response.json({ officers: [], error: 'Companies House API unavailable. Officers could not be retrieved.', source: 'unavailable' });
+    return Response.json({ officers: [], error: 'Officers could not be retrieved.', source: 'unavailable' });
   }
 
   // ── 3. Get PSC ───────────────────────────────────────────────────────────
   if (action === 'get_psc') {
-    const data = await chFetch(`/company/${company_number}/persons-with-significant-control?items_per_page=50`);
+    const data = await chFetch(`/company/${company_number}/persons-with-significant-control?items_per_page=50`, apiKey);
     if (data) {
       const psc = (data.items || []).map(p => ({
         name: p.name,
@@ -79,7 +90,7 @@ Deno.serve(async (req) => {
 
   // ── 4. Search officer by name (to get officer_id for appointments) ────────
   if (action === 'search_officer') {
-    const data = await chFetch(`/search/officers?q=${encodeURIComponent(query)}&items_per_page=10`);
+    const data = await chFetch(`/search/officers?q=${encodeURIComponent(query)}&items_per_page=10`, apiKey);
     if (data) {
       const officers = (data.items || []).map(o => ({
         name: o.title,
@@ -94,7 +105,7 @@ Deno.serve(async (req) => {
 
   // ── 5. Get officer appointments (other companies) ─────────────────────────
   if (action === 'get_officer_appointments') {
-    const data = await chFetch(`/officers/${officer_id}/appointments?items_per_page=50`);
+    const data = await chFetch(`/officers/${officer_id}/appointments?items_per_page=50`, apiKey);
     if (data) {
       const appointments = (data.items || [])
         .filter(a => a.appointed_to?.company_number !== company_number)

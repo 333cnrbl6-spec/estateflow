@@ -626,23 +626,23 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
 
   // ── CH search ──────────────────────────────────────────────────────────
   const searchCompanies = async () => {
-    if (!query.trim()) return;
-    setSearching(true);
-    setSearchError(null);
-    setResults([]);
-    try {
-      const data = await ch('search_companies', { query: query.trim() });
-      if (data.error && data.fallback) {
-        setSearchError('Companies House is temporarily unavailable. Try again in a moment.');
-      } else {
-        setResults(data.companies || []);
-        if (!data.companies?.length) setSearchError('No companies found. Try a different name or company number.');
-      }
-    } catch {
-      setSearchError('Search failed. Check your connection and try again.');
-    } finally {
-      setSearching(false);
-    }
+   if (!query.trim()) return;
+   setSearching(true);
+   setSearchError(null);
+   setResults([]);
+   try {
+     const data = await ch('search_companies', { query: query.trim() });
+     if (data.error) {
+       setSearchError(data.error);
+     } else {
+       setResults(data.companies || []);
+       if (!data.companies?.length) setSearchError('No companies found. Try a different name or company number.');
+     }
+   } catch (err) {
+     setSearchError(err.message || 'Search failed. Check your connection and try again.');
+   } finally {
+     setSearching(false);
+   }
   };
 
   const toggleCompany = (co) => {
