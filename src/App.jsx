@@ -39,6 +39,7 @@ import FinancialDashboard from './pages/FinancialDashboard';
 import TenantPortal from './pages/TenantPortal';
 import ComplianceAudit from './pages/ComplianceAudit';
 import APIIntegrationHub from './pages/APIIntegrationHub';
+import CompaniesHouseProfiles from './pages/CompaniesHouseProfiles';
 import ProductBrochure from './pages/ProductBrochure';
 import PlatformTour from './pages/PlatformTour';
 import ProductComparison from './pages/ProductComparison';
@@ -186,6 +187,7 @@ const AuthenticatedApp = () => {
         <Route path="/compliance-hub" element={<ComplianceHub />} />
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
+        <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/crm" element={<CRM />} />

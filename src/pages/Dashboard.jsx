@@ -8,6 +8,7 @@ import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
 import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
 import ComplianceAlertsWidget from '@/components/dashboard/ComplianceAlertsWidget';
+import CompaniesHouseAlertWidget from '@/components/compliance/CompaniesHouseAlertWidget';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
@@ -124,6 +125,9 @@ export default function Dashboard() {
 
         <ComplianceAlert />
         <ComplianceAlertsWidget />
+        <div className="mb-8">
+          <CompaniesHouseAlertWidget limit={5} />
+        </div>
 
         <div className="mb-8">
           <ExecutiveDashboard properties={properties} units={units} transactions={transactions} tenants={tenants} />

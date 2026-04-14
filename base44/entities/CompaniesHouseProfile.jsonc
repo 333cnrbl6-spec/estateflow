@@ -1,0 +1,232 @@
+{
+  "name": "CompaniesHouseProfile",
+  "type": "object",
+  "properties": {
+    "company_number": {
+      "type": "string",
+      "description": "Companies House registration number"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Registered company name"
+    },
+    "company_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "dissolved",
+        "liquidation",
+        "administration",
+        "converted-closed",
+        "closed"
+      ],
+      "description": "Current company status"
+    },
+    "status_changed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When status last changed"
+    },
+    "company_type": {
+      "type": "string",
+      "description": "Type of company (ltd, plc, etc)"
+    },
+    "incorporation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of incorporation"
+    },
+    "registered_address": {
+      "type": "string",
+      "description": "Full registered address"
+    },
+    "registered_office_is_in_dispute": {
+      "type": "boolean",
+      "default": false
+    },
+    "directors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "appointed_on": {
+            "type": "string",
+            "format": "date"
+          },
+          "resigned_on": {
+            "type": "string",
+            "format": "date"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "is_corporate": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "filing_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filing_id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "action_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "filing_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "pages": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Recent filing history (last 10-15 items)"
+    },
+    "accounts_filing_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Date annual accounts filing is due"
+    },
+    "accounts_filing_overdue": {
+      "type": "boolean",
+      "default": false
+    },
+    "confirmation_statement_due": {
+      "type": "string",
+      "format": "date",
+      "description": "Confirmation statement due date"
+    },
+    "last_accounts_filed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When last accounts were filed"
+    },
+    "sic_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Standard Industrial Classification codes"
+    },
+    "has_active_mortgages": {
+      "type": "boolean",
+      "default": false
+    },
+    "mortgages_count": {
+      "type": "number",
+      "default": 0
+    },
+    "persons_with_significant_control": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nature_of_control": {
+            "type": "string"
+          },
+          "notified_on": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "last_synced": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time data was synced from Companies House"
+    },
+    "next_sync_due": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When next sync is scheduled"
+    },
+    "sync_error": {
+      "type": "string",
+      "description": "Latest sync error (if any)"
+    },
+    "critical_alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "alert_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "accounts_overdue",
+              "strike_off_notice",
+              "director_change",
+              "status_change",
+              "confirmation_statement_due",
+              "insolvency"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "generated_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "acknowledged",
+              "resolved"
+            ]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal tracking notes"
+    }
+  },
+  "required": [
+    "company_number",
+    "company_name"
+  ]
+}
