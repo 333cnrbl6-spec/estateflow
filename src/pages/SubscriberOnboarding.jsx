@@ -10,9 +10,10 @@ import DataImportMappingGuidance from '@/components/onboarding/DataImportMapping
 import DataDeduplicationReview from '@/components/onboarding/DataDeduplicationReview';
 import DataStagingReview from '@/components/onboarding/DataStagingReview';
 import DataCSVUploadAndMapping from '@/components/onboarding/DataCSVUploadAndMapping';
+import CompaniesHouseWizard from '@/components/onboarding/CompaniesHouseWizard';
 import {
   Building2, Users, ChevronRight, ChevronLeft, Search, CheckCircle2, Circle,
-  Loader2, Sparkles, FileText, Globe, HardDrive, CloudIcon, Database,
+  Loader2, Sparkles, FileText, Globe, HardDrive, Database,
   Home, Key, Wrench, Receipt, AlertCircle, Check, X, ExternalLink
 } from 'lucide-react';
 
@@ -1041,16 +1042,31 @@ function ReviewRow({ label, value, sub }) {
   );
 }
 
+// ─── Onboarding steps that come AFTER the CH wizard ──────────────────────────
+const POST_CH_STEPS = [
+  { id: 'addresses',       label: 'Addresses',             icon: Home },
+  { id: 'services',        label: 'Services',              icon: Key },
+  { id: 'software',        label: 'Software',              icon: Globe },
+  { id: 'banking',         label: 'Banking',               icon: Receipt },
+  { id: 'data_audit',      label: 'Your Data',             icon: Database },
+  { id: 'data_source',     label: 'Data Sources',          icon: HardDrive },
+  { id: 'import_pipeline', label: 'Import Config',         icon: Loader2 },
+  { id: 'upload',          label: 'Import Data',           icon: FileText },
+  { id: 'deduplicate',     label: 'Duplicates',            icon: AlertCircle },
+  { id: 'cleanse',         label: 'Cleanse',               icon: Loader2 },
+  { id: 'approve',         label: 'Approve',               icon: CheckCircle2 },
+  { id: 'review',          label: 'Finish',                icon: CheckCircle2 },
+];
+
 export default function SubscriberOnboarding() {
+  // 'ch' = Companies House wizard phase, 'onboarding' = post-CH steps
+  const [phase, setPhase] = useState('ch');
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     company_number: '',
     company_name: '',
-    company_id: '',
+    registered_address: '',
     directors: [],
-    officers: [],
-    persons_with_control: [],
-    selected_officer_ids: [],
     associated_companies: [],
     addresses: [],
     services: [],
@@ -1064,20 +1080,27 @@ export default function SubscriberOnboarding() {
   const [building, setBuilding] = useState(false);
   const [buildResult, setBuildResult] = useState(null);
 
+  const handleChComplete = ({ company, officers, selectedAssociated }) => {
+    setFormData(prev => ({
+      ...prev,
+      company_name: company?.company_name || '',
+      company_number: company?.company_number || '',
+      registered_address: company?.registered_address || '',
+      directors: officers || [],
+      associated_companies: selectedAssociated || [],
+    }));
+    setPhase('onboarding');
+    setStep(0);
+  };
+
   const canContinue = () => {
-    if (step === 0) return !!formData.company_name;
-    if (step === 3) return (formData.services || []).length > 0;
+    if (step === 1) return (formData.services || []).length > 0;
     return true;
   };
 
   const build = async () => {
     setBuilding(true);
     try {
-      const selectedOfficerNames = (formData.selected_officer_ids || []).map(idx => {
-        const allOfficers = [...(formData.directors || []), ...(formData.officers || []), ...(formData.persons_with_control || [])];
-        return allOfficers[idx]?.name;
-      }).filter(Boolean);
-
       const res = await base44.integrations.Core.InvokeLLM({
         prompt: `You are setting up a new property management company called "${formData.company_name}" on the Premiso platform.
 
@@ -1086,17 +1109,16 @@ Primary Company:
 - Number: ${formData.company_number || 'N/A'}
 - Address: ${formData.registered_address || 'N/A'}
 
-Officers: ${selectedOfficerNames.join(', ') || 'None'}
-Associated Companies: ${(formData.associated_companies || []).length > 0 ? formData.associated_companies.map(c => c.company_name).join(', ') : 'None'}
+Officers: ${(formData.directors || []).map(d => d.name).join(', ') || 'None'}
+Associated Companies: ${(formData.associated_companies || []).map(c => c.company_name).join(', ') || 'None'}
 Services: ${(formData.services || []).join(', ')}
-Data imported: ${formData.import_complete ? 'Yes - records committed to production' : 'No'}
+Data imported: ${formData.import_complete ? 'Yes' : 'No'}
 
-Generate a realistic summary of what's been created and configured.`,
+Generate a realistic summary of what has been created and configured.`,
         response_json_schema: {
           type: 'object',
           properties: {
             summary: { type: 'string' },
-            created: { type: 'object' },
             recommended_workflows: { type: 'array', items: { type: 'string' } },
           },
         },
@@ -1107,21 +1129,42 @@ Generate a realistic summary of what's been created and configured.`,
     }
   };
 
+  // ── CH phase ─────────────────────────────────────────────────────────────
+  if (phase === 'ch') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
+        <div className="max-w-3xl mx-auto px-4 py-8">
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+              <Sparkles className="w-4 h-4" /> Premiso Setup Wizard
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900">Welcome to Premiso</h1>
+            <p className="text-muted-foreground mt-1">Let's start by finding your company on Companies House.</p>
+          </div>
+          <CompaniesHouseWizard mode="onboarding" onComplete={handleChComplete} />
+        </div>
+      </div>
+    );
+  }
+
+  // ── Post-CH onboarding steps ──────────────────────────────────────────────
+  const totalSteps = POST_CH_STEPS.length;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+        <div className="mb-6 text-center">
+          <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
             <Sparkles className="w-4 h-4" /> Premiso Setup Wizard
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Welcome to Premiso</h1>
-          <p className="text-muted-foreground mt-1">Complete end-to-end data import with cleansing, staging, and approval.</p>
+          <h1 className="text-xl font-bold text-slate-900">{formData.company_name}</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Company confirmed · Now let's finish your setup</p>
         </div>
 
         {/* Step progress */}
-        <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
-          {STEPS.map((s, i) => {
+        <div className="flex items-center gap-1 mb-6 overflow-x-auto pb-2">
+          {POST_CH_STEPS.map((s, i) => {
             const Icon = s.icon;
             const done = i < step;
             const active = i === step;
@@ -1135,7 +1178,7 @@ Generate a realistic summary of what's been created and configured.`,
                   {done ? <Check className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
                   <span className="hidden sm:inline">{s.label}</span>
                 </div>
-                {i < STEPS.length - 1 && <div className={`h-px w-3 shrink-0 ${i < step ? 'bg-green-300' : 'bg-slate-200'}`} />}
+                {i < totalSteps - 1 && <div className={`h-px w-3 shrink-0 ${i < step ? 'bg-green-300' : 'bg-slate-200'}`} />}
               </div>
             );
           })}
@@ -1144,40 +1187,38 @@ Generate a realistic summary of what's been created and configured.`,
         {/* Step card */}
         <div className="bg-white rounded-2xl shadow-sm border p-6 md:p-8 min-h-[400px] flex flex-col">
           <div className="flex-1">
-            {step === 0 && <StepCompany data={formData} onChange={setFormData} />}
-            {step === 1 && <StepDirectors data={formData} onChange={setFormData} />}
-            {step === 2 && <StepAddresses data={formData} onChange={setFormData} />}
-            {step === 3 && <StepServices data={formData} onChange={setFormData} />}
-            {step === 4 && <StepSoftware data={formData} onChange={setFormData} />}
-            {step === 5 && <StepBankingSetup data={formData} onChange={setFormData} />}
-            {step === 6 && <StepDataAudit data={formData} onChange={setFormData} />}
-            {step === 7 && <StepDataSource data={formData} onChange={setFormData} />}
-            {step === 8 && <StepImportPipeline data={formData} onChange={setFormData} />}
-            {step === 9 && <StepUpload data={formData} onChange={setFormData} />}
-            {step === 10 && <StepDeduplicate data={formData} onChange={setFormData} />}
-            {step === 11 && <StepCleanse data={formData} onChange={setFormData} />}
-            {step === 12 && <StepStageReview data={formData} onChange={setFormData} />}
-            {step === 13 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
+            {step === 0  && <StepAddresses data={formData} onChange={setFormData} />}
+            {step === 1  && <StepServices data={formData} onChange={setFormData} />}
+            {step === 2  && <StepSoftware data={formData} onChange={setFormData} />}
+            {step === 3  && <StepBankingSetup data={formData} onChange={setFormData} />}
+            {step === 4  && <StepDataAudit data={formData} onChange={setFormData} />}
+            {step === 5  && <StepDataSource data={formData} onChange={setFormData} />}
+            {step === 6  && <StepImportPipeline data={formData} onChange={setFormData} />}
+            {step === 7  && <StepUpload data={formData} onChange={setFormData} />}
+            {step === 8  && <StepDeduplicate data={formData} onChange={setFormData} />}
+            {step === 9  && <StepCleanse data={formData} onChange={setFormData} />}
+            {step === 10 && <StepStageReview data={formData} onChange={setFormData} />}
+            {step === 11 && <StepReview data={formData} onBuild={build} building={building} buildResult={buildResult} />}
           </div>
 
           {/* Navigation */}
-          {step < STEPS.length - 1 && (
+          {step < totalSteps - 1 && (
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              <Button variant="ghost" onClick={() => setStep(s => s - 1)} disabled={step === 0} className="gap-1">
+              <Button variant="ghost" onClick={() => step === 0 ? setPhase('ch') : setStep(s => s - 1)} className="gap-1">
                 <ChevronLeft className="w-4 h-4" /> Back
               </Button>
-              <div className="text-xs text-muted-foreground">Step {step + 1} of {STEPS.length}</div>
+              <div className="text-xs text-muted-foreground">Step {step + 1} of {totalSteps}</div>
               <Button onClick={() => setStep(s => s + 1)} disabled={!canContinue()} className="gap-1">
                 Continue <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           )}
-          {step === STEPS.length - 1 && !buildResult && (
+          {step === totalSteps - 1 && !buildResult && (
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
               <Button variant="ghost" onClick={() => setStep(s => s - 1)} className="gap-1">
                 <ChevronLeft className="w-4 h-4" /> Back
               </Button>
-              <div className="text-xs text-muted-foreground">Step {step + 1} of {STEPS.length}</div>
+              <div className="text-xs text-muted-foreground">Step {step + 1} of {totalSteps}</div>
             </div>
           )}
         </div>
