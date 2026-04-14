@@ -553,27 +553,20 @@ export default function SlideshowDemo({ onGetStarted }) {
   const current = SLIDES[slide];
 
   const renderVisual = () => {
-    switch (current.id) {
-      case 'portfolio-overview':
-      case 'portfolio-compliance':
-        return <ScreenPortfolio slide={current} />;
-      case 'financials-overview':
-      case 'financials-reporting':
-        return <ScreenFinancials slide={current} />;
-      case 'maintenance-overview':
-      case 'maintenance-contractors':
-        return <VisualBTL slide={current} />;
-      case 'block-overview':
-      case 'block-compliance':
-        return <VisualFinancials slide={current} />;
-      case 'tenants-portal':
-      case 'landlord-reporting':
-        return <VisualBTL slide={current} />;
-      case 'ooh-service':
-      case 'automation':
-        return <VisualFinancials slide={current} />;
-      default: return null;
-    }
+    if (!current.breakdown) return null;
+    return (
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {current.breakdown.map(b => (
+            <div key={b.label} className={`rounded-lg p-3 border ${b.alert ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
+              <p className="text-xs text-slate-500">{b.label}</p>
+              <p className={`text-lg font-bold ${b.alert ? 'text-red-600' : 'text-slate-900'}`}>{b.value}</p>
+              <p className={`text-xs ${b.alert ? 'text-red-500' : 'text-slate-400'}`}>{b.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
