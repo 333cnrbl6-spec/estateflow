@@ -14,6 +14,9 @@ import FooterSection from '@/components/landing/FooterSection';
 import DemoSessionBanner from '@/components/landing/DemoSessionBanner';
 import WhoIsItFor from '@/components/landing/WhoIsItFor';
 
+// Core value proposition: Compliance protection scaled for everyone
+const CORE_MESSAGE = "Enterprise-grade compliance protection built-in for every portfolio size. From solo landlords to property groups—everyone gets the same legal safeguards.";
+
 export default function Landing() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

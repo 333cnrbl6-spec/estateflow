@@ -142,11 +142,18 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-b from-background to-background">
       {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
       <div className="p-8 max-w-[1400px] mx-auto">
+        {/* Core value message */}
+        <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-900 flex items-center gap-2">
+            <span className="font-bold">🛡️ Compliance Protected Portfolio</span> — Same enterprise-grade legal safeguards whether you manage 1 property or 1,000. No premium pricing for protection.
+          </p>
+        </div>
+
         <div className="mb-8 border-b border-border pb-6 dashboard-header">
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-4xl font-serif font-bold text-foreground mb-1">Dashboard</h1>
-              <p className="text-base text-muted-foreground">{companies[0]?.name || 'Portfolio'} — Portfolio Overview</p>
+              <p className="text-base text-muted-foreground">{companies[0]?.name || 'Portfolio'} — Scaled Legal Protection</p>
             </div>
             <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-card rounded-lg border border-border">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
