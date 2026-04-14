@@ -27,7 +27,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* TODO: Replace placeholder logo/branding with final Premiso assets before launch */}
-      <LandingNav onLogin={() => base44.auth.redirectToLogin('/')} />
+      <LandingNav onLogin={() => window.location.href = '/dashboard'} />
 
       <HeroSection
         onStartDemo={() => document.getElementById('demo-chooser')?.scrollIntoView({ behavior: 'smooth' })}

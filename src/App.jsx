@@ -128,9 +128,8 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      {/* Public landing page — no auth required */}
-      <Route path="/landing" element={<Landing />} />
       <Route element={<AppLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={<Dashboard />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/properties" element={<Properties />} />
@@ -234,7 +233,13 @@ function App() {
           <RoleProvider>
             <RBMBrandingProvider>
               <Router>
-                <AuthenticatedApp />
+                <Routes>
+                  {/* Fully public — no auth check at all */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/landing" element={<Landing />} />
+                  {/* All other routes go through auth */}
+                  <Route path="/*" element={<AuthenticatedApp />} />
+                </Routes>
               </Router>
               <Toaster />
             </RBMBrandingProvider>

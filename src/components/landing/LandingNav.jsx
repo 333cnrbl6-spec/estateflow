@@ -41,7 +41,7 @@ export default function LandingNav({ onLogin }) {
           <Button
             variant="ghost"
             className={scrolled ? 'text-slate-700' : 'text-white hover:bg-white/10'}
-            onClick={onLogin}
+            onClick={() => window.location.href = '/dashboard'}
           >
             Log in
           </Button>
