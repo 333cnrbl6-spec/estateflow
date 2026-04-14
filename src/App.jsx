@@ -134,6 +134,7 @@ import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
 import TaskManagement from './pages/TaskManagement';
 import CertificateComplianceTracking from './pages/CertificateComplianceTracking';
 import BusinessRelationshipCompliance from './pages/BusinessRelationshipCompliance';
+import OnboardingWorkflowHub from './pages/OnboardingWorkflowHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -233,6 +234,7 @@ const AuthenticatedApp = () => {
         <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/workflows" element={<Workflows />} />
+        <Route path="/onboarding-workflows" element={<OnboardingWorkflowHub />} />
         <Route path="/crm" element={<CRM />} />
         <Route path="/messages" element={<MessagesAdmin />} />
 
