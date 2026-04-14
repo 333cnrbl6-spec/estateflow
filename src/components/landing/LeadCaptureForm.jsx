@@ -135,8 +135,7 @@ export default function LeadCaptureForm({ demoType, onSubmitted }) {
         </Button>
 
         <p className="text-xs text-center text-slate-400">
-          By submitting you agree to be contacted by the Premiso team.
-          {/* TODO: Add privacy policy link before launch */}
+          By submitting you agree to be contacted by the Premiso team. We respect your privacy.
         </p>
       </form>
     </div>

@@ -19,7 +19,6 @@ export default function LandingNav({ onLogin }) {
       scrolled ? 'bg-white shadow-md' : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* TODO: Replace with final Premiso logo before launch */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">P</span>

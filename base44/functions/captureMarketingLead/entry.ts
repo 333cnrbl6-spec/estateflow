@@ -17,14 +17,14 @@ Deno.serve(async (req) => {
 
     // Create sales lead
     const lead = await base44.asServiceRole.entities.SalesLead.create({
+      lead_type: 'landlord', // Marketing leads are prospective agency owners / landlords
       contact_name: name,
-      email,
-      phone: phone || '',
-      company_name: company || '',
-      source: 'landing_page',
+      contact_email: email,
+      contact_phone: phone || '',
+      source: 'website',
       status: 'new',
-      notes: `Portfolio: ${portfolio_size || 'unknown'} | Types: ${property_types || 'unknown'} | Current software: ${current_software || 'unknown'} | Demo: ${demo_type || 'slideshow'} | Notes: ${notes || ''}`,
-      lead_score: 50,
+      notes: `Company: ${company || 'unknown'} | Portfolio: ${portfolio_size || 'unknown'} | Types: ${property_types || 'unknown'} | Current software: ${current_software || 'unknown'} | Demo: ${demo_type || 'slideshow'} | Notes: ${notes || ''}`,
+      lead_score: 60,
     });
 
     // Notify sales lead routing email

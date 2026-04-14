@@ -18,15 +18,22 @@ export default function Landing() {
 
   const handleDemoChoice = (choice) => {
     setDemoMode(choice);
-    // Scroll to demo section
+    if (choice !== 'scenario') {
+      setTimeout(() => {
+        document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  const handleDemoComplete = () => {
+    setShowLeadForm(true);
     setTimeout(() => {
-      document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+      document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
   };
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      {/* TODO: Replace placeholder logo/branding with final Premiso assets before launch */}
       <LandingNav onLogin={() => window.location.href = '/dashboard'} />
 
       <HeroSection
@@ -52,9 +59,9 @@ export default function Landing() {
         <section id="demo-section" className="py-10 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             {demoMode === 'slideshow' ? (
-              <SlideshowDemo onGetStarted={() => setShowLeadForm(true)} />
+              <SlideshowDemo onGetStarted={handleDemoComplete} />
             ) : (
-              <PersonalisedDemoWizard onComplete={() => setShowLeadForm(true)} />
+              <PersonalisedDemoWizard onComplete={handleDemoComplete} />
             )}
           </div>
         </section>
