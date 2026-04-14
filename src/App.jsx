@@ -109,6 +109,7 @@ import ErrorMonitoring from './pages/ErrorMonitoring';
 import CertificateManagement from './pages/CertificateManagement';
 import RoleDashboard from './pages/RoleDashboard';
 import ContractorPortalMobile from './pages/ContractorPortalMobile';
+import DocumentationViewer from './pages/DocumentationViewer';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -260,6 +261,8 @@ const AuthenticatedApp = () => {
       <Route path="/inspection" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}
       <Route path="/tenant-self-service" element={<TenantSelfServicePortal />} />
+      {/* /documentation — documentation viewer */}
+      <Route path="/documentation" element={<DocumentationViewer />} />
 
       <Route path="*" element={<PageNotFound />} />
     </Routes>
