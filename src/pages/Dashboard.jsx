@@ -97,6 +97,21 @@ export default function Dashboard() {
   useQueryError(maintenanceQuery, 'maintenance orders');
   const { data: maintenance = [] } = maintenanceQuery;
 
+  const certificatesQuery = useQuery({
+    queryKey: ['certificates', propertyIds],
+    enabled: !demoLoading,
+    queryFn: async () => {
+      const [gas, eicr, epc] = await Promise.all([
+        base44.entities.GasSafetyCertificate?.list?.('-updated_date', 50) || Promise.resolve([]),
+        base44.entities.EICRCertificate?.list?.('-updated_date', 50) || Promise.resolve([]),
+        base44.entities.EnergyPerformanceCertificate?.list?.('-updated_date', 50) || Promise.resolve([])
+      ]);
+      return [...(gas || []), ...(eicr || []), ...(epc || [])];
+    }
+  });
+  useQueryError(certificatesQuery, 'certificates');
+  const { data: certificates = [] } = certificatesQuery;
+
   const totalIncome = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
   const totalExpenses = transactions.filter(t => t.direction === 'expense' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
   const overdueCount = transactions.filter(t => t.status === 'overdue').length;
@@ -176,7 +191,7 @@ export default function Dashboard() {
           <div>
             <ComplianceReportGenerator 
               properties={properties}
-              certificates={[...gasCerts, ...elecCerts, ...epcs]}
+              certificates={certificates}
               maintenance={maintenance}
             />
           </div>
