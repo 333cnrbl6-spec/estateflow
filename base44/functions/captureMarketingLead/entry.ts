@@ -7,6 +7,97 @@
  */
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// Lead scoring utilities (inlined since backends can't import from lib)
+function calculateLeadScore(data) {
+  let score = 50;
+  if (data.portfolio_size?.includes('500+')) score += 20;
+  else if (data.portfolio_size?.includes('151')) score += 15;
+  else if (data.portfolio_size?.includes('51')) score += 10;
+  if (data.pain_points && data.pain_points.length > 0) score += 5;
+  if (data.current_software && !data.current_software.includes('Nothing')) score += 10;
+  if (data.demo_intelligence?.officers?.length > 0) score += 5;
+  if (data.demo_intelligence?.files_uploaded?.length > 0) score += 10;
+  if (data.marketing_consent) score += 5;
+  return Math.min(score, 100);
+}
+
+function getTierEmoji(score) {
+  if (score >= 75) return '🔥';
+  if (score >= 55) return '⚡';
+  return '❄';
+}
+
+function getTierLabel(score) {
+  if (score >= 75) return 'HOT';
+  if (score >= 55) return 'WARM';
+  return 'COLD';
+}
+
+// Email template builders
+function buildSalesTeamEmail(lead, score) {
+  const groupSummary = lead.demo_intelligence?.all_companies?.length > 1
+    ? `Group: ${lead.demo_intelligence.all_companies.map(c => c.company_name).join(', ')}`
+    : '';
+
+  return `
+A new prospect has completed the personalised demo flow on the Premiso landing page.
+
+── CONTACT ────────────────────────────────
+Name:          ${lead.name}
+Email:         ${lead.email}
+Phone:         ${lead.phone || 'Not provided'}
+Company:       ${lead.company || 'Not provided'}
+CH Number:     ${lead.company_number || 'Not provided'}
+${groupSummary ? `Group:         ${groupSummary}` : ''}
+
+── PORTFOLIO ──────────────────────────────
+Portfolio Size:   ${lead.portfolio_size || 'Not provided'}
+Property Types:   ${lead.property_types || 'Not provided'}
+Pain Points:      ${lead.pain_points || 'None selected'}
+Current Software: ${lead.current_software || 'Not specified'}
+
+── INTELLIGENCE ───────────────────────────
+Officers/Directors: ${lead.demo_intelligence?.officers?.map(o => `${o.name} (${o.role})`).join(', ') || 'None'}
+Group Companies:    ${lead.demo_intelligence?.all_companies?.length || 0} company/ies
+Associated:         ${lead.demo_intelligence?.associated_companies?.length || 0}
+Files Uploaded:     ${lead.demo_intelligence?.files_uploaded?.length || 0} file(s)
+${lead.demo_intelligence?.files_uploaded?.map(f => `  - ${f.name}: ${f.url}`).join('\n') || ''}
+
+── CONSENT ────────────────────────────────
+Terms Accepted:   ${lead.consent_given ? 'YES' : 'NO'} at ${lead.consent_timestamp || 'unknown'}
+Marketing Opt-in: ${lead.marketing_consent ? 'YES' : 'NO'}
+
+── LEAD SCORE ─────────────────────────────
+Score: ${score}/100  |  Tier: ${getTierEmoji(score)} ${getTierLabel(score)}
+
+Lead ID: ${lead.leadId}
+
+Log in to Premiso CRM to follow up → https://app.premiso.co.uk/crm
+  `.trim();
+}
+
+function buildProspectConfirmationEmail(name, company, marketing_consent) {
+  return `
+Hi ${name},
+
+Your personalised Premiso demo environment has been prepared${company ? ` for ${company}` : ''}.
+
+You have 48-hour access to explore the platform. A member of our team will be in touch shortly to walk you through the features most relevant to your business.
+
+Important: This demo is for evaluation purposes only. All content, data and intellectual property within the Premiso platform remains the exclusive property of Premiso Ltd. Unauthorised use or reproduction is prohibited.
+
+To convert to a full subscription and retain your data, visit: https://app.premiso.co.uk
+
+Best regards,
+The Premiso Team
+
+—
+Premiso Ltd | hello@premiso.co.uk
+This email was sent because you requested a demo at premiso.co.uk.
+${marketing_consent ? 'You have opted in to receive product updates and industry news from Premiso.' : 'You have not opted in to marketing emails. Only transactional emails will be sent.'}
+  `.trim();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -29,16 +120,13 @@ Deno.serve(async (req) => {
     }
 
     // Score the lead based on what we know
-    let score = 50;
-    if (portfolio_size?.includes('500+')) score += 20;
-    else if (portfolio_size?.includes('151')) score += 15;
-    else if (portfolio_size?.includes('51')) score += 10;
-    if (pain_points && pain_points.length > 0) score += 5;
-    if (current_software && !current_software.includes('Nothing')) score += 10;
-    if (demo_intelligence?.officers?.length > 0) score += 5;
-    if (demo_intelligence?.files_uploaded?.length > 0) score += 10;
-    if (marketing_consent) score += 5;
-    score = Math.min(score, 100);
+    const score = calculateLeadScore({
+      portfolio_size,
+      pain_points,
+      current_software,
+      demo_intelligence,
+      marketing_consent,
+    });
 
     const notesText = [
       `Company: ${company || 'unknown'}`,
@@ -75,50 +163,15 @@ Deno.serve(async (req) => {
     }
 
     // Notify sales team
-    const groupSummary = demo_intelligence?.all_companies?.length > 1
-      ? `Group: ${demo_intelligence.all_companies.map(c => c.company_name).join(', ')}`
-      : '';
-
     try {
       await base44.asServiceRole.integrations.Core.SendEmail({
-        to: '333cnrbl6@gmail.com',
+        to: Deno.env.get('SALES_LEAD_EMAIL') || 'sales@premiso.co.uk',
         from_name: 'Premiso Website',
-        subject: `🔥 New ${score >= 75 ? 'HOT' : score >= 55 ? 'WARM' : 'COLD'} Lead (Score: ${score}): ${name} — ${company || 'unknown company'}`,
-        body: `
-A new prospect has completed the personalised demo flow on the Premiso landing page.
-
-── CONTACT ────────────────────────────────
-Name:          ${name}
-Email:         ${email}
-Phone:         ${phone || 'Not provided'}
-Company:       ${company || 'Not provided'}
-CH Number:     ${company_number || 'Not provided'}
-${groupSummary ? `Group:         ${groupSummary}` : ''}
-
-── PORTFOLIO ──────────────────────────────
-Portfolio Size:   ${portfolio_size || 'Not provided'}
-Property Types:   ${property_types || 'Not provided'}
-Pain Points:      ${pain_points || 'None selected'}
-Current Software: ${current_software || 'Not specified'}
-
-── INTELLIGENCE ───────────────────────────
-Officers/Directors: ${demo_intelligence?.officers?.map(o => `${o.name} (${o.role})`).join(', ') || 'None'}
-Group Companies:    ${demo_intelligence?.all_companies?.length || 0} company/ies
-Associated:         ${demo_intelligence?.associated_companies?.length || 0}
-Files Uploaded:     ${demo_intelligence?.files_uploaded?.length || 0} file(s)
-${demo_intelligence?.files_uploaded?.map(f => `  - ${f.name}: ${f.url}`).join('\n') || ''}
-
-── CONSENT ────────────────────────────────
-Terms Accepted:   ${consent_given ? 'YES' : 'NO'} at ${consent_timestamp || 'unknown'}
-Marketing Opt-in: ${marketing_consent ? 'YES' : 'NO'}
-
-── LEAD SCORE ─────────────────────────────
-Score: ${score}/100  |  Tier: ${score >= 75 ? '🔥 HOT' : score >= 55 ? '⚡ WARM' : '❄ COLD'}
-
-Lead ID: ${lead.id}
-
-Log in to Premiso CRM to follow up → https://app.premiso.co.uk/crm
-        `.trim(),
+        subject: `${getTierEmoji(score)} New ${getTierLabel(score)} Lead (Score: ${score}): ${name} — ${company || 'unknown company'}`,
+        body: buildSalesTeamEmail(
+          { name, email, phone, company, company_number, portfolio_size, property_types, pain_points, current_software, demo_intelligence, consent_given, consent_timestamp, marketing_consent, leadId: lead.id },
+          score
+        ),
       });
     } catch (emailErr) {
       console.error('Sales email failed:', emailErr.message);
@@ -130,25 +183,7 @@ Log in to Premiso CRM to follow up → https://app.premiso.co.uk/crm
         to: email,
         from_name: 'Premiso',
         subject: `Your personalised Premiso demo — ${company || 'welcome'}`,
-        body: `
-Hi ${name},
-
-Your personalised Premiso demo environment has been prepared${company ? ` for ${company}` : ''}.
-
-You have 48-hour access to explore the platform. A member of our team will be in touch shortly to walk you through the features most relevant to your business.
-
-Important: This demo is for evaluation purposes only. All content, data and intellectual property within the Premiso platform remains the exclusive property of Premiso Ltd. Unauthorised use or reproduction is prohibited.
-
-To convert to a full subscription and retain your data, visit: https://app.premiso.co.uk
-
-Best regards,
-The Premiso Team
-
-—
-Premiso Ltd | hello@premiso.co.uk
-This email was sent because you requested a demo at premiso.co.uk.
-${marketing_consent ? 'You have opted in to receive product updates and industry news from Premiso.' : 'You have not opted in to marketing emails. Only transactional emails will be sent.'}
-        `.trim(),
+        body: buildProspectConfirmationEmail(name, company, marketing_consent),
       });
     } catch (emailErr) {
       console.error('Confirmation email failed:', emailErr.message);
