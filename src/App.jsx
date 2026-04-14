@@ -128,7 +128,6 @@ import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
 import OwnerPortal from './pages/OwnerPortal';
 import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
-import DocumentAutomationEngine from './pages/DocumentAutomationEngine';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();

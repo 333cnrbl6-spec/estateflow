@@ -2,65 +2,74 @@
   "name": "FinancialReport",
   "type": "object",
   "properties": {
-    "company_id": {
-      "type": "string"
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
     },
     "report_type": {
       "type": "string",
       "enum": [
         "profit_loss",
-        "cash_flow",
         "balance_sheet",
-        "portfolio_summary"
-      ]
+        "custom",
+        "forecast"
+      ],
+      "description": "Type of report generated"
     },
-    "period_start": {
+    "report_period_start": {
       "type": "string",
-      "format": "date"
+      "format": "date",
+      "description": "Report period start date"
     },
-    "period_end": {
+    "report_period_end": {
       "type": "string",
-      "format": "date"
-    },
-    "total_income": {
-      "type": "number"
-    },
-    "total_expenses": {
-      "type": "number"
-    },
-    "net_profit": {
-      "type": "number"
-    },
-    "cash_position": {
-      "type": "number"
-    },
-    "property_count": {
-      "type": "number"
-    },
-    "occupancy_rate": {
-      "type": "number"
-    },
-    "arrears_amount": {
-      "type": "number"
+      "format": "date",
+      "description": "Report period end date"
     },
     "generated_date": {
       "type": "string",
-      "format": "date"
+      "format": "date-time",
+      "description": "When report was generated"
     },
     "generated_by": {
-      "type": "string"
+      "type": "string",
+      "description": "Email of user who generated report"
     },
-    "file_url": {
-      "type": "string"
+    "total_income": {
+      "type": "number",
+      "description": "Total income in pence"
     },
-    "notes": {
-      "type": "string"
+    "total_expenses": {
+      "type": "number",
+      "description": "Total expenses in pence"
+    },
+    "net_profit": {
+      "type": "number",
+      "description": "Net profit in pence"
+    },
+    "data_breakdown": {
+      "type": "object",
+      "description": "Detailed breakdown by category"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to generated PDF report"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "final",
+        "archived"
+      ],
+      "default": "draft",
+      "description": "Report status"
     }
   },
   "required": [
-    "company_id",
+    "property_id",
     "report_type",
-    "period_start",
-    "period_end"
+    "generated_date",
+    "generated_by"
   ]
 }
