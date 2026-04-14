@@ -17,22 +17,7 @@ import {
   Home, Key, Wrench, Receipt, AlertCircle, Check, X, ExternalLink
 } from 'lucide-react';
 
-const STEPS = [
-  { id: 'company',    label: 'Your Company',    icon: Building2 },
-  { id: 'directors',  label: 'Directors',       icon: Users },
-  { id: 'addresses',  label: 'Addresses',       icon: Home },
-  { id: 'services',   label: 'Services',        icon: Key },
-  { id: 'software',   label: 'Software & Integrations', icon: Globe },
-  { id: 'banking',    label: 'Banking & Accounting',   icon: Receipt },
-  { id: 'data_audit', label: 'Your Data',       icon: Database },
-  { id: 'data_source',label: 'Data Sources',    icon: HardDrive },
-  { id: 'import_pipeline', label: 'Configure Import', icon: Loader2 },
-  { id: 'upload',     label: 'Import Data',     icon: FileText },
-  { id: 'deduplicate', label: 'Review Duplicates', icon: AlertCircle },
-  { id: 'cleanse',    label: 'Cleanse & Stage', icon: Loader2 },
-  { id: 'approve',    label: 'Approve & Commit', icon: CheckCircle2 },
-  { id: 'review',     label: 'Review & Create', icon: CheckCircle2 },
-];
+// STEPS now handled by CompaniesHouseWizard (first phase) + POST_CH_STEPS (second phase)
 
 const SERVICES = [
   { id: 'residential_lettings', label: 'Residential Lettings' },
@@ -96,7 +81,9 @@ const DATA_SOURCES = [
   { id: 'paper', label: 'Paper documents (scan)', icon: '📄' },
 ];
 
-function StepCompany({ data, onChange }) {
+// StepCompany and StepDirectors removed — replaced by CompaniesHouseWizard component
+
+function StepCompany_UNUSED({ data, onChange }) {
   const [query, setQuery] = useState(data.company_name || '');
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState([]);
@@ -236,7 +223,7 @@ function StepCompany({ data, onChange }) {
   );
 }
 
-function StepDirectors({ data, onChange }) {
+function StepDirectors_UNUSED({ data, onChange }) {
   const [fetching, setFetching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchingAdditional, setSearchingAdditional] = useState(false);
