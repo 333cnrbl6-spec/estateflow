@@ -110,6 +110,8 @@ import CertificateManagement from './pages/CertificateManagement';
 import RoleDashboard from './pages/RoleDashboard';
 import ContractorPortalMobile from './pages/ContractorPortalMobile';
 import DocumentationViewer from './pages/DocumentationViewer';
+import CustomizableFinancialReports from './pages/CustomizableFinancialReports';
+import DetailedComplianceReports from './pages/DetailedComplianceReports';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -220,6 +222,8 @@ const AuthenticatedApp = () => {
         <Route path="/landlord-portal" element={<LandlordPortal />} />
         <Route path="/reporting" element={<LandlordReportingDashboard />} />
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
+        <Route path="/financial-reports" element={<CustomizableFinancialReports />} />
+        <Route path="/compliance-reports" element={<DetailedComplianceReports />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />
