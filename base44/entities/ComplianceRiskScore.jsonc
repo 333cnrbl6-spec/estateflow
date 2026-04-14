@@ -1,0 +1,214 @@
+{
+  "name": "ComplianceRiskScore",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "calculated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the risk score was calculated"
+    },
+    "overall_risk_score": {
+      "type": "number",
+      "description": "Overall compliance risk score (0-100, where 100 is highest risk)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Risk classification based on score"
+    },
+    "certificate_risk_score": {
+      "type": "number",
+      "description": "Risk from upcoming certificate expiries (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "certificates_at_risk": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "certificate_type": {
+            "type": "string",
+            "enum": [
+              "gas_safety",
+              "electrical",
+              "fire_safety",
+              "epc",
+              "other"
+            ]
+          },
+          "days_until_expiry": {
+            "type": "number"
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Reference to certificate entity"
+          }
+        }
+      }
+    },
+    "incident_risk_score": {
+      "type": "number",
+      "description": "Risk from previous incidents/breaches (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "recent_incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "incident_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "incident_type": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "resolved": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Recent incidents (last 12 months)"
+    },
+    "remedial_risk_score": {
+      "type": "number",
+      "description": "Risk from unresolved remedial actions (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "outstanding_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "days_overdue": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string",
+            "description": "Entity source (e.g., FireRiskAssessment, ComplianceRule)"
+          }
+        }
+      },
+      "description": "Unresolved remedial actions"
+    },
+    "license_risk_score": {
+      "type": "number",
+      "description": "Risk from license renewal dates (HMO, etc.) (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "licenses_expiring": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "license_type": {
+            "type": "string"
+          },
+          "days_until_expiry": {
+            "type": "number"
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "priority_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "urgency": {
+            "type": "string",
+            "enum": [
+              "immediate",
+              "urgent",
+              "important",
+              "routine"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "certificate_renewal",
+              "remedial_action",
+              "license_renewal",
+              "compliance_check"
+            ]
+          }
+        }
+      },
+      "description": "Top priority recommendations"
+    },
+    "trend": {
+      "type": "string",
+      "enum": [
+        "improving",
+        "stable",
+        "deteriorating"
+      ],
+      "description": "Risk trend compared to previous month"
+    },
+    "previous_score": {
+      "type": "number",
+      "description": "Previous overall risk score for trend analysis"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "calculated_date",
+    "overall_risk_score",
+    "risk_level"
+  ]
+}

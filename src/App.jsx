@@ -118,6 +118,7 @@ import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
 import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
 import ContractorScheduling from './pages/ContractorScheduling';
 import HMODashboard from './pages/HMODashboard';
+import ComplianceRiskAnalytics from './pages/ComplianceRiskAnalytics';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -203,6 +204,7 @@ const AuthenticatedApp = () => {
         <Route path="/role-dashboard" element={<RoleDashboard />} />
         <Route path="/compliance-audit" element={<ComplianceAudit />} />
         <Route path="/compliance-hub" element={<ComplianceHub />} />
+        <Route path="/compliance-risk-analytics" element={<ComplianceRiskAnalytics />} />
         <Route path="/compliance-dashboard-2" element={<ComplianceDashboard2 />} />
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
         <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
