@@ -125,6 +125,7 @@ import MaintenanceForecasting from './pages/MaintenanceForecasting';
 import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
+import TenantPaymentPortal from './pages/TenantPaymentPortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -294,6 +295,8 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-communication" element={<TenantCommunicationPortal />} />
       {/* /tenant-portal — dedicated tenant portal with maintenance, docs, announcements */}
       <Route path="/tenant-portal" element={<TenantPortalDedicated />} />
+      {/* /tenant-payments — tenant payment history and receipt portal */}
+      <Route path="/tenant-payments" element={<TenantPaymentPortal />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 
