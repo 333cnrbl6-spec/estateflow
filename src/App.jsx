@@ -126,6 +126,7 @@ import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
+import PropertyInspection from './pages/PropertyInspection';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -286,7 +287,7 @@ const AuthenticatedApp = () => {
       {/* /inspection-generator — inspection report generator */}
       <Route path="/inspection-generator" element={<PropertyInspectionGenerator />} />
       {/* /inspection — standalone inspection form */}
-      <Route path="/inspection" element={<PropertyInspection />} />
+      <Route path="/inspection-manager" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}
       <Route path="/tenant-self-service" element={<TenantSelfServicePortal />} />
       {/* /tenant-portal-enhanced — enhanced tenant portal with messaging */}

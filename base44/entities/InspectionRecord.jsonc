@@ -8,201 +8,84 @@
     },
     "unit_id": {
       "type": "string",
-      "description": "Reference to Unit entity"
-    },
-    "inspector_id": {
-      "type": "string",
-      "description": "User ID of inspector/contractor"
-    },
-    "inspector_name": {
-      "type": "string",
-      "description": "Name of inspector"
-    },
-    "inspection_date": {
-      "type": "string",
-      "format": "date-time",
-      "description": "Date and time of inspection"
+      "description": "Reference to Unit entity (optional)"
     },
     "inspection_type": {
       "type": "string",
       "enum": [
-        "pre_tenancy",
-        "post_tenancy",
+        "general",
         "routine",
-        "complaint",
+        "move_in",
+        "move_out",
         "safety"
       ],
       "description": "Type of inspection"
     },
-    "overall_condition": {
+    "scheduled_date": {
       "type": "string",
-      "enum": [
-        "excellent",
-        "good",
-        "fair",
-        "poor",
-        "critical"
-      ],
-      "description": "Overall property condition rating"
+      "format": "date",
+      "description": "Date inspection is scheduled"
     },
-    "room_inspections": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "room_id": {
-            "type": "string",
-            "description": "Unique identifier for this room"
-          },
-          "room_name": {
-            "type": "string",
-            "description": "e.g., Kitchen, Master Bedroom, Bathroom"
-          },
-          "condition_rating": {
-            "type": "string",
-            "enum": [
-              "excellent",
-              "good",
-              "fair",
-              "poor",
-              "critical"
-            ]
-          },
-          "comments": {
-            "type": "string",
-            "description": "Detailed comments on room condition"
-          },
-          "photos": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "photo_id": {
-                  "type": "string"
-                },
-                "photo_url": {
-                  "type": "string"
-                },
-                "caption": {
-                  "type": "string"
-                },
-                "uploaded_at": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              }
-            }
-          },
-          "fixtures": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "fixture_name": {
-                  "type": "string",
-                  "description": "e.g., Boiler, Windows, Carpets"
-                },
-                "condition": {
-                  "type": "string",
-                  "description": "Condition description"
-                },
-                "needs_repair": {
-                  "type": "boolean"
-                },
-                "repair_priority": {
-                  "type": "string",
-                  "enum": [
-                    "low",
-                    "medium",
-                    "high",
-                    "urgent"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "description": "Inspection data organized by room"
-    },
-    "issues_identified": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "issue_id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "room": {
-            "type": "string"
-          },
-          "severity": {
-            "type": "string",
-            "enum": [
-              "low",
-              "medium",
-              "high",
-              "critical"
-            ]
-          },
-          "photo_urls": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "requires_action": {
-            "type": "boolean"
-          }
-        }
-      }
-    },
-    "summary_notes": {
+    "completed_date": {
       "type": "string",
-      "description": "Overall inspection summary and recommendations"
+      "format": "date-time",
+      "description": "When inspection was completed"
     },
     "status": {
       "type": "string",
       "enum": [
-        "draft",
+        "scheduled",
         "completed",
-        "submitted",
-        "reviewed"
+        "cancelled"
       ],
-      "default": "draft",
-      "description": "Report status"
+      "default": "scheduled",
+      "description": "Inspection status"
     },
-    "submitted_date": {
+    "created_by": {
       "type": "string",
-      "format": "date-time",
-      "description": "When report was submitted to property manager"
+      "description": "Email of user who scheduled inspection"
     },
-    "reviewed_by": {
+    "completed_by": {
       "type": "string",
-      "description": "User ID who reviewed the report"
+      "description": "Email of user who completed inspection"
     },
-    "reviewed_date": {
-      "type": "string",
-      "format": "date-time",
-      "description": "When report was reviewed"
+    "checklist_data": {
+      "type": "object",
+      "description": "Checklist items and their completion status"
     },
-    "pdf_url": {
+    "findings": {
       "type": "string",
-      "description": "URL to generated PDF report"
+      "description": "Summary of inspection findings and notes"
+    },
+    "photos_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of photos taken during inspection"
+    },
+    "photos_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to uploaded inspection photos"
+    },
+    "recurrence_parent_id": {
+      "type": "string",
+      "description": "Reference to parent recurring inspection"
+    },
+    "tenant_access_confirmed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether tenant confirmed access"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Initial notes when scheduling inspection"
     }
   },
   "required": [
     "property_id",
-    "inspector_id",
-    "inspection_date",
     "inspection_type",
-    "overall_condition",
-    "room_inspections"
+    "scheduled_date"
   ]
 }
