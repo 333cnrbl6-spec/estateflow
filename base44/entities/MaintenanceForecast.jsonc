@@ -1,0 +1,209 @@
+{
+  "name": "MaintenanceForecast",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (optional)"
+    },
+    "component_type": {
+      "type": "string",
+      "enum": [
+        "hvac",
+        "roofing",
+        "plumbing",
+        "electrical",
+        "foundation",
+        "windows_doors",
+        "flooring",
+        "water_heater",
+        "appliances",
+        "structural",
+        "exterior",
+        "interior"
+      ],
+      "description": "Type of property component"
+    },
+    "component_description": {
+      "type": "string",
+      "description": "Detailed description of component"
+    },
+    "forecast_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this forecast was generated"
+    },
+    "predicted_failure_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Estimated date maintenance will be needed"
+    },
+    "days_until_failure": {
+      "type": "number",
+      "description": "Days remaining until predicted maintenance needed"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "Confidence level 0-100 based on historical data",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Risk classification"
+    },
+    "historical_frequency": {
+      "type": "object",
+      "properties": {
+        "past_12_months": {
+          "type": "number",
+          "description": "Number of maintenance events in past 12 months"
+        },
+        "average_interval_days": {
+          "type": "number",
+          "description": "Average days between maintenance events"
+        },
+        "last_maintenance_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of last maintenance"
+        }
+      }
+    },
+    "cost_analysis": {
+      "type": "object",
+      "properties": {
+        "average_cost_per_repair": {
+          "type": "number",
+          "description": "Average cost of past repairs (\u00a3)"
+        },
+        "estimated_repair_cost": {
+          "type": "number",
+          "description": "Estimated cost of predicted maintenance (\u00a3)"
+        },
+        "total_historical_cost": {
+          "type": "number",
+          "description": "Total spent on this component (\u00a3)"
+        },
+        "potential_emergency_cost": {
+          "type": "number",
+          "description": "Estimated cost if becomes emergency (\u00a3)"
+        },
+        "emergency_multiplier": {
+          "type": "number",
+          "description": "Cost multiplier if emergency (1.5x - 3x)"
+        }
+      }
+    },
+    "maintenance_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recommendation_id": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Specific action to take"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "suggested_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Recommended date to complete"
+          },
+          "estimated_cost": {
+            "type": "number",
+            "description": "Cost estimate (\u00a3)"
+          },
+          "cost_savings_vs_emergency": {
+            "type": "number",
+            "description": "Amount saved vs emergency repair (\u00a3)"
+          },
+          "actions_required": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "supporting_data": {
+      "type": "object",
+      "properties": {
+        "analysis_basis": {
+          "type": "string",
+          "description": "How many historical records analyzed"
+        },
+        "similar_properties": {
+          "type": "number",
+          "description": "Number of similar properties analyzed for benchmarking"
+        },
+        "pattern_detected": {
+          "type": "string",
+          "description": "Description of pattern or trend identified"
+        },
+        "comparison_to_benchmark": {
+          "type": "string",
+          "description": "How this property compares to similar properties"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "resolved"
+      ],
+      "default": "pending",
+      "description": "Status of predicted maintenance"
+    },
+    "maintenance_scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When maintenance was actually scheduled"
+    },
+    "maintenance_completed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When maintenance was completed"
+    },
+    "actual_cost": {
+      "type": "number",
+      "description": "Actual cost of maintenance (\u00a3)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "component_type",
+    "forecast_date",
+    "predicted_failure_date",
+    "risk_level"
+  ]
+}

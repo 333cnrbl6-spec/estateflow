@@ -121,6 +121,7 @@ import HMODashboard from './pages/HMODashboard';
 import ComplianceRiskAnalytics from './pages/ComplianceRiskAnalytics';
 import TenantCompliancePortal from './pages/TenantCompliancePortal';
 import ComplianceWorkflowAutomation from './pages/ComplianceWorkflowAutomation';
+import MaintenanceForecasting from './pages/MaintenanceForecasting';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -199,6 +200,7 @@ const AuthenticatedApp = () => {
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
+        <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/certificates" element={<CertificateManagement />} />
