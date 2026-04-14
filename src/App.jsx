@@ -124,6 +124,7 @@ import ComplianceWorkflowAutomation from './pages/ComplianceWorkflowAutomation';
 import MaintenanceForecasting from './pages/MaintenanceForecasting';
 import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
+import TenantPortalDedicated from './pages/TenantPortalDedicated';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -291,6 +292,8 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-portal-enhanced" element={<TenantPortalEnhancedPage />} />
       <Route path="/tenant-compliance-portal" element={<TenantCompliancePortal />} />
       <Route path="/tenant-communication" element={<TenantCommunicationPortal />} />
+      {/* /tenant-portal — dedicated tenant portal with maintenance, docs, announcements */}
+      <Route path="/tenant-portal" element={<TenantPortalDedicated />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 

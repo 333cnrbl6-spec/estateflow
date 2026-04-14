@@ -4,135 +4,70 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { unitId, propertyId, title, description, category, photoUrls, priority = 'standard' } = await req.json();
-
-    if (!unitId || !propertyId || !title || !description || !category) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 1. Create maintenance request
-    const maintenanceReq = await base44.entities.MaintenanceRequest.create({
-      unit_id: unitId,
-      property_id: propertyId,
-      tenant_id: user.id,
+    const {
+      tenant_id,
       title,
-      description,
       category,
       priority,
-      status: 'reported',
-      photos: photoUrls || [],
-      internal_notes: `Submitted by tenant via portal on ${new Date().toISOString()}`,
-    });
+      description,
+      photo_urls
+    } = await req.json();
 
-    // 2. Get property details for PM assignment
-    const property = await base44.entities.Property.get(propertyId);
-    if (!property) {
-      return Response.json({ error: 'Property not found' }, { status: 404 });
+    // Fetch tenant to get property_id
+    const tenant = await base44.entities.Tenant.get(tenant_id);
+    if (!tenant) {
+      return Response.json({ error: 'Tenant not found' }, { status: 404 });
     }
 
-    // 3. Find available contractors for this category
-    // In production, implement contractor matching logic
-    const contractors = await base44.entities.Contact.filter({
-      contact_type: 'contractor',
-      specializations: category,
+    // Create maintenance request
+    const request = await base44.entities.MaintenanceRequest.create({
+      tenant_id,
+      property_id: tenant.property_id,
+      unit_id: tenant.unit_id,
+      title,
+      category,
+      priority,
+      description,
+      photo_urls: photo_urls || [],
+      status: 'submitted',
+      submitted_date: new Date().toISOString()
     });
 
-    let assignedContractor = null;
-    if (contractors?.length > 0) {
-      // Pick first available contractor (in production, implement smarter matching)
-      assignedContractor = contractors[0];
-    }
+    // Send notification email to landlord/property manager
+    try {
+      const property = await base44.entities.Property.get(tenant.property_id);
+      const contactEmail = property?.contact_email || Deno.env.get('SALES_LEAD_EMAIL');
 
-    // 4. Get Property Manager email
-    const pmUsers = await base44.asServiceRole.entities.User.filter({
-      role: 'property_manager',
-    });
-
-    const pmEmail = pmUsers?.[0]?.email;
-
-    // 5. Send notification to PM
-    if (pmEmail) {
-      try {
+      if (contactEmail) {
         await base44.integrations.Core.SendEmail({
-          to: pmEmail,
-          subject: `New Maintenance Request: ${title} - ${property.name}`,
+          to: contactEmail,
+          subject: `New Maintenance Request - ${property?.name || 'Property'}`,
           body: `
-A new maintenance request has been submitted by a tenant.
-
-**Property:** ${property.name}
-**Unit:** ${unitId}
-**Category:** ${category}
-**Priority:** ${priority}
-**Title:** ${title}
-**Description:** ${description}
-
-${photoUrls?.length > 0 ? `**Photos Attached:** ${photoUrls.length} image(s)` : ''}
-
-${assignedContractor ? `**Suggested Contractor:** ${assignedContractor.name}` : '**Action Required:** Please assign a contractor'}
-
-Ticket ID: ${maintenanceReq.id}
-
-Log in to Premiso to assign a contractor and schedule the work.
-          `,
+            <h2>New Maintenance Request Submitted</h2>
+            <p><strong>Tenant:</strong> ${tenant.full_name}</p>
+            <p><strong>Property:</strong> ${property?.address || 'N/A'}</p>
+            <p><strong>Issue:</strong> ${title}</p>
+            <p><strong>Category:</strong> ${category}</p>
+            <p><strong>Priority:</strong> ${priority}</p>
+            <p><strong>Description:</strong> ${description}</p>
+            ${photo_urls?.length ? `<p><strong>Photos Attached:</strong> ${photo_urls.length} image(s)</p>` : ''}
+            <p><a href="${Deno.env.get('APP_URL') || 'http://localhost:5173'}/maintenance">View in Dashboard</a></p>
+          `
         });
-      } catch (emailErr) {
-        console.error('Failed to send PM notification:', emailErr.message);
-        // Don't fail the entire request if email fails
       }
-    }
-
-    // 6. If contractor available, auto-assign and notify
-    if (assignedContractor) {
-      try {
-        // Update maintenance request with contractor assignment
-        await base44.entities.MaintenanceRequest.update(maintenanceReq.id, {
-          assigned_contractor_id: assignedContractor.id,
-          assigned_contractor_name: assignedContractor.name,
-          assigned_contractor_email: assignedContractor.email,
-          assigned_date: new Date().toISOString(),
-          status: 'assigned',
-        });
-
-        // Send notification to contractor
-        await base44.integrations.Core.SendEmail({
-          to: assignedContractor.email,
-          subject: `New Job Assignment: ${title} - ${property.name}`,
-          body: `
-You have been assigned a new maintenance job.
-
-**Property:** ${property.name}
-**Unit:** ${unitId}
-**Category:** ${category}
-**Priority:** ${priority}
-**Issue:** ${title}
-**Details:** ${description}
-
-${photoUrls?.length > 0 ? `**Photos Provided:** ${photoUrls.length} image(s)\n${photoUrls.map(url => `- ${url}`).join('\n')}` : ''}
-
-**Next Steps:**
-1. Review the job details in your contractor portal
-2. Confirm availability and provide quote
-3. Schedule the work with the tenant
-
-Job ID: ${maintenanceReq.id}
-          `,
-        });
-      } catch (err) {
-        console.error('Failed to auto-assign contractor:', err.message);
-      }
+    } catch (emailErr) {
+      console.warn('Failed to send notification:', emailErr.message);
     }
 
     return Response.json({
       success: true,
-      maintenanceRequestId: maintenanceReq.id,
-      assigned: !!assignedContractor,
-      assignedContractor: assignedContractor?.name || null,
-      notificationsSent: {
-        propertyManager: !!pmEmail,
-        contractor: !!assignedContractor,
-      },
+      request_id: request.id,
+      message: 'Maintenance request submitted successfully'
     });
   } catch (error) {
     console.error('Error creating maintenance request:', error);

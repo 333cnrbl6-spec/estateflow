@@ -1,162 +1,220 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, Loader2, CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const CATEGORIES = [
   { value: 'plumbing', label: 'Plumbing' },
   { value: 'electrical', label: 'Electrical' },
-  { value: 'heating', label: 'Heating/Cooling' },
-  { value: 'decorating', label: 'Decorating' },
-  { value: 'structural', label: 'Structural' },
-  { value: 'cleaning', label: 'Cleaning' },
-  { value: 'general', label: 'General Maintenance' },
-  { value: 'other', label: 'Other' },
+  { value: 'heating', label: 'Heating & Hot Water' },
+  { value: 'structural', label: 'Structural/Damage' },
+  { value: 'appliances', label: 'Appliances' },
+  { value: 'safety', label: 'Safety Hazard' },
+  { value: 'other', label: 'Other' }
 ];
 
 const PRIORITIES = [
-  { value: 'low', label: 'Low' },
-  { value: 'standard', label: 'Standard' },
-  { value: 'urgent', label: 'Urgent' },
-  { value: 'emergency', label: 'Emergency' },
+  { value: 'routine', label: 'Routine (can wait)' },
+  { value: 'moderate', label: 'Moderate (within 2 weeks)' },
+  { value: 'urgent', label: 'Urgent (within 48 hours)' },
+  { value: 'emergency', label: 'Emergency (immediate)' }
 ];
 
-export default function MaintenanceRequestForm({ tenantId, unitId, onSubmitSuccess }) {
+export default function MaintenanceRequestForm({ tenant, property }) {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [priority, setPriority] = useState('moderate');
+  const [description, setDescription] = useState('');
+  const [photos, setPhotos] = useState([]);
+  const [photoUrls, setPhotoUrls] = useState([]);
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    priority: 'standard',
-  });
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
 
-  const submitRequest = useMutation({
-    mutationFn: async (data) => {
-      const request = await base44.entities.MaintenanceRequest.create({
-        tenant_id: tenantId,
-        unit_id: unitId,
-        title: data.title,
-        description: data.description,
-        category: data.category,
-        priority: data.priority,
-        status: 'reported',
+  const uploadPhotoMutation = useMutation({
+    mutationFn: async (file) => {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      return result.file_url;
+    }
+  });
+
+  const createRequestMutation = useMutation({
+    mutationFn: async () => {
+      return await base44.entities.MaintenanceRequest.create({
+        tenant_id: tenant.id,
+        property_id: tenant.property_id,
+        title,
+        category,
+        priority,
+        description,
+        photo_urls: photoUrls,
+        status: 'submitted',
+        submitted_date: new Date().toISOString()
       });
-      return request;
     },
     onSuccess: () => {
-      setSuccess(true);
-      setFormData({ title: '', description: '', category: '', priority: 'standard' });
-      queryClient.invalidateQueries({ queryKey: ['tenantTickets'] });
-      setTimeout(() => {
-        setSuccess(false);
-        onSubmitSuccess?.();
-      }, 2000);
-    },
-    onError: (err) => {
-      setError(err.message || 'Failed to submit request');
-    },
+      // Reset form
+      setTitle('');
+      setCategory('');
+      setPriority('moderate');
+      setDescription('');
+      setPhotos([]);
+      setPhotoUrls([]);
+      queryClient.invalidateQueries({ queryKey: ['maintenance-requests', tenant.id] });
+      
+      // Show success message
+      alert('Maintenance request submitted successfully!');
+    }
   });
+
+  const handlePhotoChange = async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
+      try {
+        const url = await uploadPhotoMutation.mutateAsync(file);
+        setPhotoUrls(prev => [...prev, url]);
+        setPhotos(prev => [...prev, file.name]);
+      } catch (err) {
+        alert(`Failed to upload ${file.name}: ${err.message}`);
+      }
+    }
+  };
+
+  const removePhoto = (index) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotoUrls(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.category) {
-      setError('Please fill in all fields');
+    if (!title || !category || !description) {
+      alert('Please fill in all required fields');
       return;
     }
-    setError(null);
-    submitRequest.mutate(formData);
+    createRequestMutation.mutate();
   };
 
+  const isLoading = uploadPhotoMutation.isPending || createRequestMutation.isPending;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Request Maintenance</CardTitle>
-        <CardDescription>Submit a new maintenance request for your unit</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="w-4 h-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="bg-green-50 border-green-200">
-              <CheckCircle2 className="w-4 h-4 text-green-600" />
-              <AlertDescription className="text-green-800">Request submitted successfully</AlertDescription>
-            </Alert>
-          )}
-
+    <div className="space-y-6">
+      <Card className="p-6 bg-white">
+        <h2 className="text-xl font-bold text-foreground mb-6">Submit Maintenance Request</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Title */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Issue Title *</label>
+          <div>
+            <label className="text-sm font-semibold text-foreground block mb-2">Issue Title *</label>
             <Input
-              placeholder="e.g., Leaky kitchen tap"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g., Leaky tap in bathroom"
+              disabled={isLoading}
             />
           </div>
 
-          {/* Category */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Category *</label>
-            <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category..." />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map(cat => (
-                  <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Category & Priority Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-semibold text-foreground block mb-2">Category *</label>
+              <Select value={category} onValueChange={setCategory} disabled={isLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map(cat => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Priority */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Priority *</label>
-            <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PRIORITIES.map(pri => (
-                  <SelectItem key={pri.value} value={pri.value}>{pri.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div>
+              <label className="text-sm font-semibold text-foreground block mb-2">Priority *</label>
+              <Select value={priority} onValueChange={setPriority} disabled={isLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRIORITIES.map(p => (
+                    <SelectItem key={p.value} value={p.value}>
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Description */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Description *</label>
+          <div>
+            <label className="text-sm font-semibold text-foreground block mb-2">Description *</label>
             <Textarea
-              placeholder="Describe the issue in detail..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe the issue in detail. What exactly needs to be fixed?"
               rows={4}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              disabled={isLoading}
             />
           </div>
 
-          {/* Submit */}
+          {/* Photo Upload */}
+          <div>
+            <label className="text-sm font-semibold text-foreground block mb-3">Upload Photos (optional)</label>
+            <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50 text-center hover:border-blue-400 transition-colors">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handlePhotoChange}
+                disabled={isLoading}
+                className="hidden"
+                id="photo-upload"
+              />
+              <label htmlFor="photo-upload" className="cursor-pointer block">
+                <Upload className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                <p className="text-sm font-semibold text-blue-900">Click to upload photos</p>
+                <p className="text-xs text-blue-700 mt-1">or drag and drop</p>
+              </label>
+            </div>
+
+            {/* Photo List */}
+            {photos.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {photos.map((photo, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-foreground">{photo}</p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removePhoto(idx)}
+                      disabled={isLoading}
+                      className="text-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Button */}
           <Button
             type="submit"
-            disabled={submitRequest.isPending}
-            className="w-full gap-2"
+            disabled={isLoading || !title || !category || !description}
+            size="lg"
+            className="w-full"
           >
-            {submitRequest.isPending ? (
+            {isLoading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Submitting...
               </>
             ) : (
@@ -164,7 +222,14 @@ export default function MaintenanceRequestForm({ tenantId, unitId, onSubmitSucce
             )}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+      </Card>
+
+      {/* Info Box */}
+      <Card className="p-4 bg-blue-50 border-blue-200">
+        <p className="text-sm text-blue-900">
+          <strong>Tip:</strong> Upload clear photos from multiple angles to help our contractors understand the issue faster.
+        </p>
+      </Card>
+    </div>
   );
 }
