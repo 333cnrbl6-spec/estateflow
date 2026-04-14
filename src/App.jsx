@@ -115,6 +115,7 @@ import DetailedComplianceReports from './pages/DetailedComplianceReports';
 import InvoiceManagement from './pages/InvoiceManagement';
 import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
 import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
+import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -266,6 +267,8 @@ const AuthenticatedApp = () => {
       <Route path="/contractor-view" element={<ContractorPortal />} />
       {/* /contractor-mobile — mobile-optimized contractor portal */}
       <Route path="/contractor-mobile" element={<ContractorPortalMobile />} />
+      {/* /inspection-generator — inspection report generator */}
+      <Route path="/inspection-generator" element={<PropertyInspectionGenerator />} />
       {/* /inspection — standalone inspection form */}
       <Route path="/inspection" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}
