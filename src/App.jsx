@@ -228,7 +228,7 @@ const AuthenticatedApp = () => {
         <Route path="/emergency-callouts" element={<EmergencyCalloutManager />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/certificates" element={<CertificateManagement />} />
-        <Route path="/certificate-compliance" element={<CertificateCompliance />} />
+        <Route path="/certificate-management" element={<CertificateCompliance />} />
         <Route path="/role-dashboard" element={<RoleDashboard />} />
         <Route path="/compliance-audit" element={<ComplianceAudit />} />
         <Route path="/compliance-hub" element={<ComplianceHub />} />
