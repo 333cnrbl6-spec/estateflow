@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp } from 'lucide-react';
@@ -87,24 +87,24 @@ export default function Dashboard() {
   const occupancyRate = units.length > 0 ? Math.round((occupiedUnits / units.length) * 100) : 0;
   const activeMaintenance = maintenance.filter(m => !['completed', 'cancelled'].includes(m.status)).length;
 
-  const regionData = properties.reduce((acc, p) => {
+  const regionData = useMemo(() => properties.reduce((acc, p) => {
     const region = p.region || 'other';
     const existing = acc.find(r => r.name === region);
     if (existing) existing.value++;
     else acc.push({ name: region, value: 1 });
     return acc;
-  }, []);
+  }, []), [properties]);
 
-  const companyCategories = companies.reduce((acc, c) => {
+  const companyCategories = useMemo(() => companies.reduce((acc, c) => {
     const cat = c.category || 'other';
     const label = cat.replace(/_/g, ' ');
     const existing = acc.find(r => r.name === label);
     if (existing) existing.count++;
     else acc.push({ name: label, count: 1 });
     return acc;
-  }, []);
+  }, []), [companies]);
 
-  const recentMaintenance = [...maintenance].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5);
+  const recentMaintenance = useMemo(() => [...maintenance].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5), [maintenance]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background">

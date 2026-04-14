@@ -56,17 +56,23 @@ Deno.serve(async (req) => {
       notes ? `Notes: ${notes}` : null,
     ].filter(Boolean).join(' | ');
 
-    const lead = await base44.asServiceRole.entities.SalesLead.create({
-      lead_type: 'landlord',
-      contact_name: name,
-      contact_email: email,
-      contact_phone: phone || '',
-      source: 'website',
-      status: 'new',
-      notes: notesText,
-      lead_score: score,
-      priority_tier: score >= 75 ? 'hot' : score >= 55 ? 'warm' : 'cold',
-    });
+    let lead;
+    try {
+      lead = await base44.asServiceRole.entities.SalesLead.create({
+        lead_type: 'landlord',
+        contact_name: name,
+        contact_email: email,
+        contact_phone: phone || '',
+        source: 'website',
+        status: 'new',
+        notes: notesText,
+        lead_score: score,
+        priority_tier: score >= 75 ? 'hot' : score >= 55 ? 'warm' : 'cold',
+      });
+    } catch (createErr) {
+      console.error('Lead creation failed:', createErr.message);
+      throw createErr;
+    }
 
     // Notify sales team
     const groupSummary = demo_intelligence?.all_companies?.length > 1

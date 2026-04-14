@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import Sidebar from './Sidebar';
 import HelperBot from '@/components/HelperBot';
-import { Bell } from 'lucide-react';
 import RBMBrandedHeader from '@/components/RBMBrandedHeader';
 
 export default function AppLayout() {
@@ -15,22 +14,11 @@ export default function AppLayout() {
       <RBMBrandedHeader />
       <Sidebar onCollapsedChange={setSidebarCollapsed} />
 
-      {/* Top Header */}
-      
-
-
-
-
-
-
-
-      
-
       <main className={`${sidebarCollapsed ? 'ml-[68px]' : 'ml-[260px]'} mt-[128px] min-h-screen transition-all duration-300`}>
         <Outlet />
       </main>
 
       <HelperBot />
-    </div>);
-
+    </div>
+  );
 }

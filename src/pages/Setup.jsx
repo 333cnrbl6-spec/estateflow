@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -230,11 +230,11 @@ const INTEGRATION_GROUPS = [
 export default function Setup() {
   const [activeTab, setActiveTab] = useState("overview");
 
-  const allIntegrations = INTEGRATION_GROUPS.flatMap(g => g.integrations);
+  const allIntegrations = useMemo(() => INTEGRATION_GROUPS.flatMap(g => g.integrations), []);
   const connected = allIntegrations.filter(i => i.status === "active").length;
   const available = allIntegrations.filter(i => i.status === "available").length;
   const total = allIntegrations.length;
-  const progress = Math.round(((connected + available * 0.5) / total) * 100);
+  const progress = useMemo(() => Math.round(((connected + available * 0.5) / total) * 100), [connected, available, total]);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
