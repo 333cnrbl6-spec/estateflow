@@ -1,73 +1,95 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+/**
+ * handleStripeWebhook
+ * Processes Stripe webhook events (subscription.created, customer.subscription.updated, etc.)
+ */
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import Stripe from 'npm:stripe';
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
 Deno.serve(async (req) => {
   try {
-    const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
-    if (!stripeWebhookSecret) {
-      return Response.json(
-        { error: 'Webhook secret not configured' },
-        { status: 500 }
-      );
+    const signature = req.headers.get('stripe-signature');
+    if (!signature) {
+      return Response.json({ error: 'Missing signature' }, { status: 400 });
     }
 
-    const signature = req.headers.get('stripe-signature');
     const body = await req.text();
-
-    // Verify webhook signature using Stripe webhook library
-    const stripe = await import('npm:stripe@17.0.0').then(m => new m.default(
-      Deno.env.get('STRIPE_SECRET_KEY')
-    ));
 
     let event;
     try {
-      event = await stripe.webhooks.constructEventAsync(
-        body,
-        signature,
-        stripeWebhookSecret
-      );
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     } catch (err) {
-      return Response.json(
-        { error: `Webhook signature verification failed: ${err.message}` },
-        { status: 400 }
-      );
+      console.error('Webhook signature verification failed:', err.message);
+      return Response.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    // Now authenticate with Base44
-    const base44 = createClientFromRequest(req);
+    console.log(`Processing Stripe webhook: ${event.type}`);
 
-    // Handle payment intent events
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object;
-      const invoiceId = paymentIntent.metadata?.invoice_id;
+    // Handle subscription events
+    if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object;
+      const base44 = createClientFromRequest(req);
 
-      if (invoiceId) {
-        const today = new Date();
-        await base44.asServiceRole.entities.Invoice.update(invoiceId, {
-          payment_status: 'succeeded',
-          status: 'paid',
-          paid_date: today.toISOString().split('T')[0],
-          stripe_payment_intent_id: paymentIntent.id,
-          payment_method: 'stripe',
-        });
+      // Get user ID from metadata
+      const userId = subscription.metadata?.userId;
+      const tierId = subscription.metadata?.tierId;
+      const isFounder = subscription.metadata?.isFounder === 'true';
+
+      if (!userId) {
+        console.error('Missing userId in subscription metadata');
+        return Response.json({ success: true }); // Don't fail webhook
       }
-    } else if (event.type === 'payment_intent.payment_failed') {
-      const paymentIntent = event.data.object;
-      const invoiceId = paymentIntent.metadata?.invoice_id;
 
-      if (invoiceId) {
-        await base44.asServiceRole.entities.Invoice.update(invoiceId, {
-          payment_status: 'failed',
-          status: 'issued',
+      // Update user's subscription status
+      try {
+        await base44.asServiceRole.entities.User.update(userId, {
+          subscription_tier: tierId,
+          subscription_status: subscription.status,
+          subscription_id: subscription.id,
+          is_founder: isFounder,
+          subscription_end_date: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
         });
+        console.log(`Updated user ${userId} with subscription ${subscription.id}`);
+      } catch (updateErr) {
+        console.error('Failed to update user subscription:', updateErr.message);
       }
     }
 
-    return Response.json({ received: true });
+    if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object;
+      const base44 = createClientFromRequest(req);
+      const userId = subscription.metadata?.userId;
+
+      if (userId) {
+        try {
+          await base44.asServiceRole.entities.User.update(userId, {
+            subscription_status: 'cancelled',
+            subscription_tier: null,
+          });
+          console.log(`Cancelled subscription for user ${userId}`);
+        } catch (updateErr) {
+          console.error('Failed to cancel user subscription:', updateErr.message);
+        }
+      }
+    }
+
+    if (event.type === 'invoice.payment_succeeded') {
+      const invoice = event.data.object;
+      console.log(`Payment succeeded for invoice ${invoice.id}`);
+      // Could trigger email confirmation here
+    }
+
+    if (event.type === 'invoice.payment_failed') {
+      const invoice = event.data.object;
+      console.error(`Payment failed for invoice ${invoice.id}`);
+      // Could trigger email retry notification here
+    }
+
+    return Response.json({ success: true });
   } catch (error) {
-    console.error('Webhook processing error:', error);
-    return Response.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    console.error('Webhook handler error:', error);
+    return Response.json({ error: error.message }, { status: 500 });
   }
 });

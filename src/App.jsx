@@ -102,6 +102,7 @@ import Settings from './pages/Settings';
 import FinancialReportingModule from './pages/FinancialReportingModule';
 import ComplianceHub from './pages/ComplianceHub';
 import FinancialReconciliation from './pages/FinancialReconciliation';
+import Billing from './pages/Billing';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -210,7 +211,8 @@ const AuthenticatedApp = () => {
         <Route path="/reporting" element={<LandlordReportingDashboard />} />
         <Route path="/monthly-reports" element={<LandlordMonthlyReporting />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/billing" element={<BillingManagement />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/billing-legacy" element={<BillingManagement />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
         <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
         <Route path="/bulk-import-tester" element={<BulkImportTester />} />
