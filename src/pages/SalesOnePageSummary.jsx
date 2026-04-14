@@ -202,11 +202,11 @@ export default function SalesOnePageSummary() {
         {/* STATS ROW */}
         <div className="stats-row">
           {[
-            { n: '14', l: 'Integrated Modules' },
+            { n: '18+', l: 'Platform Modules' },
             { n: '100%', l: 'UK Law Compliant' },
             { n: '24/7', l: 'Emergency Callout' },
             { n: '<2wk', l: 'Go Live' },
-            { n: '£0', l: 'Data Migration Cost' },
+            { n: '70%', l: 'Fewer Inbound Queries' },
             { n: '20%', l: 'Partner Commission' },
           ].map((s, i) => (
             <div key={i} className="stat-box">
@@ -221,13 +221,13 @@ export default function SalesOnePageSummary() {
           <div className="col-left">
             {/* Modules */}
             <div className="content-section">
-              <div className="cs-title">Full Platform — Lettings, Blocks & Operations</div>
+              <div className="cs-title">Full Platform — Lettings, Blocks, Sales & Operations</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 4 }}>
-                {[
-                  { label: 'LETTINGS', color: '#dbeafe', text: '#1e40af', items: ['Tenancy Pipeline', 'HMO Licensing', 'Right to Rent', 'Deposit Mgmt', 'S21/S8 Notices'] },
-                  { label: 'BLOCK', color: '#dcfce7', text: '#166534', items: ['Service Charges', 'Ground Rent', 'RTM Management', 'Leaseholder Portal', 'Building Safety'] },
-                  { label: 'OPERATIONS', color: '#fef3c7', text: '#92400e', items: ['Maintenance Orders', 'Out-of-Hours 24/7', 'Banking & Expenses', 'CRM & Workflows', 'Doc Automation'] },
-                ].map((col, ci) => (
+               {[
+                 { label: 'LETTINGS', color: '#dbeafe', text: '#1e40af', items: ['Tenancy Pipeline', 'HMO Licensing', 'Right to Rent', 'Deposit Mgmt', 'S21/S8 Notices'] },
+                 { label: 'BLOCK', color: '#dcfce7', text: '#166534', items: ['Service Charges', 'Ground Rent', 'RTM Management', 'Leaseholder Portal', 'Building Safety'] },
+                 { label: 'SALES & OPS', color: '#fef3c7', text: '#92400e', items: ['Sales CRM & Listings', 'Maintenance Kanban', 'Out-of-Hours 24/7', 'Contractor Portal', 'Doc Automation'] },
+               ].map((col, ci) => (
                   <div key={ci} style={{ border: `1px solid ${col.color}`, borderRadius: 7, overflow: 'hidden' }}>
                     <div style={{ background: col.color, color: col.text, fontSize: 8, fontWeight: 700, padding: '4px 9px', letterSpacing: 1.5, textTransform: 'uppercase' }}>{col.label}</div>
                     <div style={{ padding: '6px 9px' }}>
@@ -240,7 +240,7 @@ export default function SalesOnePageSummary() {
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>Also includes: Rent Ledger, Compliance Audit, Land Registry, API Integrations, Accounting Sync (QBO/Xero), Tenant Portal, Analytics & Reporting</div>
+              <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>Also includes: Sales Pipeline, Agent Leaderboards, Buyer Portal, Tenant & Landlord Self-Service Portals, Contractor Mobile Portal, Rent Ledger, Accounting Sync (QBO/Xero/Sage), Automated Reporting</div>
             </div>
 
             {/* Compliance */}
@@ -272,11 +272,11 @@ export default function SalesOnePageSummary() {
               <div className="cs-title">Why Clients Switch to Premiso</div>
               <div className="benefit-items">
                 {[
-                  { icon: '🏠', text: '<strong>Lettings & blocks in one system</strong> — manage ASTs, HMOs, leasehold blocks and RTM companies from a single login.' },
-                  { icon: '🚨', text: '<strong>Never miss a compliance deadline</strong> — gas certs, EICRs, fire risk assessments, deposit registration and more, all auto-tracked.' },
-                  { icon: '💰', text: '<strong>Full financial control</strong> — rent ledger, arrears alerts, service charges, ground rent, banking and accounting sync.' },
-                  { icon: '📞', text: '<strong>24/7 out-of-hours service</strong> available standalone — GDPR-logged calls, contractor dispatch, and auto maintenance orders.' },
-                  { icon: '⏱️', text: '<strong>Save 8+ hours/week</strong> on admin through workflow automation, bulk document generation, and CRM tools.' },
+                  { icon: '🏠', text: '<strong>Lettings, blocks & sales in one system</strong> — manage ASTs, HMOs, leasehold blocks, RTM companies and sales listings from a single login.' },
+                  { icon: '🚨', text: '<strong>Never miss a compliance deadline</strong> — gas certs, EICRs, fire risk assessments, deposit registration and more, all auto-tracked with live alerts.' },
+                  { icon: '💰', text: '<strong>Full financial control</strong> — rent ledger, arrears alerts, service charges, ground rent, banking and QuickBooks/Xero/Sage accounting sync.' },
+                  { icon: '📱', text: '<strong>Self-service portals for every stakeholder</strong> — tenant, landlord, leaseholder and contractor portals reduce inbound queries by up to 70%.' },
+                  { icon: '📞', text: '<strong>24/7 out-of-hours service</strong> available standalone — GDPR-logged calls, contractor dispatch, and auto maintenance orders from every call.' },
                 ].map((b, i) => (
                   <div key={i} className="benefit-item">
                     <span className="benefit-icon">{b.icon}</span>

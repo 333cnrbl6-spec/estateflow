@@ -265,6 +265,75 @@ const alertBg = {
   success: 'bg-green-50 border-green-200',
 };
 
+// ── App Screenshot Mockups ────────────────────────────────────────────────────
+// Realistic pixel-perfect mockups of actual Premiso screens embedded in browser chrome
+
+function AppScreenshot({ title, url, children }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-slate-100 border-b border-slate-200 px-3 py-2 flex items-center gap-2">
+        <div className="flex gap-1">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        </div>
+        <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5 mx-2">
+          premiso.co.uk/{url}
+        </div>
+      </div>
+      <div className="p-3">{children}</div>
+    </div>
+  );
+}
+
+// Sidebar + content layout mockup
+function AppScreenshotWithSidebar({ url, activeNav, children }) {
+  const navItems = [
+    { icon: '📊', label: 'Dashboard' },
+    { icon: '🏢', label: 'Properties' },
+    { icon: '👥', label: 'Tenants' },
+    { icon: '🔧', label: 'Maintenance' },
+    { icon: '🛡️', label: 'Compliance' },
+    { icon: '💰', label: 'Financials' },
+    { icon: '📞', label: 'Out-of-Hours' },
+  ];
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-slate-100 border-b border-slate-200 px-3 py-1.5 flex items-center gap-2">
+        <div className="flex gap-1">
+          <div className="w-2 h-2 rounded-full bg-red-400" />
+          <div className="w-2 h-2 rounded-full bg-amber-400" />
+          <div className="w-2 h-2 rounded-full bg-green-400" />
+        </div>
+        <div className="flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 px-2 py-0.5 mx-1 truncate">
+          premiso.co.uk/{url}
+        </div>
+      </div>
+      <div className="flex" style={{ minHeight: 220 }}>
+        {/* Sidebar */}
+        <div className="w-28 shrink-0 border-r border-slate-200" style={{ background: 'hsl(221 55% 20%)' }}>
+          <div className="px-2 py-2 border-b border-white/10">
+            <div className="text-white text-xs font-bold">Premiso</div>
+            <div className="text-white/40 text-xs">Property Mgmt</div>
+          </div>
+          <div className="py-1">
+            {navItems.map((n, i) => (
+              <div key={i} className={`flex items-center gap-1.5 px-2 py-1.5 mx-1 rounded text-xs cursor-pointer ${
+                n.label === activeNav ? 'bg-white/15 text-white font-semibold' : 'text-white/60 hover:text-white'
+              }`}>
+                <span className="text-xs">{n.icon}</span>
+                <span className="text-xs">{n.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Content */}
+        <div className="flex-1 p-2.5 bg-slate-50 overflow-hidden">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 // ── Visuals ──────────────────────────────────────────────────────────────────
 
 function VisualDashboard({ slide }) {
@@ -626,6 +695,280 @@ function VisualGetStarted({ slide, onGetStarted }) {
   );
 }
 
+// ── App Screenshot Screen Components ─────────────────────────────────────────
+
+function ScreenDashboard({ slide }) {
+  return (
+    <AppScreenshotWithSidebar url="dashboard" activeNav="Dashboard">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between mb-1">
+          <div>
+            <p className="text-xs font-bold text-slate-800">Executive Dashboard</p>
+            <p className="text-xs text-slate-400">Admiral Group · 47 properties · 312 units</p>
+          </div>
+          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Live</span>
+        </div>
+        <div className="grid grid-cols-4 gap-1.5">
+          {slide.stats.map(s => (
+            <div key={s.label} className="bg-white rounded-lg p-2 border border-slate-200 text-center shadow-sm">
+              <p className="text-sm font-bold text-slate-900">{s.value}</p>
+              <p className="text-xs text-slate-500 leading-tight">{s.label}</p>
+              <p className={`text-xs mt-0.5 ${s.up ? 'text-green-600' : 'text-orange-500'}`}>{s.trend}</p>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-1 mt-1">
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Live Alerts</p>
+          {slide.alerts.slice(0, 3).map((a, i) => (
+            <div key={i} className={`flex items-center justify-between rounded-lg px-2 py-1.5 border text-xs ${alertBg[a.type]}`}>
+              <div className="flex items-center gap-1.5">
+                <span>{a.icon}</span>
+                <span className="text-slate-700 font-medium truncate max-w-[140px]">{a.text}</span>
+              </div>
+              <span className="text-primary font-semibold shrink-0 ml-1">{a.action} →</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
+function ScreenCompliance({ slide }) {
+  return (
+    <AppScreenshotWithSidebar url="certificate-compliance" activeNav="Compliance">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold text-slate-800">Certificate Compliance Hub</p>
+          <div className="flex gap-1">
+            <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">{slide.summary.expired} Expired</span>
+            <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">{slide.summary.warning} Warning</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-1 mb-1">
+          {[
+            { label: 'Total', value: slide.summary.total, color: 'bg-slate-100 text-slate-700' },
+            { label: 'Compliant', value: slide.summary.compliant, color: 'bg-green-100 text-green-700' },
+            { label: 'Expiring', value: slide.summary.warning, color: 'bg-amber-100 text-amber-700' },
+            { label: 'Expired', value: slide.summary.expired, color: 'bg-red-100 text-red-700' },
+          ].map(s => (
+            <div key={s.label} className={`rounded-lg p-1.5 text-center ${s.color}`}>
+              <p className="text-base font-bold">{s.value}</p>
+              <p className="text-xs">{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-slate-800 text-white">
+                <th className="text-left px-2 py-1.5 font-semibold">Certificate</th>
+                <th className="text-left px-2 py-1.5 font-semibold">Property</th>
+                <th className="text-right px-2 py-1.5 font-semibold">Expires</th>
+              </tr>
+            </thead>
+            <tbody>
+              {slide.certs.map((c, i) => (
+                <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                  <td className="px-2 py-1.5 font-medium text-slate-800">{c.name}</td>
+                  <td className="px-2 py-1.5 text-slate-500 truncate max-w-[80px]">{c.property}</td>
+                  <td className="px-2 py-1.5 text-right">
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold border ${certStatusColor[c.status]}`}>{c.expires}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
+function ScreenBlock({ slide }) {
+  return (
+    <AppScreenshotWithSidebar url="block-management" activeNav="Properties">
+      <div className="space-y-2">
+        <p className="text-xs font-bold text-slate-800">Block Management Overview</p>
+        {slide.blocks.map((b, i) => (
+          <div key={i} className="bg-white border border-slate-200 rounded-lg px-2.5 py-2">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs font-bold text-slate-800">{b.name} <span className="font-normal text-slate-400">· {b.units} units</span></p>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${certStatusColor[b.safety]}`}>
+                {b.safety === 'ok' ? '✓ Safety' : '⚠ Action'}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 text-xs">
+              <div className="bg-slate-50 rounded p-1 text-center"><p className="font-semibold text-slate-700">{b.sc_budget}</p><p className="text-slate-400">Budget</p></div>
+              <div className="bg-green-50 rounded p-1 text-center"><p className="font-semibold text-green-700">{b.collected}</p><p className="text-slate-400">Collected</p></div>
+              <div className={`rounded p-1 text-center ${b.pending > 0 ? 'bg-amber-50' : 'bg-slate-50'}`}><p className={`font-semibold ${b.pending > 0 ? 'text-amber-600' : 'text-slate-400'}`}>{b.pending}</p><p className="text-slate-400">Pending</p></div>
+            </div>
+          </div>
+        ))}
+        <div className="space-y-1">
+          {slide.tasks.map((t, i) => (
+            <div key={i} className={`flex items-center justify-between rounded px-2 py-1.5 text-xs border ${t.type === 'warning' ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-blue-50 border-blue-200 text-blue-800'}`}>
+              <span className="font-medium">{t.label}</span>
+              <span className="opacity-70">{t.due}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
+function ScreenMaintenance({ slide }) {
+  return (
+    <AppScreenshotWithSidebar url="maintenance-board" activeNav="Maintenance">
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-xs font-bold text-slate-800">Maintenance Kanban Board</p>
+          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">Live Job Board</span>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {slide.columns.map(col => (
+            <div key={col.label} className={`rounded-lg border-2 p-1.5 ${colColor[col.color]}`}>
+              <div className={`text-white text-xs font-bold rounded px-1.5 py-0.5 mb-1.5 inline-block ${colHeaderColor[col.color]}`}>
+                {col.label} ({col.jobs.length})
+              </div>
+              <div className="space-y-1.5">
+                {col.jobs.map((job, i) => (
+                  <div key={i} className="bg-white rounded-lg p-1.5 border border-slate-200 shadow-sm">
+                    <p className="text-xs font-semibold text-slate-800 leading-tight mb-1">{job.title}</p>
+                    <div className="flex items-center justify-between gap-1">
+                      <span className={`text-xs px-1 py-0.5 rounded font-medium ${priorityColor[job.priority]}`}>{job.priority}</span>
+                      <span className="text-xs text-slate-400">{job.unit}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
+function ScreenFinancials({ slide }) {
+  const max = Math.max(...slide.months.map(m => m.expected));
+  return (
+    <AppScreenshotWithSidebar url="financials" activeNav="Financials">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold text-slate-800">Financial Dashboard</p>
+          <span className="text-xs text-slate-400">April 2026</span>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5 mb-1">
+          {slide.breakdown.map(b => (
+            <div key={b.label} className={`rounded-lg p-2 border ${b.alert ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
+              <p className="text-xs text-slate-500">{b.label}</p>
+              <p className={`text-base font-bold ${b.alert ? 'text-red-600' : 'text-slate-900'}`}>{b.value}</p>
+              <p className={`text-xs ${b.alert ? 'text-red-500' : 'text-slate-400'}`}>{b.note}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white rounded-lg border border-slate-200 p-2">
+          <p className="text-xs font-semibold text-slate-600 mb-1.5">Rent Collection — 6 Months</p>
+          <div className="flex items-end gap-1.5 h-14">
+            {slide.months.map((m, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                <div className="w-full flex flex-col justify-end h-10">
+                  <div className="w-full rounded-t-sm bg-slate-200" style={{ height: `${(m.expected / max) * 100}%` }}>
+                    <div className={`w-full rounded-t-sm ${m.collected >= m.expected ? 'bg-green-500' : 'bg-primary'}`}
+                      style={{ height: `${(m.collected / m.expected) * 100}%` }} />
+                  </div>
+                </div>
+                <span className="text-xs text-slate-400">{m.month}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
+function ScreenPortals({ slide }) {
+  return (
+    <div className="space-y-2">
+      {/* Tenant Portal screenshot */}
+      <AppScreenshot title="Tenant Portal" url="tenant-self-service">
+        <div className="flex items-center gap-2 mb-2 p-2 bg-primary/5 rounded-lg border border-primary/10">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold shrink-0">{slide.tenant.name[0]}</div>
+          <div>
+            <p className="text-xs font-bold text-slate-800">{slide.tenant.name}</p>
+            <p className="text-xs text-slate-500">{slide.tenant.unit} · Rent {slide.tenant.status}</p>
+          </div>
+          <span className="ml-auto text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{slide.tenant.status}</span>
+        </div>
+        <div className="grid grid-cols-4 gap-1">
+          {slide.tenant.actions.map(a => (
+            <button key={a} className="text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-2 font-medium text-center hover:bg-primary/10 leading-tight">{a}</button>
+          ))}
+        </div>
+      </AppScreenshot>
+      {/* Landlord Portal screenshot */}
+      <AppScreenshot title="Landlord Portal" url="landlord-portal">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold shrink-0">{slide.landlord.name[0]}</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-slate-800">{slide.landlord.name}</p>
+            <p className="text-xs text-slate-500 truncate">{slide.landlord.portfolio}</p>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-sm font-bold text-primary">{slide.landlord.income}</p>
+            <p className="text-xs text-slate-400">{slide.landlord.yield} yield</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-1 mt-2">
+          {slide.landlord.actions.map(a => (
+            <button key={a} className="text-xs bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-1.5 font-medium text-center leading-tight">{a}</button>
+          ))}
+        </div>
+      </AppScreenshot>
+    </div>
+  );
+}
+
+function ScreenOutOfHours({ slide }) {
+  const statusColor = { 'Escalated': 'bg-amber-100 text-amber-700', 'Resolved': 'bg-green-100 text-green-700', 'Logged': 'bg-blue-100 text-blue-700' };
+  return (
+    <AppScreenshotWithSidebar url="out-of-hours" activeNav="Out-of-Hours">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold text-slate-800">Out-of-Hours Call Centre</p>
+            <p className="text-xs text-slate-400">24/7 Emergency Management</p>
+          </div>
+          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold animate-pulse">● Live</span>
+        </div>
+        <div className="grid grid-cols-4 gap-1">
+          {slide.stats.map(s => (
+            <div key={s.label} className="bg-white border rounded-lg p-1.5 text-center">
+              <p className="text-sm font-bold text-slate-900">{s.value}</p>
+              <p className="text-xs text-slate-500 leading-tight">{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <div className="bg-slate-800 px-2 py-1.5 text-xs font-semibold text-white">Recent Calls</div>
+          {slide.calls.map((c, i) => (
+            <div key={i} className={`flex items-center justify-between px-2 py-2 text-xs border-b border-slate-100 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-slate-800 truncate">{c.type} — {c.property}</p>
+                <p className="text-slate-400">{c.time} · {c.caller}</p>
+              </div>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0 ml-2 ${statusColor[c.status]}`}>{c.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AppScreenshotWithSidebar>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function SlideshowDemo({ onGetStarted }) {
@@ -665,15 +1008,15 @@ export default function SlideshowDemo({ onGetStarted }) {
 
   const renderVisual = () => {
     switch (current.id) {
-      case 'dashboard': return <VisualDashboard slide={current} />;
-      case 'compliance': return <VisualCompliance slide={current} />;
+      case 'dashboard': return <ScreenDashboard slide={current} />;
+      case 'compliance': return <ScreenCompliance slide={current} />;
       case 'btl': return <VisualBTL slide={current} />;
-      case 'block': return <VisualBlock slide={current} />;
-      case 'maintenance': return <VisualMaintenance slide={current} />;
-      case 'financials': return <VisualFinancials slide={current} />;
+      case 'block': return <ScreenBlock slide={current} />;
+      case 'maintenance': return <ScreenMaintenance slide={current} />;
+      case 'financials': return <ScreenFinancials slide={current} />;
       case 'sales': return <VisualSales slide={current} />;
-      case 'portals': return <VisualPortals slide={current} />;
-      case 'outofhours': return <VisualOutOfHours slide={current} />;
+      case 'portals': return <ScreenPortals slide={current} />;
+      case 'outofhours': return <ScreenOutOfHours slide={current} />;
       case 'contractor': return <VisualContractor slide={current} />;
       case 'reporting': return <VisualReporting slide={current} />;
       case 'getstarted': return <VisualGetStarted slide={current} onGetStarted={onGetStarted} />;

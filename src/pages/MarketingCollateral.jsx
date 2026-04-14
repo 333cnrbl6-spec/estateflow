@@ -113,44 +113,56 @@ export default function MarketingCollateral() {
             <p className="text-lg text-slate-500">Powered by Powell & Co Demo: 38 Companies | 13 Properties | 120+ Units</p>
           </div>
 
-          {/* Six Feature Sections */}
+          {/* Eight Feature Sections */}
           <div className="grid grid-cols-2 gap-6">
             {[
               {
                 icon: '🏢',
-                title: 'Portfolio Management',
-                description: 'Powell & Co operates 13 major properties across 6 UK regions with 120+ units and 38 company entities.',
-                features: ['Multi-company hierarchy', 'Companies House integration', 'Property region tracking'],
+                title: 'Lettings & Block Management',
+                description: 'Manage ASTs, HMOs, leasehold blocks and RTM companies from a single login. All property types, all tenancy structures.',
+                features: ['Tenancy pipeline & HMO licensing', 'Service charges & ground rent', 'RTM claim management', 'Building Safety Act 2023 register'],
+              },
+              {
+                icon: '🛡️',
+                title: 'Compliance & Certificate Hub',
+                description: 'Track every statutory obligation in real time — gas certs, EICRs, fire risk, EPC, deposit registration and more.',
+                features: ['Auto-expiry alerts per certificate', 'Full audit trail on every action', '14 compliance areas covered', 'Right to Rent & deposit tracking'],
               },
               {
                 icon: '💰',
                 title: 'Financial Management',
-                description: 'Powell & Co processes 200+ transactions monthly: rent, service charges, maintenance, and operating expenses.',
-                features: ['Multi-transaction tracking', '92% collection rate', 'Monthly analytics'],
+                description: 'Real-time rent ledger, arrears alerting, service charge accounts, and accounting sync with QuickBooks, Xero and Sage.',
+                features: ['92%+ rent collection rate', 'Automated arrears notifications', 'QBO / Xero / Sage sync', 'Monthly landlord statement auto-send'],
               },
               {
-                icon: '⚖️',
-                title: 'Compliance & Audit',
-                description: 'Powell & Co tracks 18+ compliance areas across 38 companies: Gas Safety, EPC, EICR, deposits, CRB checks.',
-                features: ['Full audit trail', 'Deadline tracking', 'Multi-jurisdiction support'],
-              },
-              {
-                icon: '👥',
-                title: 'Tenant Experience',
-                description: 'Powell & Co manages 60+ active tenants across 120+ units with secure access to documents and history.',
-                features: ['Payment tracking', 'Document access', 'Maintenance requests'],
+                icon: '📱',
+                title: 'Self-Service Portals',
+                description: 'Dedicated portals for tenants, landlords, leaseholders and contractors. Reduce inbound queries by up to 70%.',
+                features: ['Tenant rent payment & maintenance', 'Landlord statements & approvals', 'Leaseholder service charge access', 'Contractor mobile job portal'],
               },
               {
                 icon: '🔧',
-                title: 'Operations Hub',
-                description: 'Powell & Co manages 40+ maintenance orders across multiple contractors and 7 service categories.',
-                features: ['Priority scheduling', 'Contractor mgmt', 'Cost tracking'],
+                title: 'Maintenance & Operations',
+                description: 'Live Kanban job board from tenant report to invoice approval. Contractor dispatch, photo uploads and cost tracking.',
+                features: ['Priority-based Kanban board', 'Contractor job pack dispatch', 'Before/after photo uploads', 'Invoice matching & approval'],
               },
               {
-                icon: '🔗',
-                title: 'API & Integrations',
-                description: 'Powell & Co integrates with QuickBooks, Xero, and custom APIs for seamless data synchronization.',
-                features: ['Webhook support', 'Auto-sync', 'Custom APIs'],
+                icon: '📞',
+                title: '24/7 Out-of-Hours Service',
+                description: 'GDPR-compliant emergency call handling available standalone or fully integrated. Automatic maintenance order on every call.',
+                features: ['Structured call logging & GDPR consent', 'Auto-maintenance order creation', 'Contractor dispatch from approved list', '34 calls/month avg · 97% resolved'],
+              },
+              {
+                icon: '🏠',
+                title: 'Residential Sales CRM',
+                description: 'Full sales pipeline from valuation to completion. Listings, buyer portal, viewing management and agent leaderboards.',
+                features: ['Listings & offer tracking pipeline', 'Buyer/seller CRM with follow-ups', 'Viewing scheduler & confirmation', 'Agent performance leaderboards'],
+              },
+              {
+                icon: '📊',
+                title: 'Automated Reporting',
+                description: 'Branded reports auto-delivered to the right people at the right time — no manual compilation required.',
+                features: ['Monthly landlord statements', 'Service charge accounts (quarterly)', 'Compliance digest (weekly)', 'Portfolio performance & yield reports'],
               },
             ].map((section, idx) => (
               <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
@@ -170,17 +182,17 @@ export default function MarketingCollateral() {
 
           {/* Key Metrics */}
           <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-8">
-            <h3 className="text-2xl font-bold mb-6">Platform Capabilities</h3>
+            <h3 className="text-2xl font-bold mb-6">Platform at a Glance</h3>
             <div className="grid grid-cols-4 gap-4">
               {[
-                 { label: 'Properties', value: '13' },
-                 { label: 'Units', value: '120+' },
-                 { label: 'Companies', value: '38' },
-                 { label: 'Compliance Areas', value: '18+' },
-                 { label: 'Transactions', value: '200+' },
-                 { label: 'Maintenance Orders', value: '40+' },
-                 { label: 'Active Tenants', value: '60+' },
-                 { label: 'UK Regions', value: '6' },
+                 { label: 'Platform Modules', value: '18+' },
+                 { label: 'Compliance Areas', value: '14+' },
+                 { label: 'UK Law Compliant', value: '100%' },
+                 { label: 'Go Live Time', value: '<2 wks' },
+                 { label: 'Query Reduction', value: '70%' },
+                 { label: 'OOH Response', value: '8 min' },
+                 { label: 'Partner Commission', value: '20%' },
+                 { label: 'Data Migration Cost', value: '£0' },
               ].map((metric, idx) => (
                 <div key={idx} className="text-center">
                   <p className="text-3xl font-bold text-blue-300">{metric.value}</p>
@@ -192,11 +204,29 @@ export default function MarketingCollateral() {
 
           {/* Regulatory Framework */}
           <div className="bg-green-50 border-l-4 border-green-600 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">✓ Regulatory & Compliance Framework</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">✓ Regulatory & Compliance Coverage</h3>
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div><strong>England Lettings:</strong> MEES (2018), Gas Safety Act, EPC, Deposit Protection, How to Rent</div>
-              <div><strong>Wales Lettings:</strong> Renting Homes (Wales) Act 2016, FFHH Standard, Rent Smart Wales</div>
-              <div><strong>Corporate:</strong> Companies House filing, Directors' returns, Confirmation Statements</div>
+              <div><strong>England Lettings:</strong> MEES (2018), Gas Safety Act (Annual CP12), EICR (5-yr), EPC, Deposit Protection (30-day), Right to Rent, How to Rent Guide</div>
+              <div><strong>Block Management:</strong> Building Safety Act 2023, Section 20 Consultation (£250/unit), Leaseholder & Freehold Reform Act 2024, RTM (CLRA 2002), Client Money Protection</div>
+              <div><strong>Wales & Corporate:</strong> Renting Homes (Wales) Act 2016, Rent Smart Wales, Companies House filing, Directors' returns, Confirmation Statements</div>
+            </div>
+          </div>
+          
+          {/* Personalised Demo Builder callout */}
+          <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-xl p-6">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">🎯</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Personalised Demo Builder</h3>
+                <p className="text-blue-200 text-sm leading-relaxed mb-3">
+                  Every prospect gets a demo built with their real company data — pulled live from Companies House. Real directors, real company structure, real portfolio size. No generic demos. Just Premiso, set up exactly for them.
+                </p>
+                <div className="flex gap-4 text-sm">
+                  <span className="bg-white/10 px-3 py-1 rounded-full">Real CH API data</span>
+                  <span className="bg-white/10 px-3 py-1 rounded-full">Personalised in 5 mins</span>
+                  <span className="bg-white/10 px-3 py-1 rounded-full">48hr demo access</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -215,52 +245,52 @@ export default function MarketingCollateral() {
           <div className="space-y-6">
             {[
               {
-                title: 'Dashboard',
-                subtitle: 'Powell & Co Overview',
-                metrics: ['38 Companies', '13 Properties', '120+ Units', '91% Occupancy'],
-                features: ['Real-time analytics', 'Compliance tracking', 'Financial summary'],
+                title: 'Executive Dashboard',
+                subtitle: 'Portfolio Command Centre',
+                metrics: ['Real-time KPIs', 'Compliance alerts', 'Rent collection rate', 'Open maintenance jobs'],
+                features: ['Live portfolio overview', 'One-click alert resolution', 'Compliance traffic light system'],
               },
               {
-                title: 'Companies',
-                subtitle: 'Group Structure Management',
-                metrics: ['38 Companies', '36 Active', '50+ Directors'],
-                features: ['Companies House integration', 'Filing deadlines', 'Company hierarchy'],
+                title: 'Compliance Hub',
+                subtitle: 'Certificate Tracking',
+                metrics: ['Gas Safety · EICR · EPC', 'Fire Risk · Asbestos', 'Deposit Registration', 'Right to Rent'],
+                features: ['Auto-expiry alerts', 'Full audit trail', 'Certificate upload & delivery log'],
               },
               {
-                title: 'Properties & Units',
-                subtitle: 'Portfolio Holdings',
-                metrics: ['13 Properties', '120+ Units', '91% Occupancy'],
-                features: ['Unit tracking', 'Lease management', 'Regional distribution'],
+                title: 'Block & Leasehold Management',
+                subtitle: 'Service Charge Accounts',
+                metrics: ['Service charge budgets', 'Section 20 consultation', 'RTM claim management', 'Building Safety Register'],
+                features: ['Leaseholder portal', 'Ground rent ledger', 'Reserve fund tracking'],
               },
               {
-                title: 'Financial Reporting',
-                subtitle: 'Powell & Co Analytics',
-                metrics: ['200+ Transactions', '92% Collection', '£2,100 Avg Rent'],
-                features: ['Multi-transaction tracking', 'Collection analytics', 'Cost analysis'],
+                title: 'Maintenance Kanban',
+                subtitle: 'Live Job Board',
+                metrics: ['Reported → In Progress → Done', 'Emergency priority routing', 'Contractor dispatch'],
+                features: ['Photo upload by contractors', 'Invoice matching & approval', 'SLA response tracking'],
               },
               {
-                title: 'Compliance Audit',
-                subtitle: 'Multi-Company Tracking',
-                metrics: ['18+ Checkpoints', '38 Companies', 'Gas/EPC/EICR'],
-                features: ['Full audit trails', 'Deadline tracking', 'Multi-jurisdiction'],
+                title: 'Financial Dashboard',
+                subtitle: 'Rent, SC & Banking',
+                metrics: ['98%+ collection rate', 'Automated arrears alerts', 'QBO / Xero / Sage sync'],
+                features: ['12-month income charts', 'Property profitability', 'One-click landlord statements'],
               },
               {
-                title: 'Tenant Portal',
-                subtitle: 'Powell & Co Tenants',
-                metrics: ['60+ Active Tenants', '120+ Units', '13 Properties'],
-                features: ['Secure access', 'Payment history', 'Maintenance tracking'],
+                title: 'Self-Service Portals',
+                subtitle: 'Tenant · Landlord · Leaseholder · Contractor',
+                metrics: ['70% fewer inbound calls', 'Rent payment online', 'Document self-serve'],
+                features: ['Tenant maintenance submission', 'Landlord invoice approval', 'Contractor mobile job portal'],
               },
               {
-                title: 'API Integration Hub',
-                subtitle: 'Powell & Co Integrations',
-                metrics: ['QuickBooks', 'Xero', 'Custom APIs'],
-                features: ['Webhook support', 'Auto-sync', 'Service connectors'],
+                title: 'Out-of-Hours Call Centre',
+                subtitle: '24/7 Emergency Management',
+                metrics: ['34 calls/month avg', '8 min avg response', '97% resolved', 'GDPR logged'],
+                features: ['Auto maintenance order on call close', 'Contractor dispatch', 'Full audit trail'],
               },
               {
-                title: 'Maintenance Orders',
-                subtitle: 'Powell & Co Operations',
-                metrics: ['40+ Orders', '7+ Contractors', '7 Categories'],
-                features: ['Priority routing', 'Contractor mgmt', 'Cost tracking'],
+                title: 'Residential Sales CRM',
+                subtitle: 'From Valuation to Completion',
+                metrics: ['Listings pipeline', 'Offer tracking', 'Agent leaderboards', 'Buyer portal'],
+                features: ['Viewing scheduler & confirmation', 'Sales progression pipeline', 'Unified with lettings data'],
               },
             ].map((page, idx) => (
               <div key={idx} className="border-2 border-slate-300 rounded-lg overflow-hidden">
@@ -335,28 +365,28 @@ export default function MarketingCollateral() {
             <h3 className="text-xl font-bold text-slate-900">Key Differentiators</h3>
             {[
               {
-                powell: 'UK-first regulatory focus (MEES, Renting Homes Act, Companies House)',
-                others: 'General-purpose with compliance bolt-ons',
+                powell: 'UK-first regulatory focus — Building Safety Act 2023, Renters\' Rights Bill, Leasehold Reform Act 2024',
+                others: 'General-purpose with compliance bolt-ons, often US-origin platforms',
               },
               {
-                powell: 'Bulk document generation (1000+ documents)',
-                others: 'Manual templates or third-party integrations',
+                powell: 'Lettings, block management AND residential sales in one unified system',
+                others: 'Separate platforms for lettings and sales — duplicate data, no unified landlord view',
               },
               {
-                powell: 'Unified all-in-one platform',
-                others: 'Modular add-ons increasing TCO',
+                powell: '4 self-service portals (tenant, landlord, leaseholder, contractor) — reduces inbound queries by 70%',
+                others: 'Basic tenant portal only, often a chargeable add-on with limited functionality',
               },
               {
-                powell: 'Webhook & custom API framework',
-                others: 'Limited API depth',
+                powell: '24/7 out-of-hours call service built-in and available standalone — auto maintenance order on every call',
+                others: 'No built-in out-of-hours solution — agents rely on personal mobiles with no audit trail',
               },
               {
-                powell: 'Full audit trail for every action',
-                others: 'Basic compliance logging',
+                powell: 'Personalised demo builder using live Companies House data — unique to each prospect in 5 minutes',
+                others: 'Generic product demos with no personalisation or real client data',
               },
               {
-                powell: 'White-label tenant portal included',
-                others: 'Tenant portal often separate cost',
+                powell: 'Automated reporting suite — landlord statements, SC accounts, compliance digest, portfolio yield',
+                others: 'Manual report generation or expensive third-party add-ons required',
               },
             ].map((diff, idx) => (
               <div key={idx} className="border-l-4 border-amber-600 bg-amber-50 p-4 rounded">
@@ -397,29 +427,30 @@ export default function MarketingCollateral() {
             <div className="bg-green-50 border-2 border-green-600 rounded-lg p-6">
               <h4 className="font-bold text-green-900 mb-3">✓ Choose Premiso When:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
-                <li>✓ Large, complex multi-company portfolios (250+ units)</li>
-                <li>✓ Full regulatory compliance required</li>
-                <li>✓ Bulk document generation needed</li>
-                <li>✓ Custom API integrations required</li>
-                <li>✓ Unified all-in-one platform desired</li>
+                <li>✓ You manage lettings, blocks AND/OR sales — all in one system</li>
+                <li>✓ Full UK regulatory compliance is non-negotiable</li>
+                <li>✓ You want self-service portals for tenants, landlords and leaseholders</li>
+                <li>✓ 24/7 out-of-hours cover is required (standalone or integrated)</li>
+                <li>✓ Automated landlord reporting will save you significant admin time</li>
+                <li>✓ You want a personalised demo built from your real company data</li>
               </ul>
             </div>
             <div className="bg-slate-50 border-2 border-slate-400 rounded-lg p-6">
               <h4 className="font-bold text-slate-900 mb-3">Alternative Options:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
-                <li>🔵 <strong>Goodlord:</strong> Lettings agents, simple management</li>
-                <li>🟣 <strong>AppFolio:</strong> Market leader, strong features</li>
-                <li>🟠 <strong>Keogh:</strong> Budget-friendly, UK-focused</li>
-                <li>🟢 <strong>Yardi:</strong> Enterprise mega-suites</li>
+                <li>🔵 <strong>Goodlord:</strong> Simple lettings agents, basic AST management only</li>
+                <li>🟣 <strong>AppFolio:</strong> US-origin market leader, high cost, limited UK compliance</li>
+                <li>🟠 <strong>Reapit/Jupix:</strong> Traditional agent software, no block management</li>
+                <li>🟢 <strong>Yardi:</strong> Enterprise mega-suites, 12-month implementation, very high TCO</li>
               </ul>
             </div>
           </div>
 
           {/* Footer */}
           <div className="bg-slate-900 text-white rounded-lg p-6 text-center text-sm">
-            <p className="font-semibold mb-2">Premiso Platform</p>
-            <p>Enterprise property management built for modern portfolio management</p>
-            <p className="text-slate-400 mt-3">Marketing Collateral | March 2026</p>
+            <p className="font-semibold mb-2">Premiso · The Complete UK Property Management Platform</p>
+            <p>Lettings · Block Management · Sales · Compliance · Portals · Out-of-Hours · Reporting</p>
+            <p className="text-slate-400 mt-3">Marketing Collateral · April 2026 · RBM (North West) Limited · 01204 695919 · info@rbm-nw.co.uk</p>
           </div>
         </div>
       </div>

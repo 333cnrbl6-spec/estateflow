@@ -717,11 +717,77 @@ export default function SalesBrochure() {
           </div>
         </div>
 
-        {/* ===== PAGE 7: PRICING & TIERS ===== */}
+        {/* ===== PAGE 7: PORTALS, SALES & REPORTING ===== */}
         <div className="page page-break">
           <div className="page-header">
             <div className="page-logo">Premiso</div>
-            <div className="page-num">PRICING & PACKAGES · 07</div>
+            <div className="page-num">PORTALS & REPORTING · 07</div>
+          </div>
+
+          <div className="section-eyebrow">Self-Service Portals & Automated Reporting</div>
+          <h2 className="section-h2">Every Stakeholder Has<br />Their Own Portal.</h2>
+          <p className="section-desc">
+            Premiso provides purpose-built self-service portals for tenants, landlords, leaseholders and contractors — each with the tools they need to act without calling you. Clients report a 70% reduction in inbound queries once portals go live.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
+            {[
+              { icon: '🏠', title: 'Tenant Portal', color: '#eff6ff', border: '#bfdbfe', items: ['Pay rent & view payment history', 'Submit maintenance requests with photos', 'Download documents (tenancy, gas cert, EICR)', 'Message property manager directly', 'Track maintenance job progress live'] },
+              { icon: '🤝', title: 'Landlord Portal', color: '#f0fdf4', border: '#bbf7d0', items: ['Live rent collection & yield metrics', 'One-click monthly statement download', 'Approve or reject contractor invoices', 'View compliance status for each property', 'Maintenance cost breakdowns & reports'] },
+              { icon: '🏛️', title: 'Leaseholder Portal', color: '#fef9c3', border: '#fde047', items: ['Service charge account balance & history', 'View budgets and reserve fund status', 'Section 20 consultation notices & responses', 'Download building safety register documents', 'Raise and track disputes or queries'] },
+              { icon: '🔧', title: 'Contractor Portal', color: '#fdf4ff', border: '#e9d5ff', items: ['View assigned jobs with full details & photos', 'Submit quotes, invoices and progress updates', 'Upload completion photos before/after', 'Track payment status in real time', 'Mobile-optimised — works on any device'] },
+            ].map((p, i) => (
+              <div key={i} style={{ background: p.color, border: `1px solid ${p.border}`, borderRadius: 12, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <div style={{ fontSize: 22 }}>{p.icon}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{p.title}</div>
+                </div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {p.items.map((item, ii) => (
+                    <li key={ii} style={{ fontSize: 11, color: '#475569', padding: '3px 0', display: 'flex', gap: 7, alignItems: 'flex-start', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                      <span style={{ color: '#0ea5e9', fontWeight: 700, flexShrink: 0 }}>✓</span>{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)', borderRadius: 12, padding: '20px 28px', color: 'white', marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10 }}>Automated Reports — Sent Automatically</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+              {[
+                { icon: '📄', title: 'Monthly Landlord Statement', desc: 'Income, expenses & net return — auto-sent 1st of each month' },
+                { icon: '🏛️', title: 'Service Charge Accounts', desc: 'Budget vs actual, reserve fund, S.20 — sent quarterly' },
+                { icon: '🛡️', title: 'Compliance Audit Digest', desc: 'Certificate status across all properties — weekly email digest' },
+                { icon: '💸', title: 'Arrears & Collections', desc: 'Outstanding rent with full chase history — real-time access' },
+                { icon: '📈', title: 'Portfolio Performance', desc: 'Occupancy, yield, void periods — quarterly deep dive' },
+                { icon: '🔧', title: 'Maintenance Cost Report', desc: 'Per property, per category, per contractor — monthly breakdown' },
+              ].map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'white', marginBottom: 2 }}>{r.title}</div>
+                    <div style={{ fontSize: 10, color: '#94a3b8', lineHeight: 1.5 }}>{r.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: '14px 18px' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#14532d', marginBottom: 4 }}>🤝 Residential Sales Module</div>
+            <p style={{ fontSize: 12, color: '#166534', lineHeight: 1.7, margin: 0 }}>
+              Premiso also includes a full residential <strong>sales CRM</strong> — listings management, viewing scheduling, offer tracking, agent performance leaderboards and a buyer portal. Hybrid agents managing both lettings and sales get one unified system with zero duplication.
+            </p>
+          </div>
+        </div>
+
+        {/* ===== PAGE 8: PRICING & TIERS ===== */}
+        <div className="page page-break">
+          <div className="page-header">
+            <div className="page-logo">Premiso</div>
+            <div className="page-num">PRICING & PACKAGES · 08</div>
           </div>
 
           <div className="section-eyebrow">Simple, Transparent Pricing</div>
@@ -807,7 +873,7 @@ export default function SalesBrochure() {
         <div className="page page-break">
           <div className="page-header">
             <div className="page-logo">Premiso</div>
-            <div className="page-num">ONBOARDING & SUPPORT · 08</div>
+            <div className="page-num">ONBOARDING & SUPPORT · 09</div>
           </div>
 
           <div className="section-eyebrow">Getting Started</div>
@@ -883,7 +949,7 @@ export default function SalesBrochure() {
         <div className="cta-page page-break">
           <div className="page-header" style={{ borderBottomColor: 'rgba(255,255,255,0.2)' }}>
             <div className="page-logo" style={{ color: 'white' }}>Premiso</div>
-            <div className="page-num" style={{ color: '#64748b' }}>GET IN TOUCH · 09</div>
+            <div className="page-num" style={{ color: '#64748b' }}>GET IN TOUCH · 10</div>
           </div>
 
           <div className="cta-main">
