@@ -1,0 +1,443 @@
+{
+  "name": "FireSafetyRegister",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "hmo",
+        "block_of_flats",
+        "multi_occupancy",
+        "shared_accommodation"
+      ],
+      "description": "Type of multi-occupancy property"
+    },
+    "register_created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When fire safety register was created"
+    },
+    "register_created_by": {
+      "type": "string",
+      "description": "User email who created register"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update to register"
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": [
+        "compliant",
+        "partially_compliant",
+        "non_compliant",
+        "action_required"
+      ],
+      "description": "Overall fire safety compliance status"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Overall fire risk level"
+    },
+    "fra_schedule": {
+      "type": "object",
+      "properties": {
+        "current_fra_id": {
+          "type": "string",
+          "description": "Reference to current FireRiskAssessment"
+        },
+        "current_fra_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_fra_due": {
+          "type": "string",
+          "format": "date",
+          "description": "When next FRA is due"
+        },
+        "fra_frequency_months": {
+          "type": "number",
+          "default": 12,
+          "description": "How often FRA must be repeated (usually 12 months for HMOs)"
+        },
+        "fra_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fra_id": {
+                "type": "string"
+              },
+              "assessment_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "assessor_name": {
+                "type": "string"
+              },
+              "overall_risk": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Historical FRA records"
+        }
+      }
+    },
+    "fire_alarm_schedule": {
+      "type": "object",
+      "properties": {
+        "alarm_system_type": {
+          "type": "string",
+          "enum": [
+            "mains_with_backup",
+            "battery_powered",
+            "none"
+          ],
+          "description": "Type of fire alarm system"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Rooms where alarms are installed"
+        },
+        "last_tested_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_test_due": {
+          "type": "string",
+          "format": "date"
+        },
+        "test_frequency_days": {
+          "type": "number",
+          "default": 7,
+          "description": "How often alarms must be tested (usually weekly)"
+        },
+        "test_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "test_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "tested_by": {
+                "type": "string"
+              },
+              "test_result": {
+                "type": "string",
+                "enum": [
+                  "pass",
+                  "fail"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Testing log"
+        }
+      }
+    },
+    "extinguisher_maintenance": {
+      "type": "object",
+      "properties": {
+        "extinguishers_installed": {
+          "type": "boolean"
+        },
+        "extinguisher_count": {
+          "type": "number"
+        },
+        "extinguisher_locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "serial_number": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "last_serviced_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_service_due": {
+          "type": "string",
+          "format": "date"
+        },
+        "service_frequency_months": {
+          "type": "number",
+          "default": 12,
+          "description": "How often extinguishers must be serviced"
+        },
+        "service_contractor": {
+          "type": "string",
+          "description": "Name of servicing contractor"
+        },
+        "service_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "service_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "contractor_name": {
+                "type": "string"
+              },
+              "extinguishers_serviced": {
+                "type": "number"
+              },
+              "certificate_url": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Maintenance history"
+        }
+      }
+    },
+    "evacuation_plan": {
+      "type": "object",
+      "properties": {
+        "plan_in_place": {
+          "type": "boolean",
+          "default": true
+        },
+        "plan_document_url": {
+          "type": "string",
+          "description": "URL to evacuation plan PDF"
+        },
+        "plan_last_updated": {
+          "type": "string",
+          "format": "date"
+        },
+        "assembly_point_identified": {
+          "type": "boolean"
+        },
+        "assembly_point_location": {
+          "type": "string"
+        },
+        "assembly_point_map_url": {
+          "type": "string"
+        },
+        "occupant_briefing_required": {
+          "type": "boolean",
+          "default": true
+        },
+        "occupant_briefing_schedule": {
+          "type": "string",
+          "enum": [
+            "on_arrival",
+            "annually",
+            "on_request"
+          ],
+          "default": "on_arrival"
+        },
+        "briefing_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "briefing_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "occupants_briefed": {
+                "type": "number"
+              },
+              "briefed_by": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Record of occupant briefings"
+        }
+      }
+    },
+    "emergency_lighting": {
+      "type": "object",
+      "properties": {
+        "installed": {
+          "type": "boolean"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "last_tested_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_test_due": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "fire_doors": {
+      "type": "object",
+      "properties": {
+        "installed": {
+          "type": "boolean"
+        },
+        "door_count": {
+          "type": "number"
+        },
+        "inspection_frequency_months": {
+          "type": "number",
+          "default": 12
+        },
+        "last_inspected_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_inspection_due": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "remedial_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "source_fra_id": {
+            "type": "string",
+            "description": "Which FRA identified this action"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "immediate",
+              "urgent",
+              "non-urgent"
+            ]
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "overdue"
+            ]
+          },
+          "completion_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence_url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Outstanding remedial actions from FRAs"
+    },
+    "training_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "training_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "training_type": {
+            "type": "string",
+            "enum": [
+              "fire_safety_awareness",
+              "evacuation_procedure",
+              "extinguisher_use",
+              "first_aid"
+            ]
+          },
+          "staff_count": {
+            "type": "number"
+          },
+          "trainer_name": {
+            "type": "string"
+          },
+          "certificate_url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Staff fire safety training records"
+    },
+    "incidents_logged": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "incident_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "incident_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "reported_to_authorities": {
+            "type": "boolean"
+          },
+          "actions_taken": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Fire-related incidents and near-misses"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_id",
+    "property_type",
+    "register_created_date",
+    "compliance_status"
+  ]
+}
