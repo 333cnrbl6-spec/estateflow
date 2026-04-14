@@ -5,14 +5,14 @@
  * onboarding flow.
  *
  * Steps:
- *   0  Search & confirm company        (Companies House search)
- *   1  Confirm directors / officers / PSC (Companies House officers + PSC)
- *   2  Other directorships             (CH officer appointments lookup)
+ *   0  Search & select group companies    (multi-select from CH results)
+ *   1  Confirm directors / officers / PSC (merged from all selected companies)
+ *   2  Other directorships               (CH officer appointments lookup)
  *   3  Summary & confirm
  *
  * Props:
  *   mode          'demo' | 'onboarding'
- *   onComplete    fn({ company, officers, selectedAssociated })
+ *   onComplete    fn({ company, allCompanies, officers, selectedAssociated })
  */
 
 import React, { useState } from 'react';
@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import {
   Search, Loader2, CheckCircle2, Circle, Check, X,
   Building2, Users, ChevronRight, AlertCircle, ExternalLink,
-  RefreshCw,
+  RefreshCw, Plus, Star,
 } from 'lucide-react';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -39,7 +39,7 @@ function StatusBadge({ status }) {
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colour} capitalize`}>{status || 'Unknown'}</span>;
 }
 
-function PersonRow({ person, selected, onToggle }) {
+function PersonRow({ person, selected, onToggle, sourceTags }) {
   const isResigned = !!person.resigned_on;
   return (
     <button
@@ -57,13 +57,23 @@ function PersonRow({ person, selected, onToggle }) {
           {(person.name || '?').charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0">
-          <p className="font-semibold text-slate-800 text-sm truncate">{person.name}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="font-semibold text-slate-800 text-sm truncate">{person.name}</p>
+            {sourceTags && sourceTags.length > 1 && (
+              <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-medium">
+                {sourceTags.length} cos
+              </span>
+            )}
+          </div>
           <p className="text-xs text-slate-500">
             {person.role}
             {person.appointed_on ? ` · Appointed ${person.appointed_on}` : ''}
             {person.resigned_on ? ` · Resigned ${person.resigned_on}` : ''}
             {person.nature_of_control ? ` · ${person.nature_of_control}` : ''}
           </p>
+          {sourceTags && sourceTags.length > 0 && (
+            <p className="text-xs text-slate-400 mt-0.5 truncate">{sourceTags.join(' · ')}</p>
+          )}
         </div>
       </div>
       {selected ? <Check className="w-5 h-5 text-primary shrink-0" /> : <Circle className="w-5 h-5 text-slate-300 shrink-0" />}
@@ -71,14 +81,18 @@ function PersonRow({ person, selected, onToggle }) {
   );
 }
 
-// ─── STEP 0 — Company Search ──────────────────────────────────────────────
+// ─── STEP 0 — Company Search (multi-select) ───────────────────────────────
 
-function StepCompany({ query, setQuery, results, loading, error, selectedCompany, onSearch, onSelect, onClear }) {
+function StepCompany({ query, setQuery, results, loading, error, selectedCompanies, onSearch, onToggleCompany, onSetPrimary }) {
+  const primaryId = selectedCompanies[0]?.company_number;
+
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="text-xl font-bold text-slate-900">Find your company</h3>
-        <p className="text-sm text-slate-500 mt-1">Search Companies House — we'll pull your registered details automatically.</p>
+        <h3 className="text-xl font-bold text-slate-900">Find your company group</h3>
+        <p className="text-sm text-slate-500 mt-1">
+          Search Companies House. Select <strong>one or more</strong> companies — we'll merge their directors to identify your whole group.
+        </p>
       </div>
 
       {/* Search bar */}
@@ -89,7 +103,7 @@ function StepCompany({ query, setQuery, results, loading, error, selectedCompany
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && onSearch()}
-            placeholder="Company name or number e.g. Powell & Co Property"
+            placeholder="Company name or number e.g. Powell & Co"
             className="w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:border-primary focus:outline-none text-sm transition-colors"
           />
         </div>
@@ -106,65 +120,120 @@ function StepCompany({ query, setQuery, results, loading, error, selectedCompany
         </div>
       )}
 
-      {/* Results list */}
-      {!selectedCompany && results.length > 0 && (
-        <div className="border-2 rounded-xl divide-y overflow-hidden shadow-sm">
-          {results.map((co, i) => (
-            <button key={i} onClick={() => onSelect(co)}
-              className="w-full text-left p-4 hover:bg-primary/5 transition-colors group">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-slate-800 group-hover:text-primary text-sm">{co.company_name}</p>
-                    <StatusBadge status={co.status} />
+      {/* Results grid — multi-select */}
+      {results.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            {results.length} results — tick all that belong to your group
+          </p>
+          <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            {results.map((co, i) => {
+              const isSelected = !!selectedCompanies.find(s => s.company_number === co.company_number);
+              const isPrimary = co.company_number === primaryId;
+              return (
+                <button key={i} onClick={() => onToggleCompany(co)}
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all group ${
+                    isSelected
+                      ? isPrimary ? 'border-primary bg-primary/5' : 'border-blue-400 bg-blue-50'
+                      : 'border-slate-200 hover:border-primary/30'
+                  }`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {isSelected ? (
+                          <Check className={`w-4 h-4 shrink-0 ${isPrimary ? 'text-primary' : 'text-blue-500'}`} />
+                        ) : (
+                          <Circle className="w-4 h-4 text-slate-300 shrink-0" />
+                        )}
+                        <p className={`font-semibold text-sm ${isSelected ? (isPrimary ? 'text-primary' : 'text-blue-800') : 'text-slate-800'}`}>
+                          {co.company_name}
+                        </p>
+                        <StatusBadge status={co.status} />
+                        {isPrimary && (
+                          <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded font-semibold flex items-center gap-0.5">
+                            <Star className="w-3 h-3" /> Primary
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5 ml-6">{co.company_number} · {co.company_type}</p>
+                      {co.registered_address && <p className="text-xs text-slate-400 mt-0.5 ml-6 truncate">{co.registered_address}</p>}
+                      {co.date_of_creation && <p className="text-xs text-slate-400 ml-6">Incorporated {co.date_of_creation}</p>}
+                    </div>
+                    {/* If selected but not primary, allow setting as primary */}
+                    {isSelected && !isPrimary && (
+                      <button
+                        onClick={e => { e.stopPropagation(); onSetPrimary(co); }}
+                        className="text-xs text-blue-600 hover:text-primary border border-blue-200 rounded px-2 py-1 shrink-0 whitespace-nowrap"
+                      >
+                        Set primary
+                      </button>
+                    )}
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">{co.company_number} · {co.company_type}</p>
-                  {co.registered_address && <p className="text-xs text-slate-400 mt-0.5 truncate">{co.registered_address}</p>}
-                  {co.date_of_creation && <p className="text-xs text-slate-400">Incorporated {co.date_of_creation}</p>}
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary shrink-0 mt-1" />
-              </div>
-            </button>
-          ))}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Confirmed company */}
-      {selectedCompany && (
-        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 space-y-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-              <p className="font-bold text-green-900">{selectedCompany.company_name}</p>
+      {/* Selected summary */}
+      {selectedCompanies.length > 0 && (
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
+          <p className="text-xs font-bold text-primary uppercase tracking-wider">
+            {selectedCompanies.length} compan{selectedCompanies.length !== 1 ? 'ies' : 'y'} selected
+          </p>
+          {selectedCompanies.map((co, i) => (
+            <div key={i} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 min-w-0">
+                {i === 0 ? <Star className="w-3.5 h-3.5 text-primary shrink-0" /> : <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
+                <span className="font-medium text-slate-800 truncate">{co.company_name}</span>
+                {i === 0 && <span className="text-xs text-slate-400 shrink-0">primary</span>}
+              </div>
+              <button onClick={() => onToggleCompany(co)} className="text-slate-300 hover:text-red-400 ml-2 shrink-0">
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button onClick={onClear} className="text-slate-400 hover:text-slate-600">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs pl-7">
-            <div><span className="text-slate-500">Number:</span> <span className="font-medium">{selectedCompany.company_number}</span></div>
-            <div><span className="text-slate-500">Status:</span> <StatusBadge status={selectedCompany.status} /></div>
-            {selectedCompany.date_of_creation && (
-              <div><span className="text-slate-500">Incorporated:</span> <span className="font-medium">{selectedCompany.date_of_creation}</span></div>
-            )}
-            {selectedCompany.company_type && (
-              <div><span className="text-slate-500">Type:</span> <span className="font-medium">{selectedCompany.company_type}</span></div>
-            )}
-          </div>
-          {selectedCompany.registered_address && (
-            <p className="text-xs text-green-700 pl-7">{selectedCompany.registered_address}</p>
-          )}
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-// ─── STEP 1 — Officers & PSC ──────────────────────────────────────────────
+// ─── STEP 1 — Officers & PSC (merged from all companies) ──────────────────
 
-function StepOfficers({ company, officers, psc, loading, error, selected, onToggle, onRefetch }) {
-  const current = officers.filter(o => !o.resigned_on);
-  const resigned = officers.filter(o => o.resigned_on);
+function StepOfficers({ allCompanies, officersByCompany, pscByCompany, loadingCompanies, error, selected, onToggle, onRefetch }) {
+  // Merge all officers across companies, tracking which companies each person appears in
+  const mergedOfficers = [];
+  const mergedPsc = [];
+  const nameRoleKey = (p) => `${p.name}||${p.role}`;
+
+  allCompanies.forEach(co => {
+    const offs = officersByCompany[co.company_number] || [];
+    offs.forEach(o => {
+      const key = nameRoleKey(o);
+      const existing = mergedOfficers.find(m => nameRoleKey(m) === key);
+      if (existing) {
+        if (!existing._sourceTags.includes(co.company_name)) existing._sourceTags.push(co.company_name);
+      } else {
+        mergedOfficers.push({ ...o, _sourceTags: [co.company_name] });
+      }
+    });
+    const pscs = pscByCompany[co.company_number] || [];
+    pscs.forEach(p => {
+      const existing = mergedPsc.find(m => m.name === p.name);
+      if (existing) {
+        if (!existing._sourceTags.includes(co.company_name)) existing._sourceTags.push(co.company_name);
+      } else {
+        mergedPsc.push({ ...p, _sourceTags: [co.company_name] });
+      }
+    });
+  });
+
+  const current = mergedOfficers.filter(o => !o.resigned_on);
+  const resigned = mergedOfficers.filter(o => o.resigned_on);
+  const anyLoading = Object.values(loadingCompanies).some(Boolean);
+  const primaryCompany = allCompanies[0];
 
   return (
     <div className="space-y-5">
@@ -172,7 +241,7 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
         <div>
           <h3 className="text-xl font-bold text-slate-900">Directors & Officers</h3>
           <p className="text-sm text-slate-500 mt-1">
-            Officers found for <strong>{company?.company_name}</strong> on Companies House. Select who to include.
+            Combined officers from <strong>{allCompanies.length} compan{allCompanies.length !== 1 ? 'ies' : 'y'}</strong>. Select who to include.
           </p>
         </div>
         <button onClick={onRefetch} className="text-slate-400 hover:text-primary mt-1" title="Refresh from Companies House">
@@ -180,8 +249,26 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
         </button>
       </div>
 
-      {loading && (
-        <div className="text-center py-10">
+      {/* Company fetch status */}
+      {allCompanies.length > 1 && (
+        <div className="flex flex-wrap gap-2">
+          {allCompanies.map(co => {
+            const isLoading = loadingCompanies[co.company_number];
+            const isDone = !isLoading && (officersByCompany[co.company_number] !== undefined);
+            return (
+              <span key={co.company_number} className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${
+                isLoading ? 'bg-amber-50 text-amber-600' : isDone ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'
+              }`}>
+                {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : isDone ? <Check className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                {co.company_name.length > 25 ? co.company_name.slice(0, 25) + '…' : co.company_name}
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      {anyLoading && (
+        <div className="text-center py-8">
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
           <p className="text-sm text-slate-500">Fetching officers from Companies House...</p>
         </div>
@@ -194,24 +281,26 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
         </div>
       )}
 
-      {!loading && (
+      {!anyLoading && (
         <>
           {current.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Current Officers</p>
               {current.map((o, i) => (
                 <PersonRow key={i} person={o}
+                  sourceTags={allCompanies.length > 1 ? o._sourceTags : null}
                   selected={!!selected.find(s => s.name === o.name && s.role === o.role)}
                   onToggle={onToggle} />
               ))}
             </div>
           )}
 
-          {psc.length > 0 && (
+          {mergedPsc.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Persons with Significant Control</p>
-              {psc.map((p, i) => (
+              {mergedPsc.map((p, i) => (
                 <PersonRow key={i} person={p}
+                  sourceTags={allCompanies.length > 1 ? p._sourceTags : null}
                   selected={!!selected.find(s => s.name === p.name)}
                   onToggle={onToggle} />
               ))}
@@ -227,6 +316,7 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
               <div className="space-y-2 mt-2">
                 {resigned.map((o, i) => (
                   <PersonRow key={i} person={o}
+                    sourceTags={allCompanies.length > 1 ? o._sourceTags : null}
                     selected={!!selected.find(s => s.name === o.name && s.role === o.role)}
                     onToggle={onToggle} />
                 ))}
@@ -234,7 +324,7 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
             </details>
           )}
 
-          {officers.length === 0 && psc.length === 0 && !error && (
+          {mergedOfficers.length === 0 && mergedPsc.length === 0 && !error && (
             <div className="text-center py-8 border-2 border-dashed rounded-xl text-slate-400">
               <Users className="w-8 h-8 mx-auto mb-2" />
               <p className="text-sm">No officers found. They may not yet be publicly listed.</p>
@@ -255,15 +345,15 @@ function StepOfficers({ company, officers, psc, loading, error, selected, onTogg
 // ─── STEP 2 — Associated companies via directorships ─────────────────────
 
 function StepAssociated({
-  company, selectedOfficers, appointmentsMap, loadingMap,
+  allCompanies, selectedOfficers, appointmentsMap, loadingMap,
   onSearchAppointments, selectedAssociated, onToggleAssociated,
   manualQuery, setManualQuery, onManualSearch, manualResults, manualLoading,
 }) {
+  const knownNumbers = new Set(allCompanies.map(c => c.company_number));
   const allFound = Object.values(appointmentsMap).flat();
-  // deduplicate
   const unique = allFound.filter((a, idx, arr) =>
     arr.findIndex(b => b.company_number === a.company_number) === idx &&
-    a.company_number !== company?.company_number
+    !knownNumbers.has(a.company_number)
   );
 
   const anyLoading = Object.values(loadingMap).some(Boolean) || manualLoading;
@@ -273,8 +363,8 @@ function StepAssociated({
       <div>
         <h3 className="text-xl font-bold text-slate-900">Other Directorships</h3>
         <p className="text-sm text-slate-500 mt-1">
-          Search Companies House for other companies your selected directors / officers are involved with.
-          Tick any you'd like to add to your demo environment.
+          Find other companies your directors are involved with — to identify any remaining group companies.
+          Tick any you'd like to include.
         </p>
       </div>
 
@@ -360,7 +450,6 @@ function StepAssociated({
         </div>
       )}
 
-      {/* Show message if searches done but nothing found */}
       {!anyLoading && Object.keys(appointmentsMap).length > 0 && unique.length === 0 && (
         <div className="text-center py-4 border-2 border-dashed rounded-xl text-slate-400 text-sm">
           No other directorships found for the selected officers. Use manual search below to add companies.
@@ -401,7 +490,7 @@ function StepAssociated({
       {/* Selected summary */}
       {selectedAssociated.length > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-1">
-          <p className="text-xs font-bold text-blue-800">{selectedAssociated.length} associated compan{selectedAssociated.length !== 1 ? 'ies' : 'y'} selected:</p>
+          <p className="text-xs font-bold text-blue-800">{selectedAssociated.length} additional compan{selectedAssociated.length !== 1 ? 'ies' : 'y'} selected:</p>
           {selectedAssociated.map((co, i) => (
             <div key={i} className="flex items-center justify-between text-xs text-blue-700">
               <span>{co.company_name}</span>
@@ -418,27 +507,50 @@ function StepAssociated({
 
 // ─── STEP 3 — Summary ─────────────────────────────────────────────────────
 
-function StepSummary({ company, selectedOfficers, selectedAssociated, mode }) {
+function StepSummary({ allCompanies, selectedOfficers, selectedAssociated, mode }) {
+  const primaryCompany = allCompanies[0];
+  const extraGroupCompanies = allCompanies.slice(1);
+  const totalCompanies = allCompanies.length + selectedAssociated.length;
+
   return (
     <div className="space-y-5">
       <div>
         <h3 className="text-xl font-bold text-slate-900">
           {mode === 'demo' ? 'Ready to build your demo' : 'Confirm your details'}
         </h3>
-        <p className="text-sm text-slate-500 mt-1">Review what we'll set up, then confirm to continue.</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Review what we'll set up across <strong>{totalCompanies} compan{totalCompanies !== 1 ? 'ies' : 'y'}</strong>, then confirm to continue.
+        </p>
       </div>
 
       <div className="space-y-3 border-2 rounded-xl p-5 bg-slate-50 divide-y">
+        {/* Primary company */}
         <div className="pb-3">
-          <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Primary Company</p>
+          <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-2">Primary Company</p>
           <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-primary" />
+            <Building2 className="w-5 h-5 text-primary shrink-0" />
             <div>
-              <p className="font-bold text-slate-900">{company?.company_name}</p>
-              <p className="text-xs text-slate-500">{company?.company_number} · {company?.registered_address}</p>
+              <p className="font-bold text-slate-900">{primaryCompany?.company_name}</p>
+              <p className="text-xs text-slate-500">{primaryCompany?.company_number} · {primaryCompany?.registered_address}</p>
             </div>
           </div>
         </div>
+
+        {/* Group companies selected at step 0 */}
+        {extraGroupCompanies.length > 0 && (
+          <div className="py-3">
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-2">Group Companies ({extraGroupCompanies.length})</p>
+            <div className="space-y-1.5">
+              {extraGroupCompanies.map((co, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm">
+                  <Building2 className="w-4 h-4 text-blue-400 shrink-0" />
+                  <span className="text-slate-800">{co.company_name}</span>
+                  <span className="text-slate-400 text-xs">· {co.company_number}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {selectedOfficers.length > 0 && (
           <div className="py-3">
@@ -459,11 +571,11 @@ function StepSummary({ company, selectedOfficers, selectedAssociated, mode }) {
 
         {selectedAssociated.length > 0 && (
           <div className="pt-3">
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-2">Associated Companies ({selectedAssociated.length})</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-2">Additional Associated Companies ({selectedAssociated.length})</p>
             <div className="space-y-1">
               {selectedAssociated.map((co, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm">
-                  <Building2 className="w-4 h-4 text-blue-400 shrink-0" />
+                  <Building2 className="w-4 h-4 text-purple-400 shrink-0" />
                   <span className="text-slate-800">{co.company_name}</span>
                   <span className="text-slate-400 text-xs">· {co.company_number}</span>
                 </div>
@@ -490,22 +602,22 @@ const STEPS = [
 export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
   const [step, setStep] = useState(0);
 
-  // Step 0
+  // Step 0 — multi-company selection
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [company, setCompany] = useState(null);
+  const [selectedCompanies, setSelectedCompanies] = useState([]); // first = primary
 
-  // Step 1
-  const [officers, setOfficers] = useState([]);
-  const [psc, setPsc] = useState([]);
-  const [officersLoading, setOfficersLoading] = useState(false);
+  // Step 1 — merged officers per company
+  const [officersByCompany, setOfficersByCompany] = useState({});   // { company_number: [officers] }
+  const [pscByCompany, setPscByCompany] = useState({});
+  const [loadingCompanies, setLoadingCompanies] = useState({});
   const [officersError, setOfficersError] = useState(null);
   const [selectedOfficers, setSelectedOfficers] = useState([]);
 
   // Step 2
-  const [appointmentsMap, setAppointmentsMap] = useState({});   // { officerName: [appointments] }
+  const [appointmentsMap, setAppointmentsMap] = useState({});
   const [loadingMap, setLoadingMap] = useState({});
   const [selectedAssociated, setSelectedAssociated] = useState([]);
   const [manualQuery, setManualQuery] = useState('');
@@ -533,35 +645,64 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
     }
   };
 
-  const selectCompany = (co) => {
-    setCompany(co);
-    setResults([]);
-    setSearchError(null);
+  const toggleCompany = (co) => {
+    setSelectedCompanies(prev => {
+      const exists = prev.find(s => s.company_number === co.company_number);
+      if (exists) return prev.filter(s => s.company_number !== co.company_number);
+      return [...prev, co];
+    });
   };
 
-  // ── Fetch officers ─────────────────────────────────────────────────────
-  const fetchOfficers = async (co) => {
-    const target = co || company;
-    if (!target?.company_number) return;
-    setOfficersLoading(true);
+  const setPrimaryCompany = (co) => {
+    setSelectedCompanies(prev => {
+      const rest = prev.filter(s => s.company_number !== co.company_number);
+      return [co, ...rest];
+    });
+  };
+
+  // ── Fetch officers for all selected companies ──────────────────────────
+  const fetchAllOfficers = async (companies) => {
+    const targets = companies || selectedCompanies;
+    if (!targets.length) return;
     setOfficersError(null);
-    setOfficers([]);
-    setPsc([]);
-    try {
-      const [offRes, pscRes] = await Promise.all([
-        ch('get_officers', { company_number: target.company_number }),
-        ch('get_psc', { company_number: target.company_number }),
-      ]);
-      setOfficers(offRes.officers || []);
-      setPsc(pscRes.psc || []);
-      // Auto-select current active officers
-      const active = (offRes.officers || []).filter(o => !o.resigned_on);
-      setSelectedOfficers(active);
-    } catch {
-      setOfficersError('Could not fetch officers from Companies House.');
-    } finally {
-      setOfficersLoading(false);
-    }
+
+    // Kick off parallel fetches
+    const newLoading = {};
+    targets.forEach(co => { newLoading[co.company_number] = true; });
+    setLoadingCompanies(newLoading);
+
+    const results = await Promise.allSettled(
+      targets.map(co =>
+        Promise.all([
+          ch('get_officers', { company_number: co.company_number }),
+          ch('get_psc', { company_number: co.company_number }),
+        ]).then(([offRes, pscRes]) => ({ company_number: co.company_number, officers: offRes.officers || [], psc: pscRes.psc || [] }))
+      )
+    );
+
+    const newOfficers = {};
+    const newPsc = {};
+    results.forEach(r => {
+      if (r.status === 'fulfilled') {
+        newOfficers[r.value.company_number] = r.value.officers;
+        newPsc[r.value.company_number] = r.value.psc;
+      }
+    });
+    setOfficersByCompany(newOfficers);
+    setPscByCompany(newPsc);
+
+    // Auto-select all unique active officers across companies
+    const autoSelected = [];
+    const seen = new Set();
+    Object.values(newOfficers).flat().forEach(o => {
+      if (!o.resigned_on) {
+        const key = o.name + o.role;
+        if (!seen.has(key)) { seen.add(key); autoSelected.push(o); }
+      }
+    });
+    setSelectedOfficers(autoSelected);
+
+    setLoadingCompanies({});
   };
 
   const toggleOfficer = (person) => {
@@ -577,17 +718,15 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
   const searchAppointments = async (officer) => {
     setLoadingMap(prev => ({ ...prev, [officer.name]: true }));
     try {
-      // Try to resolve officer_id from CH officer search first
       const searchRes = await ch('search_officer', { query: officer.name });
       const match = (searchRes.officers || []).find(o =>
         o.name?.toLowerCase().includes(officer.name.split(' ')[0].toLowerCase())
       );
-      // Use real officer_id if found, otherwise pass name as query for LLM fallback
       const officer_id = match?.officer_id || officer.name;
       const appRes = await ch('get_officer_appointments', {
         officer_id,
         query: officer.name,
-        company_number: company?.company_number,
+        company_number: selectedCompanies[0]?.company_number,
       });
       setAppointmentsMap(prev => ({ ...prev, [officer.name]: appRes.appointments || [] }));
     } catch {
@@ -622,23 +761,28 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
 
   // ── Navigation ─────────────────────────────────────────────────────────
   const goNext = () => {
-    if (step === 0 && company) {
-      fetchOfficers(company);
+    if (step === 0 && selectedCompanies.length) {
+      fetchAllOfficers(selectedCompanies);
       setStep(1);
     } else if (step === 1) {
       setStep(2);
     } else if (step === 2) {
       setStep(3);
     } else if (step === 3) {
-      onComplete?.({ company, officers: selectedOfficers, selectedAssociated });
+      onComplete?.({
+        company: selectedCompanies[0],
+        allCompanies: selectedCompanies,
+        officers: selectedOfficers,
+        selectedAssociated,
+      });
     }
   };
 
   const canNext = () => {
-    if (step === 0) return !!company;
-    if (step === 1) return true; // optional selection
+    if (step === 0) return selectedCompanies.length > 0;
+    if (step === 1) return true;
     if (step === 2) return true;
-    if (step === 3) return !!company;
+    if (step === 3) return selectedCompanies.length > 0;
     return false;
   };
 
@@ -678,25 +822,27 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
             <StepCompany
               query={query} setQuery={setQuery}
               results={results} loading={searching} error={searchError}
-              selectedCompany={company}
+              selectedCompanies={selectedCompanies}
               onSearch={searchCompanies}
-              onSelect={selectCompany}
-              onClear={() => { setCompany(null); setResults([]); }}
+              onToggleCompany={toggleCompany}
+              onSetPrimary={setPrimaryCompany}
             />
           )}
           {step === 1 && (
             <StepOfficers
-              company={company}
-              officers={officers} psc={psc}
-              loading={officersLoading} error={officersError}
+              allCompanies={selectedCompanies}
+              officersByCompany={officersByCompany}
+              pscByCompany={pscByCompany}
+              loadingCompanies={loadingCompanies}
+              error={officersError}
               selected={selectedOfficers}
               onToggle={toggleOfficer}
-              onRefetch={() => fetchOfficers(company)}
+              onRefetch={() => fetchAllOfficers(selectedCompanies)}
             />
           )}
           {step === 2 && (
             <StepAssociated
-              company={company}
+              allCompanies={selectedCompanies}
               selectedOfficers={selectedOfficers}
               appointmentsMap={appointmentsMap}
               loadingMap={loadingMap}
@@ -710,7 +856,7 @@ export default function CompaniesHouseWizard({ mode = 'demo', onComplete }) {
           )}
           {step === 3 && (
             <StepSummary
-              company={company}
+              allCompanies={selectedCompanies}
               selectedOfficers={selectedOfficers}
               selectedAssociated={selectedAssociated}
               mode={mode}

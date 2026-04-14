@@ -44,6 +44,7 @@ export default function PersonalisedDemoWizard({ onComplete }) {
   const [demoReady, setDemoReady] = useState(false);
 
   const handleChComplete = (data) => {
+    // data now includes allCompanies (multi-select from step 0)
     setChData(data);
     setPhase('portfolio');
   };
@@ -59,6 +60,7 @@ export default function PersonalisedDemoWizard({ onComplete }) {
         companyName: chData?.company?.company_name,
         companyNumber: chData?.company?.company_number,
         directors: chData?.officers || [],
+        groupCompanies: chData?.allCompanies || [],
         associatedCompanies: chData?.selectedAssociated || [],
         portfolioSize,
         propertyTypes,
@@ -89,8 +91,9 @@ export default function PersonalisedDemoWizard({ onComplete }) {
               <p className="font-bold text-slate-900">{chData?.company?.company_name}</p>
               <p className="text-xs text-slate-500">
                 {chData?.company?.company_number}
+                {chData?.allCompanies?.length > 1 && ` · ${chData.allCompanies.length} group companies`}
                 {chData?.officers?.length > 0 && ` · ${chData.officers.length} officer${chData.officers.length !== 1 ? 's' : ''}`}
-                {chData?.selectedAssociated?.length > 0 && ` · ${chData.selectedAssociated.length} associated compan${chData.selectedAssociated.length !== 1 ? 'ies' : 'y'}`}
+                {chData?.selectedAssociated?.length > 0 && ` · ${chData.selectedAssociated.length} additional compan${chData.selectedAssociated.length !== 1 ? 'ies' : 'y'}`}
               </p>
             </div>
           </div>
@@ -187,8 +190,9 @@ export default function PersonalisedDemoWizard({ onComplete }) {
               <p className="text-slate-500 mb-6">
                 A personalised Premiso environment has been built for{' '}
                 <strong>{chData?.company?.company_name}</strong>.
-                {chData?.selectedAssociated?.length > 0 &&
-                  ` Includes ${chData.selectedAssociated.length} associated compan${chData.selectedAssociated.length !== 1 ? 'ies' : 'y'}.`}
+                {(chData?.allCompanies?.length > 1 || chData?.selectedAssociated?.length > 0) && (
+                  ` Includes ${(chData?.allCompanies?.length || 1) + (chData?.selectedAssociated?.length || 0)} companies total.`
+                )}
               </p>
               <div className="flex flex-col gap-3 max-w-sm mx-auto">
                 <Button

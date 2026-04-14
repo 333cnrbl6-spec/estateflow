@@ -53,6 +53,7 @@ export default function SalesDemoSetup() {
           registered_address: data.company?.registered_address,
           founded: data.company?.date_of_creation,
           key_people: (data.officers || []).map(o => ({ name: o.name, role: o.role })),
+          group_companies: (data.allCompanies || []).slice(1).map(c => ({ name: c.company_name, number: c.company_number })),
           associated_companies: data.selectedAssociated || [],
         },
       });
@@ -110,10 +111,11 @@ export default function SalesDemoSetup() {
             <CardContent className="pt-12 pb-12 text-center">
               <Building2 className="w-14 h-14 text-primary mx-auto mb-4 animate-pulse" />
               <h2 className="text-xl font-bold text-white mb-2">
-                Building Demo for {chData?.company?.company_name}…
+                Building Demo for {chData?.company?.company_name}
+                {chData?.allCompanies?.length > 1 && ` + ${chData.allCompanies.length - 1} more`}…
               </h2>
               <p className="text-slate-400 text-sm mb-6">
-                Creating company, properties, tenants, financial records and compliance data.
+                Creating {chData?.allCompanies?.length > 1 ? `${chData.allCompanies.length} companies` : 'company'}, properties, tenants, financial records and compliance data.
               </p>
               <div className="max-w-xs mx-auto space-y-2 text-sm text-left">
                 {buildProgress.map((s, i) => (
