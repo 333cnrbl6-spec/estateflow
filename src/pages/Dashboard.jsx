@@ -16,6 +16,7 @@ import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import ErrorAnalyticsWidget from '@/components/dashboard/ErrorAnalyticsWidget';
 import PropertyMapView from '@/components/dashboard/PropertyMapView';
+import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -168,8 +169,17 @@ export default function Dashboard() {
           <ErrorAnalyticsWidget />
         </div>
 
-        <div className="mb-8">
-          <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
+          </div>
+          <div>
+            <ComplianceReportGenerator 
+              properties={properties}
+              certificates={[...gasCerts, ...elecCerts, ...epcs]}
+              maintenance={maintenance}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
