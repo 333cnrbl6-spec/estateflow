@@ -1,13 +1,19 @@
 /**
  * PersonalisedDemoWizard
- * Landing page demo builder — wraps CompaniesHouseWizard then collects
- * portfolio details and builds the demo.
+ * Landing page demo builder flow:
+ *   1. CompaniesHouseWizard  — multi-select company group + directors
+ *   2. Portfolio details      — size, types, pain points + optional file upload
+ *   3. DemoLeadGate          — capture name/email/consent BEFORE access
+ *   4. Building              — animated build progress
+ *   5. Done                  — session granted, redirect to lead form / register CTA
  */
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Building2, Loader2, ChevronRight } from 'lucide-react';
 import CompaniesHouseWizard from '@/components/onboarding/CompaniesHouseWizard';
+import DemoLeadGate from '@/components/landing/DemoLeadGate';
+import DemoDataEnrichment from '@/components/landing/DemoDataEnrichment';
 
 const PROPERTY_TYPES = ['Residential Lettings', 'Block Management', 'Commercial', 'Student', 'HMO', 'Mixed Portfolio'];
 const PORTFOLIO_SIZES = ['1–10 units', '11–50 units', '51–150 units', '151–500 units', '500+ units'];
@@ -16,6 +22,7 @@ const PAIN_POINTS = [
   'Financial reporting', 'Tenant communication', 'Contractor management',
   'Document management', 'Block & service charge accounting',
 ];
+const SOFTWARE_OPTIONS = ['Reapit', 'Jupix', 'Qube', 'Fixflo', 'Spreadsheets', 'Nothing yet', 'Other'];
 
 const BUILD_STEPS = [
   'Setting up company profile',
@@ -27,29 +34,33 @@ const BUILD_STEPS = [
   'Setting up maintenance workflows',
 ];
 
+// ── Phases: 'ch' | 'portfolio' | 'gate' | 'building' | 'done'
+
 export default function PersonalisedDemoWizard({ onComplete }) {
-  // phase: 'ch' → Companies House 4-step wizard
-  //         'portfolio' → portfolio / pain point questions
-  //         'building' → animated build
   const [phase, setPhase] = useState('ch');
   const [chData, setChData] = useState(null);
 
-  // Portfolio phase
+  // Portfolio phase state
   const [portfolioSize, setPortfolioSize] = useState('');
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [painPoints, setPainPoints] = useState([]);
+  const [currentSoftware, setCurrentSoftware] = useState('');
+  const [filesUploaded, setFilesUploaded] = useState([]);
 
   // Build phase
   const [buildProgress, setBuildProgress] = useState([]);
   const [demoReady, setDemoReady] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState(null);
+
+  const portfolioData = { portfolioSize, propertyTypes, painPoints, currentSoftware, filesUploaded };
 
   const handleChComplete = (data) => {
-    // data now includes allCompanies (multi-select from step 0)
     setChData(data);
     setPhase('portfolio');
   };
 
-  const buildDemo = async () => {
+  const handleLeadGranted = async (session) => {
+    setSessionInfo(session);
     setPhase('building');
     for (let i = 0; i < BUILD_STEPS.length; i++) {
       await new Promise(r => setTimeout(r, 650));
@@ -65,18 +76,18 @@ export default function PersonalisedDemoWizard({ onComplete }) {
         portfolioSize,
         propertyTypes,
         painPoints,
+        filesUploaded,
       });
     } catch {
-      // show ready regardless
+      // proceed regardless — demo is always shown
     }
     setDemoReady(true);
   };
 
-  // ── Portfolio step ──────────────────────────────────────────────────────
+  // ── Portfolio step ───────────────────────────────────────────────────────
   if (phase === 'portfolio') {
     return (
       <div className="max-w-2xl mx-auto">
-        {/* Mini progress */}
         <div className="flex items-center gap-2 mb-6 text-sm text-slate-500">
           <span className="text-primary font-semibold">✓ Company confirmed</span>
           <ChevronRight className="w-4 h-4" />
@@ -93,14 +104,13 @@ export default function PersonalisedDemoWizard({ onComplete }) {
                 {chData?.company?.company_number}
                 {chData?.allCompanies?.length > 1 && ` · ${chData.allCompanies.length} group companies`}
                 {chData?.officers?.length > 0 && ` · ${chData.officers.length} officer${chData.officers.length !== 1 ? 's' : ''}`}
-                {chData?.selectedAssociated?.length > 0 && ` · ${chData.selectedAssociated.length} additional compan${chData.selectedAssociated.length !== 1 ? 'ies' : 'y'}`}
               </p>
             </div>
           </div>
 
           {/* Portfolio size */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-3">Portfolio size</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-3">Portfolio size *</label>
             <div className="flex flex-wrap gap-2">
               {PORTFOLIO_SIZES.map(s => (
                 <button key={s} onClick={() => setPortfolioSize(s)}
@@ -145,9 +155,28 @@ export default function PersonalisedDemoWizard({ onComplete }) {
             </div>
           </div>
 
+          {/* Current software */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-3">Current software (optional)</label>
+            <div className="flex flex-wrap gap-2">
+              {SOFTWARE_OPTIONS.map(sw => (
+                <button key={sw}
+                  onClick={() => setCurrentSoftware(prev => prev === sw ? '' : sw)}
+                  className={`px-3 py-1.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                    currentSoftware === sw ? 'bg-slate-700 text-white border-slate-700' : 'border-slate-200 hover:border-slate-400'
+                  }`}>
+                  {sw}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* File upload enrichment */}
+          <DemoDataEnrichment onFilesChange={setFilesUploaded} />
+
           <div className="flex gap-3 pt-2">
             <Button variant="outline" onClick={() => setPhase('ch')}>← Back</Button>
-            <Button onClick={buildDemo} disabled={!portfolioSize}
+            <Button onClick={() => setPhase('gate')} disabled={!portfolioSize}
               className="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold text-base py-3">
               Build My Demo →
             </Button>
@@ -157,7 +186,30 @@ export default function PersonalisedDemoWizard({ onComplete }) {
     );
   }
 
-  // ── Building / Done ─────────────────────────────────────────────────────
+  // ── Lead gate (before demo access) ──────────────────────────────────────
+  if (phase === 'gate') {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-2 mb-6 text-sm text-slate-500">
+          <span className="text-primary font-semibold">✓ Company confirmed</span>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-primary font-semibold">✓ Portfolio details</span>
+          <ChevronRight className="w-4 h-4" />
+          <span className="font-semibold text-slate-700">Access demo</span>
+        </div>
+        <DemoLeadGate
+          chData={chData}
+          portfolioData={portfolioData}
+          onGranted={handleLeadGranted}
+        />
+        <div className="text-center mt-3">
+          <button onClick={() => setPhase('portfolio')} className="text-xs text-slate-400 hover:text-slate-600">← Back</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Building / Done ──────────────────────────────────────────────────────
   if (phase === 'building') {
     return (
       <div className="max-w-xl mx-auto">
@@ -187,26 +239,30 @@ export default function PersonalisedDemoWizard({ onComplete }) {
             <>
               <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-slate-900 mb-2">Your Demo is Ready!</h3>
-              <p className="text-slate-500 mb-6">
+              <p className="text-slate-500 mb-2">
                 A personalised Premiso environment has been built for{' '}
                 <strong>{chData?.company?.company_name}</strong>.
-                {(chData?.allCompanies?.length > 1 || chData?.selectedAssociated?.length > 0) && (
-                  ` Includes ${(chData?.allCompanies?.length || 1) + (chData?.selectedAssociated?.length || 0)} companies total.`
-                )}
+                {(chData?.allCompanies?.length > 1 || chData?.selectedAssociated?.length > 0) &&
+                  ` Includes ${(chData?.allCompanies?.length || 1) + (chData?.selectedAssociated?.length || 0)} companies.`}
+              </p>
+              <p className="text-xs text-slate-400 mb-6">
+                Prepared for <strong>{sessionInfo?.email}</strong> · Access expires in 48 hours
               </p>
               <div className="flex flex-col gap-3 max-w-sm mx-auto">
                 <Button
                   onClick={() => {
-                    onComplete?.();
+                    onComplete?.(sessionInfo);
                     setTimeout(() => {
                       document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' });
                     }, 100);
                   }}
                   className="w-full bg-primary text-white font-bold py-3 text-base"
                 >
-                  Register to Access Your Demo →
+                  Register for Full Access →
                 </Button>
-                <p className="text-xs text-slate-400">Free 30-day trial · No credit card required</p>
+                <p className="text-xs text-slate-400">
+                  30-day free trial · No credit card required · Full ownership of your data
+                </p>
               </div>
             </>
           )}
@@ -215,7 +271,7 @@ export default function PersonalisedDemoWizard({ onComplete }) {
     );
   }
 
-  // ── Companies House wizard (default phase) ─────────────────────────────
+  // ── Companies House wizard (default phase) ───────────────────────────────
   return (
     <div className="max-w-2xl mx-auto">
       <CompaniesHouseWizard mode="demo" onComplete={handleChComplete} />

@@ -10,11 +10,20 @@ import SlideshowDemo from '@/components/landing/SlideshowDemo';
 import PersonalisedDemoWizard from '@/components/landing/PersonalisedDemoWizard';
 import LandingNav from '@/components/landing/LandingNav';
 import FooterSection from '@/components/landing/FooterSection';
+import DemoSessionBanner from '@/components/landing/DemoSessionBanner';
 
 export default function Landing() {
   const [demoMode, setDemoMode] = useState(null); // null | 'slideshow' | 'personalised'
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
+
+  // Check if there's a still-valid demo session token from a prior visit
+  const existingToken = (() => {
+    try {
+      const t = JSON.parse(localStorage.getItem('premiso_demo_token') || 'null');
+      return t && t.expiresAt > Date.now() ? t : null;
+    } catch { return null; }
+  })();
 
   const handleDemoChoice = (choice) => {
     setDemoMode(choice);
@@ -25,7 +34,8 @@ export default function Landing() {
     }
   };
 
-  const handleDemoComplete = () => {
+  const handleDemoComplete = (session) => {
+    // session may be undefined for slideshow
     setShowLeadForm(true);
     setTimeout(() => {
       document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' });
@@ -106,6 +116,12 @@ export default function Landing() {
       </section>
 
       <FooterSection />
+
+      {/* Persistent demo watermark banner if an active session exists */}
+      <DemoSessionBanner
+        session={existingToken}
+        onExpired={() => localStorage.removeItem('premiso_demo_token')}
+      />
     </div>
   );
 }
