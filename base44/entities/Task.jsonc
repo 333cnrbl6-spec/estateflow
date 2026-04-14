@@ -1,0 +1,112 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed task description"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity (optional)"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Contractor email or user ID"
+    },
+    "assigned_by": {
+      "type": "string",
+      "description": "Email of user who assigned task"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Current task status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Task priority level"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Task completion deadline"
+    },
+    "linked_entity_type": {
+      "type": "string",
+      "enum": [
+        "maintenance_request",
+        "financial_transaction",
+        "inspection_record",
+        "property",
+        "none"
+      ],
+      "default": "none",
+      "description": "Type of related entity"
+    },
+    "linked_entity_id": {
+      "type": "string",
+      "description": "ID of related entity"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task was completed"
+    },
+    "completion_notes": {
+      "type": "string",
+      "description": "Notes on task completion"
+    },
+    "estimated_hours": {
+      "type": "number",
+      "description": "Estimated hours to complete"
+    },
+    "actual_hours": {
+      "type": "number",
+      "description": "Actual hours spent"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "maintenance",
+        "inspection",
+        "repair",
+        "cleaning",
+        "admin",
+        "other"
+      ],
+      "description": "Task category"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "title",
+    "property_id",
+    "assigned_to",
+    "deadline"
+  ]
+}
