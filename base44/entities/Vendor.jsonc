@@ -1,0 +1,128 @@
+{
+  "name": "Vendor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Vendor/contractor company name"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "plumber",
+        "electrician",
+        "gas_engineer",
+        "general_contractor",
+        "cleaning",
+        "gardening",
+        "pest_control",
+        "other"
+      ],
+      "description": "Type of service provided"
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Primary contact person"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "address": {
+      "type": "string",
+      "description": "Business address"
+    },
+    "postcode": {
+      "type": "string",
+      "description": "Postcode"
+    },
+    "registration_number": {
+      "type": "string",
+      "description": "Company registration number"
+    },
+    "tax_id": {
+      "type": "string",
+      "description": "Tax ID / VAT number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "on_hold",
+        "blacklisted"
+      ],
+      "default": "active",
+      "description": "Current vendor status"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Average rating (0-5)",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "average_response_time_hours": {
+      "type": "number",
+      "description": "Average response time in hours"
+    },
+    "completion_rate": {
+      "type": "number",
+      "description": "Percentage of jobs completed on time",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "bank_details": {
+      "type": "object",
+      "properties": {
+        "account_holder": {
+          "type": "string"
+        },
+        "account_number": {
+          "type": "string"
+        },
+        "sort_code": {
+          "type": "string"
+        },
+        "bank_name": {
+          "type": "string"
+        }
+      },
+      "description": "Payment bank details"
+    },
+    "payment_terms": {
+      "type": "string",
+      "enum": [
+        "immediate",
+        "net_7",
+        "net_14",
+        "net_30",
+        "net_60"
+      ],
+      "default": "net_30",
+      "description": "Standard payment terms"
+    },
+    "minimum_call_out_fee": {
+      "type": "number",
+      "description": "Minimum call out fee in pence"
+    },
+    "hourly_rate": {
+      "type": "number",
+      "description": "Hourly rate in pence"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "contact_name",
+    "email",
+    "phone"
+  ]
+}

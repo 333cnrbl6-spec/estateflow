@@ -1,0 +1,73 @@
+{
+  "name": "VendorInsurance",
+  "type": "object",
+  "properties": {
+    "vendor_id": {
+      "type": "string",
+      "description": "Reference to Vendor entity"
+    },
+    "insurance_type": {
+      "type": "string",
+      "enum": [
+        "public_liability",
+        "employer_liability",
+        "professional_indemnity",
+        "tools_and_equipment",
+        "combined"
+      ],
+      "description": "Type of insurance"
+    },
+    "policy_number": {
+      "type": "string",
+      "description": "Insurance policy number"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Insurance provider name"
+    },
+    "coverage_amount": {
+      "type": "number",
+      "description": "Coverage amount in pence"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Policy issue date"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Policy expiry date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expiring_soon",
+        "expired",
+        "lapsed"
+      ],
+      "default": "active",
+      "description": "Insurance status"
+    },
+    "certificate_url": {
+      "type": "string",
+      "description": "URL to uploaded insurance certificate"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to full policy document"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "vendor_id",
+    "insurance_type",
+    "policy_number",
+    "provider",
+    "expiry_date"
+  ]
+}

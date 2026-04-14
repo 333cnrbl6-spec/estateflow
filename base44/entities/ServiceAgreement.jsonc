@@ -1,0 +1,114 @@
+{
+  "name": "ServiceAgreement",
+  "type": "object",
+  "properties": {
+    "vendor_id": {
+      "type": "string",
+      "description": "Reference to Vendor entity"
+    },
+    "agreement_type": {
+      "type": "string",
+      "enum": [
+        "retainer",
+        "on_demand",
+        "maintenance_contract",
+        "call_out_service"
+      ],
+      "description": "Type of service agreement"
+    },
+    "title": {
+      "type": "string",
+      "description": "Agreement title/name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Agreement description and scope"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Agreement start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Agreement end date"
+    },
+    "renewal_type": {
+      "type": "string",
+      "enum": [
+        "auto_renew",
+        "manual_renew",
+        "one_time"
+      ],
+      "default": "manual_renew",
+      "description": "Renewal terms"
+    },
+    "monthly_cost": {
+      "type": "number",
+      "description": "Monthly retainer in pence (if applicable)"
+    },
+    "coverage_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Services covered under agreement"
+    },
+    "response_time_sla": {
+      "type": "string",
+      "description": "Service level agreement (e.g., '2 hours', '24 hours')"
+    },
+    "maximum_visits_per_month": {
+      "type": "number",
+      "description": "Maximum visits included per month"
+    },
+    "additional_visit_cost": {
+      "type": "number",
+      "description": "Cost per additional visit in pence"
+    },
+    "properties_covered": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Property IDs covered under this agreement"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "on_hold",
+        "expired",
+        "terminated"
+      ],
+      "default": "draft",
+      "description": "Agreement status"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to agreement document"
+    },
+    "signed_by_vendor": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether vendor has signed"
+    },
+    "signed_by_landlord": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether landlord has signed"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "vendor_id",
+    "agreement_type",
+    "title",
+    "start_date"
+  ]
+}

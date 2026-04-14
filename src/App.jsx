@@ -66,6 +66,7 @@ import OutOfHoursServicePipeline from './pages/OutOfHoursServicePipeline';
 import OutOfHoursReporting from './pages/OutOfHoursReporting';
 import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import TenantMaintenancePortal from './pages/TenantMaintenancePortal';
+import VendorManagement from './pages/VendorManagement';
 import BillingManagement from './pages/BillingManagement';
 import OperationalMetricsDashboard from './pages/OperationalMetricsDashboard';
 import VirtualCallCenterSetup from './pages/VirtualCallCenterSetup';
@@ -308,6 +309,8 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-payments" element={<TenantPaymentPortal />} />
       {/* /tenant-maintenance — mobile tenant portal for reporting & tracking maintenance */}
       <Route path="/tenant-maintenance" element={<TenantMaintenancePortal />} />
+      {/* /vendor-management — vendor/contractor management and payment tracking */}
+      <Route path="/vendor-management" element={<VendorManagement />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 
