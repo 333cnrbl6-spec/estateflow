@@ -12,7 +12,7 @@ import TenantRentPayment from '@/components/tenant/TenantRentPayment';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY || '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || '');
 
 export default function TenantPaymentPortal() {
   const [tenant, setTenant] = useState(null);

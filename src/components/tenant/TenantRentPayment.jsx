@@ -9,7 +9,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js';
 import { format } from 'date-fns';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY || '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || '');
 
 export default function TenantRentPayment({ tenant }) {
   const [paymentType, setPaymentType] = useState('one-time');
