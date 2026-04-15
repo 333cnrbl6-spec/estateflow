@@ -67,17 +67,33 @@ Deno.serve(async (req) => {
       console.error('Stripe customer error:', e);
     }
 
-    // Create Payment Method attachment to customer
-    await stripe.paymentMethods.attach(payment_method_id, {
-      customer: customerId,
-    });
+    // Create Payment Method attachment to customer with error handling
+    try {
+      await stripe.paymentMethods.attach(payment_method_id, {
+        customer: customerId,
+      });
+    } catch (attachError) {
+      console.error(`[setupRecurringPayment] Failed to attach payment method ${payment_method_id} to customer ${customerId}: ${attachError.message}`);
+      return Response.json({
+        success: false,
+        error: `Failed to attach payment method: ${attachError.message}`,
+      }, { status: 400 });
+    }
 
-    // Set as default payment method
-    await stripe.customers.update(customerId, {
-      invoice_settings: {
-        default_payment_method: payment_method_id,
-      },
-    });
+    // Set as default payment method with error handling
+    try {
+      await stripe.customers.update(customerId, {
+        invoice_settings: {
+          default_payment_method: payment_method_id,
+        },
+      });
+    } catch (updateError) {
+      console.error(`[setupRecurringPayment] Failed to set default payment method for customer ${customerId}: ${updateError.message}`);
+      return Response.json({
+        success: false,
+        error: `Failed to set default payment method: ${updateError.message}`,
+      }, { status: 400 });
+    }
 
     // Create Stripe Subscription Schedule for recurring payments
     const subscriptionSchedule = await stripe.subscriptionSchedules.create({

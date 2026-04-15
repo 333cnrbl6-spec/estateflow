@@ -60,12 +60,24 @@ Deno.serve(async (req) => {
 
     const paidDate = new Date().toISOString().split('T')[0];
 
-    await base44.entities.FinancialTransaction.update(transaction.id, {
-      status: 'paid',
-      paid_date: paidDate,
-      reference: paymentIntent.id,
-      notes: `Paid via Stripe on ${paidDate}`,
-    });
+    // Update transaction atomically—if this fails, the payment must be refunded
+    try {
+      await base44.entities.FinancialTransaction.update(transaction.id, {
+        status: 'paid',
+        paid_date: paidDate,
+        reference: paymentIntent.id,
+        notes: `Paid via Stripe on ${paidDate}`,
+      });
+    } catch (dbError) {
+      console.error(`[processRentPayment] DB update failed after payment succeeded. Manual reconciliation required. Stripe ID: ${paymentIntent.id}`);
+      // CRITICAL: Payment succeeded but DB update failed—log for immediate manual review
+      return Response.json({
+        success: false,
+        error: 'Payment succeeded but database update failed. Manual reconciliation required.',
+        payment_id: paymentIntent.id,
+        status: 'payment_succeeded_db_failed',
+      }, { status: 500 });
+    }
 
     const receiptContent = `
 RENT PAYMENT RECEIPT
@@ -90,18 +102,39 @@ This receipt confirms that payment has been successfully received and processed.
 For your records, please retain this receipt.
     `.trim();
 
-    const receipt = await base44.entities.Document.create({
-      title: `Rent Payment Receipt - ${property?.name || 'Property'} - ${paidDate}`,
-      document_type: 'rent_statement',
-      content: receiptContent,
-      property_id: transaction.property_id,
-      tenant_id: transaction.tenant_id,
-      status: 'filed',
-      generated_date: paidDate,
-      source: 'generated',
-      tags: ['rent', 'payment', 'receipt'],
-      notes: `Stripe Payment ID: ${paymentIntent.id}`,
-    });
+    // Validate entities exist before creating document
+    if (transaction.property_id) {
+      const propCheck = await base44.entities.Property.get(transaction.property_id);
+      if (!propCheck) {
+        console.warn(`[processRentPayment] Property ${transaction.property_id} no longer exists`);
+      }
+    }
+    if (transaction.tenant_id) {
+      const tenantCheck = await base44.entities.Tenant.get(transaction.tenant_id);
+      if (!tenantCheck) {
+        console.warn(`[processRentPayment] Tenant ${transaction.tenant_id} no longer exists`);
+      }
+    }
+
+    let receipt;
+    try {
+      receipt = await base44.entities.Document.create({
+        title: `Rent Payment Receipt - ${property?.name || 'Property'} - ${paidDate}`,
+        document_type: 'rent_statement',
+        content: receiptContent,
+        property_id: transaction.property_id,
+        tenant_id: transaction.tenant_id,
+        status: 'filed',
+        generated_date: paidDate,
+        source: 'generated',
+        tags: ['rent', 'payment', 'receipt'],
+        notes: `Stripe Payment ID: ${paymentIntent.id}`,
+      });
+    } catch (docError) {
+      console.error(`[processRentPayment] Receipt creation failed: ${docError.message}`);
+      // Don't fail the entire transaction—receipt is secondary
+      receipt = { id: null };
+    }
 
     await base44.entities.TenantNotification.create({
       tenant_id: transaction.tenant_id,

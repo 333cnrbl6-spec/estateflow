@@ -87,70 +87,93 @@ Return JSON array only, no extra text:
 
     const matches = llmResult?.matches || [];
 
-    // Auto-apply high-confidence matches
+    // Auto-apply high-confidence matches with failure tracking
     const applied = [];
     const alerts = [];
+    const failures = [];
 
     for (const match of matches) {
       const bankTxn = bankTxns[match.bank_txn_index];
       if (!bankTxn) continue;
 
       if (match.match_status === 'matched' && match.matched_invoice_id && match.confidence >= 0.85) {
-        // Mark invoice as paid
-        await base44.asServiceRole.entities.FinancialTransaction.update(match.matched_invoice_id, {
-          status: 'paid',
-          paid_date: bankTxn.date || new Date().toISOString().split('T')[0],
-          notes: `Auto-reconciled from bank feed. Bank ref: ${bankTxn.reference || bankTxn.description || '—'}`,
-        });
-        applied.push({ ...match, bankTxn, action: 'marked_paid' });
+        try {
+          // Mark invoice as paid
+          await base44.asServiceRole.entities.FinancialTransaction.update(match.matched_invoice_id, {
+            status: 'paid',
+            paid_date: bankTxn.date || new Date().toISOString().split('T')[0],
+            notes: `Auto-reconciled from bank feed. Bank ref: ${bankTxn.reference || bankTxn.description || '—'}`,
+          });
+          applied.push({ ...match, bankTxn, action: 'marked_paid' });
 
-        // Create success notification
-        await base44.asServiceRole.entities.TenantNotification.create({
-          title: `✅ Payment matched: ${match.matched_invoice_description}`,
-          message: `Bank transaction of £${bankTxn.amount} on ${bankTxn.date || 'unknown date'} has been automatically matched and marked as paid.`,
-          notification_type: 'update',
-          is_read: false,
-          sent_date: new Date().toISOString(),
-          notes: `reconcile:matched:${match.matched_invoice_id}`,
-        });
+          // Create success notification with error handling
+          try {
+            await base44.asServiceRole.entities.TenantNotification.create({
+              title: `✅ Payment matched: ${match.matched_invoice_description}`,
+              message: `Bank transaction of £${bankTxn.amount} on ${bankTxn.date || 'unknown date'} has been automatically matched and marked as paid.`,
+              notification_type: 'update',
+              is_read: false,
+              sent_date: new Date().toISOString(),
+              notes: `reconcile:matched:${match.matched_invoice_id}`,
+            });
+          } catch (notifError) {
+            console.error(`[reconcileBankTransactions] Notification creation failed for match ${match.matched_invoice_id}: ${notifError.message}`);
+            failures.push({ match, reason: 'notification_failed', error: notifError.message });
+          }
+        } catch (updateError) {
+          console.error(`[reconcileBankTransactions] Failed to update transaction ${match.matched_invoice_id}: ${updateError.message}`);
+          failures.push({ match, bankTxn, reason: 'update_failed', error: updateError.message });
+        }
 
       } else if (['partial', 'unmatched', 'overpayment'].includes(match.match_status)) {
         alerts.push({ ...match, bankTxn });
 
-        // Create alert notification
+        // Create alert notification with error handling
         const emoji = { partial: '⚠️', unmatched: '❓', overpayment: '💰' }[match.match_status] || '⚠️';
         const titles = {
           partial: `Partial payment received: £${bankTxn.amount}`,
           unmatched: `Unmatched bank transaction: £${bankTxn.amount}`,
           overpayment: `Overpayment received: £${bankTxn.amount}`,
         };
-        await base44.asServiceRole.entities.TenantNotification.create({
-          title: `${emoji} ${titles[match.match_status]}`,
-          message: `Bank transaction "${bankTxn.description || bankTxn.reference || '—'}" (£${bankTxn.amount}, ${bankTxn.date || '—'}) could not be automatically matched. ${match.notes || ''}`,
-          notification_type: match.match_status === 'unmatched' ? 'urgent' : 'reminder',
-          is_read: false,
-          sent_date: new Date().toISOString(),
-          notes: `reconcile:${match.match_status}:${match.matched_invoice_id || 'none'}`,
-        });
+        try {
+          await base44.asServiceRole.entities.TenantNotification.create({
+            title: `${emoji} ${titles[match.match_status]}`,
+            message: `Bank transaction "${bankTxn.description || bankTxn.reference || '—'}" (£${bankTxn.amount}, ${bankTxn.date || '—'}) could not be automatically matched. ${match.notes || ''}`,
+            notification_type: match.match_status === 'unmatched' ? 'urgent' : 'reminder',
+            is_read: false,
+            sent_date: new Date().toISOString(),
+            notes: `reconcile:${match.match_status}:${match.matched_invoice_id || 'none'}`,
+          });
+        } catch (notifError) {
+          console.error(`[reconcileBankTransactions] Alert notification failed: ${notifError.message}`);
+          failures.push({ match, reason: 'alert_notification_failed', error: notifError.message });
+        }
 
         // Mark partial payments as partial
         if (match.match_status === 'partial' && match.matched_invoice_id && match.confidence >= 0.7) {
-          await base44.asServiceRole.entities.FinancialTransaction.update(match.matched_invoice_id, {
-            status: 'partial',
-            notes: `Partial payment received: £${bankTxn.amount} of £${match.invoice_amount}. Bank ref: ${bankTxn.reference || bankTxn.description || '—'}`,
-          });
+          try {
+            await base44.asServiceRole.entities.FinancialTransaction.update(match.matched_invoice_id, {
+              status: 'partial',
+              notes: `Partial payment received: £${bankTxn.amount} of £${match.invoice_amount}. Bank ref: ${bankTxn.reference || bankTxn.description || '—'}`,
+            });
+          } catch (partialError) {
+            console.error(`[reconcileBankTransactions] Failed to mark partial payment ${match.matched_invoice_id}: ${partialError.message}`);
+            failures.push({ match, reason: 'partial_update_failed', error: partialError.message });
+          }
         }
       }
     }
 
     return Response.json({
-      success: true,
+      success: failures.length === 0,
       total_bank_transactions: bankTxns.length,
       auto_matched: applied.length,
       alerts: alerts.length,
+      failures: failures.length,
       results: matches,
       applied,
       alert_items: alerts,
+      ...(failures.length > 0 && { failures_detail: failures }),
     });
 
   } catch (error) {

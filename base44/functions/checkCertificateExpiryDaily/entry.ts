@@ -18,7 +18,10 @@ Deno.serve(async (req) => {
     for (const cert of gasCerts) {
       if (cert.expiry_date) {
         const expiry = new Date(cert.expiry_date);
-        if (expiry <= thirtyDaysFromNow && expiry > today) {
+        const expiryUTC = new Date(Date.UTC(expiry.getUTCFullYear(), expiry.getUTCMonth(), expiry.getUTCDate()));
+        const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+        const thirtyDaysUTC = new Date(todayUTC.getTime() + 30 * 24 * 60 * 60 * 1000);
+        if (expiryUTC <= thirtyDaysUTC && expiryUTC > todayUTC) {
           // Create or update alert
           const alerts = await base44.asServiceRole.entities.CertificateExpiryAlert.filter({
             certificate_type: 'gas_safety',
@@ -31,7 +34,7 @@ Deno.serve(async (req) => {
               certificate_id: cert.id,
               property_id: cert.property_id,
               expiry_date: cert.expiry_date,
-              days_until_expiry: Math.ceil((expiry - today) / (1000 * 60 * 60 * 24)),
+              days_until_expiry: Math.ceil((expiryUTC - todayUTC) / (1000 * 60 * 60 * 24)),
               alert_status: 'pending'
             });
             checks.gasSafety++;
@@ -45,7 +48,10 @@ Deno.serve(async (req) => {
     for (const cert of eicrCerts) {
       if (cert.next_due_date) {
         const due = new Date(cert.next_due_date);
-        if (due <= thirtyDaysFromNow && due > today) {
+        const dueUTC = new Date(Date.UTC(due.getUTCFullYear(), due.getUTCMonth(), due.getUTCDate()));
+        const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+        const thirtyDaysUTC = new Date(todayUTC.getTime() + 30 * 24 * 60 * 60 * 1000);
+        if (dueUTC <= thirtyDaysUTC && dueUTC > todayUTC) {
           const alerts = await base44.asServiceRole.entities.CertificateExpiryAlert.filter({
             certificate_type: 'eicr',
             certificate_id: cert.id
@@ -57,7 +63,7 @@ Deno.serve(async (req) => {
               certificate_id: cert.id,
               property_id: cert.property_id,
               expiry_date: cert.next_due_date,
-              days_until_expiry: Math.ceil((due - today) / (1000 * 60 * 60 * 24)),
+              days_until_expiry: Math.ceil((dueUTC - todayUTC) / (1000 * 60 * 60 * 24)),
               alert_status: 'pending'
             });
             checks.eicr++;
@@ -71,7 +77,10 @@ Deno.serve(async (req) => {
     for (const dep of deposits) {
       if (dep.tenancy_end_date) {
         const endDate = new Date(dep.tenancy_end_date);
-        if (endDate <= thirtyDaysFromNow && endDate > today && !dep.deposit_returned_date) {
+        const endUTC = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()));
+        const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+        const thirtyDaysUTC = new Date(todayUTC.getTime() + 30 * 24 * 60 * 60 * 1000);
+        if (endUTC <= thirtyDaysUTC && endUTC > todayUTC && !dep.deposit_returned_date) {
           const alerts = await base44.asServiceRole.entities.CertificateExpiryAlert.filter({
             certificate_type: 'deposit_protection',
             certificate_id: dep.id
@@ -83,7 +92,7 @@ Deno.serve(async (req) => {
               certificate_id: dep.id,
               property_id: dep.property_id,
               expiry_date: dep.tenancy_end_date,
-              days_until_expiry: Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)),
+              days_until_expiry: Math.ceil((endUTC - todayUTC) / (1000 * 60 * 60 * 24)),
               alert_status: 'pending'
             });
             checks.depositProtection++;
