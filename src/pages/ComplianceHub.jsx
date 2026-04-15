@@ -32,6 +32,7 @@ export default function ComplianceHub() {
     queryFn: async () => base44.entities.DepositProtection.list(),
   });
 
+  // Memoize to prevent recreation on every render
   const propertyMap = React.useMemo(() => {
     const map = {};
     properties.forEach(p => map[p.id] = p);

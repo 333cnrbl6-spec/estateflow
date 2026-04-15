@@ -4,12 +4,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (user.role !== 'admin') {
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Admin access required' }, { status: 403 });
     }
 
@@ -456,9 +451,7 @@ Format as JSON array:
     });
 
   } catch (error) {
-    return Response.json({ 
-      error: error.message,
-      details: error.stack 
-    }, { status: 500 });
+    console.error('Error in generateSalesDemoData:', error);
+    return Response.json({ error: error.message || 'Failed to generate demo data' }, { status: 500 });
   }
 });

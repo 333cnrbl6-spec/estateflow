@@ -18,13 +18,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
-  const user = await base44.auth.me();
-  if (!user || user.role !== 'admin') {
-    return Response.json({ error: 'Admin access required' }, { status: 403 });
-  }
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
 
-  const db = base44.asServiceRole;
+    const db = base44.asServiceRole;
   const results = {};
 
   const seeders = [
@@ -79,4 +80,8 @@ Deno.serve(async (req) => {
     results,
     total_errors: totalErrors,
   });
+  } catch (error) {
+    console.error('Error in runAllRelationshipSeeders:', error);
+    return Response.json({ error: error.message || 'Failed to seed relationships' }, { status: 500 });
+  }
 });
