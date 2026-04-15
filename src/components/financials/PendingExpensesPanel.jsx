@@ -36,10 +36,11 @@ export default function PendingExpensesPanel({ transactions, propMap }) {
             </p>
             {overdue.map((t, i) => {
               const daysLate = t.due_date ? differenceInDays(new Date(), parseISO(t.due_date)) : null;
+              const desc = t.description || (t.transaction_type ? t.transaction_type.replace(/_/g, ' ') : 'Expense');
               return (
                 <div key={i} className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
                   <div>
-                    <p className="text-sm font-medium text-red-900">{t.description || t.transaction_type?.replace(/_/g, ' ')}</p>
+                    <p className="text-sm font-medium text-red-900">{desc}</p>
                     <p className="text-xs text-red-600">
                       {propMap[t.property_id]?.name || 'Portfolio'}
                       {daysLate !== null && ` · ${daysLate}d overdue`}
@@ -59,10 +60,11 @@ export default function PendingExpensesPanel({ transactions, propMap }) {
             </p>
             {upcoming.map((t, i) => {
               const daysUntil = t.due_date ? differenceInDays(parseISO(t.due_date), new Date()) : null;
+              const desc = t.description || (t.transaction_type ? t.transaction_type.replace(/_/g, ' ') : 'Expense');
               return (
                 <div key={i} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
                   <div>
-                    <p className="text-sm font-medium text-amber-900">{t.description || t.transaction_type?.replace(/_/g, ' ')}</p>
+                    <p className="text-sm font-medium text-amber-900">{desc}</p>
                     <p className="text-xs text-amber-600">
                       {propMap[t.property_id]?.name || 'Portfolio'}
                       {t.due_date && ` · Due ${format(parseISO(t.due_date), 'dd MMM yyyy')}`}
