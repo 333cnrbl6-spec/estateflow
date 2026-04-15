@@ -1,9 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Building2, Home, Users, PoundSterling, Wrench, DoorOpen, AlertTriangle, TrendingUp, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import PageHeader from '@/components/shared/PageHeader';
 import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
 import ComplianceAlert from '@/components/dashboard/ComplianceAlert';
@@ -14,13 +13,15 @@ import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
-import ErrorAnalyticsWidget from '@/components/dashboard/ErrorAnalyticsWidget';
 import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 import { useQueryError } from '@/hooks/useQueryError';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
@@ -138,174 +139,190 @@ export default function Dashboard() {
 
   const recentMaintenance = useMemo(() => [...maintenance].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5), [maintenance]);
 
+  // Determine if new subscriber (0 properties = setup mode)
+  const isNewSubscriber = properties.length === 0;
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
-      <div className="p-6 lg:p-8 max-w-[1600px] mx-auto space-y-8">
-        {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Dashboard</h1>
-              <p className="text-muted-foreground mt-1">{companies[0]?.name || 'Portfolio'} — Scaled Legal Protection</p>
+      
+      <div className="px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
+        
+        {/* Clean Hero Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome back</h1>
+          <p className="text-lg text-slate-600">{companies[0]?.name || 'Your portfolio'}</p>
+        </div>
+
+        {/* CRITICAL ALERTS ONLY (first exposure) */}
+        {(
+          <>
+            <ComplianceAlert />
+            <ComplianceAlertsWidget />
+            <div className="compliance-alerts-widget mb-8">
+              <CompaniesHouseAlertWidget limit={5} />
             </div>
-            <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-card rounded-lg border border-border">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-xs font-medium">System Live</span>
-            </div>
-          </div>
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-900">
-              <span className="font-semibold">🛡️ Compliance Protected</span> — Enterprise-grade legal safeguards across your entire portfolio
-            </p>
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* Alerts */}
-        <div className="space-y-4">
-          <ComplianceAlert />
-          <ComplianceAlertsWidget />
-          <div className="compliance-alerts-widget">
-            <CompaniesHouseAlertWidget limit={5} />
-          </div>
-        </div>
-
-        {/* Executive Summary */}
-        <div>
-          <ExecutiveDashboard properties={properties} units={units} transactions={transactions} tenants={tenants} />
-        </div>
-
-        {/* Key Metrics Grid */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Key Metrics</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Companies" value={companies.length} icon={Building2} subtitle={`${companies.filter(c => c.status === 'active').length} active`} colorIndex={0} />
-            <StatCard title="Properties" value={properties.length} icon={Home} subtitle={`${units.length} units`} colorIndex={1} />
-            <StatCard title="Occupancy" value={`${occupancyRate}%`} icon={DoorOpen} subtitle={`${occupiedUnits}/${units.length} occupied`} colorIndex={2} />
-            <StatCard title="Active Tenants" value={tenants.filter(t => t.status === 'active').length} icon={Users} subtitle={`${tenants.filter(t => t.status === 'in_arrears').length} in arrears`} colorIndex={3} />
-          </div>
-        </div>
-
-        {/* Financial Metrics Grid */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Finance & Operations</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="demo data" colorIndex={2} />
-            <StatCard title="Expenses (Paid)" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="demo data" colorIndex={4} />
-            <StatCard title="Overdue Items" value={overdueCount} icon={AlertTriangle} subtitle={`items`} colorIndex={4} />
-            <StatCard title="Active Maintenance" value={activeMaintenance} icon={Wrench} subtitle={`tasks`} colorIndex={1} />
-          </div>
-        </div>
-
-        {/* Error Monitoring */}
-        <div>
-          <ErrorAnalyticsWidget />
-        </div>
-
-        {/* Analytics & Insights Grid */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Analytics & Insights</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
-            </div>
-            <div>
-              <ComplianceReportGenerator 
-                properties={properties}
-                certificates={certificates}
-                maintenance={maintenance}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="text-sm font-semibold text-foreground mb-6">Companies by Category</h3>
-            {companyCategories.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={companyCategories}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,89%)" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="hsl(222,47%,15%)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-sm text-muted-foreground py-12 text-center">No data yet</p>
-            )}
-          </div>
-
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="text-sm font-semibold text-foreground mb-6">Properties by Region</h3>
-            {regionData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie data={regionData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({ name, value }) => `${name} (${value})`}>
-                    {regionData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-sm text-muted-foreground py-12 text-center">No data yet</p>
-            )}
-          </div>
-        </div>
-
-        {/* Market Intelligence & Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <MarketIntelligenceWidget />
-          </div>
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <Link to="/sales" className="block p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-                <p className="text-sm font-medium text-blue-900">Sales Dashboard</p>
-                <p className="text-xs text-blue-700 mt-1">View listings & leads</p>
-              </Link>
-              <Link to="/market-reports" className="block p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors">
-                <p className="text-sm font-medium text-green-900">Market Reports</p>
-                <p className="text-xs text-green-700 mt-1">Generate insights</p>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Maintenance & Setup */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-card rounded-xl border border-border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground">Recent Maintenance</h3>
-              <Link to="/maintenance" className="text-xs font-medium text-primary hover:text-primary/80">View all →</Link>
-            </div>
-            {recentMaintenance.length > 0 ? (
-              <div className="divide-y divide-border">
-                {recentMaintenance.map(m => (
-                  <div key={m.id} className="flex items-center justify-between py-3 hover:bg-muted/30 px-2 -mx-2 rounded transition-colors">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">{m.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{m.category?.replace(/_/g, ' ')}{m.created_date ? ` · ${format(new Date(m.created_date), 'dd MMM')}` : ''}</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <StatusBadge status={m.priority} />
-                      <StatusBadge status={m.status} />
-                    </div>
-                  </div>
-                ))}
+        {/* NEW SUBSCRIBER SETUP FLOW */}
+        {isNewSubscriber ? (
+          <div className="space-y-6 mb-12">
+            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Let's get you started</h2>
+                  <p className="text-slate-600">Set up your first property to unlock your dashboard</p>
+                </div>
+                <Button asChild className="w-fit h-11 px-6 text-base">
+                  <Link to="/properties/add">Add Your First Property</Link>
+                </Button>
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground py-8 text-center">No maintenance orders</p>
-            )}
+            </Card>
+
+            {/* Quick orientation */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { icon: '🏢', title: 'Add Properties', desc: 'Import your property details' },
+                { icon: '👥', title: 'Invite Tenants', desc: 'Set up tenant records' },
+                { icon: '🛡️', title: 'Enable Compliance', desc: 'Track certificates & safety' }
+              ].map((step, i) => (
+                <Card key={i} className="p-6 border-slate-200 hover:border-slate-300 hover:shadow-md transition-all">
+                  <div className="text-3xl mb-3">{step.icon}</div>
+                  <h3 className="font-semibold text-slate-900 mb-1">{step.title}</h3>
+                  <p className="text-sm text-slate-600">{step.desc}</p>
+                </Card>
+              ))}
+            </div>
           </div>
-          <div className="space-y-6">
-            <SetupProgressCard />
-            <DataQualityWidget />
-          </div>
-        </div>
+        ) : (
+          <>
+            {/* ESTABLISHED SUBSCRIBER - Progressive disclosure */}
+            
+            {/* Setup Progress (if incomplete) */}
+            <div className="mb-8">
+              <SetupProgressCard />
+            </div>
+
+            {/* Data Quality Alert (soft, not alarming) */}
+            <div className="mb-8">
+              <DataQualityWidget />
+            </div>
+
+            {/* Primary KPIs */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">At a glance</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard title="Properties" value={properties.length} icon={Home} subtitle={`${units.length} units`} colorIndex={1} />
+                <StatCard title="Occupancy" value={`${occupancyRate}%`} icon={DoorOpen} subtitle={`${occupiedUnits}/${units.length} occupied`} colorIndex={2} />
+                <StatCard title="Active Tenants" value={tenants.filter(t => t.status === 'active').length} icon={Users} subtitle={`${tenants.filter(t => t.status === 'in_arrears').length} in arrears`} colorIndex={3} />
+                <StatCard title="Active Tasks" value={activeMaintenance} icon={Wrench} subtitle="maintenance items" colorIndex={1} />
+              </div>
+            </div>
+
+            {/* Financial Summary */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Financial overview</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="this period" colorIndex={2} />
+                <StatCard title="Expenses" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="this period" colorIndex={4} />
+                <StatCard title="Overdue" value={overdueCount} icon={AlertTriangle} subtitle="items need attention" colorIndex={4} />
+              </div>
+            </div>
+
+            {/* Recent Activity & Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              {/* Recent Maintenance */}
+              <div className="lg:col-span-2">
+                <Card className="p-6 border-slate-200">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-slate-900">Recent activity</h3>
+                    <Link to="/maintenance" className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                      View all <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  {recentMaintenance.length > 0 ? (
+                    <div className="divide-y divide-slate-200">
+                      {recentMaintenance.slice(0, 4).map(m => (
+                        <div key={m.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0 hover:bg-slate-50 px-2 -mx-2 rounded transition-colors">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900">{m.title}</p>
+                            <p className="text-xs text-slate-500 mt-0.5">{m.category?.replace(/_/g, ' ')}{m.created_date ? ` · ${format(new Date(m.created_date), 'dd MMM')}` : ''}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <StatusBadge status={m.priority} />
+                            <StatusBadge status={m.status} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500 text-center py-8">No maintenance orders yet</p>
+                  )}
+                </Card>
+              </div>
+
+              {/* Executive Summary */}
+              <div>
+                <ExecutiveDashboard properties={properties} units={units} transactions={transactions} tenants={tenants} />
+              </div>
+            </div>
+
+            {/* Analytics (collapsed by default for new users) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <Card className="p-6 border-slate-200">
+                <h3 className="text-lg font-bold text-slate-900 mb-6">Properties by region</h3>
+                {regionData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={regionData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name} (${value})`}>
+                        {regionData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-sm text-slate-500 py-8 text-center">Add properties to see region breakdown</p>
+                )}
+              </Card>
+
+              <Card className="p-6 border-slate-200">
+                <h3 className="text-lg font-bold text-slate-900 mb-6">Companies by category</h3>
+                {companyCategories.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={companyCategories}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,89%)" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="hsl(221,65%,28%)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-sm text-slate-500 py-8 text-center">No companies yet</p>
+                )}
+              </Card>
+            </div>
+
+            {/* Advanced widgets (collapsible insights) */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Insights & Intelligence</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
+                <ComplianceReportGenerator 
+                  properties={properties}
+                  certificates={certificates}
+                  maintenance={maintenance}
+                />
+              </div>
+            </div>
+
+            {/* Market Intelligence */}
+            <div className="mb-8">
+              <MarketIntelligenceWidget />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
