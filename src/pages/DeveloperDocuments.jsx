@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FileText, Download, ExternalLink, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, Download, ExternalLink, BookOpen, Printer } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function DeveloperDocuments() {
   const [loadedDocs, setLoadedDocs] = useState({});
+  const [isReady, setIsReady] = useState(false);
 
   const documents = [
     {
@@ -25,7 +26,8 @@ export default function DeveloperDocuments() {
       category: 'Product',
       file: 'PRODUCT_MANUAL.md',
       isPdf: false,
-      downloadText: 'View',
+      downloadText: 'Download All',
+      autoLoad: true,
     },
   ];
 
@@ -50,6 +52,65 @@ export default function DeveloperDocuments() {
     } catch (err) {
       console.error('Failed to load document:', err);
     }
+  };
+
+  // Auto-load product manual on mount
+  useEffect(() => {
+    const productManual = documents.find(d => d.autoLoad);
+    if (productManual) {
+      loadDocument(productManual).then(() => setIsReady(true));
+    }
+  }, []);
+
+  const downloadAllAsHTML = () => {
+    const allContent = Object.entries(loadedDocs)
+      .map(([docId, content]) => {
+        const doc = documents.find(d => d.id === docId);
+        return `
+          <div style="page-break-after: always; margin-bottom: 40px;">
+            <h1>${doc.title}</h1>
+            <p>${doc.description}</p>
+            <div style="margin-top: 20px;">
+              ${content}
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Premiso - Product Manual</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; }
+          h1 { color: #1d2d44; margin-top: 0; }
+          h2 { color: #2d3d54; margin-top: 30px; }
+          code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+          pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
+          table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+          th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+          th { background: #f9f9f9; }
+          @media print { body { margin: 0; padding: 0; } }
+        </style>
+      </head>
+      <body>
+        ${allContent}
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Premiso-Product-Manual.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -88,12 +149,12 @@ export default function DeveloperDocuments() {
             <p className="text-sm text-blue-800 mb-4">Read the Product Manual for feature details and use cases.</p>
             <Button
               size="sm"
-              variant="outline"
-              onClick={() => loadDocument(documents[1])}
+              onClick={downloadAllAsHTML}
+              disabled={!loadedDocs['product-manual']}
               className="gap-2"
             >
-              <FileText className="w-4 h-4" />
-              Expand
+              <Download className="w-4 h-4" />
+              {loadedDocs['product-manual'] ? 'Download Manual' : 'Loading...'}
             </Button>
           </CardContent>
         </Card>
@@ -129,12 +190,12 @@ export default function DeveloperDocuments() {
                 ) : (
                   <Button
                     size="sm"
-                    variant="outline"
-                    onClick={() => loadDocument(doc)}
+                    onClick={downloadAllAsHTML}
+                    disabled={!loadedDocs['product-manual']}
                     className="gap-2 flex-1"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    Expand
+                    <Printer className="w-4 h-4" />
+                    {loadedDocs['product-manual'] ? 'Download' : 'Loading...'}
                   </Button>
                 )}
               </div>
@@ -146,48 +207,45 @@ export default function DeveloperDocuments() {
       {/* PDF Export Tips */}
       <Card className="bg-slate-50 border-slate-200">
         <CardHeader>
-          <CardTitle className="text-base">💡 Printing to PDF</CardTitle>
+          <CardTitle className="text-base">💡 Downloading & Printing</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-slate-700">
           <p>
-            <strong>For HTML files (Investor Pitch):</strong> Click "View & Print" → Browser print dialog (Cmd+P / Ctrl+P) → Save as PDF
+            <strong>Product Manual:</strong> Click "Download Manual" → Saves as HTML → Open in browser → Cmd+P / Ctrl+P → Save as PDF
           </p>
           <p>
-            <strong>For Markdown files:</strong> Click "View" → Copy content → Paste into Google Docs → Download as PDF
+            <strong>Investor Pitch:</strong> Click "View & Print" → Browser print dialog → Save as PDF
           </p>
           <p>
-            <strong>Alternative:</strong> Use free online converters (Pandoc, CloudConvert) for batch markdown to PDF conversion
+            <strong>Note:</strong> Product Manual auto-loads on page load and includes all expanded content ready to print.
           </p>
         </CardContent>
       </Card>
 
       {/* Expanded Document Sections */}
-      {Object.entries(loadedDocs).map(([docId, content]) => {
-        const doc = documents.find(d => d.id === docId);
-        return (
-          <Card key={docId} className="print:page-break-before">
-            <CardHeader className="flex items-center justify-between flex-row">
-              <div>
-                <CardTitle>{doc.title}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">{doc.description}</p>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => window.print()}
-                className="gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Print/Save PDF
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none dark:prose-invert">
-                <ReactMarkdown>{content}</ReactMarkdown>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {loadedDocs['product-manual'] && (
+        <Card className="print:page-break-before">
+          <CardHeader className="flex items-center justify-between flex-row">
+            <div>
+              <CardTitle>Product Manual - Full Content</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to print</p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => window.print()}
+              className="gap-2"
+            >
+              <Printer className="w-4 h-4" />
+              Print/Save PDF
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <ReactMarkdown>{loadedDocs['product-manual']}</ReactMarkdown>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       </div>
       );
       }
