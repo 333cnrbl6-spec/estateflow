@@ -72,25 +72,38 @@ export default function ZoneBasedSidebar() {
               {isExpanded && (
                 <div className="ml-2 mt-1 space-y-1 border-l border-sidebar-border pl-3">
                   {zone.routes.map(route => {
-                    const RouteIcon = typeof route.icon === 'function' ? route.icon : null;
-                    const iconDisplay = RouteIcon ? <RouteIcon className="w-3.5 h-3.5" /> : <span className="text-sm">{route.icon}</span>;
+                     let iconDisplay = null;
 
-                    return (
-                      <Link
-                        key={route.path}
-                        to={route.path}
-                        className={cn(
-                          'flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-colors',
-                          isRouteActive(route.path)
-                            ? 'bg-sidebar-primary text-sidebar-primary-foreground font-medium'
-                            : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/30'
-                        )}
-                      >
-                        {iconDisplay}
-                        <span>{route.label}</span>
-                      </Link>
-                    );
-                  })}
+                     // Handle function/component icons
+                     if (typeof route.icon === 'function') {
+                       const RouteIcon = route.icon;
+                       iconDisplay = <RouteIcon className="w-3.5 h-3.5" />;
+                     }
+                     // Handle string/emoji icons
+                     else if (typeof route.icon === 'string') {
+                       iconDisplay = <span className="text-sm">{route.icon}</span>;
+                     }
+                     // Handle React component icons (already instantiated)
+                     else if (route.icon?.$$typeof) {
+                       iconDisplay = route.icon;
+                     }
+
+                     return (
+                       <Link
+                         key={route.path}
+                         to={route.path}
+                         className={cn(
+                           'flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-colors',
+                           isRouteActive(route.path)
+                             ? 'bg-sidebar-primary text-sidebar-primary-foreground font-medium'
+                             : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/30'
+                         )}
+                       >
+                         {iconDisplay}
+                         <span>{route.label}</span>
+                       </Link>
+                     );
+                   })}
                 </div>
               )}
             </div>
