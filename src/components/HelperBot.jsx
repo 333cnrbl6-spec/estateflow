@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Send, X, Loader2, ChevronDown } from 'lucide-react';
+import { Send, X, Loader2, ChevronDown, Lightbulb } from 'lucide-react';
+import { PAGE_HINTS } from '@/lib/app-knowledge';
 
 const PremisoBotIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -40,6 +41,7 @@ export default function HelperBot() {
   const getPageContext = () => {
     const pathMap = {
       '/': 'dashboard',
+      '/dashboard': 'dashboard',
       '/properties': 'properties',
       '/units': 'units',
       '/tenants': 'tenancies',
@@ -48,8 +50,15 @@ export default function HelperBot() {
       '/financials': 'financials',
       '/sales': 'sales',
       '/block-management': 'block_management',
+      '/workflows': 'automation',
+      '/documents': 'documents',
     };
     return pathMap[location.pathname] || 'general';
+  };
+
+  const getContextHints = () => {
+    const hints = PAGE_HINTS[location.pathname] || PAGE_HINTS['default'];
+    return hints || [];
   };
 
   const handleSubmit = async (e) => {
@@ -213,13 +222,31 @@ export default function HelperBot() {
               </Button>
             </form>
 
-            {/* Quick tips */}
-            <div className="text-xs text-muted-foreground space-y-1">
-              <p className="font-semibold">Quick tips:</p>
+            {/* Page-specific hints */}
+            {getContextHints().length > 0 && (
+              <div className="space-y-3 border-t pt-3">
+                <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                  Tips for this page
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1.5">
+                  {getContextHints().slice(0, 3).map((hint, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-primary font-bold shrink-0">•</span>
+                      <span>{hint.hint}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* General tips */}
+            <div className="border-t pt-3 text-xs text-muted-foreground space-y-1">
+              <p className="font-semibold text-foreground">How to use</p>
               <ul className="space-y-0.5">
-                <li>• Ask "how do I...?" for step-by-step guides</li>
-                <li>• Ask about compliance requirements</li>
-                <li>• Ask for feature recommendations</li>
+                <li>• "How do I...?" for step-by-step guides</li>
+                <li>• Ask about compliance or legal requirements</li>
+                <li>• "What does [feature] do?"</li>
               </ul>
             </div>
           </CardContent>
@@ -228,19 +255,19 @@ export default function HelperBot() {
         <div className="relative flex flex-col items-end gap-3">
           {/* Floating tip bubble */}
           {showBubble && (
-            <div className="bg-white border-2 border-primary rounded-2xl px-4 py-2.5 shadow-lg max-w-xs animate-bounce" style={{ animationDuration: '3s' }}>
-              <div className="flex items-start gap-2">
-                <div className="w-5 h-5 text-primary shrink-0 mt-0.5">
-                  <PremisoBotIcon />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Need help?</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Ask me about features, compliance, or how to use the platform</p>
-                </div>
-              </div>
-              {/* Bubble tail */}
-              <div className="absolute bottom-0 right-0 transform translate-x-3 translate-y-full w-0 h-0 border-l-8 border-t-8 border-l-transparent border-t-white border-r-8 border-r-transparent"></div>
-            </div>
+           <div className="bg-white border-2 border-primary rounded-2xl px-4 py-3 shadow-lg max-w-xs animate-bounce" style={{ animationDuration: '3s' }}>
+             <div className="flex items-start gap-2">
+               <div className="w-5 h-5 text-primary shrink-0 mt-0.5">
+                 <PremisoBotIcon />
+               </div>
+               <div className="flex-1">
+                 <p className="text-sm font-semibold text-foreground">Tip for this page</p>
+                 <p className="text-xs text-muted-foreground mt-1.5">{getContextHints()[0]?.hint || 'Ask me about features, compliance, or how to use the platform'}</p>
+               </div>
+             </div>
+             {/* Bubble tail */}
+             <div className="absolute bottom-0 right-0 transform translate-x-3 translate-y-full w-0 h-0 border-l-8 border-t-8 border-l-transparent border-t-white border-r-8 border-r-transparent"></div>
+           </div>
           )}
           
           {/* Bot button */}

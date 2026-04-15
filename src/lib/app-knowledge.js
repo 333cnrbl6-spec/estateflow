@@ -245,3 +245,70 @@ export const PAGE_GUIDES = {
   '/sales': { title: 'Sales', help: 'Manage leads, listings, and property transactions' },
   '/block-management': { title: 'Block Management', help: 'Manage service charges and leaseholder communications' },
 };
+
+export const PAGE_HINTS = {
+  '/': [
+    { hint: 'Check the compliance alerts widget at the top to stay on top of certificate renewals' },
+    { hint: 'Use the occupancy rate card to monitor unit fill rates across your portfolio' },
+    { hint: 'Click "View all" on recent maintenance to see the full maintenance pipeline' },
+    { hint: 'The Quick Actions panel links to Sales Dashboard and Market Reports' },
+  ],
+  '/dashboard': [
+    { hint: 'Check the compliance alerts widget at the top to stay on top of certificate renewals' },
+    { hint: 'Use the occupancy rate card to monitor unit fill rates across your portfolio' },
+    { hint: 'Click "View all" on recent maintenance to see the full maintenance pipeline' },
+  ],
+  '/properties': [
+    { hint: 'Add a property to get started managing units, tenants, and maintenance' },
+    { hint: 'Assign a property manager to each property for better organization' },
+    { hint: 'Use the region filter to compare portfolio performance by location' },
+    { hint: 'Upload property documents and images for quick reference' },
+  ],
+  '/tenants': [
+    { hint: 'Always set up deposit protection within 30 days of tenancy start' },
+    { hint: 'Serve prescribed information to tenants to comply with housing law' },
+    { hint: 'Use the screening module to verify credit and references before approval' },
+    { hint: 'Mark tenants as "in arrears" to track rent payment issues' },
+  ],
+  '/maintenance': [
+    { hint: 'Assign contractors to maintenance requests to track progress in real-time' },
+    { hint: 'Use the priority field to highlight urgent repairs (e.g., emergency callouts)' },
+    { hint: 'Upload progress photos and sign-offs to complete work orders' },
+    { hint: 'Check the maintenance forecasting feature to predict repairs before they fail' },
+  ],
+  '/compliance': [
+    { hint: 'Set up alerts for certificates expiring within the next 30 days' },
+    { hint: 'Gas Safety Certificates (CP12) must be renewed annually for all gas appliances' },
+    { hint: 'EICR electrical certificates are valid for 5 years and are mandatory in rentals' },
+    { hint: 'Generate compliance reports to prove your legal safeguards to auditors' },
+  ],
+  '/financials': [
+    { hint: 'Set up recurring payments to automate rent collection from tenants' },
+    { hint: 'Use the bank reconciliation tool to match transactions with your accounts' },
+    { hint: 'Generate P&L reports monthly to track profitability by property' },
+    { hint: 'Export financial data to Xero, Sage, or QuickBooks for accounting' },
+  ],
+  '/sales': [
+    { hint: 'Lead scoring automatically ranks prospects by conversion likelihood' },
+    { hint: 'Use market reports to set competitive listing prices based on local data' },
+    { hint: 'Schedule viewings and track appointment confirmations with the scheduler' },
+    { hint: 'Create offers and manage negotiations through the transaction pipeline' },
+  ],
+  '/workflows': [
+    { hint: 'Create scheduled automations to send reminders (e.g., certificate renewals)' },
+    { hint: 'Use entity triggers to auto-generate documents when tenancies are created' },
+    { hint: 'Set conditions to filter which events trigger your automation' },
+    { hint: 'Test workflows with demo data before running on live properties' },
+  ],
+  '/documents': [
+    { hint: 'Upload tenancy agreements and certificates to keep documents centralized' },
+    { hint: 'Use templates to auto-generate letters, notices, and legal documents' },
+    { hint: 'Enable E-signature to get tenant signatures without printing' },
+    { hint: 'Bulk generate documents for multiple properties in one action' },
+  ],
+  'default': [
+    { hint: 'Use the search bar to quickly find properties, tenants, or maintenance records' },
+    { hint: 'Click the help icon in any form for field-level explanations' },
+    { hint: 'Check the notification center for compliance deadlines and task updates' },
+  ],
+};
