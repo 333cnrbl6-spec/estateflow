@@ -1,13 +1,40 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { v4 as uuidv4 } from 'npm:uuid@10.0.0';
+import { z } from 'npm:zod@3.24.2';
+
+const BuyerOfferSchema = z.object({
+  sales_listing_id: z.string().min(1, 'Sales listing ID required'),
+  buyer_name: z.string().min(1, 'Buyer name required'),
+  buyer_email: z.string().email('Invalid email address'),
+  buyer_phone: z.string().optional(),
+  offer_amount: z.number().int().positive('Offer amount must be positive'),
+  mortgage_status: z.string().optional(),
+  is_chain_free: z.boolean().default(false),
+  solicitor_name: z.string().optional(),
+  solicitor_contact: z.string().optional(),
+  target_completion_date: z.string().optional(),
+  conditions: z.array(z.any()).optional(),
+});
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
     // Parse request body
-    const body = await req.json();
-    const { 
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = BuyerOfferSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const {
       sales_listing_id, 
       buyer_name, 
       buyer_email, 
@@ -19,15 +46,7 @@ Deno.serve(async (req) => {
       solicitor_contact,
       target_completion_date,
       conditions
-    } = body;
-
-    // Validate required fields
-    if (!sales_listing_id || !buyer_name || !buyer_email || !offer_amount) {
-      return Response.json({ 
-        success: false, 
-        error: 'Missing required fields' 
-      }, { status: 400 });
-    }
+    } = validation.data;
 
     // Generate secure access token
     const access_token = uuidv4();

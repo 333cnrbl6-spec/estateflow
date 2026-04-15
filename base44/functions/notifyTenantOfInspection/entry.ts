@@ -1,9 +1,27 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const NotifyInspectionSchema = z.object({
+  inspection_id: z.string().min(1, 'Inspection ID required'),
+});
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { inspection_id } = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = NotifyInspectionSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { inspection_id } = validation.data;
 
     // Get inspection details
     const inspection = await base44.asServiceRole.entities.InspectionRecord.get(inspection_id);

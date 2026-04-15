@@ -1,4 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const InspectionReportSchema = z.object({
+  inspection_record_id: z.string().min(1, 'Inspection record ID required'),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,7 +14,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { inspection_record_id } = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = InspectionReportSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { inspection_record_id } = validation.data;
 
     // Fetch inspection record
     const inspection = await base44.asServiceRole.entities.InspectionRecord.get(inspection_record_id);

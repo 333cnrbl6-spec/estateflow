@@ -1,4 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const MaintenanceFromInspectionSchema = z.object({
+  event_data: z.object({
+    data: z.object({}).passthrough(),
+  }),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,7 +16,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { event_data } = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = MaintenanceFromInspectionSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { event_data } = validation.data;
     const inspection = event_data.data;
 
     // Only process if submitted and has findings requiring maintenance

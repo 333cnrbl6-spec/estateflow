@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import PaginationControls from '@/components/shared/PaginationControls';
 import {
   Plus, Search, GitBranch, AlertTriangle, CheckCircle2,
   Network, Loader2, Zap, ShieldAlert, Shield
@@ -38,6 +39,8 @@ export default function RelationshipIntelligence() {
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [legalPanel, setLegalPanel] = useState(null); // { pattern, fromLabel, toLabel }
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
 
   const { data: relationships = [], isLoading } = useQuery({
     queryKey: ['ownership_relationships'],
@@ -79,6 +82,10 @@ export default function RelationshipIntelligence() {
       .some(v => v?.toLowerCase?.()?.includes(search.toLowerCase?.()) || false);
     return matchesTab && matchesSearch;
   });
+
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const paginated = filtered.slice(startIdx, endIdx);
 
   const runScan = async () => {
     setScanning(true);
@@ -256,7 +263,7 @@ export default function RelationshipIntelligence() {
 
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Graph */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 space-y-4">
             <Card>
               <CardHeader className="pb-2 pt-4">
                 <CardTitle className="text-sm flex items-center gap-2">
@@ -271,13 +278,26 @@ export default function RelationshipIntelligence() {
                   </div>
                 ) : (
                   <RelationshipChainGraph
-                    relationships={filtered}
+                    relationships={paginated}
                     onNodeClick={setSelectedNodeId}
                     selectedNodeId={selectedNodeId}
                   />
                 )}
               </CardContent>
             </Card>
+            {filtered.length > pageSize && (
+              <PaginationControls
+                currentPage={currentPage}
+                pageSize={pageSize}
+                hasNextPage={endIdx < filtered.length}
+                hasPreviousPage={currentPage > 1}
+                totalItems={filtered.length}
+                onNextPage={() => setCurrentPage(c => c + 1)}
+                onPreviousPage={() => setCurrentPage(c => Math.max(1, c - 1))}
+                onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+                pageSizeOptions={[25, 50, 100]}
+              />
+            )}
           </div>
 
           {/* Side panel */}

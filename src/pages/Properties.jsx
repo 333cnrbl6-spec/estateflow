@@ -10,6 +10,7 @@ import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import PaginationControls from '@/components/shared/PaginationControls';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 
@@ -33,6 +34,8 @@ export default function Properties() {
   const [filterRegion, setFilterRegion] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const queryClient = useQueryClient();
   const { demoCompanyId } = useDemoFilter();
 
@@ -67,6 +70,10 @@ export default function Properties() {
     return matchSearch && matchRegion;
   });
 
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const paginated = filtered.slice(startIdx, endIdx);
+
   const handleSave = (data) => {
     if (editing) updateMutation.mutate({ id: editing.id, data });
     else createMutation.mutate(data);
@@ -95,8 +102,9 @@ export default function Properties() {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map(property => (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {paginated.map(property => (
             <div key={property.id} className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow group">
               <div className="h-32 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
                 <Home className="w-10 h-10 text-primary/30" />
@@ -140,10 +148,22 @@ export default function Properties() {
               </div>
             </div>
           ))}
-        </div>
-      ) : (
-        <EmptyState icon={Home} title="No properties found" description="Add your first property" actionLabel="Add Property" onAction={() => { setEditing(null); setDialogOpen(true); }} />
-      )}
+          </div>
+          <PaginationControls
+          currentPage={currentPage}
+          pageSize={pageSize}
+          hasNextPage={endIdx < filtered.length}
+          hasPreviousPage={currentPage > 1}
+          totalItems={filtered.length}
+          onNextPage={() => setCurrentPage(c => c + 1)}
+          onPreviousPage={() => setCurrentPage(c => Math.max(1, c - 1))}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[10, 25, 50]}
+          />
+          </div>
+          ) : (
+          <EmptyState icon={Home} title="No properties found" description="Add your first property" actionLabel="Add Property" onAction={() => { setEditing(null); setDialogOpen(true); }} />
+          )}
 
       <EntityFormDialog
         open={dialogOpen} onOpenChange={setDialogOpen}

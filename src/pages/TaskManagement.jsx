@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import TaskCard from '@/components/tasks/TaskCard';
 import TaskFormDialog from '@/components/tasks/TaskFormDialog';
+import PaginationControls from '@/components/shared/PaginationControls';
 
 export default function TaskManagement() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -16,6 +17,8 @@ export default function TaskManagement() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const queryClient = useQueryClient();
 
   const { data: tasks = [], isLoading } = useQuery({
@@ -68,6 +71,10 @@ export default function TaskManagement() {
                        task.description?.toLowerCase().includes(searchQuery.toLowerCase());
     return statusMatch && priorityMatch && searchMatch;
   });
+
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const paginatedTasks = filteredTasks.slice(startIdx, endIdx);
 
   const pendingCount = tasks.filter(t => t.status === 'pending').length;
   const inProgressCount = tasks.filter(t => t.status === 'in_progress').length;
@@ -178,18 +185,33 @@ export default function TaskManagement() {
               ) : filteredTasks.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">No tasks found</div>
               ) : (
-                <div className="grid gap-3">
-                  {filteredTasks.map(task => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      onEdit={(t) => {
-                        setEditingTask(t);
-                        setOpenDialog(true);
-                      }}
-                      onStatusChange={handleStatusChange}
+                <div className="space-y-3">
+                  <div className="grid gap-3">
+                    {paginatedTasks.map(task => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onEdit={(t) => {
+                          setEditingTask(t);
+                          setOpenDialog(true);
+                        }}
+                        onStatusChange={handleStatusChange}
+                      />
+                    ))}
+                  </div>
+                  {filteredTasks.length > pageSize && (
+                    <PaginationControls
+                      currentPage={currentPage}
+                      pageSize={pageSize}
+                      hasNextPage={endIdx < filteredTasks.length}
+                      hasPreviousPage={currentPage > 1}
+                      totalItems={filteredTasks.length}
+                      onNextPage={() => setCurrentPage(c => c + 1)}
+                      onPreviousPage={() => setCurrentPage(c => Math.max(1, c - 1))}
+                      onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+                      pageSizeOptions={[10, 25, 50]}
                     />
-                  ))}
+                  )}
                 </div>
               )}
             </TabsContent>

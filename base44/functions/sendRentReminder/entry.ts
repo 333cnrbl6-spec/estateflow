@@ -1,4 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const RentReminderSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice ID required'),
+  sendEmail: z.boolean().default(true),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,8 +15,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { invoiceId, sendEmail = true } = body;
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = RentReminderSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { invoiceId, sendEmail } = validation.data;
 
     // Fetch invoice
     const invoice = await base44.entities.Invoice.get(invoiceId);
