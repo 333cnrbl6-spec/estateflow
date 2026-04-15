@@ -2,10 +2,11 @@ import React from 'react';
 import { toast } from 'sonner';
 
 /**
- * Wraps async operations to automatically display errors as toasts
- * Usage: <AsyncOperation fn={() => someAsyncFunc()} onSuccess={handler} />
+ * Wraps async operations to automatically display errors as toasts.
+ * Use: const execute = useAsyncOp(); await execute(() => someAsyncFunc())
+ * Or: <AsyncOperationWrapper fn={() => someAsyncFunc()} onSuccess={handler} />
  */
-export default function AsyncOperation({ 
+export default function AsyncOperationWrapper({ 
   fn, 
   onSuccess, 
   onError, 

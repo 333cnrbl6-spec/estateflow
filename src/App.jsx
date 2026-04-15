@@ -303,12 +303,6 @@ const AuthenticatedApp = () => {
         <Route path="/bulk-import-tester" element={<BulkImportTester />} />
         <Route path="/user-type-manager" element={<UserTypeManager />} />
         <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
-        <Route path="/errors" element={<ErrorMonitoring />} />
-        <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
-        <Route path="/kpi-dashboard" element={<PropertyKPIDashboard />} />
-        <Route path="/bulk-import-tester" element={<BulkImportTester />} />
-        <Route path="/user-type-manager" element={<UserTypeManager />} />
-        <Route path="/dev-demo-switcher" element={<DeveloperDemoSwitcher />} />
 
         {/* Demo & Sales */}
         <Route path="/demo-station" element={<DemoStation />} />
