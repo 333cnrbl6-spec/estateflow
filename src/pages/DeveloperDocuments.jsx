@@ -80,6 +80,8 @@ export default function DeveloperDocuments() {
     }
 
     const doc = documents.find(d => d.id === docId);
+    if (!doc) return;
+    
     const content = loadedDocs[docId];
 
     const html = `
