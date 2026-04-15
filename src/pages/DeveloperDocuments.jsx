@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { FileText, Download, ExternalLink, BookOpen, X } from 'lucide-react';
+import { FileText, Download, ExternalLink, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ReactMarkdown from 'react-markdown';
 
 export default function DeveloperDocuments() {
-  const [selectedDoc, setSelectedDoc] = useState(null);
-  const [docContent, setDocContent] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loadedDocs, setLoadedDocs] = useState({});
 
   const documents = [
     {
@@ -42,66 +40,17 @@ export default function DeveloperDocuments() {
     'Deployment': 'bg-cyan-100 text-cyan-800',
   };
 
-  const handleViewDocument = async (doc) => {
-    if (doc.id === 'investor-pitch') {
-      window.open(doc.file, '_blank');
-      return;
-    }
+  const loadDocument = async (doc) => {
+    if (loadedDocs[doc.id]) return;
     
-    setLoading(true);
     try {
       const response = await fetch(doc.file);
       const text = await response.text();
-      setDocContent(text);
-      setSelectedDoc(doc);
+      setLoadedDocs(prev => ({ ...prev, [doc.id]: text }));
     } catch (err) {
       console.error('Failed to load document:', err);
     }
-    setLoading(false);
   };
-
-  const handlePrintPdf = () => {
-    window.print();
-  };
-
-  const closeModal = () => {
-    setSelectedDoc(null);
-    setDocContent(null);
-  };
-
-  // Modal for viewing markdown documents
-  if (selectedDoc && docContent) {
-    return (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-2xl font-bold">{selectedDoc.title}</h2>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={handlePrintPdf}
-                className="gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Print/Save PDF
-              </Button>
-              <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-          <div className="flex-1 overflow-auto p-6">
-            <div className="prose prose-sm max-w-none">
-              <ReactMarkdown>{docContent}</ReactMarkdown>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -140,12 +89,11 @@ export default function DeveloperDocuments() {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => handleViewDocument(documents[1])}
-              disabled={loading}
+              onClick={() => loadDocument(documents[1])}
               className="gap-2"
             >
               <FileText className="w-4 h-4" />
-              {loading ? 'Loading...' : 'Open Product Manual'}
+              Expand
             </Button>
           </CardContent>
         </Card>
@@ -169,24 +117,24 @@ export default function DeveloperDocuments() {
                 {doc.description}
               </p>
               <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleViewDocument(doc)}
-                  disabled={loading}
-                  className="gap-2 flex-1"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  {loading ? 'Loading...' : 'View'}
-                </Button>
-                {doc.id === 'investor-pitch' && (
+                {doc.id === 'investor-pitch' ? (
                   <Button
                     size="sm"
-                    onClick={() => handleViewDocument(doc)}
+                    onClick={() => window.open(doc.file, '_blank')}
                     className="gap-2 flex-1"
                   >
                     <Download className="w-4 h-4" />
-                    {doc.downloadText}
+                    View & Print
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => loadDocument(doc)}
+                    className="gap-2 flex-1"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Expand
                   </Button>
                 )}
               </div>
@@ -212,6 +160,34 @@ export default function DeveloperDocuments() {
           </p>
         </CardContent>
       </Card>
-    </div>
-  );
-}
+
+      {/* Expanded Document Sections */}
+      {Object.entries(loadedDocs).map(([docId, content]) => {
+        const doc = documents.find(d => d.id === docId);
+        return (
+          <Card key={docId} className="print:page-break-before">
+            <CardHeader className="flex items-center justify-between flex-row">
+              <div>
+                <CardTitle>{doc.title}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">{doc.description}</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => window.print()}
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Print/Save PDF
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{content}</ReactMarkdown>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+      </div>
+      );
+      }
