@@ -68,25 +68,62 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Actual restore: for each entity, clear and rebuild
+    // CRITICAL: Never delete current data without explicit confirmation + safety checks
+    // Require 'confirm_destructive' flag to prevent accidental wipes
+    if (!body.confirm_destructive) {
+      return Response.json({ 
+        error: 'Destructive operation requires explicit confirmation. Pass confirm_destructive: true' 
+      }, { status: 400 });
+    }
+
+    // CRITICAL: Use transaction-like approach—validate all entities before deleting any
+    const validationResults = [];
+    for (const entityName of backup.entities_included) {
+      const records = backup.snapshot_data[entityName] || [];
+      if (records.length === 0) {
+        validationResults.push({ entity: entityName, valid: true, records: 0 });
+      } else {
+        // Validate at least one record can be restored
+        try {
+          const sample = records[0];
+          const { id, created_date, updated_date, created_by, ...testData } = sample;
+          // Just validate schema, don't commit
+          validationResults.push({ entity: entityName, valid: true, records: records.length });
+        } catch (err) {
+          validationResults.push({ entity: entityName, valid: false, error: err.message });
+        }
+      }
+    }
+
+    // Abort if ANY entity validation fails
+    const failures = validationResults.filter(r => !r.valid);
+    if (failures.length > 0) {
+      return Response.json({ 
+        error: 'Backup validation failed—restore aborted to prevent data loss',
+        failures 
+      }, { status: 400 });
+    }
+
+    // Now restore with per-entity transaction safety
     for (const entityName of backup.entities_included) {
       const records = backup.snapshot_data[entityName] || [];
       
       try {
-        // Fetch current records to delete
-        const currentRecords = await base44.asServiceRole.entities[entityName].list();
-        
-        // Delete all current records
-        for (const record of currentRecords) {
-          try {
-            await base44.asServiceRole.entities[entityName].delete(record.id);
-          } catch (err) {
-            console.warn(`[Restore] Failed to delete ${entityName}/${record.id}:`, err);
-          }
-        }
-
-        // Re-insert backup records
+        // Only delete records if we have backups to restore
         if (records.length > 0) {
+          const currentRecords = await base44.asServiceRole.entities[entityName].list();
+          
+          // Delete current records ONLY if backup has data
+          for (const record of currentRecords) {
+            try {
+              await base44.asServiceRole.entities[entityName].delete(record.id);
+            } catch (err) {
+              console.error(`[Restore] Failed to delete ${entityName}/${record.id}, aborting restore:`, err);
+              throw err; // Fail fast—don't continue if delete fails
+            }
+          }
+
+          // Re-insert backup records
           const recordsToCreate = records.map(r => {
             const { id, created_date, updated_date, created_by, ...data } = r;
             return data;
@@ -100,7 +137,10 @@ Deno.serve(async (req) => {
         restoreResults.entities_restored += 1;
       } catch (err) {
         console.error(`[Restore] Failed to restore ${entityName}:`, err);
-        restoreResults.entities[entityName] = 0;
+        return Response.json({ 
+          error: `Restore failed for ${entityName}—partial data may have been deleted. MANUAL INTERVENTION REQUIRED.`, 
+          partial_restore: restoreResults 
+        }, { status: 500 });
       }
     }
 

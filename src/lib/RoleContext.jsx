@@ -8,10 +8,16 @@ export function RoleProvider({ children }) {
   const [demoMode, setDemoMode] = useState(false); // Indicates if using demo/test role
 
   const switchRole = useCallback((newRole) => {
+    // CRITICAL: Only allow role switching in DEMO mode - never persist to localStorage
+    // Frontend role is for UI only; backend must verify actual user role
     if (Object.values(ROLES).includes(newRole)) {
       setCurrentRole(newRole);
       setDemoMode(true); // Switching roles puts us in demo mode
-      localStorage.setItem('demo_role', newRole);
+      // NEVER store role in localStorage—it's user-editable and exploitable
+      // Clear any persisted role to force backend auth on page reload
+      localStorage.removeItem('demo_role');
+      localStorage.removeItem('user_role');
+      console.warn('[RoleContext] Role switched for demo only—backend auth required for actual operations');
     }
   }, []);
 
@@ -19,6 +25,7 @@ export function RoleProvider({ children }) {
     setCurrentRole(ROLES.SUBSCRIBER);
     setDemoMode(false);
     localStorage.removeItem('demo_role');
+    localStorage.removeItem('user_role');
   }, []);
 
   const canAccess = useCallback((routePath) => {
@@ -41,9 +48,10 @@ export function RoleProvider({ children }) {
     canAccess,
     hasFeature,
     getDataLevel,
-    // Helper to check if role is admin
-    isAdmin: currentRole === ROLES.ADMIN,
-    isSales: currentRole === ROLES.SALES,
+    // CRITICAL: Frontend role is for UI ONLY—backend always validates actual user role
+    // These should NEVER be used to gate sensitive operations
+    isAdmin: currentRole === ROLES.ADMIN && demoMode, // Only in demo mode
+    isSales: currentRole === ROLES.SALES && demoMode, // Only in demo mode
     isSubscriber: currentRole === ROLES.SUBSCRIBER,
   };
 
