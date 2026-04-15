@@ -170,6 +170,7 @@ export const navigationZones = [
     icon: Settings,
     description: 'Settings, integrations, documentation, monitoring',
     routes: [
+      { path: '/role-management', label: 'Role Management', icon: Shield },
       { path: '/settings', label: 'Settings', icon: Settings },
       { path: '/integrations', label: 'Integrations', icon: '🔗' },
       { path: '/api-integrations', label: 'API Integrations', icon: '⚡' },

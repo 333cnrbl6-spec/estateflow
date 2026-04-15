@@ -1,23 +1,51 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { ROLES, ROLE_FEATURES, canAccessRoute, hasFeatureAccess, getDataAccess } from './roleConfig';
 
 const RoleContext = createContext();
 
+/**
+ * Unified Role Management Context
+ * - Manages both demo mode and authenticated user roles
+ * - Always validates backend permissions; frontend is UI-only
+ * - Supports role hierarchies (admin > subscriber > viewer)
+ */
 export function RoleProvider({ children }) {
   const [currentRole, setCurrentRole] = useState(ROLES.SUBSCRIBER);
-  const [demoMode, setDemoMode] = useState(false); // Indicates if using demo/test role
+  const [demoMode, setDemoMode] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [permissions, setPermissions] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Load authenticated user's actual role on mount
+  useEffect(() => {
+    const loadUserRole = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user) {
+          setCurrentRole(user.role || ROLES.SUBSCRIBER);
+          setUserRole(user);
+          // Backend validates all actual permissions
+          setPermissions(getDefaultPermissions(user.role));
+        }
+      } catch (e) {
+        // Not authenticated, use default
+        setCurrentRole(ROLES.SUBSCRIBER);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUserRole();
+  }, []);
 
   const switchRole = useCallback((newRole) => {
-    // CRITICAL: Only allow role switching in DEMO mode - never persist to localStorage
-    // Frontend role is for UI only; backend must verify actual user role
+    // CRITICAL: Only allow role switching in DEMO mode—never persist to localStorage
     if (Object.values(ROLES).includes(newRole)) {
       setCurrentRole(newRole);
-      setDemoMode(true); // Switching roles puts us in demo mode
-      // NEVER store role in localStorage—it's user-editable and exploitable
-      // Clear any persisted role to force backend auth on page reload
+      setDemoMode(true);
       localStorage.removeItem('demo_role');
       localStorage.removeItem('user_role');
-      console.warn('[RoleContext] Role switched for demo only—backend auth required for actual operations');
+      console.warn('[RoleContext] Role switched for demo only—backend validates actual role on page reload');
     }
   }, []);
 
@@ -41,18 +69,24 @@ export function RoleProvider({ children }) {
   }, [currentRole]);
 
   const value = {
+    // Current role state
     currentRole,
+    userRole,
+    permissions,
+    loading,
+    demoMode,
+    isAdmin: currentRole === ROLES.ADMIN,
+    isSales: currentRole === ROLES.SALES,
+    isSubscriber: currentRole === ROLES.SUBSCRIBER,
+
+    // Role switching (demo only)
     switchRole,
     resetRole,
-    demoMode,
+
+    // Permission checks (UI hints only—backend validates)
     canAccess,
     hasFeature,
     getDataLevel,
-    // CRITICAL: Frontend role is for UI ONLY—backend always validates actual user role
-    // These should NEVER be used to gate sensitive operations
-    isAdmin: currentRole === ROLES.ADMIN && demoMode, // Only in demo mode
-    isSales: currentRole === ROLES.SALES && demoMode, // Only in demo mode
-    isSubscriber: currentRole === ROLES.SUBSCRIBER,
   };
 
   return (
@@ -68,4 +102,18 @@ export function useRole() {
     throw new Error('useRole must be used within a RoleProvider');
   }
   return context;
+}
+
+/**
+ * Get default permissions for a role
+ */
+function getDefaultPermissions(role) {
+  const perms = ROLE_FEATURES[role] || {};
+  return {
+    ...perms,
+    // Ensure backend validates all sensitive operations
+    canManageRoles: role === ROLES.ADMIN,
+    canManageUsers: role === ROLES.ADMIN,
+    canAccessAuditLogs: role === ROLES.ADMIN,
+  };
 }
