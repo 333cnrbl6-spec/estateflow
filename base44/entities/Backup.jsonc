@@ -1,0 +1,89 @@
+{
+  "name": "Backup",
+  "type": "object",
+  "properties": {
+    "backup_name": {
+      "type": "string",
+      "description": "User-friendly backup name"
+    },
+    "backup_type": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "scheduled",
+        "pre_bulk_import"
+      ],
+      "default": "manual",
+      "description": "Type of backup"
+    },
+    "entities_included": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of entity types included (e.g., ['Property', 'Tenant', 'Task'])"
+    },
+    "snapshot_data": {
+      "type": "object",
+      "description": "Compressed snapshot of entity data"
+    },
+    "total_records": {
+      "type": "number",
+      "description": "Total number of records in backup"
+    },
+    "backup_size_bytes": {
+      "type": "number",
+      "description": "Size of backup in bytes"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created backup"
+    },
+    "backup_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When backup was created"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "creating",
+        "ready",
+        "restoring",
+        "failed"
+      ],
+      "default": "creating",
+      "description": "Backup status"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether backup integrity verified"
+    },
+    "restore_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times this backup has been restored"
+    },
+    "last_restored": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When backup was last restored"
+    },
+    "retention_days": {
+      "type": "number",
+      "default": 30,
+      "description": "Days to retain backup before auto-delete"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Backup notes or description"
+    }
+  },
+  "required": [
+    "backup_name",
+    "entities_included",
+    "backup_timestamp",
+    "created_by"
+  ]
+}
