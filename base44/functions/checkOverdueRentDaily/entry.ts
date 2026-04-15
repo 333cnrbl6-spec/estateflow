@@ -42,6 +42,9 @@ Deno.serve(async (req) => {
 
         // Check if this is recurring arrears (3+ months)
         const isRecurringArrears = overdueTransactions.length >= 3;
+        
+        // Escalation tiers: day 30, day 60, day 90+ (persistent severe)
+        const escalationTier = daysOverdue >= 90 ? 'critical' : daysOverdue >= 60 ? 'severe' : daysOverdue >= 30 ? 'warning' : 'reminder';
 
         console.log(`[Daily Rent Check] Tenant ${tenant.full_name}: ${overdueTransactions.length} overdue months, £${totalOverdue}, ${daysOverdue} days overdue`);
 
@@ -109,10 +112,21 @@ async function sendTenantReminder(base44, tenant, overdueTransactions, totalOver
       return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
     }).join(', ');
 
-    const isSevere = daysOverdue > 60 || overdueTransactions.length >= 3;
+    const colors = {
+      reminder: '#f59e0b',
+      warning: '#ea580c',
+      severe: '#dc2626',
+      critical: '#7c2d12'
+    };
+    const messages = {
+      reminder: 'Payment Reminder: Outstanding Rent',
+      warning: 'Action Required: Overdue Rent',
+      severe: '⚠️ Urgent: Outstanding Rent Payment Required',
+      critical: '🚨 Critical: Legal Action May Follow'
+    };
 
     const emailBody = `
-      <h2 style="color: ${isSevere ? '#dc2626' : '#f59e0b'};">Payment Reminder: Outstanding Rent</h2>
+      <h2 style="color: ${colors[escalationTier]};">${messages[escalationTier]}</h2>
       
       <p>Dear ${tenant.full_name},</p>
       
@@ -144,10 +158,20 @@ async function sendTenantReminder(base44, tenant, overdueTransactions, totalOver
         <li>Direct debit (contact us to set up)</li>
       </ul>
 
-      ${isSevere ? `
+      ${escalationTier === 'critical' ? `
+        <div style="background: #7c2d12; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; color: #fff;">
+          <p style="margin: 0; font-weight: bold;">🚨 CRITICAL: Legal proceedings may commence</p>
+          <p style="margin: 5px 0 0 0;">Contact us immediately. Payment must be received within 7 days to avoid eviction proceedings.</p>
+        </div>
+      ` : escalationTier === 'severe' ? `
         <div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
-          <p style="margin: 0; color: #991b1b; font-weight: bold;">⚠️ Important Notice</p>
-          <p style="margin: 5px 0 0 0; color: #7f1d1d;">Your rent is significantly overdue. Please contact us immediately to discuss payment arrangements. Failure to resolve this matter may result in further action.</p>
+          <p style="margin: 0; color: #991b1b; font-weight: bold;">⚠️ Serious Notice</p>
+          <p style="margin: 5px 0 0 0; color: #7f1d1d;">Your rent is significantly overdue. Please arrange payment immediately or contact us to discuss. Continued non-payment may result in formal legal action.</p>
+        </div>
+      ` : escalationTier === 'warning' ? `
+        <div style="background: #fed7aa; border-left: 4px solid #ea580c; padding: 15px; margin: 20px 0;">
+          <p style="margin: 0; color: #92400e; font-weight: bold;">⚠️ Action Required</p>
+          <p style="margin: 5px 0 0 0; color: #92400e;">Your rent is now overdue. Please settle the outstanding balance within 14 days.</p>
         </div>
       ` : `
         <p style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 20px 0; border-radius: 3px;">
@@ -163,9 +187,7 @@ async function sendTenantReminder(base44, tenant, overdueTransactions, totalOver
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: tenant.email,
-      subject: isSevere ? 
-        '⚠️ Urgent: Outstanding Rent Payment Required' : 
-        '📧 Friendly Reminder: Rent Payment Due',
+      subject: messages[escalationTier],
       body: emailBody
     });
 

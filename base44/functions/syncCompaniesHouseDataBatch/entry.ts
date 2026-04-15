@@ -23,19 +23,33 @@ Deno.serve(async (req) => {
 
     let synced = 0;
     let errors = 0;
+    const timeout = 30000; // 30-second timeout per profile
 
-    // Sync each profile
+    // Sync each profile with timeout protection
     for (const profile of profiles) {
       try {
         console.log(`[syncCompaniesHouseDataBatch] Syncing ${profile.company_number}...`);
         
-        // Call the sync function for each company
-        const result = await base44.asServiceRole.functions.invoke('syncCompaniesHouseData', {
-          company_number: profile.company_number,
-          company_name: profile.company_name
-        });
+        // Call the sync function with explicit timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        if (result.status === 'synced') {
+        let result;
+        try {
+          result = await Promise.race([
+            base44.asServiceRole.functions.invoke('syncCompaniesHouseData', {
+              company_number: profile.company_number,
+              company_name: profile.company_name
+            }),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error(`Sync timeout after ${timeout}ms`)), timeout)
+            )
+          ]);
+        } finally {
+          clearTimeout(timeoutId);
+        }
+
+        if (result?.data?.status === 'synced') {
           synced++;
         } else {
           errors++;
@@ -43,6 +57,7 @@ Deno.serve(async (req) => {
       } catch (err) {
         console.error(`[syncCompaniesHouseDataBatch] Error syncing ${profile.company_number}:`, err.message);
         errors++;
+        // Continue to next profile instead of failing entire batch
       }
     }
 

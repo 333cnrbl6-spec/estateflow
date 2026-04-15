@@ -39,8 +39,9 @@ Deno.serve(async (req) => {
     // Filter active tenancies for this period
     const activeTenancies = tenancies.filter(t => {
       const startDate = new Date(t.start_date);
-      const endDate = t.end_date ? new Date(t.end_date) : new Date('2099-12-31');
-      return startDate <= date && date <= endDate;
+      // Open-ended tenancies: only check start date, end date null/future is ignored
+      const endDate = t.end_date ? new Date(t.end_date) : null;
+      return startDate <= date && (!endDate || date <= endDate);
     });
 
     // Generate invoices for each active tenancy
@@ -52,16 +53,18 @@ Deno.serve(async (req) => {
 
       if (!tenancy.rent_amount || !tenancy.rent_frequency) continue;
 
-      // Create invoice
-      const invoice = await base44.entities.Invoice.create({
-        maintenance_request_id: tenancy.unit_id,
-        contractor_id: tenancy.tenant_id,
+      // Create invoice (note: using FinancialTransaction for rent, not Invoice entity)
+       const invoice = await base44.entities.FinancialTransaction.create({
+        tenant_id: tenancy.tenant_id,
+        property_id: propertyData?.id,
+        unit_id: tenancy.unit_id,
+        transaction_type: 'rent',
+        direction: 'income',
         amount: tenancy.rent_amount,
-        description: `Rent for ${propertyData?.name} - ${unitData?.name} - ${month}`,
-        document_url: '', // Can be populated with generated PDF
-        status: 'pending_approval',
-        submitted_by: user.email,
-        submitted_date: new Date().toISOString(),
+        description: `Rent for ${propertyData?.name || 'Property'} - ${unitData?.name || 'Unit'} - ${month}`,
+        status: 'pending',
+        created_date: new Date().toISOString(),
+        due_date: new Date(year, parseInt(monthNum), 1).toISOString().split('T')[0], // 1st of next month
         notes: `Auto-generated for ${month} rent period`,
       });
 
