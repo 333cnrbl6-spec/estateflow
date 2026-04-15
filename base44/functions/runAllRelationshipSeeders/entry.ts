@@ -17,6 +17,24 @@
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const limits = new Map();
+
+function checkRateLimit(key, maxRequests, windowMs) {
+  const now = Date.now();
+  let record = limits.get(key);
+  if (!record || now - record.resetTime > windowMs) {
+    record = { count: 0, resetTime: now };
+    limits.set(key, record);
+  }
+  if (record.count >= maxRequests) {
+    const retryAfter = Math.ceil((record.resetTime + windowMs - now) / 1000);
+    const err = new Error(`Rate limit exceeded. Max ${maxRequests} per ${Math.floor(windowMs/1000)}s. Retry after ${retryAfter}s.`);
+    err.status = 429;
+    throw err;
+  }
+  record.count++;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -24,6 +42,9 @@ Deno.serve(async (req) => {
     if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Admin access required' }, { status: 403 });
     }
+
+    // Rate limit: 1 full seeding per hour per user
+    checkRateLimit(user.email, 1, 3600000);
 
     const db = base44.asServiceRole;
   const results = {};
@@ -82,6 +103,10 @@ Deno.serve(async (req) => {
   });
   } catch (error) {
     console.error('Error in runAllRelationshipSeeders:', error);
-    return Response.json({ error: error.message || 'Failed to seed relationships' }, { status: 500 });
+    const statusCode = error.status || 500;
+    return Response.json(
+      { error: error.message || 'Failed to seed relationships', ...(statusCode === 429 && { retryAfter: error.retryAfter }) },
+      { status: statusCode }
+    );
   }
 });
