@@ -18,7 +18,7 @@ export default function TenantPortalDedicated() {
   useEffect(() => {
     const initPortal = async () => {
       try {
-        // Get tenant from URL or auth token
+        // Get tenant from URL token—MUST be validated server-side
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         
@@ -28,24 +28,28 @@ export default function TenantPortalDedicated() {
           return;
         }
 
-        // Fetch tenant data using token (this would be verified server-side in production)
-        const tenantData = localStorage.getItem(`tenant_${token}`);
-        if (!tenantData) {
+        // CRITICAL: Validate token server-side (call a backend function to verify)
+        // DO NOT trust client-side validation or localStorage
+        const res = await base44.functions.invoke('validateTenantAccessToken', {
+          token: token
+        });
+
+        if (!res.data.valid) {
           setError('Invalid or expired access token');
           setLoading(false);
           return;
         }
 
-        const parsed = JSON.parse(tenantData);
-        setTenant(parsed);
+        setTenant(res.data.tenant);
 
         // Fetch property data
-        if (parsed.property_id) {
-          const propData = await base44.entities.Property.get(parsed.property_id);
+        if (res.data.tenant?.property_id) {
+          const propData = await base44.entities.Property.get(res.data.tenant.property_id);
           setProperty(propData);
         }
       } catch (err) {
-        setError(err.message);
+        setError('Session validation failed. Please request a new access link.');
+        console.error('Portal init error:', err);
       } finally {
         setLoading(false);
       }
@@ -54,8 +58,16 @@ export default function TenantPortalDedicated() {
     initPortal();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
+  const handleLogout = async () => {
+    // Revoke token server-side
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+      try {
+        await base44.functions.invoke('revokeTenantAccessToken', { token });
+      } catch (_) {}
+    }
+    // Clear client state
+    sessionStorage.clear();
     window.location.href = '/';
   };
 

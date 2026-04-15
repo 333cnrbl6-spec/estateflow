@@ -43,16 +43,21 @@ Deno.serve(async (req) => {
       last_used: null
     });
 
+    // Log token generation (NOT the token itself, only ID and context)
+    console.log(`[generateTenantAccessToken] Token created for tenant ${tenant_id}, expires ${tokenData.expires_at}`);
+
     return Response.json({
       success: true,
       token: token,
       tenant_id,
       property_id,
       expires_at: tokenData.expires_at,
-      portal_url: `/tenant-communication?token=${token}`
+      portal_url: `/tenant-communication?token=${encodeURIComponent(token)}`
     });
 
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    // Never leak error details to client
+    console.error('[generateTenantAccessToken] Error:', error.message);
+    return Response.json({ error: 'Failed to generate token' }, { status: 500 });
   }
 });

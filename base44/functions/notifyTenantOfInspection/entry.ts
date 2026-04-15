@@ -5,6 +5,13 @@ const NotifyInspectionSchema = z.object({
   inspection_id: z.string().min(1, 'Inspection ID required'),
 });
 
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -63,7 +70,7 @@ Deno.serve(async (req) => {
           <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
             <tr style="background: #f3f4f6;">
               <th style="text-align: left; padding: 10px; border: 1px solid #e5e7eb;">Property</th>
-              <td style="padding: 10px; border: 1px solid #e5e7eb;">${property?.address || inspection.property_id}</td>
+              <td style="padding: 10px; border: 1px solid #e5e7eb;">${escapeHtml(property?.address || inspection.property_id)}</td>
             </tr>
             <tr>
               <th style="text-align: left; padding: 10px; border: 1px solid #e5e7eb;">Inspection Type</th>
@@ -92,7 +99,7 @@ Deno.serve(async (req) => {
 
           ${inspection.notes ? `
             <h3>Additional Information</h3>
-            <p>${inspection.notes}</p>
+            <p>${escapeHtml(inspection.notes)}</p>
           ` : ''}
 
           <p>If you have any questions, please don't hesitate to contact us.</p>
@@ -118,7 +125,8 @@ Deno.serve(async (req) => {
       tenants_notified: tenants.length
     });
   } catch (error) {
-    console.error('[Notify Inspection] Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    // Never expose error details
+    console.error('[Notify Inspection] Error:', error.message);
+    return Response.json({ error: 'Failed to send notifications' }, { status: 500 });
   }
 });

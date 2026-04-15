@@ -75,12 +75,13 @@ Deno.serve(async (req) => {
     console.log(`[Stripe Payment] Created payment intent ${paymentIntent.id} for tenant ${tenant_id}`);
 
     return Response.json({
-      success: true,
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id
+     success: true,
+     clientSecret: paymentIntent.client_secret,
+     paymentIntentId: paymentIntent.id
     });
-  } catch (error) {
-    console.error('[Stripe Payment] Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
-  }
+    } catch (error) {
+    // Never expose error details to client—log securely server-side only
+    console.error('[Stripe Payment] Error:', error.message);
+    return Response.json({ error: 'Payment intent creation failed. Please try again or contact support.' }, { status: 500 });
+    }
 });
