@@ -73,76 +73,107 @@ export default function DeveloperDocuments() {
 
   const downloadAsHTML = async (docId) => {
     const doc = documents.find(d => d.id === docId);
-    if (!doc || !loadedDocs[docId]) return;
+    if (!doc) return;
     
-    const content = loadedDocs[docId];
+    let content = loadedDocs[docId];
     
-    // Create PDF with proper markdown parsing
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 15;
-    let yPosition = margin;
-
-    // Split into lines and process
-    const lines = content.split('\n');
-
-    lines.forEach((line) => {
-      // Auto page break
-      if (yPosition > pageHeight - margin) {
-        pdf.addPage();
-        yPosition = margin;
-      }
-
-      const trimmedLine = line.trim();
-      
-      // Skip empty lines
-      if (!trimmedLine) {
-        yPosition += 3;
+    // If not loaded yet, fetch it
+    if (!content) {
+      try {
+        const response = await fetch(doc.file);
+        if (!response.ok) throw new Error('Failed to load document');
+        content = await response.text();
+      } catch (err) {
+        console.error('Failed to download document:', err);
+        alert('Failed to download document. Please try again.');
         return;
       }
+    }
+    
+    // Ensure content is plain text, not HTML
+    if (content.includes('<!doctype') || content.includes('<html')) {
+      console.error('Content is HTML, not markdown. Aborting download.');
+      alert('Document content appears to be corrupted. Please refresh the page.');
+      return;
+    }
+    
+    try {
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
 
-      // Handle headers
-      if (trimmedLine.startsWith('# ')) {
-        const text = trimmedLine.replace(/^#+ /, '');
-        pdf.setFontSize(18);
-        pdf.setFont(undefined, 'bold');
-        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += 10;
-      } else if (trimmedLine.startsWith('## ')) {
-        const text = trimmedLine.replace(/^#+ /, '');
-        pdf.setFontSize(14);
-        pdf.setFont(undefined, 'bold');
-        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += 8;
-      } else if (trimmedLine.startsWith('### ')) {
-        const text = trimmedLine.replace(/^#+ /, '');
-        pdf.setFontSize(12);
-        pdf.setFont(undefined, 'bold');
-        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += 7;
-      } else {
-        // Body text
-        pdf.setFontSize(11);
-        pdf.setFont(undefined, 'normal');
-        const splitLines = pdf.splitTextToSize(trimmedLine, pageWidth - 2 * margin);
-        splitLines.forEach(splitLine => {
-          if (yPosition > pageHeight - margin) {
-            pdf.addPage();
-            yPosition = margin;
-          }
-          pdf.text(splitLine, margin, yPosition);
-          yPosition += 5;
-        });
-      }
-    });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const contentWidth = pageWidth - 2 * margin;
+      let yPosition = margin;
 
-    pdf.save(`${doc.id.replace(/-/g, '_')}.pdf`);
+      // Process markdown line by line
+      const lines = content.split('\n');
+
+      lines.forEach((line) => {
+        const trimmedLine = line.trim();
+        
+        // Skip empty lines but add minimal spacing
+        if (!trimmedLine) {
+          yPosition += 2;
+          return;
+        }
+
+        // Check for page break
+        if (yPosition > pageHeight - margin) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+
+        // Detect and format headers
+        const headerMatch = trimmedLine.match(/^(#+)\s+(.+)$/);
+        if (headerMatch) {
+          const level = headerMatch[1].length;
+          const text = headerMatch[2];
+          const sizes = { 1: 18, 2: 14, 3: 12 };
+          const size = sizes[level] || 11;
+          
+          pdf.setFontSize(size);
+          pdf.setFont(undefined, 'bold');
+          pdf.setTextColor(0, 0, 0);
+          
+          const wrappedLines = pdf.splitTextToSize(text, contentWidth);
+          wrappedLines.forEach((wrappedLine) => {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += size * 0.4;
+          });
+          yPosition += 3;
+        } else {
+          // Body text
+          pdf.setFontSize(10);
+          pdf.setFont(undefined, 'normal');
+          pdf.setTextColor(30, 30, 30);
+          
+          const wrappedLines = pdf.splitTextToSize(trimmedLine, contentWidth);
+          wrappedLines.forEach((wrappedLine) => {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += 4.5;
+          });
+        }
+      });
+
+      const fileName = `${doc.title.replace(/\s+/g, '_').toLowerCase()}.pdf`;
+      pdf.save(fileName);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('Failed to generate PDF. Please try again.');
+    }
   };
 
   return (
