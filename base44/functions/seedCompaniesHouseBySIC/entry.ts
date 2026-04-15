@@ -190,6 +190,35 @@ async function storeCompaniesHouseProfile(base44, companyNumber, companyData, ap
       } catch (_) {}
     }
 
+    // Create PSC relationships
+    for (const p of psc) {
+      try {
+        const pscId = p.name.replace(/\s+/g, '_').toLowerCase();
+        const relExists = await base44.asServiceRole.entities.OwnershipRelationship.filter({
+          from_entity_id: pscId,
+          to_entity_id: companyNumber,
+          relationship_type: 'psc_of',
+        });
+        if (relExists.length === 0) {
+          await base44.asServiceRole.entities.OwnershipRelationship.create({
+            from_entity_type: 'person',
+            from_entity_id: pscId,
+            from_label: p.name,
+            to_entity_type: 'company',
+            to_entity_id: companyNumber,
+            to_label: fullData.company_name,
+            relationship_type: 'psc_of',
+            relationship_label: 'PSC of',
+            notes: p.nature_of_control,
+            verified: true,
+            source: 'companies_house',
+            conflict_of_interest: false,
+          });
+          await sleep(30);
+        }
+      } catch (_) {}
+    }
+
     return profile;
   } catch (err) {
     console.error(`[SIC seeder] Error for ${companyNumber}: ${err.message}`);
