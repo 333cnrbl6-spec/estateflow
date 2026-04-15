@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageHeader } from '@/components/shared/PageHeader';
+import PageHeader from '@/components/shared/PageHeader';
 import RoleManagementPanel from '@/components/admin/RoleManagementPanel';
 import { useRole } from '@/lib/RoleContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
