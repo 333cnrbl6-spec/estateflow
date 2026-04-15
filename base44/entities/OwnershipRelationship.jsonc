@@ -52,13 +52,55 @@
         "tenant_of",
         "beneficial_owner_of",
         "shareholder_of",
-        "secretary_of"
+        "secretary_of",
+        "service_charge_vehicle_for",
+        "nominee_director_of",
+        "offshore_owner_of",
+        "ground_rent_fund_for"
       ],
       "description": "Nature of the relationship"
     },
     "relationship_label": {
       "type": "string",
       "description": "Human-readable edge label e.g. 'Director of', 'Holds leasehold of'"
+    },
+    "date_from": {
+      "type": "string",
+      "format": "date",
+      "description": "When this relationship began (e.g. lease start, director appointment, RTM acquisition)"
+    },
+    "date_to": {
+      "type": "string",
+      "format": "date",
+      "description": "When this relationship ended (e.g. director resignation, RTM dissolution, lease expiry). Null = currently active."
+    },
+    "is_historical": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this relationship has ended (date_to is set). Used for timeline filtering."
+    },
+    "leaseholder_type": {
+      "type": "string",
+      "enum": [
+        "investor",
+        "owner_occupier",
+        "nominee",
+        "corporate",
+        "offshore",
+        "unknown"
+      ],
+      "description": "For holds_leasehold relationships: the nature of the leaseholder's interest"
+    },
+    "control_type": {
+      "type": "string",
+      "enum": [
+        "direct",
+        "beneficial",
+        "nominee",
+        "offshore_vehicle",
+        "unknown"
+      ],
+      "description": "Nature of control \u2014 distinguishes nominal from beneficial directors/owners"
     },
     "notes": {
       "type": "string",
@@ -73,6 +115,25 @@
       "type": "string",
       "description": "Description of the conflict"
     },
+    "auto_detected_coi": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this COI was auto-detected by the system (not manually flagged)"
+    },
+    "coi_pattern": {
+      "type": "string",
+      "enum": [
+        "leaseholder_controls_letting_agent",
+        "rtm_director_controls_managing_agent",
+        "freehold_and_rtm_same_controller",
+        "service_charge_vehicle_same_directors",
+        "offshore_freehold_no_psc",
+        "nominee_director_high_volume",
+        "managing_agent_controls_reserve_fund",
+        "other"
+      ],
+      "description": "The detected COI pattern type \u2014 used for analytics and pattern training"
+    },
     "verified": {
       "type": "boolean",
       "default": false,
@@ -84,13 +145,24 @@
         "companies_house",
         "land_registry",
         "manual",
-        "onboarding"
+        "onboarding",
+        "auto_detected"
       ],
       "description": "How this relationship was established"
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Calculated risk score for this specific relationship (0=no risk, 100=critical)"
     },
     "subscriber_company_id": {
       "type": "string",
       "description": "The top-level subscriber company this chain belongs to"
+    },
+    "scenario_tag": {
+      "type": "string",
+      "description": "Training scenario this relationship belongs to e.g. 'reed_close_farnworth', 'adriatic_offshore', 'service_charge_vehicle'"
     }
   },
   "required": [
