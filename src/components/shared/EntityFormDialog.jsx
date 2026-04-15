@@ -62,7 +62,7 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] pr-4">
           <div className="space-y-4 py-2">
-            {fields.map(field => (
+            {(fields || []).map(field => (
               <div key={field.name} className="space-y-1.5">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {field.label || field.name.replace(/_/g, ' ')}
