@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useCachedQuery, useInvalidateCache } from '@/hooks/useCachedQuery';
+import FullPaginationComponent from '@/components/shared/FullPaginationComponent';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,11 +13,22 @@ import {
 
 export default function CompaniesHouseProfiles() {
   const [refreshing, setRefreshing] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const { invalidate } = useInvalidateCache();
 
-  const { data: profiles = [], isLoading, refetch } = useQuery({
+  // Use cached query (60 min TTL for company profiles)
+  const { data: allProfiles = [], isLoading, refetch } = useCachedQuery({
     queryKey: ['companies-house-profiles'],
-    queryFn: () => base44.entities.CompaniesHouseProfile.list('-last_synced', 100),
+    queryFn: () => base44.entities.CompaniesHouseProfile.list('-last_synced', 500),
+    cacheTTL: 3600000, // 1 hour
   });
+
+  // Paginate on client
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const profiles = allProfiles.slice(startIdx, endIdx);
+  const totalProfiles = allProfiles.length;
 
   const refreshProfile = async (id, companyNumber) => {
     setRefreshing(prev => new Set([...prev, id]));
@@ -24,6 +37,8 @@ export default function CompaniesHouseProfiles() {
         company_number: companyNumber,
         company_name: id
       });
+      // Invalidate cache to refetch
+      invalidate(['companies-house-profiles']);
       refetch();
     } finally {
       setRefreshing(prev => {
@@ -238,6 +253,24 @@ export default function CompaniesHouseProfiles() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!isLoading && totalProfiles > 0 && (
+        <div className="bg-white p-4 rounded-lg border border-slate-200">
+          <FullPaginationComponent
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={totalProfiles}
+            isLoading={isLoading}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+            pageSizeOptions={[10, 25, 50]}
+          />
         </div>
       )}
     </div>
