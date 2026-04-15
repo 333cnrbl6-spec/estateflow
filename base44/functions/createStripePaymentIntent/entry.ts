@@ -59,20 +59,25 @@ Deno.serve(async (req) => {
       });
     }
 
+    // CRITICAL: Use idempotency key to prevent duplicate payment intents
+    const idempotencyKey = `${tenant_id}_${amount}_${Date.now()}`;
+
     // Create payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'gbp',
-      customer: stripeCustomerId,
-      metadata: {
-        tenant_id,
-        payment_type,
-        tenant_email: tenant.email
-      },
-      description: `Rent payment for ${tenant.full_name}`
+     amount,
+     currency: 'gbp',
+     customer: stripeCustomerId,
+     // CRITICAL: Never store PII (tenant_email) in metadata—it's permanent in Stripe
+     metadata: {
+       payment_type
+     },
+     description: `Rent payment`
+    }, {
+     idempotencyKey
     });
 
-    console.log(`[Stripe Payment] Created payment intent ${paymentIntent.id} for tenant ${tenant_id}`);
+    // Log securely without exposing PII
+    console.log(`[Stripe Payment] Created payment intent for rent payment`);
 
     return Response.json({
      success: true,

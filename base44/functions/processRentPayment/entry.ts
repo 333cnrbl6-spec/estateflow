@@ -36,18 +36,22 @@ Deno.serve(async (req) => {
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
+    // CRITICAL: Use idempotency key to prevent double-charges on retries
+    const idempotencyKey = `${transaction.id}_${Math.round(amount * 100)}`;
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100),
-      currency,
-      payment_method: payment_method_id,
-      confirm: true,
-      automatic_payment_methods: { enabled: true },
-      description: `Rent payment - ${property?.name || 'Property'} - ${tenant?.full_name || 'Tenant'}`,
-      metadata: {
-        transaction_id: transaction.id,
-        tenant_id: transaction.tenant_id,
-        property_id: transaction.property_id || '',
-      },
+     amount: Math.round(amount * 100),
+     currency,
+     payment_method: payment_method_id,
+     confirm: true,
+     automatic_payment_methods: { enabled: true },
+     description: `Rent payment - Property - Tenant`,
+     // CRITICAL: Never store PII in Stripe metadata—it's permanent
+     metadata: {
+       transaction_id: transaction.id,
+     },
+    }, {
+     idempotencyKey // Prevents duplicate charges if request is retried
     });
 
     if (paymentIntent.status !== 'succeeded') {
@@ -119,7 +123,7 @@ For your records, please retain this receipt.
     let receipt;
     try {
       receipt = await base44.entities.Document.create({
-        title: `Rent Payment Receipt - ${property?.name || 'Property'} - ${paidDate}`,
+        title: `Rent Payment Receipt - ${paidDate}`,
         document_type: 'rent_statement',
         content: receiptContent,
         property_id: transaction.property_id,
@@ -131,8 +135,8 @@ For your records, please retain this receipt.
         notes: `Stripe Payment ID: ${paymentIntent.id}`,
       });
     } catch (docError) {
-      console.error(`[processRentPayment] Receipt creation failed: ${docError.message}`);
-      // Don't fail the entire transaction—receipt is secondary
+      console.error(`[processRentPayment] Receipt creation failed for tenant ${transaction.tenant_id}: ${docError.message}`);
+      // Don't fail payment—receipt is secondary. Log tenant ID for manual follow-up
       receipt = { id: null };
     }
 

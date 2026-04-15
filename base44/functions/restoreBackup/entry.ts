@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
     const { backup_id, dry_run } = validation.data;
 
     // Fetch backup
-    const backup = await base44.asServiceRole.entities.Backup.read(backup_id);
+    const backup = await base44.asServiceRole.entities.Backup.get(backup_id);
     if (!backup) {
       return Response.json({ error: 'Backup not found' }, { status: 404 });
     }

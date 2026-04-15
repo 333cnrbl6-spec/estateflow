@@ -75,7 +75,7 @@ Cleansing rules:
                 cleaned_data: { type: 'object' },
                 entity_type: { type: 'string' },
                 quality_score: { type: 'number' },
-                cleansing_applied: { type: 'array' },
+                cleansing_applied: { type: 'array', items: { type: 'object' } },
                 validation_warnings: { type: 'array', items: { type: 'string' } },
                 validation_errors: { type: 'array', items: { type: 'string' } },
               },
