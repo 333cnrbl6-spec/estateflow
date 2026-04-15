@@ -1,4 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const TenantMaintenanceSchema = z.object({
+  tenant_id: z.string().min(1, 'Tenant ID required'),
+  title: z.string().min(1, 'Title required').max(255),
+  category: z.string().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
+  description: z.string().optional(),
+  photo_urls: z.array(z.string().url()).optional().default([]),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,6 +19,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    // Validate input
+    const validation = TenantMaintenanceSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
     const {
       tenant_id,
       title,
@@ -16,7 +40,7 @@ Deno.serve(async (req) => {
       priority,
       description,
       photo_urls
-    } = await req.json();
+    } = validation.data;
 
     // Fetch tenant to get property_id
     const tenant = await base44.entities.Tenant.get(tenant_id);

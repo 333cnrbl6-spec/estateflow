@@ -1,4 +1,16 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const InspectionSchema = z.object({
+  property_id: z.string().min(1, 'Property ID required'),
+  unit_id: z.string().optional(),
+  inspection_type: z.enum(['general', 'routine', 'move_in', 'move_out', 'safety']).default('general'),
+  scheduled_date: z.string().min(1, 'Scheduled date required'),
+  recurrence: z.enum(['once', 'recurring']).optional().default('once'),
+  recurrence_interval: z.number().positive().optional(),
+  recurrence_unit: z.enum(['weeks', 'months', 'years']).optional(),
+  notes: z.string().optional(),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,11 +21,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { property_id, unit_id, inspection_type, scheduled_date, recurrence, recurrence_interval, recurrence_unit, notes } = await req.json();
-
-    if (!property_id || !scheduled_date) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
     }
+
+    // Validate input
+    const validation = InspectionSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { property_id, unit_id, inspection_type, scheduled_date, recurrence, recurrence_interval, recurrence_unit, notes } = validation.data;
 
     const inspections = [];
 

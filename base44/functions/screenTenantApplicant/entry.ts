@@ -1,4 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const ScreeningSchema = z.object({
+  tenant_id: z.string().min(1, 'Tenant ID required'),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -9,11 +14,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const { tenant_id } = await req.json();
-
-    if (!tenant_id) {
-      return Response.json({ error: 'Missing tenant_id' }, { status: 400 });
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
     }
+
+    // Validate input
+    const validation = ScreeningSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { tenant_id } = validation.data;
 
     const tenant = await base44.asServiceRole.entities.Tenant.get(tenant_id);
     if (!tenant) {
