@@ -275,15 +275,15 @@ export default function DeveloperDocuments() {
             <CardHeader className="flex items-center justify-between flex-row">
               <div>
                 <CardTitle>{doc.title} - Full Content</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to print</p>
+                <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to download</p>
               </div>
               <Button
                 size="sm"
-                onClick={() => window.print()}
+                onClick={() => downloadAsHTML(docId)}
                 className="gap-2"
               >
-                <Printer className="w-4 h-4" />
-                Print/Save PDF
+                <Download className="w-4 h-4" />
+                Download PDF
               </Button>
             </CardHeader>
             <CardContent>
