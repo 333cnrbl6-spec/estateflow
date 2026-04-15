@@ -73,7 +73,7 @@ export default function DeveloperDocuments() {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => handlePrintPdf(documents[0])}
+              onClick={() => window.open(documents[0].file, '_blank')}
               className="gap-2"
             >
               <Download className="w-4 h-4" />
