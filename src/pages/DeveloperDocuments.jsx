@@ -53,12 +53,35 @@ export default function DeveloperDocuments() {
     'Deployment': 'bg-cyan-100 text-cyan-800',
   };
 
+  const extractMarkdownContent = (text) => {
+    // If response is HTML page wrapper, try to extract markdown from script
+    if (text.includes('<!doctype') || text.includes('<html')) {
+      // This is the full HTML page - return empty to signal reload needed
+      return null;
+    }
+    return text;
+  };
+
   const loadDocument = async (doc) => {
     if (loadedDocs[doc.id]) return;
     
     try {
       const response = await fetch(doc.file);
-      const text = await response.text();
+      let text = await response.text();
+      
+      // Validate and extract content
+      const content = extractMarkdownContent(text);
+      if (!content) {
+        console.error('Document returned HTML instead of markdown:', doc.file);
+        // Try direct import as fallback
+        try {
+          const imported = await import(`../../${doc.file}`);
+          text = imported.default || text;
+        } catch (e) {
+          console.error('Fallback import failed:', e);
+        }
+      }
+      
       setLoadedDocs(prev => ({ ...prev, [doc.id]: text }));
     } catch (err) {
       console.error('Failed to load document:', err);
@@ -77,23 +100,36 @@ export default function DeveloperDocuments() {
     
     let content = loadedDocs[docId];
     
-    // If not loaded yet, fetch it
-    if (!content) {
+    // If not loaded yet or is HTML, fetch raw markdown
+    if (!content || content.includes('<!doctype') || content.includes('<html')) {
       try {
-        const response = await fetch(doc.file);
-        if (!response.ok) throw new Error('Failed to load document');
-        content = await response.text();
+        // Try importing as ES module
+        try {
+          const imported = await import(`../../${doc.file}`);
+          content = imported.default;
+        } catch (e) {
+          // Fallback: fetch with ?raw query param
+          const response = await fetch(`${doc.file}?raw=true`);
+          if (!response.ok) throw new Error('Failed to load document');
+          content = await response.text();
+          
+          // Still HTML? Try stripping it
+          if (content.includes('<!doctype')) {
+            // Last resort: alert user to reload
+            alert('Document format invalid. Please refresh the page.');
+            return;
+          }
+        }
       } catch (err) {
         console.error('Failed to download document:', err);
-        alert('Failed to download document. Please try again.');
+        alert('Failed to download document. Please refresh and try again.');
         return;
       }
     }
     
-    // Ensure content is plain text, not HTML
-    if (content.includes('<!doctype') || content.includes('<html')) {
-      console.error('Content is HTML, not markdown. Aborting download.');
-      alert('Document content appears to be corrupted. Please refresh the page.');
+    // Final validation
+    if (!content || content.includes('<!doctype') || content.includes('<html')) {
+      alert('Document content is invalid. Please refresh the page.');
       return;
     }
     
