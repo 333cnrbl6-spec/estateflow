@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Send, X, Loader2, ChevronDown, Lightbulb } from 'lucide-react';
+import { Send, X, Loader2, ChevronDown, Lightbulb, AlertTriangle, CheckCircle, Zap } from 'lucide-react';
 import { PAGE_HINTS } from '@/lib/app-knowledge';
+import { audioNotifications, isAudioEnabled } from '@/lib/audioNotifications';
 
 const PremisoBotIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -88,8 +89,21 @@ export default function HelperBot() {
         text: response.data?.answer || 'I couldn\'t generate a response. Please try again.',
         suggested_actions: response.data?.suggested_actions || [],
         related_modules: response.data?.related_modules || [],
+        compliance_level: response.data?.compliance_level,
+        compliance_note: response.data?.compliance_note,
       };
       setMessages(prev => [...prev, botMsg]);
+      
+      // Play audio feedback based on compliance level
+      if (isAudioEnabled()) {
+        if (response.data?.compliance_level === 'threat') {
+          audioNotifications.threat();
+        } else if (response.data?.compliance_level === 'compliance') {
+          audioNotifications.complianceAlert();
+        } else {
+          audioNotifications.success();
+        }
+      }
     } catch (error) {
       const errorMsg = {
         id: messages.length + 2,
@@ -118,8 +132,20 @@ export default function HelperBot() {
         type: 'bot',
         text: response.data?.answer || 'I couldn\'t generate a response.',
         suggested_actions: response.data?.suggested_actions || [],
+        compliance_level: response.data?.compliance_level,
+        compliance_note: response.data?.compliance_note,
       };
       setMessages(prev => [...prev, botMsg]);
+      
+      if (isAudioEnabled()) {
+        if (response.data?.compliance_level === 'threat') {
+          audioNotifications.threat();
+        } else if (response.data?.compliance_level === 'compliance') {
+          audioNotifications.complianceAlert();
+        } else {
+          audioNotifications.success();
+        }
+      }
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -186,6 +212,19 @@ export default function HelperBot() {
                         ))}
                       </div>
                     )}
+
+                    {msg.type === 'bot' && msg.compliance_level && (
+                      <div className={`mt-2 px-2 py-1.5 rounded text-xs flex items-start gap-2 ${
+                        msg.compliance_level === 'threat' ? 'bg-red-50 text-red-700' :
+                        msg.compliance_level === 'compliance' ? 'bg-blue-50 text-blue-700' :
+                        'bg-amber-50 text-amber-700'
+                      }`}>
+                        {msg.compliance_level === 'threat' && <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5" />}
+                        {msg.compliance_level === 'compliance' && <CheckCircle className="w-3 h-3 shrink-0 mt-0.5" />}
+                        {msg.compliance_level === 'warning' && <Zap className="w-3 h-3 shrink-0 mt-0.5" />}
+                        <span>{msg.compliance_note}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -222,20 +261,34 @@ export default function HelperBot() {
               </Button>
             </form>
 
-            {/* Page-specific hints */}
+            {/* Page-specific hints with type indicators */}
             {getContextHints().length > 0 && (
               <div className="space-y-3 border-t pt-3">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
                   <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-                  Tips for this page
+                  Guidance for this page
                 </div>
-                <ul className="text-xs text-muted-foreground space-y-1.5">
-                  {getContextHints().slice(0, 3).map((hint, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-primary font-bold shrink-0">•</span>
-                      <span>{hint.hint}</span>
-                    </li>
-                  ))}
+                <ul className="text-xs space-y-2">
+                  {getContextHints().slice(0, 3).map((hint, i) => {
+                    const typeColors = {
+                      compliance: 'text-blue-700 bg-blue-50',
+                      threat: 'text-red-700 bg-red-50',
+                      warning: 'text-amber-700 bg-amber-50',
+                      tip: 'text-slate-700 bg-slate-50',
+                    };
+                    const typeIcons = {
+                      compliance: '🛡️',
+                      threat: '⚠️',
+                      warning: '⚡',
+                      tip: '💡',
+                    };
+                    return (
+                      <li key={i} className={`flex gap-2 p-1.5 rounded ${typeColors[hint.type] || typeColors.tip}`}>
+                        <span className="shrink-0">{typeIcons[hint.type]}</span>
+                        <span>{hint.hint}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
