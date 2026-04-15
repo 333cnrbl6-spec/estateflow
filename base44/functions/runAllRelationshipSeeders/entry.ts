@@ -5,10 +5,12 @@
  * and then runs the COI auto-detection engine.
  *
  * Scenarios seeded:
- *   - Reed Close, Farnworth (RTM + self-dealing letting agent)
- *   - Offshore Freehold (Adriatic Land / Long Harbour)
- *   - Service Charge Vehicle (Meridian composite)
- *   - Nominee Director Web (Duport Director Ltd)
+  *   - Reed Close, Farnworth (RTM + self-dealing letting agent)
+  *   - Offshore Freehold (Adriatic Land / Long Harbour)
+  *   - Service Charge Vehicle (Meridian composite)
+  *   - Nominee Director Web (Duport Director Ltd)
+  *   - Sean Powell Major Works (£723k slashed to £158k)
+  *   - Tchenguiz Ground Rent Empire (3000+ freeholds, 130k leaseholders)
  *
  * After seeding, runs detectConflictsOfInterest in 'fix' mode to auto-flag all COIs.
  */
@@ -30,6 +32,8 @@ Deno.serve(async (req) => {
     'seedOffshoreFreeholdScenario',
     'seedServiceChargeVehicleScenario',
     'seedNomineeDirectorScenario',
+    'seedSeanPowellMajorWorksScenario',
+    'seedTchenguizGroundRentEmpire',
   ];
 
   for (const fn of seeders) {
