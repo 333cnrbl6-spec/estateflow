@@ -116,10 +116,10 @@ export default function ExecutiveDashboard({ properties = [], units = [], transa
   }, [transactions, currentYear, lastYear]);
 
   const getHeatColor = (occupancy) => {
-    if (occupancy >= 90) return 'bg-green-500';
-    if (occupancy >= 75) return 'bg-yellow-500';
-    if (occupancy >= 50) return 'bg-orange-500';
-    return 'bg-red-500';
+    if (occupancy >= 90) return { bg: 'bg-green-500', border: '#22c55e', text: 'text-green-700' };
+    if (occupancy >= 75) return { bg: 'bg-yellow-500', border: '#eab308', text: 'text-yellow-700' };
+    if (occupancy >= 50) return { bg: 'bg-orange-500', border: '#f97316', text: 'text-orange-700' };
+    return { bg: 'bg-red-500', border: '#ef4444', text: 'text-red-700' };
   };
 
   return (
@@ -203,11 +203,13 @@ export default function ExecutiveDashboard({ properties = [], units = [], transa
         <CardContent>
           {heatMapData.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {heatMapData.map((region) => (
+              {heatMapData.map((region) => {
+                const colors = getHeatColor(region.occupancy);
+                return (
                 <div
                   key={region.region}
-                  className={`p-4 rounded-lg border-2 ${getHeatColor(region.occupancy)} bg-opacity-10`}
-                  style={{ borderColor: getHeatColor(region.occupancy).replace('bg-', 'rgb(').replace('-', ',') }}
+                  className={`p-4 rounded-lg border-2 bg-opacity-10`}
+                  style={{ borderColor: colors.border, backgroundColor: `${colors.border}10` }}
                 >
                   <h4 className="font-semibold text-sm mb-2">{region.region}</h4>
                   <div className="space-y-1 text-xs">
@@ -229,7 +231,8 @@ export default function ExecutiveDashboard({ properties = [], units = [], transa
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground py-12 text-center">No regional data available</p>
