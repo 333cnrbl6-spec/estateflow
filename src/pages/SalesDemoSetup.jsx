@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle2, Loader2, Zap, Lightbulb, Building2 } from 'lucide-react';
+import { CheckCircle2, Loader2, Zap, Lightbulb, Building2, Database } from 'lucide-react';
 import CompaniesHouseWizard from '@/components/onboarding/CompaniesHouseWizard';
 
 const BUILD_STEPS = [
@@ -29,6 +29,25 @@ export default function SalesDemoSetup() {
   const [buildProgress, setBuildProgress] = useState([]);
   const [buildResult, setBuildResult] = useState(null);
   const [error, setError] = useState(null);
+
+  // Floating gauge state
+  const [gaugeStats, setGaugeStats] = useState({ profiles: 0, relationships: 0 });
+  const gaugeInterval = useRef(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [profiles, relationships] = await Promise.all([
+          base44.entities.CompaniesHouseProfile.list('created_date', 1000),
+          base44.entities.OwnershipRelationship.list('created_date', 1000),
+        ]);
+        setGaugeStats({ profiles: profiles.length, relationships: relationships.length });
+      } catch (_) {}
+    };
+    fetchStats();
+    gaugeInterval.current = setInterval(fetchStats, 4000);
+    return () => clearInterval(gaugeInterval.current);
+  }, []);
 
   const handleChComplete = async (data) => {
     setChData(data);
@@ -186,6 +205,54 @@ export default function SalesDemoSetup() {
             </CardContent>
           </Card>
         )}
+      </div>
+    </div>
+
+      {/* Floating Data Import Gauge */}
+      <div className="fixed bottom-6 right-6 z-50 bg-slate-900/95 border border-slate-700 rounded-2xl shadow-2xl p-4 w-56 backdrop-blur-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <Database className="w-4 h-4 text-amber-400" />
+          <span className="text-xs font-semibold text-white">CH Data Import</span>
+          <span className="ml-auto flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+            <span className="text-xs text-green-400">live</span>
+          </span>
+        </div>
+
+        {/* Profiles */}
+        <div className="mb-2">
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-xs text-slate-400">Companies</span>
+            <span className="text-xs font-bold text-white">{gaugeStats.profiles.toLocaleString()}</span>
+          </div>
+          <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-amber-400 rounded-full transition-all duration-700"
+              style={{ width: `${Math.min(100, (gaugeStats.profiles / 500) * 100)}%` }}
+            />
+          </div>
+          <div className="text-right text-xs text-slate-600 mt-0.5">/ 500 target</div>
+        </div>
+
+        {/* Relationships */}
+        <div>
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-xs text-slate-400">Relationships</span>
+            <span className="text-xs font-bold text-white">{gaugeStats.relationships.toLocaleString()}</span>
+          </div>
+          <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-400 rounded-full transition-all duration-700"
+              style={{ width: `${Math.min(100, (gaugeStats.relationships / 2000) * 100)}%` }}
+            />
+          </div>
+          <div className="text-right text-xs text-slate-600 mt-0.5">/ 2k target</div>
+        </div>
+
+        <div className="mt-3 pt-3 border-t border-slate-700 text-center">
+          <span className="text-lg font-bold text-white">{(gaugeStats.profiles + gaugeStats.relationships).toLocaleString()}</span>
+          <span className="text-xs text-slate-400 ml-1">total records</span>
+        </div>
       </div>
     </div>
   );
