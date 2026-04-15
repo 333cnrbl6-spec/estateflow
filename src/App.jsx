@@ -147,6 +147,7 @@ import BackupManagement from './pages/BackupManagement';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
 import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
+import DataDiscoveryHub from './pages/DataDiscoveryHub';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 
 const AuthenticatedApp = () => {
@@ -257,6 +258,7 @@ const AuthenticatedApp = () => {
         <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/property-documents" element={<PropertyDocumentManager />} />
+        <Route path="/data-discovery" element={<DataDiscoveryHub />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/onboarding-workflows" element={<OnboardingWorkflowHub />} />
         <Route path="/crm" element={<CRM />} />
