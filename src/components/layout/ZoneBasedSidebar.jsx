@@ -30,7 +30,7 @@ export default function ZoneBasedSidebar() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground overflow-y-auto">
+    <div className="w-full h-full flex flex-col bg-sidebar text-sidebar-foreground">
       {/* Logo Section */}
       <div className="px-4 py-4 border-b border-sidebar-border">
         <h2 className="font-bold text-lg text-sidebar-primary">Premiso</h2>
@@ -38,7 +38,7 @@ export default function ZoneBasedSidebar() {
       </div>
 
       {/* Navigation Zones */}
-      <nav className="flex-1 px-2 py-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
         {navigationZones.map(zone => {
           const Icon = zone.icon;
           const isActive = isZoneActive(zone);
