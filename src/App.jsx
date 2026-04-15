@@ -9,10 +9,12 @@ import RBMBrandingProvider from '@/components/RBMBrandingProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { RoleProvider } from '@/lib/RoleContext';
 import ErrorToastContainer from '@/components/ErrorToastContainer';
+import { BrandingProvider } from '@/lib/BrandingContext';
+import ThemeWrapper from '@/components/ThemeWrapper';
 
 import Landing from './pages/Landing';
 import FounderLaunch from './pages/FounderLaunch';
-import AppLayout from './components/layout/AppLayout';
+import LightThemeLayout from './components/layout/LightThemeLayout';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import Dashboard from './pages/Dashboard';
 import Companies from './pages/Companies';
@@ -151,6 +153,8 @@ import DataDiscoveryHub from './pages/DataDiscoveryHub';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 import AutomationTemplateLibrary from './pages/AutomationTemplateLibrary';
 import SubscriberView from './pages/SubscriberView';
+import OnboardingBranding from './pages/OnboardingBranding';
+import SettingsBranding from './pages/SettingsBranding';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -177,8 +181,8 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      {/* ── Sidebar-wrapped authenticated pages ─────────────────────────── */}
-      <Route element={<AppLayout />}>
+      {/* ── Sidebar-wrapped authenticated pages with light theme ─────────────────────────── */}
+      <Route element={<LightThemeLayout />}>
         <Route path="/dashboard" element={<RouteErrorBoundary><Dashboard /></RouteErrorBoundary>} />
 
         {/* Core */}
@@ -290,6 +294,7 @@ const AuthenticatedApp = () => {
         <Route path="/compliance-reports" element={<DetailedComplianceReports />} />
         <Route path="/invoices" element={<InvoiceManagement />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings-branding" element={<SettingsBranding />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />
         <Route path="/errors" element={<ErrorMonitoring />} />
@@ -306,6 +311,7 @@ const AuthenticatedApp = () => {
         <Route path="/sales-targeted-demo-builder" element={<SalesTargetedDemoBuilder />} />
         <Route path="/expansion-opportunities" element={<ExpansionOpportunities />} />
         <Route path="/onboarding" element={<SubscriberOnboarding />} />
+        <Route path="/onboarding-branding" element={<OnboardingBranding />} />
         <Route path="/intelligent-onboarding" element={<SubscriberIntelligentOnboarding />} />
 
         {/* Marketing / Collateral (sidebar-wrapped so nav is present) */}
@@ -357,26 +363,30 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <RoleProvider>
-            <RBMBrandingProvider>
-              <Router>
-                <Routes>
-                  {/* Fully public — no auth check at all */}
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/landing" element={<Landing />} />
-                  <Route path="/founder-launch" element={<FounderLaunch />} />
-                  <Route path="/vendor-self-service" element={<VendorSelfService />} />
-                  <Route path="/subscriber-view" element={<SubscriberView />} />
-                  {/* All other routes go through auth */}
-                  <Route path="/*" element={<AuthenticatedApp />} />
-                </Routes>
-              </Router>
-              <Toaster />
-              <ErrorToastContainer />
-            </RBMBrandingProvider>
-          </RoleProvider>
-        </QueryClientProvider>
+        <BrandingProvider>
+          <ThemeWrapper>
+            <QueryClientProvider client={queryClientInstance}>
+              <RoleProvider>
+                <RBMBrandingProvider>
+                  <Router>
+                    <Routes>
+                      {/* Fully public — no auth check at all */}
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/landing" element={<Landing />} />
+                      <Route path="/founder-launch" element={<FounderLaunch />} />
+                      <Route path="/vendor-self-service" element={<VendorSelfService />} />
+                      <Route path="/subscriber-view" element={<SubscriberView />} />
+                      {/* All other routes go through auth */}
+                      <Route path="/*" element={<AuthenticatedApp />} />
+                    </Routes>
+                  </Router>
+                  <Toaster />
+                  <ErrorToastContainer />
+                </RBMBrandingProvider>
+              </RoleProvider>
+            </QueryClientProvider>
+          </ThemeWrapper>
+        </BrandingProvider>
       </AuthProvider>
     </ErrorBoundary>
   )
