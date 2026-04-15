@@ -12,6 +12,7 @@ import TaskFormDialog from '@/components/tasks/TaskFormDialog';
 import PaginationControls from '@/components/shared/PaginationControls';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { auditLogger } from '@/lib/auditLogger';
+import { usePerformanceTracking } from '@/hooks/usePerformanceTracking';
 
 export default function TaskManagement() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -23,6 +24,7 @@ export default function TaskManagement() {
   const [pageSize, setPageSize] = useState(25);
   const queryClient = useQueryClient();
   const { handleError, handleSuccess } = useErrorHandler();
+  const { recordMetric } = usePerformanceTracking();
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],

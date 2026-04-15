@@ -1,0 +1,77 @@
+{
+  "name": "PerformanceMetric",
+  "type": "object",
+  "properties": {
+    "metric_type": {
+      "type": "string",
+      "enum": [
+        "query_time",
+        "function_call",
+        "api_response",
+        "entity_operation",
+        "page_load"
+      ],
+      "description": "Type of metric"
+    },
+    "name": {
+      "type": "string",
+      "description": "Metric identifier (e.g., 'Task.list', 'createBackup')"
+    },
+    "duration_ms": {
+      "type": "number",
+      "description": "Operation duration in milliseconds"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "error",
+        "timeout"
+      ],
+      "default": "success",
+      "description": "Operation status"
+    },
+    "entity_name": {
+      "type": "string",
+      "description": "Related entity (if applicable)"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "list",
+        "create",
+        "update",
+        "delete",
+        "filter"
+      ],
+      "description": "Entity operation type"
+    },
+    "record_count": {
+      "type": "number",
+      "description": "Records affected/returned"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if failed"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User who triggered metric"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When metric was recorded"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context (page, browser, etc.)"
+    }
+  },
+  "required": [
+    "metric_type",
+    "name",
+    "duration_ms",
+    "recorded_at"
+  ]
+}
