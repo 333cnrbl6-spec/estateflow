@@ -3,6 +3,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+
+    // CRITICAL: Verify admin-only access
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const { entityId, entityType, relationshipType, jurisdiction = 'England', auditMode = false } = await req.json();
 
     // Fetch entity data
@@ -44,7 +51,9 @@ Deno.serve(async (req) => {
     // Calculate scores
     assessment.results = calculateComplianceScore(assessment.checks);
     assessment.overall_risk_level = assessment.results.risk_level;
-    assessment.approved = assessment.results.risk_level !== 'critical' && assessment.results.risk_level !== 'high';
+    // CRITICAL: Approval logic cannot be bypassed—requires manual review for high/critical
+    assessment.approved = assessment.results.risk_level === 'low' || assessment.results.risk_level === 'medium';
+    assessment.requires_manual_review = assessment.results.risk_level !== 'low';
     assessment.recommendations = generateRecommendations(assessment);
 
     // Log audit if in audit mode
@@ -55,7 +64,7 @@ Deno.serve(async (req) => {
     return Response.json(assessment);
   } catch (error) {
     console.error('Compliance assessment error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Assessment failed' }, { status: 500 });
   }
 });
 

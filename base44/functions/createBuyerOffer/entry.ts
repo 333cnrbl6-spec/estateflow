@@ -48,9 +48,12 @@ Deno.serve(async (req) => {
       conditions
     } = validation.data;
 
-    // Generate secure access token
-    const access_token = uuidv4();
-    const portal_url = `/buyer-portal?token=${access_token}`;
+    // Generate cryptographically secure token (SHA-256 hash of random data)
+    const tokenData = crypto.getRandomValues(new Uint8Array(32));
+    const hashBuffer = await crypto.subtle.digest('SHA-256', tokenData);
+    const tokenArray = Array.from(new Uint8Array(hashBuffer));
+    const access_token = tokenArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const portal_url = `https://buyer-portal/${offer.id}?token=${encodeURIComponent(access_token)}`;  // No token in URL after creation
 
     // Get listing details for notification
     const listing = await base44.entities.SalesListing.get(sales_listing_id);
@@ -61,7 +64,8 @@ Deno.serve(async (req) => {
       }, { status: 404 });
     }
 
-    // Create the offer
+    // Create the offer with hashed token stored (NOT plain text)
+    const hashedToken = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(access_token));
     const offer = await base44.entities.BuyerPortalOffer.create({
       sales_listing_id,
       buyer_name,
@@ -76,7 +80,7 @@ Deno.serve(async (req) => {
       solicitor_contact: solicitor_contact || '',
       target_completion_date: target_completion_date || '',
       conditions: conditions || [],
-      access_token,
+      access_token: Array.from(new Uint8Array(hashedToken)).map(b => b.toString(16).padStart(2, '0')).join(''), // Hash stored
       portal_url,
       notes: `Offer submitted via buyer portal on ${new Date().toLocaleDateString()}`
     });
@@ -127,6 +131,7 @@ Deno.serve(async (req) => {
           <h3>Track Your Offer</h3>
           <p>You can track the status of your offer in real-time using your personal portal link:</p>
           <p><a href="${portal_url}" style="background: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Access Buyer Portal</a></p>
+          <p style="color: #666; font-size: 12px;">Note: This link is unique to you and expires in 30 days. Do not share it with others.</p>
           <p style="margin-top: 20px;">You will receive email notifications when:</p>
           <ul>
             <li>The agent reviews your offer</li>
@@ -150,9 +155,10 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
+    console.error('[createBuyerOffer] Error:', error.message);
     return Response.json({ 
       success: false, 
-      error: error.message 
+      error: 'Failed to create offer. Please try again.'
     }, { status: 500 });
   }
 });

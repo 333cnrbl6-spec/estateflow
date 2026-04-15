@@ -24,6 +24,29 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid entity type' }, { status: 400 });
     }
 
+    // CRITICAL: Verify ownership/permission before linking
+    const task = await base44.asServiceRole.entities.Task.get(task_id);
+    if (!task) {
+      return Response.json({ error: 'Task not found' }, { status: 404 });
+    }
+
+    // Only task owner/admin can link entities
+    if (task.assigned_by !== user.email && user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: No permission to modify this task' }, { status: 403 });
+    }
+
+    // Verify entity exists and user has access
+    const entity = await base44.asServiceRole.entities[
+      entity_type === 'maintenance_request' ? 'MaintenanceRequest' :
+      entity_type === 'financial_transaction' ? 'FinancialTransaction' :
+      entity_type === 'inspection_record' ? 'InspectionRecord' :
+      entity_type === 'property' ? 'Property' : null
+    ]?.get?.(entity_id);
+
+    if (!entity) {
+      return Response.json({ error: 'Target entity not found' }, { status: 404 });
+    }
+
     // Update the task with the linked entity
     await base44.asServiceRole.entities.Task.update(task_id, {
       linked_entity_type: entity_type,
@@ -42,7 +65,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`[Task] Linked task ${task_id} to ${entity_type} ${entity_id}`);
+    console.log(`[Task] User ${user.email} linked task ${task_id} to ${entity_type} ${entity_id}`);
 
     return Response.json({
       success: true,
@@ -50,6 +73,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('[Task] Link error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to link task' }, { status: 500 });
   }
 });

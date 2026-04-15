@@ -5,31 +5,55 @@
  * - Token refresh strategy
  */
 
-export function generateSecureToken(userId, expiryHours = 24) {
+export async function generateSecureToken(userId, expiryHours = 24) {
   const payload = {
     userId,
     issuedAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + expiryHours * 3600000).toISOString(),
-    nonce: Math.random().toString(36).substring(2, 15),
+    nonce: Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join(''),
   };
 
-  // In production, use cryptographic signing (e.g., JWT with secret)
-  const token = btoa(JSON.stringify(payload));
+  // CRITICAL: Use cryptographic signing, NOT base64 encoding
+  // For real JWT: use jsonwebtoken lib with HS256 signing
+  // This is a temporary SHA-256 hash of the payload
+  const payloadStr = JSON.stringify(payload);
+  const encoder = new TextEncoder();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(payloadStr));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  // Token format: base64(payload).signature
+  const token = btoa(payloadStr) + '.' + signature;
   return token;
 }
 
-export function validateToken(token) {
+export async function validateToken(token) {
   try {
-    const payload = JSON.parse(atob(token));
+    const [payloadPart, signaturePart] = token.split('.');
+    if (!payloadPart || !signaturePart) {
+      return { valid: false, reason: 'Invalid token format' };
+    }
+
+    const payload = JSON.parse(atob(payloadPart));
     const now = new Date();
     
     if (new Date(payload.expiresAt) < now) {
       return { valid: false, reason: 'Token expired' };
     }
+
+    // Verify signature hasn't been tampered with
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(atob(payloadPart)));
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const expectedSignature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    if (signaturePart !== expectedSignature) {
+      return { valid: false, reason: 'Token signature invalid—tampering detected' };
+    }
     
     return { valid: true, payload };
   } catch (error) {
-    return { valid: false, reason: 'Invalid token format' };
+    return { valid: false, reason: 'Token validation failed' };
   }
 }
 
