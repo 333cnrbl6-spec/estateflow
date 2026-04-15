@@ -175,6 +175,7 @@ export const navigationZones = [
       { path: '/api-integrations', label: 'API Integrations', icon: '⚡' },
       { path: '/document-templates', label: 'Document Templates', icon: '📄' },
       { path: '/workflows', label: 'Workflows', icon: '⚙️' },
+      { path: '/automation-templates', label: 'Automation Templates', icon: Zap },
       { path: '/document-repository', label: 'Document Repository', icon: '📚' },
       { path: '/property-documents', label: 'Property Documents', icon: '🗂️' },
       { path: '/vendor-management', label: 'Vendor Management', icon: '🤝' },

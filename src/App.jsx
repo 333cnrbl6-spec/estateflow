@@ -149,6 +149,7 @@ import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
 import DataDiscoveryHub from './pages/DataDiscoveryHub';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
+import AutomationTemplateLibrary from './pages/AutomationTemplateLibrary';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -260,6 +261,7 @@ const AuthenticatedApp = () => {
         <Route path="/property-documents" element={<PropertyDocumentManager />} />
         <Route path="/data-discovery" element={<DataDiscoveryHub />} />
         <Route path="/workflows" element={<Workflows />} />
+        <Route path="/automation-templates" element={<AutomationTemplateLibrary />} />
         <Route path="/onboarding-workflows" element={<OnboardingWorkflowHub />} />
         <Route path="/crm" element={<CRM />} />
         <Route path="/messages" element={<MessagesAdmin />} />

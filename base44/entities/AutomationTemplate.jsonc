@@ -1,0 +1,158 @@
+{
+  "name": "AutomationTemplate",
+  "type": "object",
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Unique identifier for template (e.g., 'cert-expiry-alert')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-friendly template name (e.g., 'Certificate Expiry Alert')"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this automation does and when it runs"
+    },
+    "zone": {
+      "type": "string",
+      "enum": [
+        "onboarding",
+        "core",
+        "operations",
+        "finance",
+        "compliance",
+        "block-management",
+        "sales",
+        "tenants",
+        "outofhours",
+        "admin"
+      ],
+      "description": "Which navigation zone this template belongs to"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "alerts",
+        "scheduling",
+        "reporting",
+        "notifications",
+        "integration",
+        "cleanup",
+        "verification"
+      ],
+      "description": "Template category for discovery"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "entity_create",
+        "entity_update",
+        "entity_delete",
+        "date_based",
+        "manual"
+      ],
+      "description": "When the automation triggers"
+    },
+    "trigger_config": {
+      "type": "object",
+      "description": "Trigger configuration (frequency, entity, etc.)"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "send_email",
+              "create_task",
+              "update_entity",
+              "invoke_function",
+              "send_notification",
+              "create_event"
+            ]
+          },
+          "config": {
+            "type": "object",
+            "description": "Action-specific configuration"
+          }
+        }
+      },
+      "description": "Actions to execute when triggered"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "advanced"
+      ],
+      "default": "easy",
+      "description": "Setup complexity level"
+    },
+    "estimated_setup_time_minutes": {
+      "type": "number",
+      "description": "How long to set up (for new users)"
+    },
+    "use_cases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Real-world scenarios where this is useful"
+    },
+    "related_entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Entities involved (Property, Tenant, Certificate, etc.)"
+    },
+    "related_functions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Backend functions called by this template"
+    },
+    "is_popular": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured template?"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon emoji or lucide name"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color for visual branding"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "beta",
+        "deprecated"
+      ],
+      "default": "active",
+      "description": "Template status"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes or tips"
+    }
+  },
+  "required": [
+    "template_id",
+    "name",
+    "description",
+    "zone",
+    "category",
+    "trigger_type",
+    "actions"
+  ]
+}
