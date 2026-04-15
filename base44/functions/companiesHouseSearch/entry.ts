@@ -79,6 +79,34 @@ Deno.serve(async (req) => {
     }, { status: 500 });
   }
 
+  // ── 0. Connectivity test ─────────────────────────────────────────────────
+  if (action === 'ping') {
+    const apiKey2 = Deno.env.get('COMPANIES_HOUSE_API_KEY') || '';
+    const auth2 = toBase64(`${apiKey2.trim()}:`);
+    let status, body;
+    const rawKey = Deno.env.get('COMPANIES_HOUSE_API_KEY') || '';
+    const cleanKey = rawKey.replace(/\s/g, '');
+    // Try 1: key as-is with colon (standard CH Basic auth)
+    const auth3a = toBase64(`${cleanKey}:`);
+    // Try 2: key without hyphens (in case UUID was entered)
+    const keyNoHyphen = cleanKey.replace(/-/g, '');
+    const auth3b = toBase64(`${keyNoHyphen}:`);
+
+    const results = {};
+    for (const [label, authHeader] of [['with-hyphens', auth3a], ['no-hyphens', auth3b]]) {
+      try {
+        const r = await fetch(`${CH_BASE}/search/companies?q=test&items_per_page=1`, {
+          headers: { 'Authorization': `Basic ${authHeader}`, 'User-Agent': 'Premiso/1.0' },
+          signal: AbortSignal.timeout(10000),
+        });
+        results[label] = { status: r.status, ok: r.status === 200 };
+      } catch (e) {
+        results[label] = { error: e.message };
+      }
+    }
+    return Response.json({ results, rawKeyLength: rawKey.length, cleanKeyLength: cleanKey.length, noHyphenLength: keyNoHyphen.length });
+  }
+
   // ── 1. Search companies ──────────────────────────────────────────────────
   if (action === 'search_companies') {
     console.log(`[companiesHouseSearch] Searching for: ${query}`);
