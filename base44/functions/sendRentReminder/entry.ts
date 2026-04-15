@@ -90,17 +90,15 @@ Property Management Team
       notes: (invoice.notes || '') + `\nReminder sent: ${new Date().toISOString()}`,
     });
 
+    // CRITICAL: Never return PII or sensitive invoice details in API response
     return Response.json({
       success: true,
-      invoiceId: invoiceId,
-      daysOverdue: daysOverdue,
-      tenantEmail: tenant.email,
-      reminderSent: true,
+      message: 'Reminder sent successfully'
     });
   } catch (error) {
-    console.error('Rent reminder error:', error);
+    console.error('Rent reminder error:', error.message);
     return Response.json(
-      { error: error.message || 'Failed to send reminder' },
+      { error: 'Failed to send reminder' },
       { status: 500 }
     );
   }

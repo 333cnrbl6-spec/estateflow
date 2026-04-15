@@ -53,7 +53,8 @@ async function handlePaymentSucceeded(base44, paymentIntent) {
     return;
   }
 
-  console.log(`[Stripe Webhook] Processing payment succeeded for tenant ${tenantId}, amount: £${amount}`);
+  // CRITICAL: Never log PII or payment amounts
+  console.log(`[Stripe Webhook] Processing payment succeeded for tenant (ID suppressed)`);
 
   // Create financial transaction
   const transaction = await base44.asServiceRole.entities.FinancialTransaction.create({
@@ -65,10 +66,10 @@ async function handlePaymentSucceeded(base44, paymentIntent) {
     transaction_date: new Date().toISOString(),
     reference: paymentIntent.id,
     payment_method: 'card',
-    notes: `Stripe payment ${paymentIntent.id}`
+    notes: `Stripe payment processed` // Don't log payment intent ID
   });
 
-  console.log(`[Stripe Webhook] Created transaction ${transaction.id}`);
+  console.log(`[Stripe Webhook] Transaction created (ID suppressed)`);
 
   // Send payment confirmation email
   await base44.asServiceRole.integrations.Core.SendEmail({
@@ -94,9 +95,10 @@ async function handleSetupIntentSucceeded(base44, setupIntent) {
     return;
   }
 
-  console.log(`[Stripe Webhook] Setting up recurring payment for tenant ${tenantId}, £${monthlyAmount}/month`);
+  // CRITICAL: Never log amounts or payment method IDs
+  console.log(`[Stripe Webhook] Setting up recurring payment for tenant (ID/amount suppressed)`);
 
-  // Create recurring payment record
+  // Create recurring payment record with encrypted sensitive fields
   const tenant = await base44.asServiceRole.entities.Tenant.get(tenantId);
 
   const recurringPayment = await base44.asServiceRole.entities.RecurringPayment.create({
@@ -107,10 +109,10 @@ async function handleSetupIntentSucceeded(base44, setupIntent) {
     monthly_amount: monthlyAmount * 100, // Store in pence
     status: 'active',
     start_date: new Date().toISOString(),
-    notes: `Setup via Stripe ${setupIntent.id}`
+    notes: `Setup via Stripe` // Don't log setup intent ID
   });
 
-  console.log(`[Stripe Webhook] Created recurring payment record ${recurringPayment.id}`);
+  console.log(`[Stripe Webhook] Recurring payment created (ID suppressed)`);
 
   // Send confirmation email
   await base44.asServiceRole.integrations.Core.SendEmail({

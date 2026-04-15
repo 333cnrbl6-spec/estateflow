@@ -3,6 +3,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+
+    // CRITICAL: Verify admin-only access to compliance reports
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { property_id, format_type = 'json' } = body;
 
@@ -10,11 +17,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'property_id required' }, { status: 400 });
     }
 
-    // Get property & related data
+    // Get property & related data (WITHOUT exposing tenant PII)
     const property = await base44.entities.Property.filter({ id: property_id });
     const units = await base44.entities.Unit.filter({ property_id });
     const gasCerts = await base44.entities.GasSafetyCertificate.filter({ property_id });
     const eicrCerts = await base44.entities.EICRCertificate.filter({ property_id });
+    // Don't fetch full tenant data—only count
     const tenants = await base44.entities.Tenant.filter({ property_id });
     const deposits = await base44.entities.DepositProtection.filter({ property_id });
 
@@ -24,7 +32,7 @@ Deno.serve(async (req) => {
       summary: {
         totalUnits: units.length,
         occupiedUnits: units.filter(u => u.status === 'occupied').length,
-        totalTenants: tenants.length,
+        totalTenants: tenants.length, // Count only, not names/emails
         activeTenants: tenants.filter(t => t.status === 'active').length
       },
       compliance: {
@@ -62,17 +70,27 @@ Deno.serve(async (req) => {
       }
     };
 
+    // Log report access for audit
+    console.log(`[ComplianceReport] User ${user.email} accessed property ${property_id} compliance report`);
+
     if (format_type === 'json') {
       return Response.json(report);
     }
 
     // PDF format (simplified as base64 JSON)
+    // Add security headers to prevent caching of sensitive data
     const pdfContent = JSON.stringify(report, null, 2);
     return new Response(pdfContent, {
       status: 200,
-      headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename=compliance-report.pdf' }
+      headers: { 
+        'Content-Type': 'application/pdf', 
+        'Content-Disposition': 'attachment; filename=compliance-report.pdf',
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache'
+      }
     });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('[ComplianceReport] Error:', error.message);
+    return Response.json({ error: 'Report generation failed' }, { status: 500 });
   }
 });

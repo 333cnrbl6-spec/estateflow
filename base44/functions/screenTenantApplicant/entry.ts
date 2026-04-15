@@ -103,20 +103,31 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Screening error:', error.message);
+    return Response.json({ error: 'Screening assessment failed' }, { status: 500 });
   }
 });
 
+async function hashValue(value) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(value);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 16);
+}
+
 async function runCreditCheck(base44, tenant) {
   try {
-    // Use LLM to simulate credit check with realistic scoring
+    // CRITICAL: Never send PII to external LLM API
+    // Use only anonymized/hashed identifiers
+    const tenantHash = await hashValue(tenant.id);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a credit scoring system. Generate a realistic credit check report for this tenant:
+      prompt: `You are a credit scoring system. Generate a realistic credit check report for a tenant profile.
 
-Name: ${tenant.full_name}
-Email: ${tenant.email}
+Tenant Hash: ${tenantHash}
+(Note: No personal identifiable information provided)
 
-Based on the name and general tenant profile, generate a comprehensive credit check result including:
+Based on a standard tenant profile, generate a comprehensive credit check result including:
 1. Credit score (0-100)
 2. Credit rating (excellent/good/fair/poor)
 3. Whether defaults were found (true/false)
@@ -176,11 +187,14 @@ async function runReferenceChecks(base44, tenant) {
 
   for (const refType of referenceTypes) {
     try {
+      // CRITICAL: Never send PII to external LLM API
+      const tenantHash = await hashValue(tenant.id);
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a reference check system generating a ${refType.type} reference for a tenant:
+        prompt: `You are a reference check system generating a ${refType.type} reference.
 
-Tenant Name: ${tenant.full_name}
+Tenant Hash: ${tenantHash}
 Reference Type: ${refType.type}
+(Note: No personal identifiable information provided)
 
 Generate a realistic reference check result including:
 1. Score (0-100)
