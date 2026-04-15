@@ -53,6 +53,24 @@
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const limits = new Map();
+
+function checkRateLimit(key, maxRequests, windowMs) {
+  const now = Date.now();
+  let record = limits.get(key);
+  if (!record || now - record.resetTime > windowMs) {
+    record = { count: 0, resetTime: now };
+    limits.set(key, record);
+  }
+  if (record.count >= maxRequests) {
+    const retryAfter = Math.ceil((record.resetTime + windowMs - now) / 1000);
+    const err = new Error(`Rate limit exceeded. Max ${maxRequests} per ${Math.floor(windowMs/1000)}s. Retry after ${retryAfter}s.`);
+    err.status = 429;
+    throw err;
+  }
+  record.count++;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -63,6 +81,9 @@ Deno.serve(async (req) => {
         { status: 403 }
       );
     }
+
+    // Rate limit: 5 scans per minute per user
+    checkRateLimit(user.email, 5, 60000);
 
     const db = base44.asServiceRole;
     let body;
@@ -364,12 +385,13 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in detectConflictsOfInterest:', error);
+    const statusCode = error.status || 500;
     return Response.json(
       {
         error: error.message || 'Failed to scan for conflicts',
-        details: error.stack,
+        ...(statusCode === 429 && { retryAfter: error.retryAfter }),
       },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 });

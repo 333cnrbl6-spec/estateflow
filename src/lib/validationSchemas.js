@@ -43,6 +43,24 @@ export const MaintenanceOrderSchema = z.object({
   assigned_contractor_id: z.string().optional(),
 });
 
+export const SalesDemoDataSchema = z.object({
+  dry_run: z.boolean().optional().default(false),
+});
+
+export const PropertySchema = z.object({
+  name: z.string().min(1, 'Property name required').max(255),
+  address_line_1: z.string().optional(),
+  postcode: z.string().optional(),
+  property_type: z.string().optional(),
+  status: z.enum(['active', 'archived']).default('active'),
+});
+
+export const InspectionSchema = z.object({
+  property_id: z.string().min(1, 'Property ID required'),
+  inspection_type: z.enum(['general', 'routine', 'move_in', 'move_out', 'safety']),
+  scheduled_date: z.string().min(1, 'Schedule date required'),
+});
+
 /**
  * Safe validation wrapper — returns { valid: boolean, data?: T, errors?: ZodError[] }
  */

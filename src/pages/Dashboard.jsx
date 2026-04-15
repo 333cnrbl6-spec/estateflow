@@ -57,9 +57,9 @@ export default function Dashboard() {
     enabled: !demoLoading,
     queryFn: async () => {
       if (demoCompanyId) {
-        return base44.entities.Property.filter({ owning_company: demoCompanyId }, '-updated_date', 50);
+        return base44.entities.Property.filter({ owning_company: demoCompanyId }, '-updated_date', 20);
       }
-      return base44.entities.Property.list('-updated_date', 50);
+      return base44.entities.Property.list('-updated_date', 20);
     }
   });
   useQueryError(propertiesQuery, 'properties');
@@ -68,7 +68,7 @@ export default function Dashboard() {
   const unitsQuery = useQuery({
     queryKey: ['units', propertyIds],
     enabled: !demoLoading && propertyIds?.length > 0,
-    queryFn: () => base44.entities.Unit.list('-updated_date', 200)
+    queryFn: () => base44.entities.Unit.list('-updated_date', 100)
   });
   useQueryError(unitsQuery, 'units');
   const { data: units = [] } = unitsQuery;
@@ -76,7 +76,7 @@ export default function Dashboard() {
   const tenantsQuery = useQuery({
     queryKey: ['tenants', propertyIds],
     enabled: !demoLoading,
-    queryFn: () => base44.entities.Tenant.list('-updated_date', 100)
+    queryFn: () => base44.entities.Tenant.list('-updated_date', 50)
   });
   useQueryError(tenantsQuery, 'tenants');
   const { data: tenants = [] } = tenantsQuery;
@@ -84,7 +84,7 @@ export default function Dashboard() {
   const transactionsQuery = useQuery({
     queryKey: ['transactions', propertyIds],
     enabled: !demoLoading,
-    queryFn: () => base44.entities.FinancialTransaction.list('-updated_date', 200)
+    queryFn: () => base44.entities.FinancialTransaction.list('-updated_date', 100)
   });
   useQueryError(transactionsQuery, 'transactions');
   const { data: transactions = [] } = transactionsQuery;
@@ -92,7 +92,7 @@ export default function Dashboard() {
   const maintenanceQuery = useQuery({
     queryKey: ['maintenance', propertyIds],
     enabled: !demoLoading,
-    queryFn: () => base44.entities.MaintenanceOrder.list('-updated_date', 50)
+    queryFn: () => base44.entities.MaintenanceOrder.list('-updated_date', 30)
   });
   useQueryError(maintenanceQuery, 'maintenance orders');
   const { data: maintenance = [] } = maintenanceQuery;
@@ -102,9 +102,9 @@ export default function Dashboard() {
     enabled: !demoLoading,
     queryFn: async () => {
       const [gas, eicr, epc] = await Promise.all([
-        base44.entities.GasSafetyCertificate?.list?.('-updated_date', 50) || Promise.resolve([]),
-        base44.entities.EICRCertificate?.list?.('-updated_date', 50) || Promise.resolve([]),
-        base44.entities.EnergyPerformanceCertificate?.list?.('-updated_date', 50) || Promise.resolve([])
+        base44.entities.GasSafetyCertificate?.list?.('-updated_date', 30) || Promise.resolve([]),
+        base44.entities.EICRCertificate?.list?.('-updated_date', 30) || Promise.resolve([]),
+        base44.entities.EnergyPerformanceCertificate?.list?.('-updated_date', 30) || Promise.resolve([])
       ]);
       return [...(gas || []), ...(eicr || []), ...(epc || [])];
     }
