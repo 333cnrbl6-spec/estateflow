@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Send, X, Loader2, ChevronDown, Lightbulb, AlertTriangle, CheckCircle, Zap } from 'lucide-react';
 import { PAGE_HINTS } from '@/lib/app-knowledge';
 import { audioNotifications, isAudioEnabled } from '@/lib/audioNotifications';
+import { getGreeting, PERSONALITY_RESPONSES, getFlourish } from '@/lib/premiso-personality';
 
 const PremisoBotIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -27,7 +28,8 @@ export default function HelperBot() {
     {
       id: 1,
       type: 'bot',
-      text: 'Hi! I\'m Premiso Assistant. I can help you with any questions about the platform, guide you through tasks, or explain features. What would you like help with?',
+      text: `${getGreeting()}\n\nI'm **Premiso**, your property compliance & operations guide. I can help with:\n• Step-by-step guidance on any task\n• Compliance & legal requirements\n• Feature explanations & best practices\n\nWhat would you like to know?`,
+      personality: true,
     },
   ]);
   const [query, setQuery] = useState('');
@@ -105,10 +107,11 @@ export default function HelperBot() {
         }
       }
     } catch (error) {
+      const randomError = PERSONALITY_RESPONSES.error[Math.floor(Math.random() * PERSONALITY_RESPONSES.error.length)];
       const errorMsg = {
         id: messages.length + 2,
         type: 'bot',
-        text: `Sorry, I encountered an error: ${error.message}. Please try again.`,
+        text: randomError,
       };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
@@ -197,7 +200,7 @@ export default function HelperBot() {
                         : 'bg-white border border-slate-200 text-slate-900'
                     }`}
                   >
-                    <p className="text-sm leading-relaxed">{msg.text}</p>
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap prose prose-sm max-w-none">{msg.text}</p>
 
                     {msg.type === 'bot' && msg.suggested_actions && msg.suggested_actions.length > 0 && (
                       <div className="mt-2 space-y-1">
@@ -309,18 +312,18 @@ export default function HelperBot() {
           {/* Floating tip bubble */}
           {showBubble && (
            <div className="bg-white border-2 border-primary rounded-2xl px-4 py-3 shadow-lg max-w-xs animate-bounce" style={{ animationDuration: '3s' }}>
-             <div className="flex items-start gap-2">
-               <div className="w-5 h-5 text-primary shrink-0 mt-0.5">
-                 <PremisoBotIcon />
-               </div>
-               <div className="flex-1">
-                 <p className="text-sm font-semibold text-foreground">Tip for this page</p>
-                 <p className="text-xs text-muted-foreground mt-1.5">{getContextHints()[0]?.hint || 'Ask me about features, compliance, or how to use the platform'}</p>
-               </div>
-             </div>
-             {/* Bubble tail */}
-             <div className="absolute bottom-0 right-0 transform translate-x-3 translate-y-full w-0 h-0 border-l-8 border-t-8 border-l-transparent border-t-white border-r-8 border-r-transparent"></div>
-           </div>
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 text-primary shrink-0 mt-0.5">
+                  <PremisoBotIcon />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">💡 {getFlourish('tips')}</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">{getContextHints()[0]?.hint || 'Ask me about compliance, features, or best practices'}</p>
+                </div>
+              </div>
+              {/* Bubble tail */}
+              <div className="absolute bottom-0 right-0 transform translate-x-3 translate-y-full w-0 h-0 border-l-8 border-t-8 border-l-transparent border-t-white border-r-8 border-r-transparent"></div>
+            </div>
           )}
           
           {/* Bot button */}
