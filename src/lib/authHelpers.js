@@ -67,7 +67,6 @@ export function errorResponse(error, statusCode = 500) {
     {
       error: error.message || 'Internal server error',
       status: statusCode,
-      ...(Deno.env.get('DEBUG') && { stack: error.stack }),
     },
     { status: statusCode }
   );
