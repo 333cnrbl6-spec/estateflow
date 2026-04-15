@@ -147,7 +147,6 @@ import BackupManagement from './pages/BackupManagement';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
 import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
-import PropertyDocumentManager from './pages/PropertyDocumentManager';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 
 const AuthenticatedApp = () => {
