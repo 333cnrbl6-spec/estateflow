@@ -2,25 +2,38 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const CH_BASE = 'https://api.company-information.service.gov.uk';
 
-async function chFetch(path, apiKey) {
+async function chFetch(path, apiKey, retries = 3) {
   if (!apiKey) return null;
-  try {
-    const auth = btoa(`${apiKey}:`);
-    const res = await fetch(`${CH_BASE}${path}`, {
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'User-Agent': 'Premiso/1.0'
-      },
-    });
-    if (!res.ok) {
-      console.error(`[chFetch] API returned ${res.status} for ${path}`);
-      return null;
+  const auth = btoa(`${apiKey}:`);
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(`${CH_BASE}${path}`, {
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'User-Agent': 'Premiso/1.0'
+        },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (res.status === 429) {
+        const wait = attempt * 2000;
+        console.warn(`[chFetch] Rate limited, waiting ${wait}ms (attempt ${attempt}/${retries})`);
+        await new Promise(r => setTimeout(r, wait));
+        continue;
+      }
+      if (!res.ok) {
+        console.error(`[chFetch] API returned ${res.status} for ${path}`);
+        return null;
+      }
+      return await res.json();
+    } catch (err) {
+      if (attempt === retries) {
+        console.error(`[chFetch] All ${retries} attempts failed: ${err.message}`);
+        return null;
+      }
+      await new Promise(r => setTimeout(r, attempt * 1500));
     }
-    return res.json();
-  } catch (err) {
-    console.error(`[chFetch] Request failed: ${err.message}`);
-    return null;
   }
+  return null;
 }
 
 function calculateDeadlines(companyData) {
@@ -130,10 +143,30 @@ Deno.serve(async (req) => {
 
     console.log(`[syncCompaniesHouseData] Syncing ${company_number}...`);
 
-    // Fetch company profile
+    // Check cache first — if synced within last 12 hours, return cached data
+    try {
+      const cached = await base44.entities.CompaniesHouseProfile.filter({ company_number });
+      if (cached.length > 0 && cached[0].last_synced) {
+        const ageHours = (Date.now() - new Date(cached[0].last_synced).getTime()) / 3600000;
+        if (ageHours < 12) {
+          console.log(`[syncCompaniesHouseData] Cache hit for ${company_number} (${Math.round(ageHours)}h old), skipping live fetch`);
+          return Response.json({ profile: cached[0], alerts: cached[0].critical_alerts || [], status: 'cached' });
+        }
+      }
+    } catch (_) {}
+
+    // Fetch company profile with retry
     const companyRes = await chFetch(`/company/${company_number}`, apiKey);
     if (!companyRes) {
-      return Response.json({ error: 'Failed to fetch company data' }, { status: 500 });
+      // Return stale cache if available rather than hard error
+      try {
+        const stale = await base44.entities.CompaniesHouseProfile.filter({ company_number });
+        if (stale.length > 0) {
+          console.warn(`[syncCompaniesHouseData] CH unavailable, returning stale cache for ${company_number}`);
+          return Response.json({ profile: stale[0], alerts: stale[0].critical_alerts || [], status: 'stale_cache' });
+        }
+      } catch (_) {}
+      return Response.json({ error: 'Companies House API temporarily unavailable. Please try again later.' }, { status: 503 });
     }
 
     // Fetch officers

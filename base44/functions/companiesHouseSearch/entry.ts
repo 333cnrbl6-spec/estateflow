@@ -1,51 +1,61 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// Companies House REST API — requires API key (Basic auth with key as username)
 const CH_BASE = 'https://api.company-information.service.gov.uk';
 
-async function chFetch(path, apiKey) {
+// Fetch with exponential backoff retry
+async function chFetch(path, apiKey, retries = 3) {
   if (!apiKey) {
     console.error('[chFetch] No API key provided');
     return null;
   }
-  try {
-    const auth = btoa(`${apiKey}:`);
-    const res = await fetch(`${CH_BASE}${path}`, {
-      headers: { 
-        'Authorization': `Basic ${auth}`,
-        'User-Agent': 'Premiso/1.0'
-      },
-    });
-    if (!res.ok) {
-      const body = await res.text();
-      console.error(`[chFetch] API returned ${res.status} for ${path}: ${body}`);
-      return null;
+  const auth = btoa(`${apiKey}:`);
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(`${CH_BASE}${path}`, {
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'User-Agent': 'Premiso/1.0'
+        },
+        signal: AbortSignal.timeout(10000), // 10s timeout
+      });
+
+      if (res.status === 429) {
+        // Rate limited — wait and retry
+        const wait = attempt * 2000;
+        console.warn(`[chFetch] Rate limited, waiting ${wait}ms before retry ${attempt}/${retries}`);
+        await new Promise(r => setTimeout(r, wait));
+        continue;
+      }
+
+      if (!res.ok) {
+        console.error(`[chFetch] API returned ${res.status} for ${path}`);
+        return null;
+      }
+      return await res.json();
+    } catch (err) {
+      if (attempt === retries) {
+        console.error(`[chFetch] All ${retries} attempts failed for ${path}: ${err.message}`);
+        return null;
+      }
+      const wait = attempt * 1500;
+      console.warn(`[chFetch] Attempt ${attempt} failed, retrying in ${wait}ms: ${err.message}`);
+      await new Promise(r => setTimeout(r, wait));
     }
-    return res.json();
-  } catch (err) {
-    console.error(`[chFetch] Request failed: ${err.message}`);
-    return null;
   }
+  return null;
 }
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   const body = await req.json();
   const { action, query, company_number, officer_id } = body;
-  const officerName = query || officer_id;
-  
-  // Get API key from environment
+
   const apiKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
-  console.log('[companiesHouseSearch] API key present:', !!apiKey);
   if (!apiKey) {
-    console.error('[companiesHouseSearch] API key missing');
-    return Response.json({ 
-      error: 'Companies House API key not configured', 
+    return Response.json({
+      error: 'Companies House API key not configured',
       source: 'unavailable',
-      companies: [],
-      officers: [],
-      psc: [],
-      appointments: []
+      companies: [], officers: [], psc: [], appointments: []
     }, { status: 500 });
   }
 
@@ -63,17 +73,25 @@ Deno.serve(async (req) => {
         date_of_creation: c.date_of_creation || '',
         sic_codes: c.sic_codes || [],
       }));
-      console.log(`[companiesHouseSearch] Found ${companies.length} companies`);
       return Response.json({ companies, source: 'companies_house' });
     }
-
-    // API request failed — return sample data for now
-    console.log('[companiesHouseSearch] API unavailable, returning empty results');
-    return Response.json({ companies: [], error: 'Companies House API request failed. Try again.', source: 'unavailable' });
+    return Response.json({ companies: [], error: 'Companies House API temporarily unavailable. Please try again shortly.', source: 'unavailable' });
   }
 
   // ── 2. Get officers ──────────────────────────────────────────────────────
   if (action === 'get_officers') {
+    // Try cache first
+    try {
+      const cached = await base44.asServiceRole.entities.CompaniesHouseProfile.filter({ company_number });
+      if (cached.length > 0 && cached[0].directors && cached[0].last_synced) {
+        const ageHours = (Date.now() - new Date(cached[0].last_synced).getTime()) / 3600000;
+        if (ageHours < 24) {
+          console.log(`[companiesHouseSearch] Serving officers from cache (${Math.round(ageHours)}h old)`);
+          return Response.json({ officers: cached[0].directors || [], source: 'cache' });
+        }
+      }
+    } catch (_) {}
+
     const data = await chFetch(`/company/${company_number}/officers?items_per_page=50`, apiKey);
     if (data) {
       const officers = (data.items || []).map(o => ({
@@ -86,13 +104,23 @@ Deno.serve(async (req) => {
       }));
       return Response.json({ officers, source: 'companies_house' });
     }
-
-    // API unavailable — return empty, do not fabricate real people
-    return Response.json({ officers: [], error: 'Officers could not be retrieved.', source: 'unavailable' });
+    return Response.json({ officers: [], error: 'Officers temporarily unavailable.', source: 'unavailable' });
   }
 
   // ── 3. Get PSC ───────────────────────────────────────────────────────────
   if (action === 'get_psc') {
+    // Try cache first
+    try {
+      const cached = await base44.asServiceRole.entities.CompaniesHouseProfile.filter({ company_number });
+      if (cached.length > 0 && cached[0].persons_with_significant_control && cached[0].last_synced) {
+        const ageHours = (Date.now() - new Date(cached[0].last_synced).getTime()) / 3600000;
+        if (ageHours < 24) {
+          console.log(`[companiesHouseSearch] Serving PSC from cache (${Math.round(ageHours)}h old)`);
+          return Response.json({ psc: cached[0].persons_with_significant_control || [], source: 'cache' });
+        }
+      }
+    } catch (_) {}
+
     const data = await chFetch(`/company/${company_number}/persons-with-significant-control?items_per_page=50`, apiKey);
     if (data) {
       const psc = (data.items || []).map(p => ({
@@ -104,12 +132,10 @@ Deno.serve(async (req) => {
       }));
       return Response.json({ psc, source: 'companies_house' });
     }
-
-    // API unavailable — return empty, do not fabricate real people
     return Response.json({ psc: [], source: 'unavailable' });
   }
 
-  // ── 4. Search officer by name (to get officer_id for appointments) ────────
+  // ── 4. Search officer by name ─────────────────────────────────────────────
   if (action === 'search_officer') {
     const data = await chFetch(`/search/officers?q=${encodeURIComponent(query)}&items_per_page=10`, apiKey);
     if (data) {
@@ -124,7 +150,7 @@ Deno.serve(async (req) => {
     return Response.json({ officers: [], source: 'unavailable' });
   }
 
-  // ── 5. Get officer appointments (other companies) ─────────────────────────
+  // ── 5. Get officer appointments ───────────────────────────────────────────
   if (action === 'get_officer_appointments') {
     const data = await chFetch(`/officers/${officer_id}/appointments?items_per_page=50`, apiKey);
     if (data) {
@@ -140,7 +166,6 @@ Deno.serve(async (req) => {
         }));
       return Response.json({ appointments, source: 'companies_house' });
     }
-
     return Response.json({ appointments: [], source: 'unavailable' });
   }
 
