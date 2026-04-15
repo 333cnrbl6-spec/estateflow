@@ -13,6 +13,7 @@ import {
 import RelationshipChainGraph from '@/components/relationship/RelationshipChainGraph';
 import AddRelationshipDialog from '@/components/relationship/AddRelationshipDialog';
 import RelationshipNodePanel from '@/components/relationship/RelationshipNodePanel';
+import COILegalSeverityPanel, { COILegalBadge } from '@/components/relationship/COILegalSeverityPanel';
 
 const SCENARIO_META = {
   reed_close_farnworth:     { label: 'Reed Close, Farnworth',      color: 'bg-blue-100 text-blue-800 border-blue-200',   desc: 'RTM + self-dealing letting agent' },
@@ -36,6 +37,7 @@ export default function RelationshipIntelligence() {
   const [activeTab, setActiveTab] = useState('all');
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
+  const [legalPanel, setLegalPanel] = useState(null); // { pattern, fromLabel, toLabel }
 
   const { data: relationships = [], isLoading } = useQuery({
     queryKey: ['ownership_relationships'],
@@ -164,7 +166,7 @@ export default function RelationshipIntelligence() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
             {conflicts.slice(0, 6).map(c => (
               <div key={c.id} className="border border-red-200 bg-red-50 rounded-xl p-3 space-y-1.5">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
                   <span className="text-xs font-semibold text-red-800 leading-tight">{c.coi_pattern?.replace(/_/g, ' ') || 'conflict detected'}</span>
                   {c.risk_score && (
@@ -181,13 +183,19 @@ export default function RelationshipIntelligence() {
                 {c.conflict_description && (
                   <div className="text-[10px] text-red-600 opacity-80 line-clamp-2">{c.conflict_description}</div>
                 )}
-                <div className="flex gap-1 flex-wrap">
+                <div className="flex gap-1 flex-wrap items-center">
                   {c.auto_detected_coi && <Badge variant="outline" className="text-[9px] border-red-200 text-red-600">Auto-detected</Badge>}
                   {c.verified && <Badge variant="outline" className="text-[9px] border-green-200 text-green-700">Verified</Badge>}
                   {c.scenario_tag && (
                     <Badge variant="outline" className={`text-[9px] ${SCENARIO_META[c.scenario_tag]?.color || ''}`}>
                       {SCENARIO_META[c.scenario_tag]?.label || c.scenario_tag}
                     </Badge>
+                  )}
+                  {c.coi_pattern && (
+                    <COILegalBadge
+                      coiPattern={c.coi_pattern}
+                      onClick={() => setLegalPanel({ pattern: c.coi_pattern, fromLabel: c.from_label, toLabel: c.to_label })}
+                    />
                   )}
                 </div>
               </div>
@@ -305,6 +313,16 @@ export default function RelationshipIntelligence() {
         onClose={() => setShowAdd(false)}
         onSaved={() => queryClient.invalidateQueries({ queryKey: ['ownership_relationships'] })}
       />
+
+      {legalPanel && (
+        <COILegalSeverityPanel
+          open={!!legalPanel}
+          onClose={() => setLegalPanel(null)}
+          coiPattern={legalPanel.pattern}
+          fromLabel={legalPanel.fromLabel}
+          toLabel={legalPanel.toLabel}
+        />
+      )}
     </div>
   );
 }

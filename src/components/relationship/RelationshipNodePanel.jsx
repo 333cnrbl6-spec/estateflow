@@ -1,6 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, CheckCircle2, ExternalLink, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
+import { COILegalBadge } from '@/components/relationship/COILegalSeverityPanel';
+import { useState } from 'react';
+import COILegalSeverityPanel from '@/components/relationship/COILegalSeverityPanel';
 
 const RELATIONSHIP_LABELS = {
   director_of: 'Director of',
@@ -18,6 +21,7 @@ const RELATIONSHIP_LABELS = {
 };
 
 export default function RelationshipNodePanel({ relationships, selectedNodeId, onClose }) {
+  const [legalPanel, setLegalPanel] = useState(null);
   if (!selectedNodeId) return null;
 
   // Find all relationships involving this node
@@ -50,12 +54,21 @@ export default function RelationshipNodePanel({ relationships, selectedNodeId, o
       </div>
 
       {conflicts.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-700 flex items-start gap-1.5">
-          <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
-          <div>
-            <div className="font-medium">Conflict of interest</div>
-            {conflicts.map((c, i) => <div key={i} className="opacity-80">{c.conflict_description}</div>)}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-700 space-y-2">
+          <div className="flex items-start gap-1.5">
+            <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
+            <div>
+              <div className="font-medium">Conflict of interest</div>
+              {conflicts.map((c, i) => <div key={i} className="opacity-80 mt-0.5">{c.conflict_description}</div>)}
+            </div>
           </div>
+          {conflicts.filter(c => c.coi_pattern).map((c, i) => (
+            <COILegalBadge
+              key={i}
+              coiPattern={c.coi_pattern}
+              onClick={() => setLegalPanel({ pattern: c.coi_pattern, fromLabel: c.from_label, toLabel: c.to_label })}
+            />
+          ))}
         </div>
       )}
 
@@ -93,7 +106,7 @@ export default function RelationshipNodePanel({ relationships, selectedNodeId, o
         </div>
       )}
 
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-2 pt-1 flex-wrap">
         <Badge variant="outline" className="text-[10px]">
           {nodeRels.length} relationship{nodeRels.length !== 1 ? 's' : ''}
         </Badge>
@@ -103,6 +116,16 @@ export default function RelationshipNodePanel({ relationships, selectedNodeId, o
           </Badge>
         )}
       </div>
+
+      {legalPanel && (
+        <COILegalSeverityPanel
+          open={!!legalPanel}
+          onClose={() => setLegalPanel(null)}
+          coiPattern={legalPanel.pattern}
+          fromLabel={legalPanel.fromLabel}
+          toLabel={legalPanel.toLabel}
+        />
+      )}
     </div>
   );
 }
