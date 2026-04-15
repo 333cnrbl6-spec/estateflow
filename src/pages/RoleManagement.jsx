@@ -1,9 +1,9 @@
 import React from 'react';
-import { PageHeader } from '@/components/shared/PageHeader';
+import { Card, CardContent } from '@/components/ui/card';
 import RoleManagementPanel from '@/components/admin/RoleManagementPanel';
 import { useRole } from '@/lib/RoleContext';
-import { Alert, AlertDescription } from '@/components/ui/card';
-import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle, Shield } from 'lucide-react';
 
 export default function RoleManagement() {
   const { isAdmin } = useRole();
@@ -28,11 +28,14 @@ export default function RoleManagement() {
 
   return (
     <div className="space-y-6 p-6 max-w-6xl">
-      <PageHeader
-        title="Role Management"
-        subtitle="Centralized admin panel for managing user roles and permissions"
-        icon="Shield"
-      />
+      {/* Header */}
+      <div>
+        <div className="flex items-center gap-3 mb-2">
+          <Shield className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold text-foreground">Role Management</h1>
+        </div>
+        <p className="text-muted-foreground">Centralized admin panel for managing user roles and permissions</p>
+      </div>
 
       {/* Info Banner */}
       <Alert className="bg-blue-50 border-blue-200">

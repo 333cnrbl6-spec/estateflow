@@ -15,18 +15,7 @@ export default function RoleManagementPanel() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const queryClient = useQueryClient();
 
-  if (!isAdmin || !permissions.canManageRoles) {
-    return (
-      <Alert className="bg-amber-50 border-amber-200">
-        <AlertTriangle className="h-4 w-4 text-amber-600" />
-        <AlertDescription className="text-amber-800">
-          Only administrators can manage roles and permissions.
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  // Fetch all users with their roles
+  // Fetch all users with their roles (move hooks before conditional)
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['users-with-roles'],
     queryFn: async () => {
@@ -50,6 +39,18 @@ export default function RoleManagementPanel() {
       setSelectedUser(null);
     },
   });
+
+  // Check permission after hooks
+  if (!isAdmin || !permissions.canManageRoles) {
+    return (
+      <Alert className="bg-amber-50 border-amber-200">
+        <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <AlertDescription className="text-amber-800">
+          Only administrators can manage roles and permissions.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="space-y-6">
