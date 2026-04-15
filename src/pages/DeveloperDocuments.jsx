@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ReactMarkdown from 'react-markdown';
+import { jsPDF } from 'jspdf';
 
 export default function DeveloperDocuments() {
   const [loadedDocs, setLoadedDocs] = useState({});
@@ -83,117 +84,78 @@ export default function DeveloperDocuments() {
     if (!doc) return;
     
     const content = loadedDocs[docId];
+    
+    // Create PDF
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
 
-    const html = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>Premiso - ${doc.title}</title>
-        <style>
-          * { margin: 0; padding: 0; }
-          body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; 
-            line-height: 1.7; 
-            color: #1f2937; 
-            background: white;
-            padding: 40px 20px;
-          }
-          .container { max-width: 900px; margin: 0 auto; }
-          h1 { 
-            color: #1d2d44; 
-            font-size: 2.5em; 
-            margin: 40px 0 20px 0; 
-            border-bottom: 3px solid #1d2d44;
-            padding-bottom: 15px;
-          }
-          h2 { 
-            color: #2d3d54; 
-            font-size: 1.8em; 
-            margin: 35px 0 15px 0;
-            page-break-after: avoid;
-          }
-          h3 { 
-            color: #374151; 
-            font-size: 1.3em; 
-            margin: 20px 0 10px 0;
-            page-break-after: avoid;
-          }
-          p, li, td { margin-bottom: 10px; }
-          ul, ol { margin-left: 20px; margin-bottom: 15px; }
-          li { margin-bottom: 6px; }
-          code { 
-            background: #f3f4f6; 
-            padding: 2px 6px; 
-            border-radius: 3px; 
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-          }
-          pre { 
-            background: #f9fafb; 
-            padding: 15px; 
-            border-radius: 6px; 
-            overflow-x: auto; 
-            border-left: 4px solid #1d2d44;
-            margin: 15px 0;
-            page-break-inside: avoid;
-          }
-          table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin: 20px 0; 
-            page-break-inside: avoid;
-          }
-          th, td { 
-            border: 1px solid #d1d5db; 
-            padding: 12px; 
-            text-align: left; 
-          }
-          th { 
-            background: #f3f4f6; 
-            font-weight: 600;
-            color: #1f2937;
-          }
-          tr:nth-child(even) { background: #f9fafb; }
-          blockquote {
-            border-left: 4px solid #dbeafe;
-            padding-left: 15px;
-            margin: 20px 0;
-            color: #6b7280;
-            font-style: italic;
-          }
-          .section { page-break-inside: avoid; }
-          hr { 
-            border: none; 
-            border-top: 2px solid #e5e7eb; 
-            margin: 30px 0;
-            page-break-after: avoid;
-          }
-          @media print { 
-            body { padding: 0; }
-            h1, h2, h3 { page-break-after: avoid; }
-            table, pre { page-break-inside: avoid; }
-            .no-print { display: none; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          ${content.replace(/^# /gm, '<h1>').replace(/^## /gm, '<h2>').replace(/^### /gm, '<h3>')}
-        </div>
-      </body>
-      </html>
-    `;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const lineHeight = 7;
+    let yPosition = margin;
 
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Premiso-${doc.id.replace(/-/g, '_')}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Parse markdown and add to PDF
+    const lines = content.split('\n');
+    pdf.setFontSize(12);
+    pdf.setTextColor(31, 41, 55);
+
+    lines.forEach((line) => {
+      if (yPosition > pageHeight - margin) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      let text = line;
+      let fontSize = 12;
+      let isBold = false;
+
+      // Handle headers
+      if (line.startsWith('# ')) {
+        fontSize = 20;
+        isBold = true;
+        text = line.replace(/^# /, '');
+        pdf.setFontSize(fontSize);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
+        yPosition += lineHeight * 2;
+      } else if (line.startsWith('## ')) {
+        fontSize = 16;
+        isBold = true;
+        text = line.replace(/^## /, '');
+        pdf.setFontSize(fontSize);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
+        yPosition += lineHeight * 1.5;
+      } else if (line.startsWith('### ')) {
+        fontSize = 14;
+        isBold = true;
+        text = line.replace(/^### /, '');
+        pdf.setFontSize(fontSize);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
+        yPosition += lineHeight * 1.2;
+      } else if (line.trim()) {
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'normal');
+        const lines_split = pdf.splitTextToSize(line, pageWidth - 2 * margin);
+        lines_split.forEach((splitLine) => {
+          if (yPosition > pageHeight - margin) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          pdf.text(splitLine, margin, yPosition);
+          yPosition += lineHeight;
+        });
+      } else {
+        yPosition += lineHeight / 2;
+      }
+    });
+
+    pdf.save(`Premiso-${doc.id.replace(/-/g, '_')}.pdf`);
   };
 
   return (
