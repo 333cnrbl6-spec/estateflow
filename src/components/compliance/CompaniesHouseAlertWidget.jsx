@@ -57,7 +57,7 @@ export default function CompaniesHouseAlertWidget({ limit = 5 }) {
   };
 
   const getAlertIcon = (type) => {
-    const icons = {
+    const iconMap = {
       'accounts_overdue': AlertCircle,
       'confirmation_statement_due': Clock,
       'director_change': Users,
@@ -65,7 +65,7 @@ export default function CompaniesHouseAlertWidget({ limit = 5 }) {
       'strike_off_notice': AlertCircle,
       'insolvency': AlertCircle
     };
-    return icons[type] || AlertCircle;
+    return iconMap[type] || AlertCircle;
   };
 
   const getSeverityColor = (severity) => {
@@ -174,11 +174,11 @@ export default function CompaniesHouseAlertWidget({ limit = 5 }) {
             </div>
 
             <div className="space-y-2">
-              {profile.critical_alerts.slice(0, 3).map((alert, idx) => {
-                const AlertIcon = getAlertIcon(alert.type);
+              {profile.critical_alerts && profile.critical_alerts.slice(0, 3).map((alert, idx) => {
+                const IconComponent = getAlertIcon(alert.type);
                 return (
                   <div key={idx} className={`p-3 rounded-md border flex items-start gap-2 ${getSeverityColor(alert.severity)}`}>
-                    <AlertIcon className="w-4 h-4 mt-0.5 shrink-0" />
+                    <IconComponent className="w-4 h-4 mt-0.5 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold capitalize">{alert.type.replace(/_/g, ' ')}</p>
                       <p className="text-xs mt-0.5">{alert.message}</p>
@@ -186,7 +186,7 @@ export default function CompaniesHouseAlertWidget({ limit = 5 }) {
                   </div>
                 );
               })}
-              {profile.critical_alerts.length > 3 && (
+              {profile.critical_alerts && profile.critical_alerts.length > 3 && (
                 <p className="text-xs text-muted-foreground">+{profile.critical_alerts.length - 3} more alerts</p>
               )}
             </div>
