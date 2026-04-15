@@ -16,7 +16,7 @@ export default function DeveloperDocuments() {
       title: 'Investor Pitch Deck',
       description: '6-slide professional pitch deck for Series A funding. Includes market opportunity, traction, and investment thesis.',
       category: 'Investor Relations',
-      file: 'investor-pitch/INVESTOR_PITCH.html',
+      file: '/investor-pitch/INVESTOR_PITCH.html',
       isPdf: false,
       downloadText: 'View & Print',
     },
@@ -25,7 +25,7 @@ export default function DeveloperDocuments() {
       title: 'Product Manual',
       description: 'Core product guide covering modules, features, user roles, and FAQ.',
       category: 'Product',
-      file: 'PRODUCT_MANUAL.md',
+      file: '/PRODUCT_MANUAL.md',
       isPdf: false,
       downloadText: 'Download All',
       autoLoad: true,
@@ -35,7 +35,7 @@ export default function DeveloperDocuments() {
       title: 'Business Strategy 2026',
       description: 'Comprehensive business plan, market analysis, SWOT, competitive landscape, financial projections, roadmap, and Series A case.',
       category: 'Investor Relations',
-      file: 'BUSINESS_STRATEGY_2026.md',
+      file: '/BUSINESS_STRATEGY_2026.md',
       isPdf: false,
       downloadText: 'Download Strategy',
       autoLoad: true,
@@ -53,35 +53,14 @@ export default function DeveloperDocuments() {
     'Deployment': 'bg-cyan-100 text-cyan-800',
   };
 
-  const extractMarkdownContent = (text) => {
-    // If response is HTML page wrapper, try to extract markdown from script
-    if (text.includes('<!doctype') || text.includes('<html')) {
-      // This is the full HTML page - return empty to signal reload needed
-      return null;
-    }
-    return text;
-  };
+
 
   const loadDocument = async (doc) => {
     if (loadedDocs[doc.id]) return;
     
     try {
       const response = await fetch(doc.file);
-      let text = await response.text();
-      
-      // Validate and extract content
-      const content = extractMarkdownContent(text);
-      if (!content) {
-        console.error('Document returned HTML instead of markdown:', doc.file);
-        // Try direct import as fallback
-        try {
-          const imported = await import(`../../${doc.file}`);
-          text = imported.default || text;
-        } catch (e) {
-          console.error('Fallback import failed:', e);
-        }
-      }
-      
+      const text = await response.text();
       setLoadedDocs(prev => ({ ...prev, [doc.id]: text }));
     } catch (err) {
       console.error('Failed to load document:', err);
@@ -100,37 +79,17 @@ export default function DeveloperDocuments() {
     
     let content = loadedDocs[docId];
     
-    // If not loaded yet or is HTML, fetch raw markdown
-    if (!content || content.includes('<!doctype') || content.includes('<html')) {
+    // If not loaded, fetch it
+    if (!content) {
       try {
-        // Try importing as ES module
-        try {
-          const imported = await import(`../../${doc.file}`);
-          content = imported.default;
-        } catch (e) {
-          // Fallback: fetch with ?raw query param
-          const response = await fetch(`${doc.file}?raw=true`);
-          if (!response.ok) throw new Error('Failed to load document');
-          content = await response.text();
-          
-          // Still HTML? Try stripping it
-          if (content.includes('<!doctype')) {
-            // Last resort: alert user to reload
-            alert('Document format invalid. Please refresh the page.');
-            return;
-          }
-        }
+        const response = await fetch(doc.file);
+        if (!response.ok) throw new Error('Failed to load document');
+        content = await response.text();
       } catch (err) {
         console.error('Failed to download document:', err);
-        alert('Failed to download document. Please refresh and try again.');
+        alert('Failed to download document. Please try again.');
         return;
       }
-    }
-    
-    // Final validation
-    if (!content || content.includes('<!doctype') || content.includes('<html')) {
-      alert('Document content is invalid. Please refresh the page.');
-      return;
     }
     
     try {
