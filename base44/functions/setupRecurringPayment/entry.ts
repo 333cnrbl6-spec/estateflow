@@ -1,5 +1,16 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe';
+import { z } from 'npm:zod@3.24.2';
+
+const RecurringPaymentSetupSchema = z.object({
+  tenant_id: z.string().min(1, 'Tenant ID required'),
+  payment_method_id: z.string().min(1, 'Payment method ID required'),
+  amount: z.number().positive('Amount must be positive'),
+  currency: z.string().default('gbp'),
+  start_date: z.string().min(1, 'Start date required'),
+  day_of_month: z.number().int().min(1).max(31).default(1),
+  property_id: z.string().optional(),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -10,19 +21,28 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = RecurringPaymentSetupSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
     const {
       tenant_id,
       payment_method_id,
       amount,
-      currency = 'gbp',
+      currency,
       start_date,
-      day_of_month = 1,
+      day_of_month,
       property_id,
-    } = await req.json();
-
-    if (!tenant_id || !payment_method_id || !amount || !start_date) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
-    }
+    } = validation.data;
 
     const tenant = await base44.entities.Tenant.get(tenant_id);
     const property = property_id ? await base44.entities.Property.get(property_id) : null;

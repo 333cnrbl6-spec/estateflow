@@ -1,72 +1,68 @@
 /**
- * Backend audit logging function
- * Stores all critical operations for compliance audits
+ * auditLog — Backend audit logging function
+ * Stores all mutations and sensitive operations for compliance audits
  */
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const AuditLogSchema = z.object({
+  entity_type: z.string().optional(),
+  action: z.string(),
+  entity_id: z.string().optional(),
+  changes: z.string().optional(),
+  function_name: z.string().optional(),
+  params: z.string().optional(),
+  error: z.string().optional(),
+  timestamp: z.string().datetime(),
+});
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    
-    // Verify admin
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Unauthorized' }, { status: 403 });
+
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (req.method === 'POST') {
-      const logData = await req.json();
-      
-      // Validate required fields
-      const required = ['action', 'entity_type'];
-      const missing = required.filter(f => !logData[f]);
-      if (missing.length > 0) {
-        return Response.json(
-          { error: `Missing fields: ${missing.join(', ')}` },
-          { status: 400 }
-        );
-      }
-
-      // Store audit log
-      const auditRecord = await base44.asServiceRole.entities.AuditLog.create({
-        action: logData.action,
-        user_email: logData.user_email,
-        entity_type: logData.entity_type,
-        entity_id: logData.entity_id,
-        changes: logData.changes,
-        status: logData.status || 'success',
-        notes: logData.notes,
-        ip_address: logData.ip_address,
-        timestamp: new Date().toISOString(),
-      });
-
-      return Response.json({ success: true, id: auditRecord.id });
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
     }
 
-    if (req.method === 'GET') {
-      const url = new URL(req.url);
-      const action = url.searchParams.get('action');
-      const days = parseInt(url.searchParams.get('days') || '30');
-      
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - days);
-
-      const query = { timestamp: { $gte: startDate.toISOString() } };
-      if (action) query.action = action;
-
-      const logs = await base44.asServiceRole.entities.AuditLog.filter(
-        query,
-        '-timestamp',
-        1000
-      );
-
-      return Response.json({ logs, count: logs.length });
+    const validation = AuditLogSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
     }
 
-    return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    const { entity_type, action, entity_id, changes, function_name, params, error, timestamp } = validation.data;
+
+    // Create audit log record
+    const auditLog = await base44.asServiceRole.entities.AuditLog.create({
+      action: action || function_name || 'unknown',
+      entity_type,
+      entity_id,
+      function_name,
+      changes,
+      params,
+      error,
+      user_email: user.email,
+      timestamp: new Date(timestamp).toISOString(),
+      performed_by: user.email,
+      ip_address: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown',
+    });
+
+    return Response.json({
+      success: true,
+      audit_id: auditLog.id,
+      timestamp: auditLog.timestamp,
+    });
   } catch (error) {
-    console.error('[AUDIT_LOG_ERROR]', error);
+    console.error('[Audit Log Error]', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

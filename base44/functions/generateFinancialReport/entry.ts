@@ -6,6 +6,12 @@
  */
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { z } from 'npm:zod@3.24.2';
+
+const FinancialReportSchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}$/, 'Month must be in YYYY-MM format'),
+  propertyIds: z.array(z.string()).optional().default([]),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -16,7 +22,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { month, propertyIds } = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const validation = FinancialReportSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { month, propertyIds } = validation.data;
     const [year, monthNum] = month.split('-');
     const startDate = new Date(`${year}-${monthNum}-01`);
     const endDate = new Date(year, parseInt(monthNum), 0);

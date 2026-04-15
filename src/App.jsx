@@ -8,6 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import RBMBrandingProvider from '@/components/RBMBrandingProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { RoleProvider } from '@/lib/RoleContext';
+import ErrorToastContainer from '@/components/ErrorToastContainer';
 
 import Landing from './pages/Landing';
 import FounderLaunch from './pages/FounderLaunch';
@@ -354,6 +355,7 @@ function App() {
                 </Routes>
               </Router>
               <Toaster />
+              <ErrorToastContainer />
             </RBMBrandingProvider>
           </RoleProvider>
         </QueryClientProvider>

@@ -10,6 +10,8 @@ import { Plus, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import TaskCard from '@/components/tasks/TaskCard';
 import TaskFormDialog from '@/components/tasks/TaskFormDialog';
 import PaginationControls from '@/components/shared/PaginationControls';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { auditLogger } from '@/lib/auditLogger';
 
 export default function TaskManagement() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -20,6 +22,7 @@ export default function TaskManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const queryClient = useQueryClient();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],
@@ -27,21 +30,33 @@ export default function TaskManagement() {
   });
 
   const createTaskMutation = useMutation({
-    mutationFn: (data) => base44.entities.Task.create(data),
+    mutationFn: async (data) => {
+      const result = await base44.entities.Task.create(data);
+      await auditLogger.logMutation('Task', 'create', result.id, data);
+      return result;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setOpenDialog(false);
       setEditingTask(null);
-    }
+      handleSuccess('Task created successfully');
+    },
+    onError: (error) => handleError(error, 'Failed to create task'),
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      const result = await base44.entities.Task.update(id, data);
+      await auditLogger.logMutation('Task', 'update', id, data);
+      return result;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setOpenDialog(false);
       setEditingTask(null);
-    }
+      handleSuccess('Task updated successfully');
+    },
+    onError: (error) => handleError(error, 'Failed to update task'),
   });
 
   const handleSaveTask = (formData) => {

@@ -1,5 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe';
+import { z } from 'npm:zod@3.24.2';
+
+const RecurringPaymentSchema = z.object({
+  recurring_payment_id: z.string().min(1, 'Recurring payment ID required'),
+});
 
 Deno.serve(async (req) => {
   try {
@@ -11,11 +16,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { recurring_payment_id } = await req.json();
-
-    if (!recurring_payment_id) {
-      return Response.json({ error: 'Missing recurring_payment_id' }, { status: 400 });
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
     }
+
+    const validation = RecurringPaymentSchema.safeParse(body);
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
+    }
+
+    const { recurring_payment_id } = validation.data;
 
     const recurringPayment = await base44.entities.RecurringPayment.get(recurring_payment_id);
 
