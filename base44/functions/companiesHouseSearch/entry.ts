@@ -24,7 +24,9 @@ async function chFetch(path, apiKey, retries = 3) {
   }
   let auth;
   try {
-    auth = toBase64(`${apiKey.trim()}:`);
+    // Strip only whitespace (not hyphens — CH UUID keys require hyphens)
+    const cleanKey = apiKey.replace(/\s/g, '');
+    auth = toBase64(`${cleanKey}:`);
     console.log(`[chFetch] Auth header generated, key length: ${apiKey.trim().length}`);
   } catch (e) {
     console.error('[chFetch] Failed to generate auth header:', e.message);
