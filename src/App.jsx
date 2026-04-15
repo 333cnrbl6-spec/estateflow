@@ -144,6 +144,7 @@ import AddPropertyWizard from './pages/AddPropertyWizard';
 import RelationshipIntelligence from './pages/RelationshipIntelligence';
 import BackupManagement from './pages/BackupManagement';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
+import DeveloperDocuments from './pages/DeveloperDocuments';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -229,6 +230,7 @@ const AuthenticatedApp = () => {
         <Route path="/relationship-intelligence" element={<RouteErrorBoundary><RelationshipIntelligence /></RouteErrorBoundary>} />
         <Route path="/backup-management" element={<BackupManagement />} />
         <Route path="/performance-metrics" element={<PerformanceMetricsDashboard />} />
+        <Route path="/developer-documents" element={<DeveloperDocuments />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />

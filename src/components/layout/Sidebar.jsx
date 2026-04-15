@@ -143,6 +143,12 @@ const navGroups = [
       { label: 'Expansion Opportunities', icon: Lightbulb, path: '/expansion-opportunities' },
       { label: 'Dev: Demo Switcher', icon: Code2, path: '/dev-demo-switcher' },
     ]
+  },
+  {
+    label: '📖 Resources',
+    items: [
+      { label: 'Developer Documents', icon: BookOpen, path: '/developer-documents' },
+    ]
   }
 ];
 
