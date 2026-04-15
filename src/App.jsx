@@ -146,6 +146,7 @@ import BackupManagement from './pages/BackupManagement';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
 import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
+import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -223,6 +224,7 @@ const AuthenticatedApp = () => {
         {/* Operations */}
         <Route path="/maintenance" element={<MaintenanceWorkflow />} />
         <Route path="/maintenance-board" element={<RouteErrorBoundary><MaintenanceBoard /></RouteErrorBoundary>} />
+        <Route path="/maintenance-timelines" element={<MaintenanceRequestTimelines />} />
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
