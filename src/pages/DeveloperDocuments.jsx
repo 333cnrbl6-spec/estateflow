@@ -187,7 +187,7 @@ export default function DeveloperDocuments() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = \`Premiso-\${doc.id.replace(/-/g, '_')}.html\`;
+    a.download = `Premiso-${doc.id.replace(/-/g, '_')}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
