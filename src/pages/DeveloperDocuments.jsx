@@ -72,18 +72,12 @@ export default function DeveloperDocuments() {
   }, []);
 
   const downloadAsHTML = async (docId) => {
-    // Load doc if not already loaded
-    if (!loadedDocs[docId]) {
-      const doc = documents.find(d => d.id === docId);
-      await loadDocument(doc);
-    }
-
     const doc = documents.find(d => d.id === docId);
-    if (!doc) return;
+    if (!doc || !loadedDocs[docId]) return;
     
     const content = loadedDocs[docId];
     
-    // Create PDF
+    // Create PDF with proper markdown parsing
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -92,68 +86,63 @@ export default function DeveloperDocuments() {
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 20;
-    const lineHeight = 7;
+    const margin = 15;
     let yPosition = margin;
 
-    // Parse markdown and add to PDF
+    // Split into lines and process
     const lines = content.split('\n');
-    pdf.setFontSize(12);
-    pdf.setTextColor(31, 41, 55);
 
     lines.forEach((line) => {
+      // Auto page break
       if (yPosition > pageHeight - margin) {
         pdf.addPage();
         yPosition = margin;
       }
 
-      let text = line;
-      let fontSize = 12;
-      let isBold = false;
+      const trimmedLine = line.trim();
+      
+      // Skip empty lines
+      if (!trimmedLine) {
+        yPosition += 3;
+        return;
+      }
 
       // Handle headers
-      if (line.startsWith('# ')) {
-        fontSize = 20;
-        isBold = true;
-        text = line.replace(/^# /, '');
-        pdf.setFontSize(fontSize);
+      if (trimmedLine.startsWith('# ')) {
+        const text = trimmedLine.replace(/^#+ /, '');
+        pdf.setFontSize(18);
         pdf.setFont(undefined, 'bold');
         pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += lineHeight * 2;
-      } else if (line.startsWith('## ')) {
-        fontSize = 16;
-        isBold = true;
-        text = line.replace(/^## /, '');
-        pdf.setFontSize(fontSize);
+        yPosition += 10;
+      } else if (trimmedLine.startsWith('## ')) {
+        const text = trimmedLine.replace(/^#+ /, '');
+        pdf.setFontSize(14);
         pdf.setFont(undefined, 'bold');
         pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += lineHeight * 1.5;
-      } else if (line.startsWith('### ')) {
-        fontSize = 14;
-        isBold = true;
-        text = line.replace(/^### /, '');
-        pdf.setFontSize(fontSize);
-        pdf.setFont(undefined, 'bold');
-        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
-        yPosition += lineHeight * 1.2;
-      } else if (line.trim()) {
+        yPosition += 8;
+      } else if (trimmedLine.startsWith('### ')) {
+        const text = trimmedLine.replace(/^#+ /, '');
         pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(text, margin, yPosition, { maxWidth: pageWidth - 2 * margin });
+        yPosition += 7;
+      } else {
+        // Body text
+        pdf.setFontSize(11);
         pdf.setFont(undefined, 'normal');
-        const lines_split = pdf.splitTextToSize(line, pageWidth - 2 * margin);
-        lines_split.forEach((splitLine) => {
+        const splitLines = pdf.splitTextToSize(trimmedLine, pageWidth - 2 * margin);
+        splitLines.forEach(splitLine => {
           if (yPosition > pageHeight - margin) {
             pdf.addPage();
             yPosition = margin;
           }
           pdf.text(splitLine, margin, yPosition);
-          yPosition += lineHeight;
+          yPosition += 5;
         });
-      } else {
-        yPosition += lineHeight / 2;
       }
     });
 
-    pdf.save(`Premiso-${doc.id.replace(/-/g, '_')}.pdf`);
+    pdf.save(`${doc.id.replace(/-/g, '_')}.pdf`);
   };
 
   return (
