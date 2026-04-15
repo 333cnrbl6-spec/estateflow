@@ -1,6 +1,20 @@
+// v2 - updated 2026-04-15
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const CH_BASE = 'https://api.company-information.service.gov.uk';
+
+function toBase64(str) {
+  try {
+    // Safe base64 for any characters
+    const encoded = new TextEncoder().encode(str);
+    let binary = '';
+    encoded.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  } catch (e) {
+    console.error('[toBase64] Encoding failed:', e.message);
+    throw e;
+  }
+}
 
 // Fetch with exponential backoff retry
 async function chFetch(path, apiKey, retries = 3) {
@@ -8,7 +22,14 @@ async function chFetch(path, apiKey, retries = 3) {
     console.error('[chFetch] No API key provided');
     return null;
   }
-  const auth = btoa(`${apiKey}:`);
+  let auth;
+  try {
+    auth = toBase64(`${apiKey.trim()}:`);
+    console.log(`[chFetch] Auth header generated, key length: ${apiKey.trim().length}`);
+  } catch (e) {
+    console.error('[chFetch] Failed to generate auth header:', e.message);
+    return null;
+  }
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const res = await fetch(`${CH_BASE}${path}`, {
@@ -28,17 +49,15 @@ async function chFetch(path, apiKey, retries = 3) {
       }
 
       if (!res.ok) {
-        console.error(`[chFetch] API returned ${res.status} for ${path}`);
+        const errBody = await res.text().catch(() => '');
+        console.error(`[chFetch] API returned ${res.status} for ${path} — body: ${errBody.substring(0, 200)}`);
         return null;
       }
       return await res.json();
     } catch (err) {
-      if (attempt === retries) {
-        console.error(`[chFetch] All ${retries} attempts failed for ${path}: ${err.message}`);
-        return null;
-      }
+      console.error(`[chFetch] Attempt ${attempt}/${retries} exception for ${path}: ${err.constructor?.name} — ${err.message}`);
+      if (attempt === retries) return null;
       const wait = attempt * 1500;
-      console.warn(`[chFetch] Attempt ${attempt} failed, retrying in ${wait}ms: ${err.message}`);
       await new Promise(r => setTimeout(r, wait));
     }
   }
@@ -47,8 +66,9 @@ async function chFetch(path, apiKey, retries = 3) {
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
   const { action, query, company_number, officer_id } = body;
+  console.log(`[companiesHouseSearch] action=${action} query=${query}`);
 
   const apiKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
   if (!apiKey) {

@@ -46,9 +46,13 @@ async function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
+function toBase64(str) {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(str)));
+}
+
 async function chFetch(path, apiKey, retries = 3) {
   if (!apiKey) return null;
-  const auth = btoa(`${apiKey}:`);
+  const auth = toBase64(`${apiKey.trim()}:`);
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const res = await fetch(`${CH_BASE}${path}`, {
