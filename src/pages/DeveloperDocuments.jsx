@@ -38,7 +38,7 @@ export default function DeveloperDocuments() {
       file: 'BUSINESS_STRATEGY_2026.md',
       isPdf: false,
       downloadText: 'Download Strategy',
-      autoLoad: false,
+      autoLoad: true,
     },
   ];
 
@@ -65,12 +65,10 @@ export default function DeveloperDocuments() {
     }
   };
 
-  // Auto-load product manual on mount
+  // Auto-load all documents marked with autoLoad on mount
   useEffect(() => {
-    const productManual = documents.find(d => d.autoLoad);
-    if (productManual) {
-      loadDocument(productManual).then(() => setIsReady(true));
-    }
+    const autoLoadDocs = documents.filter(d => d.autoLoad);
+    Promise.all(autoLoadDocs.map(doc => loadDocument(doc))).then(() => setIsReady(true));
   }, []);
 
   const downloadAsHTML = async (docId) => {
@@ -203,50 +201,6 @@ export default function DeveloperDocuments() {
             </Button>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Documents Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {documents.map((doc) => (
-          <Card key={doc.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between mb-2">
-                <FileText className="w-5 h-5 text-primary" />
-                <Badge className={categoryColors[doc.category]}>
-                  {doc.category}
-                </Badge>
-              </div>
-              <CardTitle className="text-lg">{doc.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                {doc.description}
-              </p>
-              <div className="flex gap-2">
-                {doc.id === 'investor-pitch' ? (
-                  <Button
-                    size="sm"
-                    onClick={() => window.open(doc.file, '_blank')}
-                    className="gap-2 flex-1"
-                  >
-                    <Download className="w-4 h-4" />
-                    View & Print
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    onClick={() => downloadAsHTML(doc.id)}
-                    disabled={doc.autoLoad && !loadedDocs[doc.id]}
-                    className="gap-2 flex-1"
-                  >
-                    <Printer className="w-4 h-4" />
-                    {doc.autoLoad && !loadedDocs[doc.id] ? 'Loading...' : 'Download'}
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
       </div>
 
       {/* PDF Export Tips */}
