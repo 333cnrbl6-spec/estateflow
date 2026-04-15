@@ -31,42 +31,49 @@ Deno.serve(async (req) => {
   }
 });
 
-function generateHTMLReport(data, month, properties, user) {
-  const timestamp = new Date().toLocaleDateString();
-  const [year, monthNum] = month.split('-');
-  const monthName = new Date(year, monthNum - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
 
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Financial Report - ${month}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
-    h1 { color: #1e40af; border-bottom: 3px solid #1e40af; padding-bottom: 10px; }
-    h2 { color: #1e40af; margin-top: 30px; font-size: 18px; }
-    h3 { color: #475569; font-size: 14px; margin-top: 15px; }
-    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-    th { background-color: #e0e7ff; padding: 10px; text-align: left; border-bottom: 2px solid #1e40af; font-weight: bold; }
-    td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
-    tr:nth-child(even) { background-color: #f8fafc; }
-    .summary-box { background-color: #f0f9ff; padding: 15px; border-left: 4px solid #1e40af; margin: 15px 0; }
-    .positive { color: #10b981; font-weight: bold; }
-    .negative { color: #ef4444; font-weight: bold; }
-    .warning-box { background-color: #fef3c7; padding: 10px; border-left: 4px solid #f59e0b; margin: 10px 0; }
-    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
-    .page-break { page-break-after: always; }
-    .amount-right { text-align: right; font-family: monospace; }
-  </style>
-</head>
-<body>
-  <h1>Financial Report for ${monthName}</h1>
-  <div class="summary-box">
-    <p><strong>Generated:</strong> ${timestamp}</p>
-    <p><strong>Prepared for:</strong> ${user.full_name} (${user.email})</p>
-    <p><strong>Properties Included:</strong> ${properties.map(p => p.name).join(', ')}</p>
-  </div>
+function generateHTMLReport(data, month, properties, user) {
+   const timestamp = new Date().toLocaleDateString();
+   const [year, monthNum] = month.split('-');
+   const monthName = new Date(year, monthNum - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+   return `
+ <!DOCTYPE html>
+ <html>
+ <head>
+   <meta charset="utf-8">
+   <title>Financial Report - ${escapeHtml(month)}</title>
+   <style>
+     body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+     h1 { color: #1e40af; border-bottom: 3px solid #1e40af; padding-bottom: 10px; }
+     h2 { color: #1e40af; margin-top: 30px; font-size: 18px; }
+     h3 { color: #475569; font-size: 14px; margin-top: 15px; }
+     table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+     th { background-color: #e0e7ff; padding: 10px; text-align: left; border-bottom: 2px solid #1e40af; font-weight: bold; }
+     td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
+     tr:nth-child(even) { background-color: #f8fafc; }
+     .summary-box { background-color: #f0f9ff; padding: 15px; border-left: 4px solid #1e40af; margin: 15px 0; }
+     .positive { color: #10b981; font-weight: bold; }
+     .negative { color: #ef4444; font-weight: bold; }
+     .warning-box { background-color: #fef3c7; padding: 10px; border-left: 4px solid #f59e0b; margin: 10px 0; }
+     .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
+     .page-break { page-break-after: always; }
+     .amount-right { text-align: right; font-family: monospace; }
+   </style>
+ </head>
+ <body>
+   <h1>Financial Report for ${escapeHtml(monthName)}</h1>
+   <div class="summary-box">
+     <p><strong>Generated:</strong> ${timestamp}</p>
+     <p><strong>Prepared for:</strong> ${escapeHtml(user.full_name || 'User')} (${escapeHtml(user.email || '')})</p>
+     <p><strong>Properties Included:</strong> ${(properties || []).map(p => escapeHtml(p.name || '')).join(', ')}</p>
+   </div>
 
   <!-- CASH FLOW SECTION -->
   <div class="page-break">

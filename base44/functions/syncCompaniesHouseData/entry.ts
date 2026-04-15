@@ -169,36 +169,40 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Companies House API temporarily unavailable. Please try again later.' }, { status: 503 });
     }
 
-    // Fetch officers
+    // Fetch officers with validation
     const officersRes = await chFetch(`/company/${company_number}/officers?items_per_page=100`, apiKey);
-    const officers = (officersRes?.items || []).map(o => ({
-      name: o.name,
-      role: o.officer_role,
-      appointed_on: o.appointed_on,
-      resigned_on: o.resigned_on,
-      nationality: o.nationality,
-      is_corporate: o.occupation === 'Judge' ? false : !!o.country_of_residence
+    if (!officersRes) {
+      console.warn(`[syncCompaniesHouseData] Officers fetch failed for ${company_number}`);
+      return Response.json({ error: 'Failed to fetch officers data from Companies House' }, { status: 503 });
+    }
+    const officers = (Array.isArray(officersRes?.items) ? officersRes.items : []).map(o => ({
+      name: o?.name || 'Unknown',
+      role: o?.officer_role || '',
+      appointed_on: o?.appointed_on || null,
+      resigned_on: o?.resigned_on || null,
+      nationality: o?.nationality || '',
+      is_corporate: !!(o?.country_of_residence || (o?.occupation !== 'Judge' && o?.occupation))
     }));
 
-    // Fetch PSC
+    // Fetch PSC with validation
     const pscRes = await chFetch(`/company/${company_number}/persons-with-significant-control?items_per_page=100`, apiKey);
-    const psc = (pscRes?.items || []).map(p => ({
-      name: p.name,
-      nature_of_control: (p.natures_of_control || []).join(', '),
-      notified_on: p.notified_on
+    const psc = (Array.isArray(pscRes?.items) ? pscRes.items : []).map(p => ({
+      name: p?.name || 'Unknown',
+      nature_of_control: (Array.isArray(p?.natures_of_control) ? p.natures_of_control : []).join(', '),
+      notified_on: p?.notified_on || null
     }));
 
-    // Fetch filing history
+    // Fetch filing history with validation
     const filingRes = await chFetch(`/company/${company_number}/filing-history?items_per_page=15`, apiKey);
-    const filings = (filingRes?.items || []).map(f => ({
-      filing_id: f.filing_id,
-      date: f.date,
-      type: f.type,
-      description: f.description,
-      category: f.category,
-      action_date: f.action_date,
-      filing_date: f.filing_date,
-      pages: f.pages
+    const filings = (Array.isArray(filingRes?.items) ? filingRes.items : []).map(f => ({
+      filing_id: f?.filing_id || '',
+      date: f?.date || '',
+      type: f?.type || '',
+      description: f?.description || '',
+      category: f?.category || '',
+      action_date: f?.action_date || null,
+      filing_date: f?.filing_date || null,
+      pages: f?.pages || 0
     }));
 
     // Build profile

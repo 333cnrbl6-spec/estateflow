@@ -36,18 +36,23 @@ Deno.serve(async (req) => {
       .reduce((s, t) => s + (t.amount || 0), 0);
 
     const property = await base44.entities.Property.filter({ id: property_id });
+    if (!property || property.length === 0) {
+      console.error(`[generateMonthlyLandlordReport] Property ${property_id} not found`);
+      return Response.json({ error: 'Property not found' }, { status: 404 });
+    }
+    
     const tenants = await base44.entities.Tenant.filter({ property_id });
     const maintenance = await base44.entities.MaintenanceRequest.filter({ property_id });
 
     const monthMaintenance = maintenance.filter(m => {
-      const mDate = new Date(m.created_date);
+      const mDate = new Date(m?.created_date);
       return mDate >= startDate && mDate <= endDate;
     });
 
     return Response.json({
       generatedAt: new Date().toISOString(),
       period: `${year}-${String(month).padStart(2, '0')}`,
-      property: property[0] || {},
+      property: property[0],
       financials: {
         income,
         expenses,
