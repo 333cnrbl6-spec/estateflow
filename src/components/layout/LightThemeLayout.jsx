@@ -14,19 +14,26 @@ export default function LightThemeLayout() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <RBMBrandedHeader />
-      <ZoneBasedSidebar />
-      
-      {/* Audio toggle */}
-      <div className="fixed top-4 right-6 z-[1000]">
-        <AudioToggle />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex">
+      {/* Fixed sidebar */}
+      <div className="fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar text-sidebar-foreground overflow-y-auto z-50">
+        <ZoneBasedSidebar />
       </div>
 
-      {/* Main content with proper spacing */}
-      <main className="ml-[260px] mt-[128px] min-h-screen transition-all duration-300">
-        <Outlet />
-      </main>
+      {/* Main content area */}
+      <div className="ml-[260px] w-full flex flex-col">
+        <RBMBrandedHeader />
+        
+        {/* Audio toggle */}
+        <div className="fixed top-4 right-6 z-[1000]">
+          <AudioToggle />
+        </div>
+
+        {/* Scrollable content */}
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
 
       <HelperBot />
     </div>
