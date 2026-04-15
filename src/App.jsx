@@ -150,6 +150,7 @@ import DocumentUploadHub from './pages/DocumentUploadHub';
 import DataDiscoveryHub from './pages/DataDiscoveryHub';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 import AutomationTemplateLibrary from './pages/AutomationTemplateLibrary';
+import SubscriberView from './pages/SubscriberView';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -366,6 +367,7 @@ function App() {
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/founder-launch" element={<FounderLaunch />} />
                   <Route path="/vendor-self-service" element={<VendorSelfService />} />
+                  <Route path="/subscriber-view" element={<SubscriberView />} />
                   {/* All other routes go through auth */}
                   <Route path="/*" element={<AuthenticatedApp />} />
                 </Routes>
