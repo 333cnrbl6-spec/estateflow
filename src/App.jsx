@@ -84,6 +84,7 @@ import SubscriberOnboarding from './pages/SubscriberOnboarding';
 import SubscriberIntelligentOnboarding from './pages/SubscriberIntelligentOnboarding';
 import SalesTargetedDemoBuilder from './pages/SalesTargetedDemoBuilder';
 import DocumentRepository from './pages/DocumentRepository';
+import PropertyDocumentManager from './pages/PropertyDocumentManager';
 import MaintenanceBoard from './pages/MaintenanceBoard';
 import LandlordPortal from './pages/LandlordPortal';
 import BankReconciliation from './pages/BankReconciliation';
@@ -146,6 +147,7 @@ import BackupManagement from './pages/BackupManagement';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
 import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
+import PropertyDocumentManager from './pages/PropertyDocumentManager';
 import MaintenanceRequestTimelines from './pages/MaintenanceRequestTimelines';
 
 const AuthenticatedApp = () => {
@@ -255,6 +257,7 @@ const AuthenticatedApp = () => {
         <Route path="/regulatory-hub" element={<RegulatoryHub />} />
         <Route path="/companies-house-profiles" element={<CompaniesHouseProfiles />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
+        <Route path="/property-documents" element={<PropertyDocumentManager />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/onboarding-workflows" element={<OnboardingWorkflowHub />} />
         <Route path="/crm" element={<CRM />} />
