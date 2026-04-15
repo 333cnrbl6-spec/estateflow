@@ -54,16 +54,34 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
-  const user = await base44.auth.me();
-  if (!user || user.role !== 'admin') {
-    return Response.json({ error: 'Admin access required' }, { status: 403 });
-  }
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
 
-  const db = base44.asServiceRole;
-  const body = await req.json().catch(() => ({}));
-  const action = body.action || 'scan';
-  const dryRun = body.dry_run !== false; // default dry_run = true for safety
+    const db = base44.asServiceRole;
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+
+    // Validate input
+    const action = body.action || 'scan';
+    const dryRun = body.dry_run !== false; // default dry_run = true for safety
+
+    if (!['scan', 'fix'].includes(action)) {
+      return Response.json(
+        { error: `Invalid action: ${action}. Must be 'scan' or 'fix'` },
+        { status: 400 }
+      );
+    }
 
   // ── Load all relationships into memory for graph traversal ───────────────
   // Batch load to prevent timeout on large datasets
@@ -315,33 +333,43 @@ Deno.serve(async (req) => {
     }
   }
 
-  // ── SUMMARY REPORT ────────────────────────────────────────────────────────
-  const bySeverity = {
-    CRITICAL: findings.filter(f => f.severity === 'CRITICAL').length,
-    HIGH: findings.filter(f => f.severity === 'HIGH').length,
-    MEDIUM: findings.filter(f => f.severity === 'MEDIUM').length,
-  };
+    // ── SUMMARY REPORT ────────────────────────────────────────────────────────
+    const bySeverity = {
+      CRITICAL: findings.filter(f => f.severity === 'CRITICAL').length,
+      HIGH: findings.filter(f => f.severity === 'HIGH').length,
+      MEDIUM: findings.filter(f => f.severity === 'MEDIUM').length,
+    };
 
-  const byPattern = {};
-  for (const f of findings) {
-    byPattern[f.pattern] = (byPattern[f.pattern] || 0) + 1;
+    const byPattern = {};
+    for (const f of findings) {
+      byPattern[f.pattern] = (byPattern[f.pattern] || 0) + 1;
+    }
+
+    return Response.json({
+      success: true,
+      action,
+      dry_run: dryRun,
+      scan_stats: {
+        total_relationships_scanned: allRels.length,
+        total_findings: findings.length,
+        by_severity: bySeverity,
+        by_pattern: byPattern,
+        updates_applied: updatesApplied,
+      },
+      findings,
+      instructions: {
+        to_apply_fixes: 'POST with { action: "fix", dry_run: false } to auto-update flagged relationships',
+        patterns_detected: Object.keys(byPattern),
+      },
+    });
+  } catch (error) {
+    console.error('Error in detectConflictsOfInterest:', error);
+    return Response.json(
+      {
+        error: error.message || 'Failed to scan for conflicts',
+        details: error.stack,
+      },
+      { status: 500 }
+    );
   }
-
-  return Response.json({
-    success: true,
-    action,
-    dry_run: dryRun,
-    scan_stats: {
-      total_relationships_scanned: allRels.length,
-      total_findings: findings.length,
-      by_severity: bySeverity,
-      by_pattern: byPattern,
-      updates_applied: updatesApplied,
-    },
-    findings,
-    instructions: {
-      to_apply_fixes: 'POST with { action: "fix", dry_run: false } to auto-update flagged relationships',
-      patterns_detected: Object.keys(byPattern),
-    },
-  });
 });

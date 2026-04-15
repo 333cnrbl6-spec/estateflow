@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -43,6 +43,20 @@ export default function RelationshipIntelligence() {
     queryKey: ['ownership_relationships'],
     queryFn: () => base44.entities.OwnershipRelationship.list('-created_date', 500),
   });
+
+  // Cleanup subscriptions on unmount to prevent memory leaks
+  useEffect(() => {
+    const unsubscribe = base44.entities.OwnershipRelationship.subscribe((event) => {
+      // Real-time updates would be handled here if needed
+      queryClient.invalidateQueries({ queryKey: ['ownership_relationships'] });
+    });
+
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [queryClient]);
 
   // Derived stats
   const conflicts = relationships.filter(r => r.conflict_of_interest);

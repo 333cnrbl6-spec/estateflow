@@ -253,6 +253,25 @@ export default function MaintenanceBoard() {
     queryFn: () => base44.entities.Contact.list('full_name', 200),
   });
 
+  // Cleanup subscriptions on unmount to prevent memory leaks
+  React.useEffect(() => {
+    const unsubOrders = base44.entities.MaintenanceOrder.subscribe(() => {
+      qc.invalidateQueries(['maintenance_orders']);
+    });
+    const unsubProperties = base44.entities.Property.subscribe(() => {
+      qc.invalidateQueries(['properties']);
+    });
+    const unsubContacts = base44.entities.Contact.subscribe(() => {
+      qc.invalidateQueries(['contacts']);
+    });
+
+    return () => {
+      if (typeof unsubOrders === 'function') unsubOrders();
+      if (typeof unsubProperties === 'function') unsubProperties();
+      if (typeof unsubContacts === 'function') unsubContacts();
+    };
+  }, [qc]);
+
   const filtered = orders.filter(o => {
     const matchSearch = !search || o.title?.toLowerCase().includes(search.toLowerCase()) ||
       o.assigned_contractor_name?.toLowerCase().includes(search.toLowerCase());

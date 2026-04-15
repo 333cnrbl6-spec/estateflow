@@ -12,6 +12,7 @@ import { RoleProvider } from '@/lib/RoleContext';
 import Landing from './pages/Landing';
 import FounderLaunch from './pages/FounderLaunch';
 import AppLayout from './components/layout/AppLayout';
+import RouteErrorBoundary from './components/RouteErrorBoundary';
 import Dashboard from './pages/Dashboard';
 import Companies from './pages/Companies';
 import Properties from './pages/Properties';
@@ -168,7 +169,7 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* ── Sidebar-wrapped authenticated pages ─────────────────────────── */}
       <Route element={<AppLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<RouteErrorBoundary><Dashboard /></RouteErrorBoundary>} />
 
         {/* Core */}
         <Route path="/companies" element={<Companies />} />
@@ -216,13 +217,13 @@ const AuthenticatedApp = () => {
 
         {/* Operations */}
         <Route path="/maintenance" element={<MaintenanceWorkflow />} />
-        <Route path="/maintenance-board" element={<MaintenanceBoard />} />
+        <Route path="/maintenance-board" element={<RouteErrorBoundary><MaintenanceBoard /></RouteErrorBoundary>} />
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-scheduling" element={<MaintenanceSchedulingDashboard />} />
         <Route path="/legal-compliance-framework" element={<LegalComplianceFramework />} />
-        <Route path="/relationship-intelligence" element={<RelationshipIntelligence />} />
+        <Route path="/relationship-intelligence" element={<RouteErrorBoundary><RelationshipIntelligence /></RouteErrorBoundary>} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />
@@ -235,7 +236,7 @@ const AuthenticatedApp = () => {
         <Route path="/certificate-management" element={<CertificateCompliance />} />
         <Route path="/role-dashboard" element={<RoleDashboard />} />
         <Route path="/compliance-audit" element={<ComplianceAudit />} />
-        <Route path="/compliance-hub" element={<ComplianceHub />} />
+        <Route path="/compliance-hub" element={<RouteErrorBoundary><ComplianceHub /></RouteErrorBoundary>} />
         <Route path="/compliance-risk-analytics" element={<ComplianceRiskAnalytics />} />
         <Route path="/compliance-workflow-automation" element={<ComplianceWorkflowAutomation />} />
         <Route path="/compliance-notification-center" element={<ComplianceNotificationCenter />} />
