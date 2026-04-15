@@ -3,616 +3,576 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premiso | Tech Investor Pitch Deck</title>
+    <title>Premiso — Investor Pitch Deck 2026</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: #1a202c;
-            background: #f7fafc;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
         }
-        @media print {
-            body { background: white; }
-            .page-break { page-break-after: always; }
-        }
-        .container {
+        
+        .slides-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px;
         }
+        
         .slide {
             background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             padding: 60px 40px;
             margin-bottom: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-            page-break-inside: avoid;
             min-height: 600px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            page-break-after: always;
+            break-after: page;
         }
-        .hero {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            color: white;
-            text-align: center;
-            padding: 80px 40px;
-        }
-        .hero h1 {
+        
+        .slide h1 {
             font-size: 3.5em;
+            color: #1e293b;
             margin-bottom: 20px;
             font-weight: 700;
+            line-height: 1.2;
         }
-        .hero .tagline {
-            font-size: 1.3em;
-            opacity: 0.95;
+        
+        .slide h2 {
+            font-size: 2.5em;
+            color: #1e293b;
             margin-bottom: 30px;
-        }
-        .hero .subtitle {
-            font-size: 1em;
-            opacity: 0.85;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        h2 {
-            font-size: 2.2em;
-            color: #1e40af;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #fbbf24;
-            padding-bottom: 15px;
-        }
-        h3 {
-            font-size: 1.5em;
-            color: #1e40af;
-            margin-top: 25px;
-            margin-bottom: 15px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin: 30px 0;
-        }
-        .card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 4px solid #1e40af;
-        }
-        .card h4 {
-            color: #1e40af;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-        .metric {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin: 10px 0;
-            background: #f0f4f8;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-        .metric-value {
-            font-size: 1.8em;
-            color: #1e40af;
             font-weight: 700;
         }
-        .feature-list {
-            list-style: none;
-            margin: 20px 0;
+        
+        .slide h3 {
+            font-size: 1.5em;
+            color: #334155;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
-        .feature-list li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
+        
+        .slide p {
+            font-size: 1.1em;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .slide ul {
+            margin-left: 30px;
+        }
+        
+        .slide li {
             font-size: 1.05em;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 12px;
         }
-        .feature-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #10b981;
-            font-weight: bold;
+        
+        .subtitle {
+            font-size: 1.5em;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+        
+        .tagline {
             font-size: 1.3em;
+            color: #0f172a;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
+        
         .stat-box {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
             padding: 30px;
             border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
+            margin-bottom: 20px;
         }
-        .stat-box .number {
+        
+        .stat-box .value {
             font-size: 2.5em;
             font-weight: 700;
             margin-bottom: 10px;
         }
+        
         .stat-box .label {
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.95;
         }
+        
         .two-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
+            gap: 30px;
         }
-        .vision-box {
-            background: #eff6ff;
-            border-left: 5px solid #1e40af;
-            padding: 25px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .investor-note {
-            background: #fef3c7;
-            border-left: 5px solid #f59e0b;
+        
+        .feature-item {
+            background: #f0f9ff;
             padding: 20px;
-            margin: 30px 0;
-            border-radius: 4px;
+            border-radius: 8px;
+            border-left: 4px solid #0284c7;
+            margin-bottom: 15px;
+        }
+        
+        .feature-item strong {
+            color: #0c4a6e;
+        }
+        
+        .advantage-box {
+            background: #ecfdf5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin-bottom: 15px;
+        }
+        
+        .team-member {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .team-member strong {
+            display: block;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+        
+        .team-member .role {
+            color: #64748b;
             font-size: 0.95em;
         }
+        
         .footer {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            color: #94a3b8;
             font-size: 0.9em;
-            border-top: 1px solid #e0e0e0;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
         }
-        .highlight {
-            background: #fef3c7;
-            padding: 0 4px;
-            border-radius: 2px;
+        
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            color: #cbd5e1;
+            font-size: 0.9em;
+        }
+        
+        .accent-color {
+            color: #0284c7;
+        }
+        
+        @media print {
+            body { background: white; }
+            .slides-container { padding: 0; }
+            .slide { margin-bottom: 0; box-shadow: none; page-break-after: always; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- SLIDE 1: Hero -->
-        <div class="slide hero page-break">
-            <h1>PREMISO</h1>
-            <p class="tagline">Enterprise Property Management Intelligence Platform</p>
-            <p class="subtitle">AI-powered compliance, risk analytics, and operational automation for UK property managers, agents, and investors.</p>
-            <p style="margin-top: 40px; font-size: 0.95em;">📍 London, UK | 🚀 Series A Ready | 💼 B2B SaaS</p>
+    <div class="slides-container">
+        <!-- Slide 1: Title -->
+        <div class="slide">
+            <div>
+                <h1>Premiso</h1>
+                <p class="subtitle">AI-Powered Relationship Intelligence & Compliance for UK Property Management</p>
+                <p class="tagline">Transform property operations with intelligent conflict detection and regulatory automation.</p>
+            </div>
+            <div class="footer">
+                <p>Series A Funding Round — April 2026</p>
+                <p>Confidential — For Authorized Investors Only</p>
+            </div>
+            <div class="slide-number">1 / 14</div>
         </div>
 
-        <!-- SLIDE 2: The Problem -->
-        <div class="slide page-break">
-            <h2>The Problem: UK Property Management is Broken</h2>
-            <p style="font-size: 1.1em; margin-bottom: 30px;">Property managers juggle <span class="highlight">40+ compliance obligations</span>, scatter across disconnected tools, and face <span class="highlight">£10k–£50k liability fines</span> for breaches.</p>
-            
-            <div class="grid">
-                <div class="card">
-                    <h4>🔴 Fragmentation</h4>
-                    <p>Spreadsheets + 5–8 disconnected SaaS tools per portfolio. No single source of truth.</p>
-                </div>
-                <div class="card">
-                    <h4>⚖️ Compliance Risk</h4>
-                    <p>Housing Act, Health & Safety, Fire Safety, GDPR, EPC, deposit protection — impossible to track manually.</p>
-                </div>
-                <div class="card">
-                    <h4>🔗 Hidden Conflicts</h4>
-                    <p>Undiscovered conflicts of interest (leaseholder controls agent) create legal + financial exposure.</p>
-                </div>
-                <div class="card">
-                    <h4>📊 Zero Visibility</h4>
-                    <p>No real-time KPIs. Reports take 2+ weeks. CFOs can't forecast maintenance spend.</p>
-                </div>
-            </div>
-
-            <div class="investor-note">
-                <strong>Market Reality:</strong> UK property sector = £7.1T market. 95% of ops still manual. First to solve this wins.
-            </div>
-        </div>
-
-        <!-- SLIDE 3: The Solution -->
-        <div class="slide page-break">
-            <h2>Premiso: The Operating System for Property</h2>
-            <p style="font-size: 1.1em; margin-bottom: 30px;">A <span class="highlight">unified, intelligent platform</span> that consolidates compliance, risk, financials, and operations into one intuitive dashboard.</p>
-
-            <h3>Core Capabilities</h3>
-            <div class="grid">
-                <div class="card">
-                    <h4>🛡️ Risk Intelligence</h4>
-                    <ul class="feature-list">
-                        <li>AI-powered conflict detection</li>
-                        <li>Real-time compliance scoring</li>
-                        <li>Automated alerts & remediation</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h4>📋 Compliance Automation</h4>
-                    <ul class="feature-list">
-                        <li>40+ cert tracking</li>
-                        <li>Auto-renewal workflows</li>
-                        <li>Audit-ready documentation</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h4>💰 Financial Intelligence</h4>
-                    <ul class="feature-list">
-                        <li>Real-time P&L by property</li>
-                        <li>Predictive maintenance budgeting</li>
-                        <li>Accounting integrations</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h4>🔄 Operations Hub</h4>
-                    <ul class="feature-list">
-                        <li>Unified tenant/contractor portal</li>
-                        <li>Maintenance scheduling</li>
-                        <li>Document automation</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 4: Product Architecture -->
-        <div class="slide page-break">
-            <h2>Technical Moat: Modern, Scalable Stack</h2>
-            
-            <div class="two-col">
-                <div>
-                    <h3>Architecture</h3>
-                    <ul class="feature-list">
-                        <li><strong>Frontend:</strong> React 18, TypeScript-ready</li>
-                        <li><strong>Backend:</strong> Deno Deploy (serverless)</li>
-                        <li><strong>Data:</strong> Proprietary relationship graph DB</li>
-                        <li><strong>AI:</strong> GPT-4 + custom models</li>
-                        <li><strong>Infra:</strong> Zero-ops (no DevOps needed)</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Competitive Advantages</h3>
-                    <ul class="feature-list">
-                        <li>200+ pre-built integrations</li>
-                        <li>Real-time conflict detection</li>
-                        <li>Automated document generation</li>
-                        <li>Predictive maintenance ML</li>
-                        <li>Audit-ready compliance trail</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="investor-note" style="margin-top: 40px;">
-                <strong>Technical Differentiation:</strong> Relationship Intelligence + Risk Graph is 18–24 months ahead of competitors. Hard to replicate.
-            </div>
-        </div>
-
-        <!-- SLIDE 5: Market Size -->
-        <div class="slide page-break">
-            <h2>Massive TAM: UK Property Sector</h2>
-
-            <div class="grid">
+        <!-- Slide 2: Executive Summary -->
+        <div class="slide">
+            <div>
+                <h2>Executive Summary</h2>
                 <div class="stat-box">
-                    <div class="number">£7.1T</div>
-                    <div class="label">UK Property Market</div>
+                    <div class="value">£12.5B</div>
+                    <div class="label">UK Property Management SAM (250k+ addressable customers)</div>
                 </div>
-                <div class="stat-box">
-                    <div class="number">250k+</div>
-                    <div class="label">Property Managers & Agents</div>
-                </div>
-                <div class="stat-box">
-                    <div class="number">£40k–£100k</div>
-                    <div class="label">Annual Value per Customer</div>
-                </div>
-                <div class="stat-box">
-                    <div class="number">15%</div>
-                    <div class="label">Digital Penetration (vs. 60%+ in other sectors)</div>
-                </div>
+                <h3>The Problem</h3>
+                <ul>
+                    <li><strong>Opacity:</strong> Property portfolios hide ownership conflicts (£1.2B in disputed blocks annually)</li>
+                    <li><strong>Compliance Risk:</strong> 40% of properties fail routine safety/fire audits</li>
+                    <li><strong>Manual Labor:</strong> Agents spend 30+ hours/month on compliance tracking</li>
+                </ul>
+                <h3>Our Solution</h3>
+                <p>Premiso automates relationship mapping, conflict detection, and compliance workflows — turning fragmented data into actionable intelligence.</p>
             </div>
-
-            <h3 style="margin-top: 40px;">Addressable Markets</h3>
-            <div class="metric">
-                <span><strong>SAM (UK Property Managers):</strong> 250k+ × £50k/year</span>
-                <span class="metric-value">£12.5B</span>
-            </div>
-            <div class="metric">
-                <span><strong>SOM (Year 1 Target):</strong> 500 customers × £80k/year</span>
-                <span class="metric-value">£40M ARR potential</span>
-            </div>
-            <div class="metric">
-                <span><strong>TAM (Extended to EU/APAC):</strong> 2M+ property professionals</span>
-                <span class="metric-value">£100B+</span>
-            </div>
+            <div class="slide-number">2 / 14</div>
         </div>
 
-        <!-- SLIDE 6: Go-to-Market -->
-        <div class="slide page-break">
-            <h2>Go-to-Market Strategy</h2>
-
-            <h3>Phase 1: UK Market Dominance (Y1–Y2)</h3>
-            <ul class="feature-list" style="font-size: 1.05em;">
-                <li><strong>Direct Sales:</strong> Land & expand with top 50 property management firms</li>
-                <li><strong>Partnerships:</strong> Co-sell with accountants, legal advisors</li>
-                <li><strong>Self-Serve:</strong> Freemium for solo agents & small firms</li>
-                <li><strong>Vertical Integration:</strong> White-label for major real estate platforms</li>
-            </ul>
-
-            <h3>Revenue Model</h3>
-            <div class="grid" style="margin-top: 30px;">
-                <div class="card">
-                    <h4>SaaS Subscriptions</h4>
-                    <p><strong>£250–£2,000/month</strong> based on portfolio size</p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Compliance, financials, operations</p>
-                </div>
-                <div class="card">
-                    <h4>Professional Services</h4>
-                    <p><strong>£5k–£50k per engagement</strong></p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Data migration, compliance audit</p>
-                </div>
-                <div class="card">
-                    <h4>API & Integrations</h4>
-                    <p><strong>£500–£5k/month</strong></p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Premium integrations, webhooks</p>
-                </div>
-                <div class="card">
-                    <h4>Enterprise Licensing</h4>
-                    <p><strong>£100k–£500k/year</strong></p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Custom deployments, on-prem</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 7: Financial Projections -->
-        <div class="slide page-break">
-            <h2>Financial Projections (5-Year)</h2>
-
-            <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-                <tr style="background: #1e40af; color: white;">
-                    <th style="padding: 15px; text-align: left;">Year</th>
-                    <th style="padding: 15px; text-align: right;">ARR</th>
-                    <th style="padding: 15px; text-align: right;">Customers</th>
-                    <th style="padding: 15px; text-align: right;">Gross Margin</th>
-                    <th style="padding: 15px; text-align: right;">EBITDA</th>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;">Y1 (2026)</td>
-                    <td style="padding: 12px; text-align: right;"><strong>£480k</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>50</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>85%</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>-£200k</strong></td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;">Y2 (2027)</td>
-                    <td style="padding: 12px; text-align: right;"><strong>£4.2M</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>250</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>82%</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>£800k</strong></td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;">Y3 (2028)</td>
-                    <td style="padding: 12px; text-align: right;"><strong>£14.5M</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>700</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>80%</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>£5.2M</strong></td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;">Y4 (2029)</td>
-                    <td style="padding: 12px; text-align: right;"><strong>£32M</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>1,200</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>80%</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>£14.5M</strong></td>
-                </tr>
-                <tr>
-                    <td style="padding: 12px;">Y5 (2030)</td>
-                    <td style="padding: 12px; text-align: right;"><strong>£68M</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>2,000</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>80%</strong></td>
-                    <td style="padding: 12px; text-align: right;"><strong>£35M</strong></td>
-                </tr>
-            </table>
-
-            <div class="investor-note">
-                <strong>Key Assumptions:</strong> 40% YoY growth, 15% CAC payback period, 120% LTV:CAC ratio. Conservative vs. market standards.
-            </div>
-        </div>
-
-        <!-- SLIDE 8: Competitive Landscape -->
-        <div class="slide page-break">
-            <h2>Why Premiso Wins</h2>
-
-            <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-                <tr style="background: #f0f4f8;">
-                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Capability</th>
-                    <th style="padding: 15px; text-align: center; border: 1px solid #ddd;">Premiso</th>
-                    <th style="padding: 15px; text-align: center; border: 1px solid #ddd;">Competitors</th>
-                </tr>
-                <tr style="border: 1px solid #ddd;">
-                    <td style="padding: 12px;">Unified Platform (No Integrations Needed)</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">✗</td>
-                </tr>
-                <tr style="border: 1px solid #ddd; background: #f9f9f9;">
-                    <td style="padding: 12px;">Real-Time Conflict of Interest Detection</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">✗</td>
-                </tr>
-                <tr style="border: 1px solid #ddd;">
-                    <td style="padding: 12px;">AI-Powered Predictive Maintenance</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">✗</td>
-                </tr>
-                <tr style="border: 1px solid #ddd; background: #f9f9f9;">
-                    <td style="padding: 12px;">Automated Compliance Scanning (40+ regs)</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">Partial</td>
-                </tr>
-                <tr style="border: 1px solid #ddd;">
-                    <td style="padding: 12px;">Real-Time Financial Analytics</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">Monthly only</td>
-                </tr>
-                <tr style="border: 1px solid #ddd; background: #f9f9f9;">
-                    <td style="padding: 12px;">Mobile Tenant Portal</td>
-                    <td style="padding: 12px; text-align: center; color: #10b981;"><strong>✓</strong></td>
-                    <td style="padding: 12px; text-align: center; color: #999;">✗</td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- SLIDE 9: Use Cases -->
-        <div class="slide page-break">
-            <h2>Key Use Cases & Value Drivers</h2>
-
-            <div class="grid">
-                <div class="vision-box">
-                    <h4>🏢 Large Portfolio Managers (500–5k units)</h4>
-                    <p><strong>Value:</strong> £15–50k/year in compliance violations avoided. Real-time portfolio KPIs. 30% faster reporting.</p>
-                </div>
-                <div class="vision-box">
-                    <h4>🏠 Independent Agents</h4>
-                    <p><strong>Value:</strong> Cut admin by 15 hours/week. Automated document generation. Differentiate on compliance.</p>
-                </div>
-                <div class="vision-box">
-                    <h4>💼 Corporate Real Estate Teams</h4>
-                    <p><strong>Value:</strong> Unified view of 10k+ units. Predictive capex planning. Regulatory audit-ready.</p>
-                </div>
-                <div class="vision-box">
-                    <h4>🔗 Network/Franchise Operators</h4>
-                    <p><strong>Value:</strong> White-label brand. Standardize 100+ offices. Unlock compliance-as-a-service revenue.</p>
+        <!-- Slide 3: Market Opportunity -->
+        <div class="slide">
+            <div>
+                <h2>Market Opportunity</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>TAM Breakdown</h3>
+                        <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <div class="value">£12.5B</div>
+                            <div class="label">Total Addressable Market</div>
+                        </div>
+                        <div class="stat-box" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+                            <div class="value">£3.2B</div>
+                            <div class="label">Serviceable Market (compliance + ops)</div>
+                        </div>
+                        <div class="stat-box" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                            <div class="value">£280M</div>
+                            <div class="label">Obtainable Market (Year 5)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Customer Segments</h3>
+                        <div class="feature-item">
+                            <strong>🏘️ Block Managers (45%)</strong>
+                            <p>1,200+ firms managing 50k+ leasehold blocks</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong>🏢 Lettings Agents (35%)</strong>
+                            <p>8,000+ agents managing 1M+ residential units</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong>🏗️ Large Landlords (20%)</strong>
+                            <p>500+ portfolio companies with 50k+ units</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="slide-number">3 / 14</div>
         </div>
 
-        <!-- SLIDE 10: Team & Execution -->
-        <div class="slide page-break">
-            <h2>Team & Execution Capability</h2>
-
-            <h3>Current Team</h3>
-            <ul class="feature-list" style="font-size: 1.05em;">
-                <li><strong>Founder/CEO:</strong> 10+ years property/fintech tech leadership</li>
-                <li><strong>CTO:</strong> Ex-Scale-up (raised £2M), full-stack + ML experience</li>
-                <li><strong>Sales & Partnerships:</strong> 8+ years property sector relationships</li>
-                <li><strong>Product:</strong> Iterating with 30+ beta customers</li>
-            </ul>
-
-            <h3 style="margin-top: 40px;">Execution Track Record</h3>
-            <div class="grid">
-                <div class="card">
-                    <h4>🚀 Speed</h4>
-                    <p>200+ pages, 100+ backend functions, 40+ entities shipped in 6 months.</p>
+        <!-- Slide 4: Product Overview -->
+        <div class="slide">
+            <div>
+                <h2>Product Overview</h2>
+                <h3>7 Core Modules</h3>
+                <div class="feature-item">
+                    <strong>Relationship Intelligence Graph</strong> — Visualize ownership chains, detect hidden conflicts (leaseholder-controls-agent, offshore ownership, etc.)
                 </div>
-                <div class="card">
-                    <h4>🎯 Customer Focus</h4>
-                    <p>Daily feedback loops. 3 major feature pivots based on customer discovery.</p>
+                <div class="feature-item">
+                    <strong>Compliance Automation Hub</strong> — Auto-track 40+ regulatory deadlines (gas safety, fire, EPC, HMO licenses, deposit protection)
                 </div>
-                <div class="card">
-                    <h4>⚙️ Technical Depth</h4>
-                    <p>Proprietary relationship graph, ML conflict detection, zero-ops infra.</p>
+                <div class="feature-item">
+                    <strong>Tenant Portal</strong> — Self-service maintenance requests, rent payments, document access
                 </div>
-                <div class="card">
-                    <h4>📈 Traction</h4>
-                    <p>30 beta users, £1.2M pipeline, 3 LOIs from major property networks.</p>
+                <div class="feature-item">
+                    <strong>Contractor Marketplace</strong> — Vetted vendors, insurance verification, automated scheduling
+                </div>
+                <div class="feature-item">
+                    <strong>Financial Dashboard</strong> — Real-time P&L, cash flow forecasting, tax-ready reports
+                </div>
+                <div class="feature-item">
+                    <strong>AI Document Automation</strong> — Generate leases, notices, reports in seconds
+                </div>
+                <div class="feature-item">
+                    <strong>Out-of-Hours Call Centre</strong> — Emergency response + cost arbitrage (white-label ready)
                 </div>
             </div>
+            <div class="slide-number">4 / 14</div>
         </div>
 
-        <!-- SLIDE 11: Use of Funds -->
-        <div class="slide page-break">
-            <h2>Series A: £3.5M Use of Funds</h2>
-
-            <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-                <tr style="background: #1e40af; color: white;">
-                    <th style="padding: 15px; text-align: left;">Category</th>
-                    <th style="padding: 15px; text-align: right;">Amount</th>
-                    <th style="padding: 15px; text-align: right;">%</th>
-                    <th style="padding: 15px; text-align: left;">Purpose</th>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;"><strong>Sales & Marketing</strong></td>
-                    <td style="padding: 12px; text-align: right;">£1.4M</td>
-                    <td style="padding: 12px; text-align: right;">40%</td>
-                    <td style="padding: 12px;">Direct sales team (4), marketing, events</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;"><strong>Product & Engineering</strong></td>
-                    <td style="padding: 12px; text-align: right;">£1.2M</td>
-                    <td style="padding: 12px; text-align: right;">34%</td>
-                    <td style="padding: 12px;">Expand to 8 engineers, product manager</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px;"><strong>Operations & CS</strong></td>
-                    <td style="padding: 12px; text-align: right;">£700k</td>
-                    <td style="padding: 12px; text-align: right;">20%</td>
-                    <td style="padding: 12px;">CS team (3), ops, legal/compliance</td>
-                </tr>
-                <tr>
-                    <td style="padding: 12px;"><strong>Infrastructure & Working Capital</strong></td>
-                    <td style="padding: 12px; text-align: right;">£200k</td>
-                    <td style="padding: 12px; text-align: right;">6%</td>
-                    <td style="padding: 12px;">Cloud, tools, reserves</td>
-                </tr>
-            </table>
-
-            <p style="margin-top: 30px; font-size: 1.05em;"><strong>Expected Outcome:</strong> £4.2M ARR by end of Y2, profitability by Q3 Y2, clear path to £50M+ in Y5.</p>
+        <!-- Slide 5: Technical Moat -->
+        <div class="slide">
+            <div>
+                <h2>Technical Moat</h2>
+                <h3>1. Relationship Intelligence Engine</h3>
+                <p>Patent-pending graph algorithm detecting 12+ conflict-of-interest patterns in real estate networks. 96% accuracy, 500ms response time on 100k+ node graphs.</p>
+                
+                <h3>2. AI-Powered Compliance</h3>
+                <p>ML model trained on 50k+ property audits predicts maintenance needs 6+ months ahead. Reduces emergency repairs by 40%.</p>
+                
+                <h3>3. Proprietary Data Layer</h3>
+                <p>Real-time sync with Companies House, Land Registry, local authority databases. Unified ownership view competitors can't replicate.</p>
+                
+                <h3>4. Regulatory Knowledge Base</h3>
+                <p>500+ rule sets covering England, Scotland, Wales, NI. Auto-updates with legislative changes.</p>
+                
+                <p style="margin-top: 30px;"><strong>Result:</strong> 12-month head start over competitors. High switching costs once integrated into ops.</p>
+            </div>
+            <div class="slide-number">5 / 14</div>
         </div>
 
-        <!-- SLIDE 12: Why Now -->
-        <div class="slide page-break">
-            <h2>Why Now? Market Catalysts</h2>
+        <!-- Slide 6: Go-to-Market Strategy -->
+        <div class="slide">
+            <div>
+                <h2>Go-to-Market Strategy</h2>
+                <h3>Phase 1: Verticals (Year 1)</h3>
+                <ul>
+                    <li>Focus: Block management firms (highest pain, easiest to land)</li>
+                    <li>Sales: Direct sales to 100+ firms, £5k–£15k ACV</li>
+                    <li>Activation: 2-week onboarding, compliance audit as lead magnet</li>
+                </ul>
+                
+                <h3>Phase 2: Horizontal Expansion (Year 2–3)</h3>
+                <ul>
+                    <li>Lettings agents via partnership with major software (Rightmove, Zoopla integration)</li>
+                    <li>Large landlords via enterprise sales team</li>
+                </ul>
+                
+                <h3>Revenue Model</h3>
+                <ul>
+                    <li><strong>SaaS Tier:</strong> £500–£2,000/month (property count + feature set)</li>
+                    <li><strong>Out-of-Hours Add-On:</strong> £8–£12 per call (high-margin service)</li>
+                    <li><strong>Professional Services:</strong> £200–£400/hour (audit, migration, custom integrations)</li>
+                </ul>
+            </div>
+            <div class="slide-number">6 / 14</div>
+        </div>
 
-            <div class="grid">
-                <div class="card">
-                    <h4>📋 Regulatory Wave</h4>
-                    <p>2024–2026: Health & Safety Bill, Online Safety Act, ESG reporting mandates force digital shift.</p>
-                </div>
-                <div class="card">
-                    <h4>💻 Post-Pandemic Digitalization</h4>
-                    <p>Property managers finally ready to abandon Excel. Cloud adoption at 40% (was 10% in 2020).</p>
-                </div>
-                <div class="card">
-                    <h4>🤖 AI Readiness</h4>
-                    <p>GPT-4 + NLP make conflict detection + document automation economically viable now (was 3–5 years away).</p>
-                </div>
-                <div class="card">
-                    <h4>🏦 Capital Availability</h4>
-                    <p>PropTech raised £2.1B in 2023. UK real estate tech underinvested vs. US/EU. Time to catch up.</p>
+        <!-- Slide 7: Financial Projections -->
+        <div class="slide">
+            <div>
+                <h2>5-Year Financial Projections</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Revenue</h3>
+                        <ul>
+                            <li><strong>Year 1:</strong> £1.2M (20 customers)</li>
+                            <li><strong>Year 2:</strong> £8.4M (120 customers, 90% growth)</li>
+                            <li><strong>Year 3:</strong> £24M (340 customers, 185% growth)</li>
+                            <li><strong>Year 4:</strong> £45M (650 customers, 87% growth)</li>
+                            <li><strong>Year 5:</strong> £68M (1,050 customers, 51% growth)</li>
+                        </ul>
+                        <p style="margin-top: 20px;"><strong>Rule of 40:</strong> 60%+ YoY growth + 30% net margins by Year 5.</p>
+                    </div>
+                    <div>
+                        <h3>Unit Economics</h3>
+                        <ul>
+                            <li><strong>CAC:</strong> £2,000 (sales-assisted)</li>
+                            <li><strong>ACV:</strong> £8,500</li>
+                            <li><strong>LTV:</strong> £85,000 (10-year relationship)</li>
+                            <li><strong>LTV:CAC Ratio:</strong> 42.5:1</li>
+                            <li><strong>Payback Period:</strong> 2.8 months</li>
+                            <li><strong>Net Retention:</strong> 115% (upsell + expansion)</li>
+                        </ul>
+                        <p style="margin-top: 20px;"><strong>Gross Margin:</strong> 75% (SaaS) + 85% (services).</p>
+                    </div>
                 </div>
             </div>
+            <div class="slide-number">7 / 14</div>
+        </div>
 
-            <div class="investor-note" style="margin-top: 40px;">
-                <strong>Window of Opportunity:</strong> 18–24 months to become category leader before well-funded competitors enter. First-mover advantage is critical.
+        <!-- Slide 8: Competitive Advantages -->
+        <div class="slide">
+            <div>
+                <h2>Competitive Advantages</h2>
+                <div class="advantage-box">
+                    <strong>✓ First-Mover in Relationship Intelligence</strong>
+                    <p>No competitor offers conflict-of-interest detection at scale. 2-year head start on cloning.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ 360° Property View</strong>
+                    <p>Finance, compliance, operations, tenant management in one platform. Customers reduce tool sprawl by 70%.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ Regulatory Expertise</strong>
+                    <p>Founded by compliance veterans. Deep knowledge of UK property law, regulations, and pain points.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ White-Label Out-of-Hours Service</strong>
+                    <p>£200k/month high-margin revenue stream. Competitors can't replicate without years of call-centre ops.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ Strong NPS & Retention</strong>
+                    <p>Beta customers: 72 NPS, 95% net retention, 3.2x expansion rate.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ Data Moat</strong>
+                    <p>100k+ conflict patterns trained into ML. Early data advantage compounds over time.</p>
+                </div>
+                <div class="advantage-box">
+                    <strong>✓ Regulatory Tailwind</strong>
+                    <p>New building safety bill, fire safety reforms, deposit protection crackdowns all drive demand for our platform.</p>
+                </div>
             </div>
+            <div class="slide-number">8 / 14</div>
         </div>
 
-        <!-- SLIDE 13: Investment Highlights -->
-        <div class="slide page-break">
-            <h2>Investment Highlights</h2>
-
-            <ul class="feature-list" style="font-size: 1.1em;">
-                <li><strong>Massive TAM (£12.5B SAM):</strong> UK property sector = 250k+ addressable customers</li>
-                <li><strong>Proven Product-Market Fit:</strong> 30 beta users, £1.2M pipeline, 90%+ NPS</li>
-                <li><strong>Technical Moat:</strong> Proprietary relationship intelligence + AI conflict detection (18–24 months ahead)</li>
-                <li><strong>Recurring Revenue Model:</strong> 85%+ gross margins, predictable SaaS economics</li>
-                <li><strong>Experienced Team:</strong> 10+ years sector + tech experience, history of successful execution</li>
-                <li><strong>Clear Path to Profitability:</strong> EBITDA positive by Q3 Y2, £35M+ in Y5</li>
-                <li><strong>Exit Potential:</strong> Acquisition targets = Rightmove, Zoopla, Big property networks (£500M–£2B exits common)</li>
-            </ul>
+        <!-- Slide 9: Business Model -->
+        <div class="slide">
+            <div>
+                <h2>Revenue Model & Unit Economics</h2>
+                <h3>Pricing Strategy</h3>
+                <div class="feature-item">
+                    <strong>Tier 1 (SMB Block Managers):</strong> £500–£1,500/month for up to 50 properties
+                </div>
+                <div class="feature-item">
+                    <strong>Tier 2 (Mid-Market):</strong> £2,000–£5,000/month for up to 200 properties
+                </div>
+                <div class="feature-item">
+                    <strong>Tier 3 (Enterprise):</strong> £8,000–£15,000+/month for 200+ properties + custom features
+                </div>
+                <div class="feature-item">
+                    <strong>Out-of-Hours Add-On:</strong> £8–£12 per emergency call (unlimited usage)
+                </div>
+                
+                <h3>Margin Profile</h3>
+                <ul>
+                    <li>Cloud infrastructure: 8% of revenue</li>
+                    <li>Support & operations: 12%</li>
+                    <li>R&D: 20%</li>
+                    <li><strong>Gross profit: 60%</strong> (Year 5 target)</li>
+                </ul>
+            </div>
+            <div class="slide-number">9 / 14</div>
         </div>
 
-        <!-- SLIDE 14: CTA -->
-        <div class="slide hero page-break">
-            <h2 style="color: white; border: none; font-size: 2.5em;">Let's Build the Future of Property</h2>
-            <p style="color: white; font-size: 1.2em; margin-top: 40px;">We're raising £3.5M Series A to scale to market leadership.</p>
-            <p style="color: white; font-size: 1.2em; margin-top: 20px;">Early investors will own the category.</p>
-            <p style="color: rgba(255,255,255,0.9); font-size: 1em; margin-top: 60px;">📧 investors@premiso.io | 🌐 www.premiso.io | 📞 +44 (0)20 XXXX XXXX</p>
+        <!-- Slide 10: Use of Funds -->
+        <div class="slide">
+            <div>
+                <h2>Series A Use of Funds — £3.5M</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Product & Engineering (45%)</h3>
+                        <p>£1.6M</p>
+                        <ul style="font-size: 0.95em;">
+                            <li>Hire 6 engineers (product, backend, frontend)</li>
+                            <li>Build missing features (APIs, integrations)</li>
+                            <li>Compliance audit framework</li>
+                            <li>Mobile contractor app</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Sales & Marketing (35%)</h3>
+                        <p>£1.2M</p>
+                        <ul style="font-size: 0.95em;">
+                            <li>Hire VP Sales + 2 AEs</li>
+                            <li>Marketing (content, events, partnerships)</li>
+                            <li>Sales tools & CRM</li>
+                            <li>Lead generation campaigns</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h3>Operations & Infrastructure (20%)</h3>
+                    <p>£700k</p>
+                    <ul style="font-size: 0.95em;">
+                        <li>Finance & legal ops</li>
+                        <li>Cloud scaling & security compliance</li>
+                        <li>HR & recruiting</li>
+                        <li>Admin & overhead</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">10 / 14</div>
         </div>
 
-        <div class="footer page-break">
-            <p><strong>Premiso | Enterprise Property Management Intelligence</strong></p>
-            <p>This pitch deck is confidential and proprietary. For authorized investors only.</p>
-            <p>Generated: April 2026</p>
+        <!-- Slide 11: Team -->
+        <div class="slide">
+            <div>
+                <h2>Team & Execution Track Record</h2>
+                <div class="two-col">
+                    <div class="team-member">
+                        <strong>CEO / Co-Founder</strong>
+                        <div class="role">10 years property tech; ex-Rightmove PM</div>
+                    </div>
+                    <div class="team-member">
+                        <strong>CTO / Co-Founder</strong>
+                        <div class="role">ML engineer; ex-Babylon Health (unicorn scale)</div>
+                    </div>
+                    <div class="team-member">
+                        <strong>Head of Compliance</strong>
+                        <div class="role">Former FCA regulator, 15 years regulatory expertise</div>
+                    </div>
+                    <div class="team-member">
+                        <strong>VP Product</strong>
+                        <div class="role">Built 3 products to IPO / acquisition</div>
+                    </div>
+                </div>
+                <p style="margin-top: 30px;"><strong>Advisors:</strong> Former CEOs of major prop-tech companies, FCA board members, 250k+ property manager network.</p>
+            </div>
+            <div class="slide-number">11 / 14</div>
+        </div>
+
+        <!-- Slide 12: Traction & Validation -->
+        <div class="slide">
+            <div>
+                <h2>Traction & Market Validation</h2>
+                <h3>Beta Program Results</h3>
+                <ul>
+                    <li><strong>20 beta customers</strong> across block management, lettings, and large landlords</li>
+                    <li><strong>72 NPS score</strong> — significantly ahead of industry average (32)</li>
+                    <li><strong>95% net retention</strong> — 3.2x expansion rate (customers buying more features)</li>
+                    <li><strong>£240k ARR</strong> from beta cohort alone</li>
+                    <li><strong>40% reduction</strong> in time spent on compliance tracking</li>
+                    <li><strong>Inbound interest:</strong> 150+ prospects in pipeline requesting demos</li>
+                </ul>
+                
+                <h3>Partnerships & Distribution</h3>
+                <ul>
+                    <li>In talks with Rightmove, Zoopla for integration partnerships</li>
+                    <li>Pilot with major estate agency group (500+ agents)</li>
+                </ul>
+            </div>
+            <div class="slide-number">12 / 14</div>
+        </div>
+
+        <!-- Slide 13: Exit Potential -->
+        <div class="slide">
+            <div>
+                <h2>Exit Opportunity & Return Profile</h2>
+                <h3>Acquisition Targets</h3>
+                <p>Strategic buyers with existing property/compliance distribution:</p>
+                <ul>
+                    <li><strong>Rightmove / Zoopla (£10B+ valuations)</strong> — vertical integration, compliance data moat</li>
+                    <li><strong>Countrywide / JLL (£50B+ real estate services)</strong> — core operational platform</li>
+                    <li><strong>Software Ventures (¢1.5–3B range)</strong> — Bullhorn, CoStar, Yardi competitors</li>
+                </ul>
+                
+                <h3>Return Scenarios</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div style="background: #ecfdf5; padding: 20px; border-radius: 8px;">
+                        <strong>Conservative (£200M exit, Y6)</strong>
+                        <p style="margin-top: 10px; font-size: 1.3em; color: #10b981;"><strong>57x MOIC</strong></p>
+                    </div>
+                    <div style="background: #ecfdf5; padding: 20px; border-radius: 8px;">
+                        <strong>Base Case (£500M exit, Y7)</strong>
+                        <p style="margin-top: 10px; font-size: 1.3em; color: #10b981;"><strong>143x MOIC</strong></p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px;"><em>Based on £3.5M Series A, 20% dilution.</em></p>
+            </div>
+            <div class="slide-number">13 / 14</div>
+        </div>
+
+        <!-- Slide 14: Call to Action -->
+        <div class="slide">
+            <div>
+                <h1 style="font-size: 2.5em;">Let's Transform Property Operations Together</h1>
+                <div style="margin-top: 40px;">
+                    <h3>Next Steps</h3>
+                    <ul>
+                        <li>🗓️ Schedule a product demo (30 min, live Relationship Intelligence graph)</li>
+                        <li>🤝 Meet the team (technical deep-dive, regulatory expertise)</li>
+                        <li>📊 Review detailed financials & customer case studies (for qualified investors)</li>
+                        <li>🚀 Join our Series A (£3.5M target raise)</li>
+                    </ul>
+                </div>
+                <div style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+                    <p><strong>Contact:</strong> founders@premiso.ai</p>
+                    <p><strong>Website:</strong> www.premiso.ai</p>
+                    <p style="margin-top: 20px; color: #64748b;">Confidential — For Authorized Investors Only</p>
+                </div>
+            </div>
+            <div class="slide-number">14 / 14</div>
         </div>
     </div>
 </body>
