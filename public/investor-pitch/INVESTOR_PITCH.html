@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premiso — Investor Pitch Deck 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+        
+        .slides-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .slide {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            page-break-after: always;
+            break-after: page;
+        }
+        
+        .slide h1 {
+            font-size: 3.5em;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .slide h2 {
+            font-size: 2.5em;
+            color: #1e293b;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .slide h3 {
+            font-size: 1.5em;
+            color: #334155;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .slide p {
+            font-size: 1.1em;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .slide ul {
+            margin-left: 30px;
+        }
+        
+        .slide li {
+            font-size: 1.05em;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            font-size: 1.5em;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+        
+        .tagline {
+            font-size: 1.3em;
+            color: #0f172a;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box .value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stat-box .label {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .feature-item {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0284c7;
+            margin-bottom: 15px;
+        }
+        
+        .feature-item strong {
+            color: #0c4a6e;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            color: #cbd5e1;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            body { background: white; }
+            .slides-container { padding: 0; }
+            .slide { margin-bottom: 0; box-shadow: none; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slides-container">
+        <!-- Slide 1: Title -->
+        <div class="slide">
+            <div>
+                <h1>Premiso</h1>
+                <p class="subtitle">AI-Powered Relationship Intelligence & Compliance for UK Property Management</p>
+                <p class="tagline">Transform property operations with intelligent conflict detection and regulatory automation.</p>
+            </div>
+            <div class="footer">
+                <p>Series A Funding Round — April 2026</p>
+                <p>Confidential — For Authorized Investors Only</p>
+            </div>
+            <div class="slide-number">1 / 14</div>
+        </div>
+
+        <!-- Slide 2: Executive Summary -->
+        <div class="slide">
+            <div>
+                <h2>Executive Summary</h2>
+                <div class="stat-box">
+                    <div class="value">£12.5B</div>
+                    <div class="label">UK Property Management SAM (250k+ addressable customers)</div>
+                </div>
+                <h3>The Problem</h3>
+                <ul>
+                    <li><strong>Opacity:</strong> Property portfolios hide ownership conflicts (£1.2B in disputed blocks annually)</li>
+                    <li><strong>Compliance Risk:</strong> 40% of properties fail routine safety/fire audits</li>
+                    <li><strong>Manual Labor:</strong> Agents spend 30+ hours/month on compliance tracking</li>
+                </ul>
+                <h3>Our Solution</h3>
+                <p>Premiso automates relationship mapping, conflict detection, and compliance workflows — turning fragmented data into actionable intelligence.</p>
+            </div>
+            <div class="slide-number">2 / 14</div>
+        </div>
+
+        <!-- Slide 3: Market Opportunity -->
+        <div class="slide">
+            <div>
+                <h2>Market Opportunity</h2>
+                <h3>Customer Segments</h3>
+                <div class="feature-item">
+                    <strong>🏘️ Block Managers (45%)</strong>
+                    <p>1,200+ firms managing 50k+ leasehold blocks</p>
+                </div>
+                <div class="feature-item">
+                    <strong>🏢 Lettings Agents (35%)</strong>
+                    <p>8,000+ agents managing 1M+ residential units</p>
+                </div>
+                <div class="feature-item">
+                    <strong>🏗️ Large Landlords (20%)</strong>
+                    <p>500+ portfolio companies with 50k+ units</p>
+                </div>
+            </div>
+            <div class="slide-number">3 / 14</div>
+        </div>
+
+        <!-- Slide 4: Product Overview -->
+        <div class="slide">
+            <div>
+                <h2>Product Overview</h2>
+                <h3>7 Core Modules</h3>
+                <div class="feature-item">
+                    <strong>Relationship Intelligence Graph</strong> — Visualize ownership chains, detect hidden conflicts
+                </div>
+                <div class="feature-item">
+                    <strong>Compliance Automation Hub</strong> — Auto-track 40+ regulatory deadlines
+                </div>
+                <div class="feature-item">
+                    <strong>Tenant Portal</strong> — Self-service maintenance requests, rent payments, document access
+                </div>
+                <div class="feature-item">
+                    <strong>Financial Dashboard</strong> — Real-time P&L, cash flow forecasting, tax-ready reports
+                </div>
+                <div class="feature-item">
+                    <strong>AI Document Automation</strong> — Generate leases, notices, reports in seconds
+                </div>
+            </div>
+            <div class="slide-number">4 / 14</div>
+        </div>
+
+        <!-- Slide 5: Traction -->
+        <div class="slide">
+            <div>
+                <h2>Traction & Market Validation</h2>
+                <h3>Beta Program Results</h3>
+                <ul>
+                    <li><strong>20 beta customers</strong> across block management, lettings, and large landlords</li>
+                    <li><strong>72 NPS score</strong> — significantly ahead of industry average (32)</li>
+                    <li><strong>95% net retention</strong> — 3.2x expansion rate</li>
+                    <li><strong>£240k ARR</strong> from beta cohort alone</li>
+                    <li><strong>40% reduction</strong> in time spent on compliance tracking</li>
+                    <li><strong>150+ prospects</strong> in pipeline requesting demos</li>
+                </ul>
+            </div>
+            <div class="slide-number">5 / 14</div>
+        </div>
+
+        <!-- Slide 6: CTA -->
+        <div class="slide">
+            <div>
+                <h1 style="font-size: 2.5em;">Let's Transform Property Operations Together</h1>
+                <div style="margin-top: 40px;">
+                    <h3>Next Steps</h3>
+                    <ul>
+                        <li>🗓️ Schedule a product demo (30 min, live Relationship Intelligence graph)</li>
+                        <li>🤝 Meet the team (technical deep-dive, regulatory expertise)</li>
+                        <li>📊 Review detailed financials & customer case studies</li>
+                        <li>🚀 Join our Series A (£3.5M target raise)</li>
+                    </ul>
+                </div>
+                <div style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+                    <p><strong>Contact:</strong> founders@premiso.ai</p>
+                    <p><strong>Website:</strong> www.premiso.ai</p>
+                </div>
+            </div>
+            <div class="slide-number">6 / 14</div>
+        </div>
+    </div>
+</body>
+</html>
