@@ -106,22 +106,22 @@ export default function ComplianceReportGenerator({ properties = [], certificate
             <p className="text-sm text-muted-foreground col-span-2">No properties available</p>
           ) : (
             properties.map(prop => (
-              <label key={prop.id} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedProperties.includes(prop.id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedProperties([...selectedProperties, prop.id]);
-                    } else {
-                      setSelectedProperties(selectedProperties.filter(id => id !== prop.id));
-                    }
-                  }}
-                  className="rounded"
-                />
-                <span className="text-sm text-foreground">{prop.address?.split(',')[0]}</span>
-              </label>
-            ))
+               <label key={prop.id} className="flex items-center gap-2 cursor-pointer">
+                 <input
+                   type="checkbox"
+                   checked={selectedProperties.includes(prop.id)}
+                   onChange={(e) => {
+                     if (e.target.checked) {
+                       setSelectedProperties([...selectedProperties, prop.id]);
+                     } else {
+                       setSelectedProperties(selectedProperties.filter(id => id !== prop.id));
+                     }
+                   }}
+                   className="rounded"
+                 />
+                 <span className="text-sm text-foreground">{prop.address ? prop.address.split(',')[0] : prop.name || 'Property'}</span>
+               </label>
+             ))
           )}
         </div>
       </div>
