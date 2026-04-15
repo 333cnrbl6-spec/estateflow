@@ -138,6 +138,7 @@ import OnboardingWorkflowHub from './pages/OnboardingWorkflowHub';
 import ComplianceNotificationCenter from './pages/ComplianceNotificationCenter';
 import MaintenanceSchedulingDashboard from './pages/MaintenanceSchedulingDashboard';
 import LegalComplianceFramework from './pages/LegalComplianceFramework';
+import AddPropertyWizard from './pages/AddPropertyWizard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -171,6 +172,7 @@ const AuthenticatedApp = () => {
         {/* Core */}
         <Route path="/companies" element={<Companies />} />
         <Route path="/properties" element={<Properties />} />
+        <Route path="/properties/add" element={<AddPropertyWizard />} />
         <Route path="/units" element={<Units />} />
         <Route path="/tenants" element={<Tenants />} />
         <Route path="/contacts" element={<Contacts />} />
