@@ -22,15 +22,16 @@ const RELATIONSHIP_LABELS = {
 
 export default function RelationshipNodePanel({ relationships, selectedNodeId, onClose }) {
   const [legalPanel, setLegalPanel] = useState(null);
-  if (!selectedNodeId) return null;
 
   // Memoize relationship lookups to prevent N+1 scans when switching nodes
   const nodeRels = useMemo(
-    () => relationships.filter(
+    () => selectedNodeId ? relationships.filter(
       r => r.from_entity_id === selectedNodeId || r.to_entity_id === selectedNodeId
-    ),
+    ) : [],
     [selectedNodeId, relationships]
   );
+
+  if (!selectedNodeId) return null;
 
   const nodeLabel = nodeRels[0]?.from_entity_id === selectedNodeId
     ? nodeRels[0]?.from_label
