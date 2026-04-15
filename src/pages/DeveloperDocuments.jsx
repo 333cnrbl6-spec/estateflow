@@ -29,6 +29,16 @@ export default function DeveloperDocuments() {
       downloadText: 'Download All',
       autoLoad: true,
     },
+    {
+      id: 'business-strategy',
+      title: 'Business Strategy 2026',
+      description: 'Comprehensive business plan, market analysis, SWOT, competitive landscape, financial projections, roadmap, and Series A case.',
+      category: 'Investor Relations',
+      file: 'BUSINESS_STRATEGY_2026.md',
+      isPdf: false,
+      downloadText: 'Download Strategy',
+      autoLoad: false,
+    },
   ];
 
   const categoryColors = {
@@ -62,42 +72,113 @@ export default function DeveloperDocuments() {
     }
   }, []);
 
-  const downloadAllAsHTML = () => {
-    const allContent = Object.entries(loadedDocs)
-      .map(([docId, content]) => {
-        const doc = documents.find(d => d.id === docId);
-        return `
-          <div style="page-break-after: always; margin-bottom: 40px;">
-            <h1>${doc.title}</h1>
-            <p>${doc.description}</p>
-            <div style="margin-top: 20px;">
-              ${content}
-            </div>
-          </div>
-        `;
-      })
-      .join('');
+  const downloadAsHTML = async (docId) => {
+    // Load doc if not already loaded
+    if (!loadedDocs[docId]) {
+      const doc = documents.find(d => d.id === docId);
+      await loadDocument(doc);
+    }
+
+    const doc = documents.find(d => d.id === docId);
+    const content = loadedDocs[docId];
 
     const html = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
-        <title>Premiso - Product Manual</title>
+        <title>Premiso - ${doc.title}</title>
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; }
-          h1 { color: #1d2d44; margin-top: 0; }
-          h2 { color: #2d3d54; margin-top: 30px; }
-          code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
-          pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
-          table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-          th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-          th { background: #f9f9f9; }
-          @media print { body { margin: 0; padding: 0; } }
+          * { margin: 0; padding: 0; }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; 
+            line-height: 1.7; 
+            color: #1f2937; 
+            background: white;
+            padding: 40px 20px;
+          }
+          .container { max-width: 900px; margin: 0 auto; }
+          h1 { 
+            color: #1d2d44; 
+            font-size: 2.5em; 
+            margin: 40px 0 20px 0; 
+            border-bottom: 3px solid #1d2d44;
+            padding-bottom: 15px;
+          }
+          h2 { 
+            color: #2d3d54; 
+            font-size: 1.8em; 
+            margin: 35px 0 15px 0;
+            page-break-after: avoid;
+          }
+          h3 { 
+            color: #374151; 
+            font-size: 1.3em; 
+            margin: 20px 0 10px 0;
+            page-break-after: avoid;
+          }
+          p, li, td { margin-bottom: 10px; }
+          ul, ol { margin-left: 20px; margin-bottom: 15px; }
+          li { margin-bottom: 6px; }
+          code { 
+            background: #f3f4f6; 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+          }
+          pre { 
+            background: #f9fafb; 
+            padding: 15px; 
+            border-radius: 6px; 
+            overflow-x: auto; 
+            border-left: 4px solid #1d2d44;
+            margin: 15px 0;
+            page-break-inside: avoid;
+          }
+          table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0; 
+            page-break-inside: avoid;
+          }
+          th, td { 
+            border: 1px solid #d1d5db; 
+            padding: 12px; 
+            text-align: left; 
+          }
+          th { 
+            background: #f3f4f6; 
+            font-weight: 600;
+            color: #1f2937;
+          }
+          tr:nth-child(even) { background: #f9fafb; }
+          blockquote {
+            border-left: 4px solid #dbeafe;
+            padding-left: 15px;
+            margin: 20px 0;
+            color: #6b7280;
+            font-style: italic;
+          }
+          .section { page-break-inside: avoid; }
+          hr { 
+            border: none; 
+            border-top: 2px solid #e5e7eb; 
+            margin: 30px 0;
+            page-break-after: avoid;
+          }
+          @media print { 
+            body { padding: 0; }
+            h1, h2, h3 { page-break-after: avoid; }
+            table, pre { page-break-inside: avoid; }
+            .no-print { display: none; }
+          }
         </style>
       </head>
       <body>
-        ${allContent}
+        <div class="container">
+          ${content.replace(/^# /gm, '<h1>').replace(/^## /gm, '<h2>').replace(/^### /gm, '<h3>')}
+        </div>
       </body>
       </html>
     `;
@@ -106,7 +187,7 @@ export default function DeveloperDocuments() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'Premiso-Product-Manual.html';
+    a.download = \`Premiso-\${doc.id.replace(/-/g, '_')}.html\`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -149,7 +230,7 @@ export default function DeveloperDocuments() {
             <p className="text-sm text-blue-800 mb-4">Read the Product Manual for feature details and use cases.</p>
             <Button
               size="sm"
-              onClick={downloadAllAsHTML}
+              onClick={() => downloadAsHTML('product-manual')}
               disabled={!loadedDocs['product-manual']}
               className="gap-2"
             >
@@ -190,12 +271,12 @@ export default function DeveloperDocuments() {
                 ) : (
                   <Button
                     size="sm"
-                    onClick={downloadAllAsHTML}
-                    disabled={!loadedDocs['product-manual']}
+                    onClick={() => downloadAsHTML(doc.id)}
+                    disabled={doc.autoLoad && !loadedDocs[doc.id]}
                     className="gap-2 flex-1"
                   >
                     <Printer className="w-4 h-4" />
-                    {loadedDocs['product-manual'] ? 'Download' : 'Loading...'}
+                    {doc.autoLoad && !loadedDocs[doc.id] ? 'Loading...' : 'Download'}
                   </Button>
                 )}
               </div>
@@ -223,29 +304,32 @@ export default function DeveloperDocuments() {
       </Card>
 
       {/* Expanded Document Sections */}
-      {loadedDocs['product-manual'] && (
-        <Card className="print:page-break-before">
-          <CardHeader className="flex items-center justify-between flex-row">
-            <div>
-              <CardTitle>Product Manual - Full Content</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to print</p>
-            </div>
-            <Button
-              size="sm"
-              onClick={() => window.print()}
-              className="gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Print/Save PDF
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-sm max-w-none dark:prose-invert">
-              <ReactMarkdown>{loadedDocs['product-manual']}</ReactMarkdown>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {Object.entries(loadedDocs).map(([docId, content]) => {
+        const doc = documents.find(d => d.id === docId);
+        return (
+          <Card key={docId} className="print:page-break-before">
+            <CardHeader className="flex items-center justify-between flex-row">
+              <div>
+                <CardTitle>{doc.title} - Full Content</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to print</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => window.print()}
+                className="gap-2"
+              >
+                <Printer className="w-4 h-4" />
+                Print/Save PDF
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{content}</ReactMarkdown>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
       </div>
       );
       }
