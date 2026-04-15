@@ -1,0 +1,105 @@
+{
+  "name": "OwnershipRelationship",
+  "type": "object",
+  "properties": {
+    "from_entity_type": {
+      "type": "string",
+      "enum": [
+        "person",
+        "company",
+        "property",
+        "unit"
+      ],
+      "description": "Type of the source node"
+    },
+    "from_entity_id": {
+      "type": "string",
+      "description": "ID of the source entity (Contact, Company, Property, or Unit)"
+    },
+    "from_label": {
+      "type": "string",
+      "description": "Display name of the source node"
+    },
+    "to_entity_type": {
+      "type": "string",
+      "enum": [
+        "person",
+        "company",
+        "property",
+        "unit"
+      ],
+      "description": "Type of the target node"
+    },
+    "to_entity_id": {
+      "type": "string",
+      "description": "ID of the target entity"
+    },
+    "to_label": {
+      "type": "string",
+      "description": "Display name of the target node"
+    },
+    "relationship_type": {
+      "type": "string",
+      "enum": [
+        "director_of",
+        "psc_of",
+        "owns_freehold",
+        "holds_leasehold",
+        "manages_block",
+        "collects_ground_rent",
+        "letting_agent_for",
+        "rtm_company_for",
+        "tenant_of",
+        "beneficial_owner_of",
+        "shareholder_of",
+        "secretary_of"
+      ],
+      "description": "Nature of the relationship"
+    },
+    "relationship_label": {
+      "type": "string",
+      "description": "Human-readable edge label e.g. 'Director of', 'Holds leasehold of'"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context or conflict-of-interest flags"
+    },
+    "conflict_of_interest": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag if this relationship creates a conflict of interest"
+    },
+    "conflict_description": {
+      "type": "string",
+      "description": "Description of the conflict"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether verified via Companies House or Land Registry"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "companies_house",
+        "land_registry",
+        "manual",
+        "onboarding"
+      ],
+      "description": "How this relationship was established"
+    },
+    "subscriber_company_id": {
+      "type": "string",
+      "description": "The top-level subscriber company this chain belongs to"
+    }
+  },
+  "required": [
+    "from_entity_type",
+    "from_entity_id",
+    "from_label",
+    "to_entity_type",
+    "to_entity_id",
+    "to_label",
+    "relationship_type"
+  ]
+}

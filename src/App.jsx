@@ -139,6 +139,7 @@ import ComplianceNotificationCenter from './pages/ComplianceNotificationCenter';
 import MaintenanceSchedulingDashboard from './pages/MaintenanceSchedulingDashboard';
 import LegalComplianceFramework from './pages/LegalComplianceFramework';
 import AddPropertyWizard from './pages/AddPropertyWizard';
+import RelationshipIntelligence from './pages/RelationshipIntelligence';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -221,6 +222,7 @@ const AuthenticatedApp = () => {
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-scheduling" element={<MaintenanceSchedulingDashboard />} />
         <Route path="/legal-compliance-framework" element={<LegalComplianceFramework />} />
+        <Route path="/relationship-intelligence" element={<RelationshipIntelligence />} />
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />

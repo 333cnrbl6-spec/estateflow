@@ -7,7 +7,7 @@ import {
   BookUser, ShieldCheck, GitBranch, ChevronLeft, ChevronRight, Crown, BookOpen,
   Layers, MapPin, Landmark, Receipt, MessageSquare, Settings, Plug, Scale, Zap,
   FileText, Shield, AlertCircle, Code2, TrendingUp, Phone, Lightbulb, Sparkles,
-  Calendar, BarChart3
+  Calendar, BarChart3, Network
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -111,6 +111,12 @@ const navGroups = [
       { label: 'KPI Dashboard', icon: BarChart3, path: '/kpi-dashboard' },
       { label: 'Maintenance Analytics', icon: Wrench, path: '/maintenance-analytics' },
       { label: 'Reconciliation', icon: Receipt, path: '/reconciliation' },
+    ]
+  },
+  {
+    label: '🔗 Intelligence',
+    items: [
+      { label: 'Relationship Intelligence', icon: Network, path: '/relationship-intelligence' },
     ]
   },
   {
