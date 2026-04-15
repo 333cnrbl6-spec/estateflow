@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { COILegalBadge } from '@/components/relationship/COILegalSeverityPanel';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import COILegalSeverityPanel from '@/components/relationship/COILegalSeverityPanel';
 
 const RELATIONSHIP_LABELS = {
@@ -24,9 +24,12 @@ export default function RelationshipNodePanel({ relationships, selectedNodeId, o
   const [legalPanel, setLegalPanel] = useState(null);
   if (!selectedNodeId) return null;
 
-  // Find all relationships involving this node
-  const nodeRels = relationships.filter(
-    r => r.from_entity_id === selectedNodeId || r.to_entity_id === selectedNodeId
+  // Memoize relationship lookups to prevent N+1 scans when switching nodes
+  const nodeRels = useMemo(
+    () => relationships.filter(
+      r => r.from_entity_id === selectedNodeId || r.to_entity_id === selectedNodeId
+    ),
+    [selectedNodeId, relationships]
   );
 
   const nodeLabel = nodeRels[0]?.from_entity_id === selectedNodeId

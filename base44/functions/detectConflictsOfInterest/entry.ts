@@ -66,7 +66,16 @@ Deno.serve(async (req) => {
   const dryRun = body.dry_run !== false; // default dry_run = true for safety
 
   // ── Load all relationships into memory for graph traversal ───────────────
-  const allRels = await db.entities.OwnershipRelationship.list('-created_date', 5000);
+  // Batch load to prevent timeout on large datasets
+  const allRels = [];
+  const BATCH_SIZE = 500;
+  for (let offset = 0; offset < 5000; offset += BATCH_SIZE) {
+    const batch = await db.entities.OwnershipRelationship.list('-created_date', BATCH_SIZE, { offset });
+    if (!batch || batch.length === 0) break;
+    allRels.push(...batch);
+    // Yield to event loop every batch to prevent blocking
+    await new Promise(r => setTimeout(r, 10));
+  }
 
   // Build lookup indexes
   const byFromId = {}; // from_entity_id → [rel, ...]

@@ -82,9 +82,17 @@ export function COILegalBadge({ coiPattern, onClick }) {
 }
 
 export default function COILegalSeverityPanel({ coiPattern, fromLabel, toLabel, open, onClose }) {
-  const data = getLegalSeverity(coiPattern);
+  const data = getLegalSeverity(coiPattern) || {
+    pattern_name: coiPattern?.replace(/_/g, ' ') || 'Unknown Pattern',
+    severity: 'MEDIUM',
+    headline: 'Conflict of Interest — Unmapped Pattern',
+    summary: 'This COI pattern has not yet been mapped to UK legislation. Refer to specialist leasehold legal counsel for advice.',
+    legal_basis: [],
+    tribunal_route: 'Seek advice from a solicitor specialising in leasehold law.',
+    leaseholder_remedies: [],
+  };
 
-  if (!data) return null;
+  if (!open) return null;
 
   const style = SEVERITY_STYLES[data.severity] || SEVERITY_STYLES.MEDIUM;
   const Icon = SEVERITY_ICONS[data.severity] || AlertTriangle;

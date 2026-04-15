@@ -61,18 +61,23 @@ export default function RelationshipIntelligence() {
     const matchesTab = activeTab === 'all' || activeTab === 'conflicts'
       ? (activeTab === 'conflicts' ? r.conflict_of_interest : true)
       : tag === activeTab;
-    const matchesSearch = !search || [r.from_label, r.to_label, r.relationship_label, r.conflict_description]
-      .some(v => v?.toLowerCase().includes(search.toLowerCase()));
+    const matchesSearch = !search || [r.from_label, r.to_label, r.relationship_label, r.conflict_description || '']
+      .some(v => v?.toLowerCase?.()?.includes(search.toLowerCase?.()) || false);
     return matchesTab && matchesSearch;
   });
 
   const runScan = async () => {
     setScanning(true);
     setScanResult(null);
-    const res = await base44.functions.invoke('detectConflictsOfInterest', { action: 'fix', dry_run: false });
-    setScanResult(res.data);
-    setScanning(false);
-    queryClient.invalidateQueries({ queryKey: ['ownership_relationships'] });
+    try {
+      const res = await base44.functions.invoke('detectConflictsOfInterest', { action: 'fix', dry_run: false });
+      setScanResult(res.data || res);
+      await queryClient.invalidateQueries({ queryKey: ['ownership_relationships'] });
+    } catch (err) {
+      setScanResult({ error: err.message, scan_stats: {} });
+    } finally {
+      setScanning(false);
+    }
   };
 
   return (

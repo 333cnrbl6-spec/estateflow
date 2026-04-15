@@ -87,52 +87,53 @@ function GraphEdge({ rel }) {
 }
 
 export default function RelationshipChainGraph({ relationships, onNodeClick, selectedNodeId }) {
-  // Build deduplicated node map and edge list
-  const { nodeMap, edges } = useMemo(() => {
-    const nodeMap = {};
-    const edges = [];
-
+  // Build deduplicated node map — memoized to prevent redundant computation
+  const nodeMap = useMemo(() => {
+    const map = {};
     (relationships || []).forEach(rel => {
-      if (!nodeMap[rel.from_entity_id]) {
-        nodeMap[rel.from_entity_id] = {
+      if (!map[rel.from_entity_id]) {
+        map[rel.from_entity_id] = {
           id: rel.from_entity_id,
-          label: rel.from_label,
-          type: rel.from_entity_type,
+          label: rel.from_label || 'Unknown',
+          type: rel.from_entity_type || 'company',
           isConflict: false,
-          verified: rel.verified,
+          verified: false,
           control_type: rel.control_type,
         };
       }
-      if (!nodeMap[rel.to_entity_id]) {
-        nodeMap[rel.to_entity_id] = {
+      if (!map[rel.to_entity_id]) {
+        map[rel.to_entity_id] = {
           id: rel.to_entity_id,
-          label: rel.to_label,
-          type: rel.to_entity_type,
+          label: rel.to_label || 'Unknown',
+          type: rel.to_entity_type || 'company',
           isConflict: false,
-          verified: rel.verified,
+          verified: false,
           control_type: rel.control_type,
         };
       }
+      // Mark as conflict/verified if any relationship indicates it
       if (rel.conflict_of_interest) {
-        nodeMap[rel.from_entity_id].isConflict = true;
-        nodeMap[rel.to_entity_id].isConflict = true;
+        map[rel.from_entity_id].isConflict = true;
+        map[rel.to_entity_id].isConflict = true;
       }
-      edges.push(rel);
+      if (rel.verified) {
+        map[rel.from_entity_id].verified = true;
+        map[rel.to_entity_id].verified = true;
+      }
     });
-
-    return { nodeMap, edges };
+    return map;
   }, [relationships]);
 
-  // Build chains: group edges by scenario_tag so each scenario renders as its own chain
+  // Build chains: group relationships by scenario_tag
   const scenarioGroups = useMemo(() => {
     const groups = {};
-    edges.forEach(rel => {
+    (relationships || []).forEach(rel => {
       const tag = rel.scenario_tag || 'other';
       if (!groups[tag]) groups[tag] = [];
       groups[tag].push(rel);
     });
     return groups;
-  }, [edges]);
+  }, [relationships]);
 
   if (!relationships?.length) {
     return (
@@ -168,13 +169,13 @@ export default function RelationshipChainGraph({ relationships, onNodeClick, sel
                 {rels.map((rel, i) => (
                   <div key={rel.id || i} className="flex items-center gap-0.5">
                     <GraphNode
-                      node={nodeMap[rel.from_entity_id] || { id: rel.from_entity_id, label: rel.from_label, type: rel.from_entity_type }}
+                      node={nodeMap[rel.from_entity_id]}
                       selected={selectedNodeId === rel.from_entity_id}
                       onClick={onNodeClick}
                     />
                     <GraphEdge rel={rel} />
                     <GraphNode
-                      node={nodeMap[rel.to_entity_id] || { id: rel.to_entity_id, label: rel.to_label, type: rel.to_entity_type }}
+                      node={nodeMap[rel.to_entity_id]}
                       selected={selectedNodeId === rel.to_entity_id}
                       onClick={onNodeClick}
                     />
