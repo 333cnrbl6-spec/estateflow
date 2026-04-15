@@ -206,7 +206,6 @@ export default function SalesDemoSetup() {
           </Card>
         )}
       </div>
-    </div>
 
       {/* Floating Data Import Gauge */}
       <div className="fixed bottom-6 right-6 z-50 bg-slate-900/95 border border-slate-700 rounded-2xl shadow-2xl p-4 w-56 backdrop-blur-sm">
