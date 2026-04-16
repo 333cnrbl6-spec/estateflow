@@ -206,7 +206,7 @@ export default function ExecutiveDashboard({ properties = [], units = [], transa
               {heatMapData.map((region) => {
                 const colors = getHeatColor(region.occupancy);
                 return (
-                <div
+                  <div
                   key={region.region}
                   className={`p-4 rounded-lg border-2 bg-opacity-10`}
                   style={{ borderColor: colors.border, backgroundColor: `${colors.border}10` }}
