@@ -1,0 +1,50 @@
+{
+  "name": "BoardMember",
+  "type": "object",
+  "properties": {
+    "member_name": {
+      "type": "string",
+      "description": "Name of board member persona"
+    },
+    "role": {
+      "type": "string",
+      "description": "Role/title (e.g., CPDO, Legal Analysis Lead)"
+    },
+    "app_name": {
+      "type": "string",
+      "description": "Name of originating app"
+    },
+    "persona": {
+      "type": "string",
+      "description": "Full persona description"
+    },
+    "expertise": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Areas of expertise"
+    },
+    "decision_authority": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What this member can approve/decide"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is this member active on the board"
+    },
+    "contact_function": {
+      "type": "string",
+      "description": "Backend function endpoint for agent invocation"
+    }
+  },
+  "required": [
+    "member_name",
+    "role",
+    "app_name"
+  ]
+}
