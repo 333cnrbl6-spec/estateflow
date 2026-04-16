@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BookOpen, Link as LinkIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
-// Raw markdown strings (paste content from docs files)
 const PREMISO_REFERENCE = `# Premiso — Complete Reference
 
 **Tagline:** Institutional property management intelligence. Built on relationship expertise, not generic compliance.
@@ -37,10 +36,10 @@ Premiso detects what others miss:
 - **Financial Tracking** — Rent ledger, service charges, P&L reports
 
 ### Backend Functions
-- \`detectConflictsOfInterest()\` — Scan all relationships for hidden COI
-- \`checkCertificateExpiryDaily()\` — Automated compliance alerts
-- \`syncCompaniesHouseDataBatch()\` — Keep CH profiles current
-- \`generateFinancialReportPDF()\` — PDF P&L, balance sheet
+- detectConflictsOfInterest() — Scan all relationships for hidden COI
+- checkCertificateExpiryDaily() — Automated compliance alerts
+- syncCompaniesHouseDataBatch() — Keep CH profiles current
+- generateFinancialReportPDF() — PDF P&L, balance sheet
 
 ---
 
@@ -69,84 +68,44 @@ const INTEGRATION_PATTERNS = `# Cross-App Integration Patterns
 
 ## Architecture
 
-\`\`\`
 Hub (Landing, Licensing)
     ↓
 Shared Services (User Auth, Billing, Analytics)
     ↓
 [Premiso] [Synergy Flow] [Future App]
-\`\`\`
 
 ---
 
 ## Key Patterns
 
 ### Pattern 1: Shared User Context
-```typescript
-const SubscriptionProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [entitlements, setEntitlements] = useState({});
 
-  useEffect(() => {
-    const init = async () => {
-      const currentUser = await base44.auth.me();
-      const subs = await base44.entities.Subscription.filter({
-        user_email: currentUser.email
-      });
-      setEntitlements({
-        premiso: subs[0]?.apps_included?.includes('premiso'),
-        synergy: subs[0]?.apps_included?.includes('synergy_flow')
-      });
-    };
-    init();
-  }, []);
-
-  return (
-    <SubscriptionContext.Provider value={{ user, entitlements }}>
-      {children}
-    </SubscriptionContext.Provider>
-  );
-};
-\`\`\`
+Use SubscriptionProvider to share user & entitlements across apps.
 
 ### Pattern 2: Cross-App Data Queries
-\`\`\`javascript
-// Any app can query shared entities via service role
-const leads = await base44.asServiceRole.entities.SalesLead.filter({
-  property_id: propertyId,
-  status: 'active'
-});
-\`\`\`
+
+Any app can query shared entities via service role:
+
+\`const leads = await base44.asServiceRole.entities.SalesLead.filter({ ... })\`
 
 ### Pattern 3: License Gating
-\`\`\`jsx
-const ProtectedRoute = ({ appName, element }) => {
-  const { entitlements } = useSubscription();
-  if (!entitlements[appName]) return <UpgradePrompt />;
-  return element;
-};
-\`\`\`
+
+Use ProtectedAppRoute to gate apps by subscription entitlements.
 
 ### Pattern 4: Shared Entities
+
 Core entities used by all apps:
-- **Property** — Base data
-- **Unit** — Sub-properties
-- **Tenant** — User data
-- **Contact** — Directors, agents
-- **Company** — Company data
+- Property — Base data
+- Unit — Sub-properties
+- Tenant — User data
+- Contact — Directors, agents
+- Company — Company data
 
 Each app extends with its own fields.
 
 ### Pattern 5: Real-Time Sync
-\`\`\`javascript
-// Automation: When Tenant created, sync to Synergy Flow
-create_automation({
-  automation_type: 'entity',
-  entity_name: 'Tenant',
-  event_types: ['create'],
-  function_name: 'syncTenantToSynergyFlow'
-});
-\`\`\`
+
+Use entity automations to sync data across apps in real-time.
 
 ---
 
@@ -167,12 +126,12 @@ create_automation({
 ---
 
 ## Getting Started
-1. Create \`Subscription\` entity in hub
+
+1. Create Subscription entity in hub
 2. Add app-specific entities in each app
-3. Build \`SubscriptionProvider\` wrapper
+3. Build SubscriptionProvider wrapper
 4. Add license gating to routes
 5. Create backend functions for cross-app queries
-
 `;
 
 export default function SynergyFlowDocs() {
