@@ -137,14 +137,14 @@ export default function Properties() {
                   </p>
                 )}
                 <div className="flex flex-wrap gap-1.5">
-                  {property.property_type && <StatusBadge status={property.property_type} />}
-                  {property.ownership_type && (
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent/10 text-accent-foreground capitalize">{property.ownership_type}</span>
-                  )}
-                  {property.total_units > 0 && (
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{property.total_units} units</span>
-                  )}
-                </div>
+                   {property.property_type && typeof property.property_type === 'string' && <StatusBadge status={property.property_type} />}
+                   {property.ownership_type && typeof property.ownership_type === 'string' && (
+                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent/10 text-accent-foreground capitalize">{property.ownership_type}</span>
+                   )}
+                   {property.total_units > 0 && (
+                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{property.total_units} units</span>
+                   )}
+                 </div>
               </div>
             </div>
           ))}
