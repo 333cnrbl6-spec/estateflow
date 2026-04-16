@@ -155,7 +155,7 @@ export default function FounderLaunch() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                {React.createElement(currentStepObj.icon, { className: 'w-5 h-5 text-primary' })}
+                <currentStepObj.icon className="w-5 h-5 text-primary" />
               </div>
               <div>
                 <CardTitle className="text-white">{currentStepObj.label}</CardTitle>
@@ -178,9 +178,9 @@ export default function FounderLaunch() {
                     { icon: Zap, label: 'Ready' }
                   ].map((item, i) => (
                     <div key={i} className="text-center p-3 bg-slate-700/50 rounded-lg">
-                      {React.createElement(item.icon, { className: 'w-5 h-5 text-primary mx-auto mb-2' })}
-                      <p className="text-xs font-medium text-white">{item.label}</p>
-                    </div>
+                       <item.icon className="w-5 h-5 text-primary mx-auto mb-2" />
+                       <p className="text-xs font-medium text-white">{item.label}</p>
+                     </div>
                   ))}
                 </div>
               </div>
