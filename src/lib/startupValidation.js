@@ -140,9 +140,9 @@ export function validateComponentTypes() {
  * Log environment info for debugging
  */
 export function logEnvironmentInfo() {
-  if (process.env.NODE_ENV !== 'production') {
+  if (import.meta.env.MODE !== 'production') {
     console.log('[Env Info]', {
-      node_env: process.env.NODE_ENV,
+      mode: import.meta.env.MODE,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent.substring(0, 50),
     });
