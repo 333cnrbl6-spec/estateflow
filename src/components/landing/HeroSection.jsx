@@ -22,19 +22,16 @@ export default function HeroSection({ onStartDemo, onGetStarted }) {
           <div>
             <div className="inline-flex items-center gap-2 bg-white/10 text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-6 backdrop-blur">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Now in early access — limited agency spots available
+              ✓ Never miss a compliance deadline — automatic alerts, guaranteed
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Property management
-              <span className="block text-amber-400"> finally done right.</span>
+              One dashboard.
+              <span className="block text-amber-400">All your properties.</span>
             </h1>
 
             <p className="text-xl text-white/80 mb-8 leading-relaxed">
-              Premiso is the all-in-one platform for everyone in the UK property industry —
-              from buy-to-let landlords and freeholders to letting agents, block management
-              companies and large property groups. Financials, compliance, maintenance,
-              tenant portals and contractor management in one beautifully simple system.
+              Compliance alerts, tenant management, maintenance scheduling, and financial reporting—all automatic, all in one place. Stop juggling 5 systems. Start controlling your portfolio.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

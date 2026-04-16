@@ -42,6 +42,7 @@ export default function Dashboard() {
   const companiesQuery = useQuery({
     queryKey: ['companies', demoCompanyId],
     enabled: !demoLoading,
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       if (demoCompanyId) {
         const c = await base44.entities.Company.get(demoCompanyId);
@@ -56,6 +57,7 @@ export default function Dashboard() {
   const propertiesQuery = useQuery({
     queryKey: ['properties', demoCompanyId],
     enabled: !demoLoading,
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       if (demoCompanyId) {
         return base44.entities.Property.filter({ owning_company: demoCompanyId }, '-updated_date', 20);
@@ -69,6 +71,7 @@ export default function Dashboard() {
   const unitsQuery = useQuery({
     queryKey: ['units', propertyIds],
     enabled: !demoLoading && propertyIds?.length > 0,
+    staleTime: 5 * 60 * 1000,
     queryFn: () => base44.entities.Unit.list('-updated_date', 100)
   });
   useQueryError(unitsQuery, 'units');
@@ -77,6 +80,7 @@ export default function Dashboard() {
   const tenantsQuery = useQuery({
     queryKey: ['tenants', propertyIds],
     enabled: !demoLoading,
+    staleTime: 5 * 60 * 1000,
     queryFn: () => base44.entities.Tenant.list('-updated_date', 50)
   });
   useQueryError(tenantsQuery, 'tenants');
@@ -85,6 +89,7 @@ export default function Dashboard() {
   const transactionsQuery = useQuery({
     queryKey: ['transactions', propertyIds],
     enabled: !demoLoading,
+    staleTime: 5 * 60 * 1000,
     queryFn: () => base44.entities.FinancialTransaction.list('-updated_date', 100)
   });
   useQueryError(transactionsQuery, 'transactions');
@@ -93,6 +98,7 @@ export default function Dashboard() {
   const maintenanceQuery = useQuery({
     queryKey: ['maintenance', propertyIds],
     enabled: !demoLoading,
+    staleTime: 5 * 60 * 1000,
     queryFn: () => base44.entities.MaintenanceOrder.list('-updated_date', 30)
   });
   useQueryError(maintenanceQuery, 'maintenance orders');
@@ -101,6 +107,7 @@ export default function Dashboard() {
   const certificatesQuery = useQuery({
     queryKey: ['certificates', propertyIds],
     enabled: !demoLoading,
+    staleTime: 10 * 60 * 1000,
     queryFn: async () => {
       const [gas, eicr, epc] = await Promise.all([
         base44.entities.GasSafetyCertificate?.list?.('-updated_date', 30) || Promise.resolve([]),

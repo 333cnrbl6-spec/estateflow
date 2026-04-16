@@ -1141,13 +1141,13 @@ Generate a realistic summary of what has been created and configured.`,
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
-            <Sparkles className="w-4 h-4" /> Premiso Setup Wizard
-          </div>
-          <h1 className="text-xl font-bold text-slate-900">{formData.company_name}</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Company confirmed · Now let's finish your setup</p>
-        </div>
+         <div className="mb-6 text-center">
+           <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
+             <Check className="w-4 h-4" /> Company Confirmed
+           </div>
+           <h1 className="text-2xl font-bold text-slate-900">{formData.company_name}</h1>
+           <p className="text-muted-foreground text-base mt-2">Setup takes 10-15 minutes. Let's get your compliance calendar running.</p>
+         </div>
 
         {/* Step progress */}
         <div className="flex items-center gap-1 mb-6 overflow-x-auto pb-2">
