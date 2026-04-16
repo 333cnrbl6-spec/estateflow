@@ -154,6 +154,142 @@ Problem (10s) → Compliance (20s) → Dashboard (15s) → CTA (15s)
 
 ---
 
+## PRODUCTION PLATFORMS & SETUP GUIDE
+
+### Option A: HeyGen (Recommended — Fastest, Most Professional)
+
+**Why HeyGen?** Fastest production (1–2 hours), high-quality avatar, natural-sounding voice cloning.
+
+**Setup Steps:**
+1. Go to [HeyGen.com](https://www.heygen.com) → Sign up (free trial available)
+2. Click "Create Video"
+3. Paste the script above into the text field
+4. Choose avatar: "Asian Female" or "Caucasian Male" (pick approachable, professional)
+5. Choose voice: English UK accent (critical for UK market)
+6. Add dashboard screenshots as B-roll:
+   - Scene 1 (0–15s): Screenshots of Premiso dashboard (properties, compliance alerts)
+   - Scene 2 (25–40s): GIF of clicking a property, showing alerts
+   - Scene 3 (70–90s): Compliance checklist animating
+   - Scene 4 (120–140s): Testimonial quote graphic
+7. Generate → Download → Publish
+
+**Cost:** $25–100/month (depending on video minutes)  
+**Output quality:** YouTube-ready (1080p)  
+**Time to publish:** 1–2 hours  
+**Best for:** Landing page, YouTube, LinkedIn (professional audience)
+
+---
+
+### Option B: Synthesia (Alternative — High Production Value)
+
+**Why Synthesia?** Ultra-professional avatar, great for formal/corporate tone.
+
+**Setup Steps:**
+1. Go to [Synthesia.io](https://www.synthesia.io) → Sign up
+2. Create new video
+3. Paste script
+4. Choose avatar: "Emma" (professional UK female) or "James" (professional UK male)
+5. Add B-roll same as HeyGen
+6. Generate → Review → Export
+
+**Cost:** $30–100/month  
+**Output quality:** Broadcast-ready (up to 4K)  
+**Time to publish:** 2–3 hours  
+**Best for:** Sales pitch, webinar, formal marketing
+
+---
+
+### Option C: Custom Recording (Most Authentic — But Takes Longer)
+
+**Why custom?** More authentic, personal connection, full control.
+
+**Setup:**
+1. Prepare a quiet room (home office ideal)
+2. Use phone camera (iPhone 12+ has excellent quality)
+3. Read the script (slowly, naturally, not robotic)
+4. Record multiple takes of each scene (2–3 versions)
+5. Edit in DaVinci Resolve (free) or Adobe Premiere ($60/month)
+6. Add dashboard screenshots as B-roll
+7. Add simple royalty-free music (YouTube Audio Library)
+
+**Cost:** Free (if you do it) or $300–500 (if you hire an editor)  
+**Output quality:** Professional (with good lighting)  
+**Time to publish:** 2–3 days (recording + editing)  
+**Best for:** Trust-building, founder story, authentic pitch
+
+---
+
+### Option D: Fiverr / Freelancer (Budget-Friendly Alternative)
+
+**How it works:**
+1. Search "AI voiceover video" on Fiverr
+2. Find freelancer who uses HeyGen/Synthesia
+3. Send them this script + dashboard screenshots
+4. They handle production, you review, provide feedback
+5. They deliver final video
+
+**Cost:** $75–200 (usually cheaper than DIY with tools)  
+**Time:** 3–5 days  
+**Quality:** Usually good (depends on freelancer)  
+**Best for:** Budget-conscious, you want someone else to handle it
+
+---
+
+## RECOMMENDED APPROACH FOR YOU
+
+**Given timeline + quality:** Use **HeyGen (Option A)** because:
+- ✓ Fastest (1–2 hours, publish same day)
+- ✓ Professional output (YouTube-ready)
+- ✓ Cost is reasonable (~$25–50 one-time)
+- ✓ No editing skills needed
+- ✓ You can iterate quickly if you want changes
+
+**Step-by-step your first video:**
+1. Sign up for HeyGen (free trial)
+2. Copy the script sections above into HeyGen
+3. Choose UK female avatar + UK accent
+4. Add 3–4 dashboard screenshots as B-roll (record from your dev environment)
+5. Generate video (15–20 min processing)
+6. Download
+7. Upload to YouTube (unlisted first to test)
+8. Test link on landing page
+9. Share on LinkedIn + email list
+
+**Total time:** 1.5–2 hours (including screenshot capture)  
+**Total cost:** Free (if using free trial) or $25–50 (if using paid)
+
+---
+
+## B-ROLL SCREENSHOTS YOU'LL NEED
+
+**Record these from Premiso dashboard (or your demo environment):**
+
+| Scene | What to Show | Duration | File |
+|-------|-------------|----------|------|
+| Scene 2 (Problem) | Messy property list, no clear compliance view | 5s | property_list.png |
+| Scene 3 (Solution) | Clean dashboard with big compliance alert | 5s | dashboard_alert.png |
+| Scene 4 (Features) | Compliance checklist popup | 5s | checklist.png |
+| Scene 5 (Proof) | Simple stat graphic (£X saved, Y hours freed) | 5s | stats_graphic.png |
+| Scene 6 (CTA) | "Start Free Trial" button on Premiso | 3s | cta_button.png |
+
+**How to capture:**
+- Use Chrome DevTools (Cmd+Shift+C) or Mac Screenshot (Cmd+Shift+4)
+- Save as high-res PNG
+- Import into HeyGen during video creation
+
+---
+
+## AFTER YOU PUBLISH: DISTRIBUTION CHECKLIST
+
+- [ ] YouTube: Upload, add description with link + keywords
+- [ ] LinkedIn: Share native video + short caption ("Compliance got easier...")
+- [ ] Landing page: Embed above fold in "Trusted by" section
+- [ ] Email: Send to warm list ("See how Premiso works in 2 min")
+- [ ] Sales deck: Add 30-second clip
+- [ ] Track metrics: YouTube analytics, clicks, watch time
+
+---
+
 ## Next Steps
 
 1. **Pick tool:** HeyGen recommended (fastest, professional output)
