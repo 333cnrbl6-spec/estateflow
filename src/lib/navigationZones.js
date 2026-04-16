@@ -109,7 +109,7 @@ export const navigationZones = [
     icon: Building2,
     description: 'Service charges, RTM, leaseholders, building safety',
     routes: [
-      { path: '/block-management', label: 'Block Management Overview', icon: Building2 },
+      { path: '/block-management', label: 'Block Management Overview', icon: '🏢' },
       { path: '/service-charges-management', label: 'Service Charges', icon: '💰' },
       { path: '/rtm-management', label: 'RTM Management', icon: '🏢' },
       { path: '/building-safety-register', label: 'Building Safety Register', icon: '🛡️' },
@@ -124,7 +124,7 @@ export const navigationZones = [
     icon: TrendingUp,
     description: 'Sales dashboard, leads, viewings, lettings pipeline',
     routes: [
-      { path: '/sales', label: 'Sales Dashboard', icon: TrendingUp },
+      { path: '/sales', label: 'Sales Dashboard', icon: '📈' },
       { path: '/pipeline', label: 'Lettings Pipeline', icon: '📈' },
       { path: '/viewings', label: 'Viewings', icon: '👁️' },
       { path: '/market-reports', label: 'Market Reports', icon: '📊' },
@@ -154,7 +154,7 @@ export const navigationZones = [
     icon: Phone,
     description: 'Call center, pipeline, reporting, pricing',
     routes: [
-      { path: '/out-of-hours', label: 'Call Center', icon: Phone },
+      { path: '/out-of-hours', label: 'Call Center', icon: '☎️' },
       { path: '/out-of-hours-pipeline', label: 'Service Pipeline', icon: '📈' },
       { path: '/out-of-hours-reporting', label: 'Reporting', icon: '📊' },
       { path: '/call-center-config', label: 'Configuration', icon: '⚙️' },
