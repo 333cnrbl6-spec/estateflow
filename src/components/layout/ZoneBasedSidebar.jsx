@@ -74,18 +74,14 @@ export default function ZoneBasedSidebar() {
                   {zone.routes.map(route => {
                      let iconDisplay = null;
 
-                     // Handle function/component icons
+                     // Handle function/component icons (most common for zone headers)
                      if (typeof route.icon === 'function') {
                        const RouteIcon = route.icon;
                        iconDisplay = <RouteIcon className="w-3.5 h-3.5" />;
                      }
-                     // Handle string/emoji icons
+                     // Handle string/emoji icons (preferred for routes)
                      else if (typeof route.icon === 'string') {
                        iconDisplay = <span className="text-sm">{route.icon}</span>;
-                     }
-                     // Handle React component icons (already instantiated)
-                     else if (route.icon?.$$typeof) {
-                       iconDisplay = route.icon;
                      }
 
                      return (
