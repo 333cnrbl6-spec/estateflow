@@ -162,7 +162,7 @@ export default function Properties() {
           />
           </div>
           ) : (
-          <EmptyState icon={Home} title="No properties found" description="Add your first property" actionLabel="Add Property" onAction={() => { setEditing(null); setDialogOpen(true); }} />
+          <EmptyState icon="🏠" title="No properties found" description="Add your first property" actionLabel="Add Property" onAction={() => { setEditing(null); setDialogOpen(true); }} />
           )}
 
       <EntityFormDialog
