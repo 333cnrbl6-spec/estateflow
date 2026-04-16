@@ -57,11 +57,7 @@ export default function ZoneBasedSidebar() {
                 )}
               >
                 <div className="flex items-center gap-2">
-                  {typeof zone.icon === 'function' ? (
-                    <Icon className="w-4 h-4" />
-                  ) : (
-                    <span className="text-sm">{zone.icon}</span>
-                  )}
+                  <Icon className="w-4 h-4" />
                   <span>{zone.label}</span>
                 </div>
                 <ChevronDown
