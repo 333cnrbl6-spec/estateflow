@@ -147,6 +147,7 @@ import LegalComplianceFramework from './pages/LegalComplianceFramework';
 import AddPropertyWizard from './pages/AddPropertyWizard';
 import RelationshipIntelligence from './pages/RelationshipIntelligence';
 import BackupManagement from './pages/BackupManagement';
+import Boardroom from './pages/Boardroom';
 import PerformanceMetricsDashboard from './pages/PerformanceMetricsDashboard';
 import DeveloperDocuments from './pages/DeveloperDocuments';
 import DocumentUploadHub from './pages/DocumentUploadHub';
@@ -242,6 +243,7 @@ const AuthenticatedApp = () => {
         <Route path="/legal-compliance-framework" element={<LegalComplianceFramework />} />
         <Route path="/relationship-intelligence" element={<RouteErrorBoundary><RelationshipIntelligence /></RouteErrorBoundary>} />
         <Route path="/backup-management" element={<BackupManagement />} />
+        <Route path="/boardroom" element={<Boardroom />} />
         <Route path="/performance-metrics" element={<PerformanceMetricsDashboard />} />
         <Route path="/developer-documents" element={<DeveloperDocuments />} />
         <Route path="/document-upload-hub" element={<DocumentUploadHub />} />
