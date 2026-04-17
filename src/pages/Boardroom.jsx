@@ -8,9 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building2, Users, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import StatusBadge from '@/components/shared/StatusBadge';
+import ScheduleMeetingDialog from '@/components/boardroom/ScheduleMeetingDialog';
 
 export default function Boardroom() {
   const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
 
   // Fetch all board meetings
   const meetingsQuery = useQuery({
@@ -39,13 +41,20 @@ export default function Boardroom() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <Building2 className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-slate-900">Boardroom</h1>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Building2 className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-bold text-slate-900">Boardroom</h1>
+            </div>
+            <ScheduleMeetingDialog 
+              open={scheduleDialogOpen} 
+              onOpenChange={setScheduleDialogOpen}
+              onMeetingCreated={() => meetingsQuery.refetch()}
+            />
           </div>
           <Card className="text-center py-12">
             <p className="text-muted-foreground mb-4">No board meetings yet</p>
-            <Button>Schedule First Meeting</Button>
+            <Button onClick={() => setScheduleDialogOpen(true)}>Schedule First Meeting</Button>
           </Card>
         </div>
       </div>
@@ -60,12 +69,19 @@ export default function Boardroom() {
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
-        <div>
-          <div className="flex items-center gap-3 mb-4">
-            <Building2 className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-slate-900">Boardroom</h1>
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <Building2 className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-bold text-slate-900">Boardroom</h1>
+            </div>
+            <p className="text-slate-600">Strategic collaboration & cross-app decision-making</p>
           </div>
-          <p className="text-slate-600">Strategic collaboration & cross-app decision-making</p>
+          <ScheduleMeetingDialog 
+            open={scheduleDialogOpen} 
+            onOpenChange={setScheduleDialogOpen}
+            onMeetingCreated={() => meetingsQuery.refetch()}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
