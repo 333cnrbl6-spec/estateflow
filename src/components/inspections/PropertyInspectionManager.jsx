@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import InspectionEditor from '@/components/inspections/InspectionEditor';
 
 const ROOM_TYPES = [
   { value: 'living_room', label: 'Living Room' },
