@@ -158,6 +158,7 @@ import SubscriberView from './pages/SubscriberView';
 import OnboardingBranding from './pages/OnboardingBranding';
 import SettingsBranding from './pages/SettingsBranding';
 import RoleManagement from './pages/RoleManagement';
+import OnboardingWizard from './pages/OnboardingWizard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -300,6 +301,7 @@ const AuthenticatedApp = () => {
         <Route path="/invoices" element={<InvoiceManagement />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings-branding" element={<SettingsBranding />} />
+        <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
         <Route path="/role-management" element={<RoleManagement />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />

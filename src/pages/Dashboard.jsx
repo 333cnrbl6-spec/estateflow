@@ -15,6 +15,8 @@ import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
+import PortfolioKPIs from '@/components/dashboard/PortfolioKPIs';
+import SmartAlerts from '@/components/dashboard/SmartAlerts';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -149,6 +151,9 @@ export default function Dashboard() {
   // Determine if new subscriber (0 properties = setup mode)
   const isNewSubscriber = properties.length === 0;
 
+  // Certificates for smart alerts
+  const { data: certificates = [] } = certificatesQuery;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
@@ -206,6 +211,11 @@ export default function Dashboard() {
           <>
             {/* ESTABLISHED SUBSCRIBER - Progressive disclosure */}
             
+            {/* Smart Alerts */}
+            <div className="mb-8">
+              <SmartAlerts tenants={tenants} maintenance={maintenance} certificates={certificates} transactions={transactions} />
+            </div>
+
             {/* Setup Progress (if incomplete) */}
             <div className="mb-8">
               <SetupProgressCard />
@@ -322,6 +332,12 @@ export default function Dashboard() {
                   maintenance={maintenance}
                 />
               </div>
+            </div>
+
+            {/* Portfolio Analytics */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Portfolio Analytics</h2>
+              <PortfolioKPIs properties={properties} units={units} tenants={tenants} transactions={transactions} maintenance={maintenance} />
             </div>
 
             {/* Market Intelligence */}

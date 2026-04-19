@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AIDraftButton from '@/components/documents/AIDraftButton';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, Trash2, FileText, Download, Plus } from 'lucide-react';
@@ -47,10 +48,14 @@ export default function DocumentTemplates() {
         title="Document Templates" 
         subtitle="Manage PDF/Word templates with automatic data merge"
       >
-        <Button onClick={() => setShowUpload(true)} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Upload Template
-        </Button>
+        <div className="flex gap-2">
+          <AIDraftButton documentType="tenancy_agreement" context={{}} />
+          <AIDraftButton documentType="section_21_notice" context={{}} />
+          <Button onClick={() => setShowUpload(true)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Upload Template
+          </Button>
+        </div>
       </PageHeader>
 
       {/* Search */}
