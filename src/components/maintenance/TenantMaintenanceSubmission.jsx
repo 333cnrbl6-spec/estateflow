@@ -90,7 +90,7 @@ export default function TenantMaintenanceSubmission({ tenantId, propertyId, onSu
 
       // Send notification to property manager
       await base44.integrations.Core.SendEmail({
-        to: process.env.SALES_LEAD_EMAIL || 'manager@premiso.app',
+        to: 'manager@premiso.app',
         subject: `New Maintenance Request - ${formData.title}`,
         body: `
           <html>
