@@ -21,7 +21,8 @@ import {
   FileText,
   Phone,
   Mail,
-  MapPin
+  MapPin,
+  Clock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/AuthContext';

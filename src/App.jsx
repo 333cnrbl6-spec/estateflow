@@ -42,6 +42,7 @@ import AccountingIntegrations from './pages/AccountingIntegrations';
 import FinancialReporting from './pages/FinancialReporting';
 import FinancialDashboard from './pages/FinancialDashboard';
 import TenantPortal from './pages/TenantPortal';
+import TenantDashboard from './pages/TenantDashboard';
 import ComplianceAudit from './pages/ComplianceAudit';
 import APIIntegrationHub from './pages/APIIntegrationHub';
 import CompaniesHouseProfiles from './pages/CompaniesHouseProfiles';
@@ -210,6 +211,7 @@ const AuthenticatedApp = () => {
         <Route path="/rent-ledger" element={<RentLedger />} />
         <Route path="/tenant-portal" element={<TenantPortal />} />
         <Route path="/tenant-portal-enhanced" element={<TenantPortalEnhanced />} />
+        <Route path="/tenant-dashboard" element={<TenantDashboard />} />
         <Route path="/tenant-screening" element={<TenantScreening />} />
 
         {/* Finance */}
