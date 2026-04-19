@@ -142,6 +142,7 @@ import TenantPaymentPortal from './pages/TenantPaymentPortal';
 import TenantOnboarding from './pages/TenantOnboarding';
 import OwnerPortal from './pages/OwnerPortal';
 import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
+import MaintenanceTracking from './pages/MaintenanceTracking';
 import TaskManagement from './pages/TaskManagement';
 import CertificateComplianceTracking from './pages/CertificateComplianceTracking';
 import BusinessRelationshipCompliance from './pages/BusinessRelationshipCompliance';
@@ -259,6 +260,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-analytics" element={<MaintenanceAnalyticsDashboard />} />
         <Route path="/maintenance-forecasting" element={<MaintenanceForecasting />} />
         <Route path="/maintenance-workflow-manager" element={<MaintenanceWorkflowManager />} />
+        <Route path="/maintenance-tracking" element={<MaintenanceTracking />} />
         <Route path="/tasks" element={<TaskManagement />} />
         <Route path="/certificate-compliance" element={<CertificateComplianceTracking />} />
         <Route path="/business-relationship-compliance" element={<BusinessRelationshipCompliance />} />
