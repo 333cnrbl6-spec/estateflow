@@ -21,23 +21,28 @@ export default function OnboardingWizard() {
   const [tenantData, setTenantData] = useState({ full_name: '', email: '', phone: '' });
   const [rentDay, setRentDay] = useState(1);
   const [createdPropertyId, setCreatedPropertyId] = useState(null);
+  const [validationError, setValidationError] = useState('');
   const navigate = useNavigate();
 
   const createPropertyMutation = useMutation({
     mutationFn: () => base44.entities.Property.create(propertyData),
     onSuccess: (p) => {
       setCreatedPropertyId(p.id);
+      setValidationError('');
       toast.success('Property added!');
       setStep(2);
-    }
+    },
+    onError: (err) => setValidationError(err.message || 'Failed to save property.')
   });
 
   const createTenantMutation = useMutation({
     mutationFn: () => base44.entities.Tenant.create({ ...tenantData, property_id: createdPropertyId, status: 'active' }),
     onSuccess: () => {
+      setValidationError('');
       toast.success('Tenant added!');
       setStep(3);
-    }
+    },
+    onError: (err) => setValidationError(err.message || 'Failed to save tenant.')
   });
 
   const completeMutation = useMutation({
@@ -98,7 +103,8 @@ export default function OnboardingWizard() {
                   </div>
                 </div>
               </div>
-              <Button className="w-full gap-2" disabled={!propertyData.name || createPropertyMutation.isPending} onClick={() => createPropertyMutation.mutate()}>
+              {validationError && <p className="text-sm text-destructive">{validationError}</p>}
+              <Button className="w-full gap-2" disabled={!propertyData.name || createPropertyMutation.isPending} onClick={() => { setValidationError(''); createPropertyMutation.mutate(); }}>
                 {createPropertyMutation.isPending ? 'Saving...' : <>Continue <ChevronRight className="w-4 h-4" /></>}
               </Button>
             </div>
@@ -128,7 +134,8 @@ export default function OnboardingWizard() {
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={() => setStep(3)}>Skip for now</Button>
-                <Button className="flex-1 gap-2" disabled={!tenantData.full_name || createTenantMutation.isPending} onClick={() => createTenantMutation.mutate()}>
+                {validationError && <p className="text-sm text-destructive col-span-2">{validationError}</p>}
+                <Button className="flex-1 gap-2" disabled={!tenantData.full_name || createTenantMutation.isPending} onClick={() => { setValidationError(''); createTenantMutation.mutate(); }}>
                   {createTenantMutation.isPending ? 'Saving...' : <>Continue <ChevronRight className="w-4 h-4" /></>}
                 </Button>
               </div>

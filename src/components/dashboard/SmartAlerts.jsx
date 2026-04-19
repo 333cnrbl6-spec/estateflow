@@ -17,14 +17,16 @@ export default function SmartAlerts({ tenants = [], maintenance = [], certificat
     const list = [];
     const now = new Date();
 
-    // Rent overdue
+    // Rent overdue — amount may be in pence (>10000) or pounds
     transactions
       .filter(t => t.status === 'overdue' && t.direction === 'income')
       .slice(0, 3)
       .forEach(t => {
+        const raw = t.amount || 0;
+        const display = raw > 10000 ? Math.round(raw / 100) : raw;
         list.push({
           type: 'rent_overdue',
-          message: `Rent overdue: £${((t.amount || 0) / 100).toFixed(0)}`,
+          message: `Rent overdue: £${display.toLocaleString()}`,
           link: '/rent-ledger',
           priority: 1
         });

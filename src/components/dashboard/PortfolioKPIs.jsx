@@ -23,8 +23,9 @@ const KPICard = ({ icon: IconComp, title, value, subtitle, color = 'text-primary
 export default function PortfolioKPIs({ properties, units, tenants, transactions, maintenance }) {
   const kpis = useMemo(() => {
     const occupied = units.filter(u => u.status === 'occupied').length;
-    const rentCollected = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
-    const rentDue = transactions.filter(t => t.direction === 'income').reduce((s, t) => s + (t.amount || 0), 0);
+    const toGBP = (a) => { const n = a || 0; return n > 10000 ? Math.round(n / 100) : n; };
+    const rentCollected = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + toGBP(t.amount), 0);
+    const rentDue = transactions.filter(t => t.direction === 'income').reduce((s, t) => s + toGBP(t.amount), 0);
     const collectionRate = rentDue > 0 ? Math.round((rentCollected / rentDue) * 100) : 0;
     const vacant = units.filter(u => u.status === 'vacant').length;
     const openMaintenance = maintenance.filter(m => !['completed', 'cancelled'].includes(m.status)).length;
@@ -34,6 +35,12 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
 
     return { collectionRate, vacant, openMaintenance, expiringTenancies, rentCollected };
   }, [units, transactions, maintenance, tenants]);
+
+  // Normalise amount: if stored in pence (>10000 on a typical rent) convert, else treat as pounds
+  const toGBP = (amount) => {
+    const n = amount || 0;
+    return n > 10000 ? Math.round(n / 100) : n;
+  };
 
   // Monthly rent collection chart data
   const monthlyData = useMemo(() => {
@@ -45,20 +52,35 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         const label = d.toLocaleString('default', { month: 'short' });
         if (!months[key]) months[key] = { month: label, collected: 0, outstanding: 0 };
-        if (t.status === 'paid') months[key].collected += (t.amount || 0) / 100;
-        else months[key].outstanding += (t.amount || 0) / 100;
+        if (t.status === 'paid') months[key].collected += toGBP(t.amount);
+        else months[key].outstanding += toGBP(t.amount);
       });
-    return Object.values(months).slice(-6);
+    return Object.entries(months).sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => v).slice(-6);
   }, [transactions]);
 
-  // Occupancy trend (simulated from current data)
+  // Occupancy trend — derived from real unit data grouped by updated_date month
   const occupancyData = useMemo(() => {
     const total = units.length || 1;
-    const base = Math.round((units.filter(u => u.status === 'occupied').length / total) * 100);
-    return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((m, i) => ({
-      month: m,
-      rate: Math.min(100, Math.max(50, base + (Math.random() * 10 - 5)))
-    }));
+    const currentRate = Math.round((units.filter(u => u.status === 'occupied').length / total) * 100);
+    // Build real monthly snapshots from units that have an updated_date
+    const monthMap = {};
+    units.forEach(u => {
+      const d = new Date(u.updated_date || u.created_date);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleString('default', { month: 'short' });
+      if (!monthMap[key]) monthMap[key] = { month: label, occupied: 0, total: 0 };
+      monthMap[key].total++;
+      if (u.status === 'occupied') monthMap[key].occupied++;
+    });
+    const real = Object.entries(monthMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-6)
+      .map(([, v]) => ({ month: v.month, rate: Math.round((v.occupied / v.total) * 100) }));
+    // Fallback: if insufficient history, show current rate as flat line
+    if (real.length < 2) {
+      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map(m => ({ month: m, rate: currentRate }));
+    }
+    return real;
   }, [units]);
 
   // Maintenance by type
@@ -73,9 +95,10 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
 
   // Yield by property (top 5)
   const yieldData = useMemo(() => {
+    const toGBP = (a) => { const n = a || 0; return n > 10000 ? Math.round(n / 100) : n; };
     return properties.slice(0, 5).map(p => {
       const propTransactions = transactions.filter(t => t.property_id === p.id && t.direction === 'income' && t.status === 'paid');
-      const annualRent = propTransactions.reduce((s, t) => s + (t.amount || 0), 0) / 100 * 12;
+      const annualRent = propTransactions.reduce((s, t) => s + toGBP(t.amount), 0) * 12;
       return { name: p.name?.substring(0, 20) || 'Unknown', yield: Math.round((annualRent / (p.estimated_value || 200000)) * 100 * 10) / 10 };
     }).filter(d => d.yield > 0);
   }, [properties, transactions]);
@@ -88,7 +111,7 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
         <KPICard icon={Home} title="Vacant Properties" value={kpis.vacant} subtitle="units currently empty" color={kpis.vacant > 0 ? 'text-amber-600' : 'text-green-600'} />
         <KPICard icon={Wrench} title="Open Maintenance" value={kpis.openMaintenance} subtitle="active requests" color={kpis.openMaintenance > 5 ? 'text-destructive' : 'text-primary'} />
         <KPICard icon={Users} title="Expiring Tenancies" value={kpis.expiringTenancies} subtitle="within 90 days" color={kpis.expiringTenancies > 0 ? 'text-amber-600' : 'text-green-600'} />
-        <KPICard icon={AlertTriangle} title="Income Collected" value={`£${(kpis.rentCollected / 100).toLocaleString()}`} subtitle="total paid this period" />
+        <KPICard icon={AlertTriangle} title="Income Collected" value={`£${kpis.rentCollected.toLocaleString()}`} subtitle="total paid this period" />
       </div>
 
       {/* Charts */}

@@ -72,7 +72,7 @@ export default function Dashboard() {
 
   const unitsQuery = useQuery({
     queryKey: ['units', propertyIds],
-    enabled: !demoLoading && propertyIds?.length > 0,
+    enabled: !demoLoading,
     staleTime: 5 * 60 * 1000,
     queryFn: () => base44.entities.Unit.list('-updated_date', 100)
   });
