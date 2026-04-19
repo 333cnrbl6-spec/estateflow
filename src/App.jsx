@@ -129,6 +129,7 @@ import InvoiceManagement from './pages/InvoiceManagement';
 import TenantPortalEnhancedPage from './pages/TenantPortalEnhancedPage';
 import PropertyManagerDashboard from './pages/PropertyManagerDashboard';
 import PropertyManagerFinancialOverview from './pages/PropertyManagerFinancialOverview';
+import PropertyManagerFinancialDashboard from './pages/PropertyManagerFinancialDashboard';
 import PropertyInspectionGenerator from './pages/PropertyInspectionGenerator';
 import ContractorScheduling from './pages/ContractorScheduling';
 import HMODashboard from './pages/HMODashboard';
@@ -249,6 +250,7 @@ const AuthenticatedApp = () => {
         <Route path="/maintenance-reports" element={<MaintenanceReports />} />
         <Route path="/property-manager-dashboard" element={<PropertyManagerDashboard />} />
         <Route path="/financial-overview" element={<PropertyManagerFinancialOverview />} />
+        <Route path="/property-manager-financial-dashboard" element={<PropertyManagerFinancialDashboard />} />
         <Route path="/contractor-scheduling" element={<ContractorScheduling />} />
         <Route path="/maintenance-scheduling" element={<MaintenanceSchedulingDashboard />} />
         <Route path="/legal-compliance-framework" element={<LegalComplianceFramework />} />
