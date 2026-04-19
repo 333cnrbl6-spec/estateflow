@@ -209,6 +209,7 @@ const AuthenticatedApp = () => {
         <Route path="/pipeline" element={<Pipeline />} />
         <Route path="/rent-ledger" element={<RentLedger />} />
         <Route path="/tenant-portal" element={<TenantPortal />} />
+        <Route path="/tenant-portal-enhanced" element={<TenantPortalEnhanced />} />
         <Route path="/tenant-screening" element={<TenantScreening />} />
 
         {/* Finance */}
