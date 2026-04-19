@@ -138,6 +138,7 @@ import TenantCommunicationPortal from './pages/TenantCommunicationPortal';
 import TenantScreening from './pages/TenantScreening';
 import TenantPortalDedicated from './pages/TenantPortalDedicated';
 import TenantPaymentPortal from './pages/TenantPaymentPortal';
+import TenantOnboarding from './pages/TenantOnboarding';
 import OwnerPortal from './pages/OwnerPortal';
 import MaintenanceWorkflowManager from './pages/MaintenanceWorkflowManager';
 import TaskManagement from './pages/TaskManagement';
@@ -361,6 +362,8 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-portal" element={<TenantPortalDedicated />} />
       {/* /tenant-payments — tenant payment history and receipt portal */}
       <Route path="/tenant-payments" element={<TenantPaymentPortal />} />
+      {/* /tenant-onboarding — new tenant guided onboarding wizard */}
+      <Route path="/tenant-onboarding" element={<TenantOnboarding />} />
       {/* /tenant-maintenance — mobile tenant portal for reporting & tracking maintenance */}
       <Route path="/tenant-maintenance" element={<TenantMaintenancePortal />} />
       {/* /vendor-management — vendor/contractor management and payment tracking */}
