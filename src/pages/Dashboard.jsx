@@ -151,9 +151,6 @@ export default function Dashboard() {
   // Determine if new subscriber (0 properties = setup mode)
   const isNewSubscriber = properties.length === 0;
 
-  // Certificates for smart alerts
-  const { data: certificates = [] } = certificatesQuery;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
