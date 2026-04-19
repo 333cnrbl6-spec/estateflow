@@ -107,6 +107,7 @@ import UserTypeManager from './pages/UserTypeManager';
 import PropertyKPIDashboard from './pages/PropertyKPIDashboard';
 import ContractorPortal from './pages/ContractorPortal';
 import PropertyInspection from './pages/PropertyInspection';
+import PropertyInspections from './pages/PropertyInspections';
 import MaintenanceAnalyticsDashboard from './pages/MaintenanceAnalyticsDashboard';
 import LandlordMonthlyReporting from './pages/LandlordMonthlyReporting';
 import ContractorDashboard from './pages/ContractorDashboard';
@@ -347,6 +348,7 @@ const AuthenticatedApp = () => {
       <Route path="/contractor-mobile" element={<ContractorPortalMobile />} />
       {/* /inspection-generator — inspection report generator */}
       <Route path="/inspection-generator" element={<PropertyInspectionGenerator />} />
+      <Route path="/property-inspections" element={<PropertyInspections />} />
       {/* /inspection — standalone inspection form */}
       <Route path="/inspection-manager" element={<PropertyInspection />} />
       {/* /tenant-self-service — token-auth'd tenant self-service */}

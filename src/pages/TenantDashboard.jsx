@@ -20,7 +20,8 @@ import {
   Mail,
   Phone,
   MapPin,
-  Shield
+  Shield,
+  ClipboardCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/AuthContext';
@@ -36,6 +37,7 @@ export default function TenantDashboard() {
   const [maintenanceRequests, setMaintenanceRequests] = useState([]);
   const [showMaintenanceForm, setShowMaintenanceForm] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [inspections, setInspections] = useState([]);
   
   const [newRequest, setNewRequest] = useState({
     title: '',
@@ -89,6 +91,12 @@ export default function TenantDashboard() {
         tenant_id: tenantRecord.id
       }, '-created_date');
       setMaintenanceRequests(requests || []);
+
+      // Get property inspections for this tenant
+      const propertyInspections = await base44.entities.PropertyInspection.filter({
+        tenant_id: tenantRecord.id
+      }, '-completed_date');
+      setInspections(propertyInspections || []);
 
     } catch (err) {
       console.error('Error loading tenant data:', err);
@@ -230,7 +238,7 @@ export default function TenantDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white">
+          <TabsList className="grid w-full grid-cols-4 bg-white">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Home className="w-4 h-4" />
               Overview
@@ -242,6 +250,10 @@ export default function TenantDashboard() {
             <TabsTrigger value="maintenance" className="flex items-center gap-2">
               <Wrench className="w-4 h-4" />
               Maintenance
+            </TabsTrigger>
+            <TabsTrigger value="inspections" className="flex items-center gap-2">
+              <ClipboardCheck className="w-4 h-4" />
+              Inspections
             </TabsTrigger>
           </TabsList>
 
@@ -540,6 +552,103 @@ export default function TenantDashboard() {
                 ))
               )}
             </div>
+          </TabsContent>
+
+          {/* Inspections Tab */}
+          <TabsContent value="inspections" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <ClipboardCheck className="w-6 h-6 text-primary" />
+                Property Inspection Reports
+              </h2>
+            </div>
+
+            {inspections.length === 0 ? (
+              <Card className="p-8 text-center">
+                <ClipboardCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No inspection reports yet</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Your property manager will create inspection reports during your tenancy
+                </p>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {inspections.map((inspection) => (
+                  <Card key={inspection.id} className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">
+                          {inspection.inspection_type.replace('_', ' ').toUpperCase()}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {inspection.completed_date 
+                            ? `Completed: ${new Date(inspection.completed_date).toLocaleDateString('en-GB')}`
+                            : `Scheduled: ${inspection.scheduled_date ? new Date(inspection.scheduled_date).toLocaleDateString('en-GB') : 'Not set'}`
+                          }
+                        </p>
+                      </div>
+                      <Badge className={
+                        inspection.status === 'tenant_signed' ? 'bg-green-100 text-green-800' :
+                        inspection.status === 'disputed' ? 'bg-red-100 text-red-800' :
+                        inspection.status === 'pending_tenant_review' ? 'bg-blue-100 text-blue-800' :
+                        'bg-gray-100 text-gray-800'
+                      }>
+                        {inspection.status.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Inspector: {inspection.inspector_name}
+                    </p>
+
+                    {inspection.status === 'pending_tenant_review' ? (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <ClipboardCheck className="w-5 h-5 text-blue-600 mt-0.5" />
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-blue-900 mb-2">Action Required</h4>
+                            <p className="text-sm text-blue-800 mb-3">
+                              Please review this inspection report and provide your agreement or note any disputes.
+                            </p>
+                            <Button size="sm">Review & Sign</Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : inspection.status === 'tenant_signed' ? (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <span className="font-medium text-green-800">You have agreed to this report</span>
+                        </div>
+                        {inspection.tenant_signature_date && (
+                          <p className="text-sm text-green-700 mt-2">
+                            Signed on: {new Date(inspection.tenant_signature_date).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    ) : inspection.status === 'disputed' ? (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-semibold text-red-900 mb-2">Dispute Submitted</h4>
+                            <p className="text-sm text-red-800">
+                              Your dispute has been recorded. The property manager will review your comments.
+                            </p>
+                            {inspection.tenant_comments && (
+                              <div className="mt-3 p-3 bg-white rounded border">
+                                <p className="text-xs font-medium text-red-900 mb-1">Your comments:</p>
+                                <p className="text-sm text-red-800">{inspection.tenant_comments}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

@@ -1,0 +1,271 @@
+{
+  "name": "PropertyInspection",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "unit_id": {
+      "type": "string",
+      "description": "Reference to Unit entity"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Reference to Tenant entity"
+    },
+    "inspection_type": {
+      "type": "string",
+      "enum": [
+        "inventory",
+        "condition_report",
+        "mid_term",
+        "check_out",
+        "routine"
+      ],
+      "description": "Type of inspection"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled inspection date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When inspection was completed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "in_progress",
+        "pending_tenant_review",
+        "tenant_signed",
+        "disputed",
+        "completed"
+      ],
+      "default": "scheduled",
+      "description": "Inspection status"
+    },
+    "inspector_name": {
+      "type": "string",
+      "description": "Name of person conducting inspection"
+    },
+    "inspector_email": {
+      "type": "string",
+      "description": "Email of inspector"
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "room_name": {
+            "type": "string",
+            "description": "Room name (e.g., Living Room, Kitchen, Bedroom 1)"
+          },
+          "room_type": {
+            "type": "string",
+            "enum": [
+              "living_room",
+              "kitchen",
+              "bedroom",
+              "bathroom",
+              "hallway",
+              "garden",
+              "other"
+            ]
+          },
+          "condition_rating": {
+            "type": "string",
+            "enum": [
+              "excellent",
+              "good",
+              "fair",
+              "poor",
+              "damaged"
+            ],
+            "description": "Overall condition of the room"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_name": {
+                  "type": "string",
+                  "description": "Item name (e.g., Sofa, Carpet, Light fixture)"
+                },
+                "item_category": {
+                  "type": "string",
+                  "enum": [
+                    "furniture",
+                    "appliance",
+                    "fixture",
+                    "fitting",
+                    "flooring",
+                    "decoration",
+                    "other"
+                  ]
+                },
+                "condition": {
+                  "type": "string",
+                  "enum": [
+                    "excellent",
+                    "good",
+                    "fair",
+                    "poor",
+                    "damaged",
+                    "missing"
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Detailed description of item condition"
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "Additional notes or observations"
+                },
+                "photo_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "URLs to timestamped photos of this item"
+                },
+                "cleanliness": {
+                  "type": "string",
+                  "enum": [
+                    "very_clean",
+                    "clean",
+                    "acceptable",
+                    "dirty",
+                    "very_dirty"
+                  ]
+                }
+              },
+              "required": [
+                "item_name",
+                "condition"
+              ]
+            }
+          },
+          "walls_condition": {
+            "type": "string",
+            "enum": [
+              "excellent",
+              "good",
+              "fair",
+              "poor",
+              "damaged"
+            ]
+          },
+          "flooring_condition": {
+            "type": "string",
+            "enum": [
+              "excellent",
+              "good",
+              "fair",
+              "poor",
+              "damaged"
+            ]
+          },
+          "windows_condition": {
+            "type": "string",
+            "enum": [
+              "excellent",
+              "good",
+              "fair",
+              "poor",
+              "damaged"
+            ]
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "General room photo URLs"
+          },
+          "notes": {
+            "type": "string",
+            "description": "General room notes"
+          }
+        },
+        "required": [
+          "room_name",
+          "condition_rating"
+        ]
+      }
+    },
+    "overall_condition": {
+      "type": "string",
+      "enum": [
+        "excellent",
+        "good",
+        "fair",
+        "poor",
+        "poor_with_damages"
+      ],
+      "description": "Overall property condition"
+    },
+    "meter_readings": {
+      "type": "object",
+      "properties": {
+        "electricity": {
+          "type": "string",
+          "description": "Electricity meter reading"
+        },
+        "gas": {
+          "type": "string",
+          "description": "Gas meter reading"
+        },
+        "water": {
+          "type": "string",
+          "description": "Water meter reading"
+        }
+      }
+    },
+    "keys_provided": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of keys provided (e.g., front door, back door, window)"
+    },
+    "tenant_comments": {
+      "type": "string",
+      "description": "Comments from tenant during review"
+    },
+    "tenant_agreed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether tenant agreed with the report"
+    },
+    "tenant_signature_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When tenant signed off"
+    },
+    "dispute_details": {
+      "type": "string",
+      "description": "Details if tenant disputed any items"
+    },
+    "report_pdf_url": {
+      "type": "string",
+      "description": "URL to generated PDF report"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional inspector notes"
+    }
+  },
+  "required": [
+    "property_id",
+    "inspection_type",
+    "inspector_name",
+    "inspector_email"
+  ]
+}

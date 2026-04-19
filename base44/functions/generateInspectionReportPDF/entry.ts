@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import jspdf from 'npm:jspdf@4.0.0';
 
 Deno.serve(async (req) => {
   try {
@@ -9,179 +10,215 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const {
-      property,
-      unit,
-      rooms,
-      inspectionNotes,
-      overallRating,
-      landlordEmail,
-      inspectionDate,
-    } = await req.json();
+    const { inspectionId } = await req.json();
 
-    // Generate HTML for PDF
-    const roomsHTML = rooms
-      .filter(r => r.name && r.name.trim())
-      .map(room => `
-        <div style="page-break-inside: avoid; margin-bottom: 30px;">
-          <h3 style="color: #1a202c; font-size: 18px; font-weight: bold; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
-            ${room.name}
-          </h3>
-          <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
-            <thead>
-              <tr style="background-color: #f0f4f8;">
-                <th style="padding: 8px; text-align: left; border: 1px solid #e2e8f0;">Item</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #e2e8f0;">Condition</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${
-                room.checklist
-                  .map(
-                    item => `
-                <tr>
-                  <td style="padding: 8px; border: 1px solid #e2e8f0;">${item.item}</td>
-                  <td style="padding: 8px; border: 1px solid #e2e8f0;">
-                    <span style="
-                      padding: 4px 8px;
-                      border-radius: 4px;
-                      font-weight: bold;
-                      ${
-                        item.status === 'excellent'
-                          ? 'background-color: #dcfce7; color: #166534;'
-                          : item.status === 'good'
-                          ? 'background-color: #dbeafe; color: #1e40af;'
-                          : item.status === 'fair'
-                          ? 'background-color: #fed7aa; color: #92400e;'
-                          : 'background-color: #fecaca; color: #991b1b;'
-                      }
-                    ">
-                      ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                    </span>
-                  </td>
-                </tr>
-              `
-                  )
-                  .join('')
-              }
-            </tbody>
-          </table>
-          ${
-            room.photos && room.photos.length > 0
-              ? `
-            <div style="margin-top: 15px;">
-              <p style="font-weight: bold; color: #374151;">Photos:</p>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
-                ${room.photos.map(photo => `<img src="${photo}" style="width: 100%; height: auto; border-radius: 4px;" />`).join('')}
-              </div>
-            </div>
-          `
-              : ''
-          }
-        </div>
-      `)
-      .join('');
+    if (!inspectionId) {
+      return Response.json({ error: 'Inspection ID required' }, { status: 400 });
+    }
 
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Inspection Report</title>
-          <style>
-            body { font-family: Arial, sans-serif; color: #1a202c; line-height: 1.6; margin: 0; padding: 20px; }
-            .header { background-color: #1e293b; color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; }
-            .header h1 { margin: 0; font-size: 28px; }
-            .header p { margin: 5px 0; font-size: 14px; }
-            .summary { background-color: #f0f4f8; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-            .summary-item { margin-bottom: 10px; }
-            .summary-label { font-weight: bold; color: #3b82f6; }
-            .rating-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin-top: 10px; }
-            .rating-excellent { background-color: #dcfce7; color: #166534; }
-            .rating-good { background-color: #dbeafe; color: #1e40af; }
-            .rating-fair { background-color: #fed7aa; color: #92400e; }
-            .rating-poor { background-color: #fecaca; color: #991b1b; }
-            .notes { background-color: #f8fafc; padding: 15px; border-left: 4px solid #3b82f6; margin-bottom: 30px; }
-            .footer { color: #64748b; font-size: 12px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>Property Inspection Report</h1>
-            <p><strong>Property:</strong> ${property.name}</p>
-            <p><strong>Unit:</strong> ${unit.name}</p>
-            <p><strong>Inspection Date:</strong> ${new Date(inspectionDate).toLocaleDateString('en-GB', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}</p>
-            <p><strong>Inspector:</strong> ${user.full_name}</p>
-          </div>
+    // Fetch inspection data
+    const inspection = await base44.entities.PropertyInspection.get(inspectionId);
+    
+    if (!inspection) {
+      return Response.json({ error: 'Inspection not found' }, { status: 404 });
+    }
 
-          <div class="summary">
-            <div class="summary-item">
-              <span class="summary-label">Overall Property Condition:</span>
-              <span class="rating-badge rating-${overallRating}">
-                ${overallRating.charAt(0).toUpperCase() + overallRating.slice(1)}
-              </span>
-            </div>
-          </div>
+    // Fetch property and tenant details
+    const property = inspection.property_id ? await base44.entities.Property.get(inspection.property_id) : null;
+    const tenant = inspection.tenant_id ? await base44.entities.Tenant.get(inspection.tenant_id) : null;
 
-          ${rooms.length > 0 ? `<h2 style="color: #1a202c; margin-top: 30px;">Room Inspections</h2>${roomsHTML}` : ''}
+    // Create PDF
+    const doc = new jspdf();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let yPosition = 20;
 
-          ${
-            inspectionNotes
-              ? `
-            <div class="notes">
-              <strong style="color: #1e293b;">Inspector Notes:</strong>
-              <p>${inspectionNotes.replace(/\n/g, '<br>')}</p>
-            </div>
-          `
-              : ''
-          }
+    // Header
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Property Inspection Report', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
 
-          <div class="footer">
-            <p>This inspection report was generated on ${new Date().toLocaleDateString('en-GB', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}.</p>
-          </div>
-        </body>
-      </html>
-    `;
+    // Property details
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Property: ${property?.name || 'N/A'}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Address: ${property?.address_line_1 || ''}, ${property?.city || ''}, ${property?.postcode || ''}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Inspection Type: ${inspection.inspection_type.replace('_', ' ').toUpperCase()}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Date: ${inspection.completed_date ? new Date(inspection.completed_date).toLocaleDateString() : 'Pending'}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Inspector: ${inspection.inspector_name} (${inspection.inspector_email})`, 20, yPosition);
+    yPosition += 15;
 
-    // Send email with PDF
-    const emailResult = await base44.integrations.Core.SendEmail({
-      to: landlordEmail,
-      subject: `Property Inspection Report - ${property.name}, ${unit.name}`,
-      body: `
-        Dear Landlord,
+    // Status
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Status: ${inspection.status.replace('_', ' ').toUpperCase()}`, 20, yPosition);
+    yPosition += 15;
 
-        Please find attached the inspection report for your property:
+    // Rooms section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Room Details', 20, yPosition);
+    yPosition += 10;
 
-        Property: ${property.name}
-        Unit: ${unit.name}
-        Inspection Date: ${new Date(inspectionDate).toLocaleDateString('en-GB')}
+    if (inspection.rooms && inspection.rooms.length > 0) {
+      inspection.rooms.forEach((room, index) => {
+        // Check if we need a new page
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = 20;
+        }
 
-        Overall Condition: ${overallRating.charAt(0).toUpperCase() + overallRating.slice(1)}
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${index + 1}. ${room.room_name}`, 20, yPosition);
+        yPosition += 7;
 
-        The detailed inspection report including photos and checklists is attached as a PDF.
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`Condition: ${room.condition_rating.toUpperCase()}`, 25, yPosition);
+        yPosition += 6;
 
-        Best regards,
-        Property Management Team
-      `,
-    });
+        if (room.walls_condition) {
+          doc.text(`Walls: ${room.walls_condition}`, 25, yPosition);
+          yPosition += 6;
+        }
 
-    return Response.json({
-      success: true,
-      message: 'Inspection report generated and sent',
-      emailSent: true,
+        if (room.flooring_condition) {
+          doc.text(`Flooring: ${room.flooring_condition}`, 25, yPosition);
+          yPosition += 6;
+        }
+
+        if (room.windows_condition) {
+          doc.text(`Windows: ${room.windows_condition}`, 25, yPosition);
+          yPosition += 6;
+        }
+
+        if (room.notes) {
+          doc.text(`Notes: ${room.notes}`, 25, yPosition);
+          yPosition += 6;
+        }
+
+        // Items in room
+        if (room.items && room.items.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.text('Items:', 25, yPosition);
+          yPosition += 6;
+
+          room.items.forEach((item, itemIndex) => {
+            if (yPosition > 270) {
+              doc.addPage();
+              yPosition = 20;
+            }
+
+            doc.setFont('helvetica', 'normal');
+            doc.text(`• ${item.item_name}: ${item.condition.toUpperCase()} - ${item.description || ''}`, 30, yPosition);
+            yPosition += 5;
+
+            if (item.notes) {
+              doc.text(`  Notes: ${item.notes}`, 30, yPosition);
+              yPosition += 5;
+            }
+          });
+        }
+
+        yPosition += 5;
+      });
+    }
+
+    // Meter readings
+    if (inspection.meter_readings) {
+      yPosition += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.text('Meter Readings', 20, yPosition);
+      yPosition += 7;
+      doc.setFont('helvetica', 'normal');
+      
+      if (inspection.meter_readings.electricity) {
+        doc.text(`Electricity: ${inspection.meter_readings.electricity}`, 20, yPosition);
+        yPosition += 6;
+      }
+      if (inspection.meter_readings.gas) {
+        doc.text(`Gas: ${inspection.meter_readings.gas}`, 20, yPosition);
+        yPosition += 6;
+      }
+      if (inspection.meter_readings.water) {
+        doc.text(`Water: ${inspection.meter_readings.water}`, 20, yPosition);
+        yPosition += 6;
+      }
+    }
+
+    // Keys
+    if (inspection.keys_provided && inspection.keys_provided.length > 0) {
+      yPosition += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.text('Keys Provided', 20, yPosition);
+      yPosition += 7;
+      doc.setFont('helvetica', 'normal');
+      inspection.keys_provided.forEach((key, idx) => {
+        doc.text(`• ${key}`, 20, yPosition);
+        yPosition += 6;
+      });
+    }
+
+    // Overall condition
+    yPosition += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Overall Condition: ${inspection.overall_condition ? inspection.overall_condition.toUpperCase() : 'N/A'}`, 20, yPosition);
+    yPosition += 15;
+
+    // Tenant sign-off
+    doc.setFont('helvetica', 'bold');
+    doc.text('Tenant Sign-off', 20, yPosition);
+    yPosition += 7;
+    doc.setFont('helvetica', 'normal');
+    
+    if (inspection.tenant_agreed) {
+      doc.text(`Status: AGREED AND SIGNED`, 20, yPosition);
+      yPosition += 6;
+      doc.text(`Signed by: ${tenant?.full_name || 'Tenant'}`, 20, yPosition);
+      yPosition += 6;
+      doc.text(`Date: ${inspection.tenant_signature_date ? new Date(inspection.tenant_signature_date).toLocaleString() : 'N/A'}`, 20, yPosition);
+    } else if (inspection.status === 'disputed') {
+      doc.text(`Status: DISPUTED`, 20, yPosition);
+      yPosition += 6;
+      if (inspection.dispute_details) {
+        doc.text(`Dispute Details: ${inspection.dispute_details}`, 20, yPosition);
+        yPosition += 6;
+      }
+    } else {
+      doc.text(`Status: PENDING TENANT REVIEW`, 20, yPosition);
+    }
+
+    if (inspection.tenant_comments) {
+      yPosition += 6;
+      doc.text(`Tenant Comments: ${inspection.tenant_comments}`, 20, yPosition);
+    }
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+      doc.text(`Generated on ${new Date().toLocaleString()}`, 20, doc.internal.pageSize.getHeight() - 10);
+    }
+
+    // Convert to blob
+    const pdfBlob = doc.output('blob');
+    const arrayBuffer = await pdfBlob.arrayBuffer();
+
+    return new Response(arrayBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="inspection_report_${inspectionId}.pdf"`
+      }
     });
   } catch (error) {
-    console.error('Error generating inspection report:', error);
+    console.error('Error generating PDF:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
