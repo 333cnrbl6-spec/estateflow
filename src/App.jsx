@@ -90,6 +90,7 @@ import SubscriberIntelligentOnboarding from './pages/SubscriberIntelligentOnboar
 import SalesTargetedDemoBuilder from './pages/SalesTargetedDemoBuilder';
 import DocumentRepository from './pages/DocumentRepository';
 import PropertyDocumentManager from './pages/PropertyDocumentManager';
+import PropertyDocumentManagement from './pages/PropertyDocumentManagement';
 import MaintenanceBoard from './pages/MaintenanceBoard';
 import LandlordPortal from './pages/LandlordPortal';
 import BankReconciliation from './pages/BankReconciliation';
@@ -280,6 +281,7 @@ const AuthenticatedApp = () => {
         <Route path="/companies-house-sync" element={<CompaniesHouseSyncDashboard />} />
         <Route path="/document-repository" element={<DocumentRepository />} />
         <Route path="/property-documents" element={<PropertyDocumentManager />} />
+        <Route path="/document-management" element={<PropertyDocumentManagement />} />
         <Route path="/data-discovery" element={<DataDiscoveryHub />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/automation-templates" element={<AutomationTemplateLibrary />} />
