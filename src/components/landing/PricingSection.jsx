@@ -4,62 +4,75 @@ import { Button } from '@/components/ui/button';
 const TIERS = [
   {
     name: 'Starter',
-    price: '£99',
+    price: '£199',
     period: '/month',
-    desc: 'Perfect for buy-to-let landlords, small letting agents and independent property owners.',
-    units: 'Up to 50 units',
+    desc: 'Perfect for individual landlords and boutique letting agencies managing small portfolios.',
+    units: 'Up to 75 units',
+    badge: 'Best Solo',
     highlight: false,
     features: [
-      'Properties & unit management',
-      'Tenant & landlord portal',
-      'Rent ledger & arrears tracking',
-      'Basic compliance certificates',
-      'Maintenance request management',
-      'Document templates (10)',
+      'Multi-unit property management',
+      'Tenant & landlord portal with online rent payment',
+      'Full maintenance request system',
+      'Gas Safety, EPC, EICR, Boiler certificates',
+      'Deposit protection monitoring',
+      'Automated rent reminders',
+      'Rent ledger with arrears alerts',
+      'Unlimited document storage',
       'Email support',
     ],
+    notIncluded: ['Block management', 'Sales CRM', 'Accounting sync'],
     cta: 'Start Free Trial',
+    annualSaving: '£388/year',
   },
   {
     name: 'Professional',
-    price: '£249',
+    price: '£449',
     period: '/month',
-    desc: 'For growing letting agents, block management companies and freeholders with larger portfolios.',
-    units: 'Up to 250 units',
-    highlight: true,
+    desc: 'The complete unified platform for lettings agents, block managers, and multi-company groups.',
+    units: 'Up to 400 units',
     badge: 'Most Popular',
+    highlight: true,
     features: [
-      'Everything in Starter',
+      'Everything in Starter, plus:',
       'Block & leasehold management',
-      'Service charges & ground rent',
-      'Bank reconciliation',
-      'Xero / Sage / QuickBooks sync',
-      'Out-of-hours call handling',
-      'Full compliance hub',
-      'Unlimited document templates',
-      'Sales CRM',
+      'Service charge budgeting',
+      'Multi-company structure',
+      'Section 20 automation',
+      'Advanced compliance hub (15+ certificates)',
+      'Fire Safety Register',
+      'Residential sales CRM',
+      'Automated reporting (P&L, cash flow)',
+      'Xero, QB, Sage 50 live sync',
+      'Predictive maintenance insights',
+      'White-label tenant portal',
       'Priority support',
     ],
     cta: 'Start Free Trial',
+    annualSaving: '£898/year',
   },
   {
     name: 'Enterprise',
-    price: 'Custom',
-    period: '',
-    desc: 'For large property management groups, multi-branch operators and institutional landlords.',
+    price: '£999',
+    period: '/month',
+    desc: 'For large groups, multi-region operators and complex institutional portfolios.',
     units: 'Unlimited units',
+    badge: 'Full Power',
     highlight: false,
     features: [
-      'Everything in Professional',
-      'Unlimited companies & regions',
-      'Custom branding & white-label',
+      'Everything in Professional, plus:',
+      '24/7 emergency call centre',
       'Dedicated account manager',
-      'Custom integrations & API access',
-      'SLA guarantee',
-      'Onboarding & data migration',
-      'Staff training sessions',
+      'Custom API & webhooks',
+      'Advanced analytics & BI',
+      'SLA guarantee (99.9%)',
+      'White-label all portals',
+      'Multi-currency support',
+      'Full data migration',
+      'Staff training program',
     ],
     cta: 'Talk to Sales',
+    annualSaving: '£1,998/year',
   },
 ];
 
@@ -105,9 +118,14 @@ export default function PricingSection({ onChoosePlan }) {
                   {tier.period}
                 </span>
               </div>
-              <p className={`text-xs font-medium mb-6 ${tier.highlight ? 'text-amber-300' : 'text-primary'}`}>
+              <p className={`text-xs font-medium mb-3 ${tier.highlight ? 'text-amber-300' : 'text-primary'}`}>
                 {tier.units}
               </p>
+              {tier.annualSaving && (
+                <p className={`text-xs mb-6 ${tier.highlight ? 'text-amber-100' : 'text-green-600'}`}>
+                  💰 Save {tier.annualSaving} on annual billing
+                </p>
+              )}
 
               <Button
                 onClick={onChoosePlan}
@@ -120,20 +138,55 @@ export default function PricingSection({ onChoosePlan }) {
                 {tier.cta}
               </Button>
 
-              <ul className="space-y-3">
+              <ul className="space-y-2 mb-4">
                 {tier.features.map(f => (
-                  <li key={f} className={`flex items-start gap-2 text-sm ${tier.highlight ? 'text-white/90' : 'text-slate-600'}`}>
+                  <li key={f} className={`flex items-start gap-2 text-xs ${tier.highlight ? 'text-white/90' : 'text-slate-600'}`}>
                     <span className={tier.highlight ? 'text-amber-300' : 'text-green-500'}>✓</span>
-                    {f}
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
+
+              {tier.notIncluded && (
+                <div className={`text-xs p-2 rounded ${tier.highlight ? 'bg-white/10' : 'bg-slate-100'}`}>
+                  <p className={`font-medium mb-1 ${tier.highlight ? 'text-white' : 'text-slate-600'}`}>Not included:</p>
+                  <ul className="space-y-1">
+                    {tier.notIncluded.map(f => (
+                      <li key={f} className={tier.highlight ? 'text-white/60' : 'text-slate-500'}>
+                        • {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           ))}
         </div>
 
-        <p className="text-center text-slate-400 text-sm mt-10">
-          All prices exclude VAT. Annual billing available with 2 months free. Volume discounts for 500+ units.
+        <div className="mt-12 bg-blue-50 rounded-lg p-6 text-center">
+          <h4 className="font-semibold text-slate-900 mb-2">Why Premiso Stands Out</h4>
+          <div className="grid md:grid-cols-4 gap-4 text-sm text-slate-700">
+            <div>
+              <p className="font-semibold text-primary mb-1">Unified Platform</p>
+              <p>No expensive add-on modules like competitors</p>
+            </div>
+            <div>
+              <p className="font-semibold text-primary mb-1">UK-Regulated</p>
+              <p>Built for MEES, Companies House, Renting Homes Act</p>
+            </div>
+            <div>
+              <p className="font-semibold text-primary mb-1">Best Value</p>
+              <p>50% cheaper than AppFolio & Yardi on comparable portfolios</p>
+            </div>
+            <div>
+              <p className="font-semibold text-primary mb-1">Developer Friendly</p>
+              <p>Webhooks, APIs, custom integrations on all tiers</p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-slate-500 text-sm mt-10">
+          All prices exclude VAT. Annual billing saves 2 months. 30-day free trial. Cancel anytime.
         </p>
       </div>
     </section>

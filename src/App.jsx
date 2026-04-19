@@ -53,6 +53,7 @@ import ProductComparison from './pages/ProductComparison';
 import MarketingCollateral from './pages/MarketingCollateral';
 import DeveloperMarketing from './pages/DeveloperMarketing';
 import BlockManagementPitch from './pages/BlockManagementPitch';
+import ProductOnePageBrochure from './pages/ProductOnePageBrochure';
 import BlockManagement from './pages/BlockManagement';
 import ServiceChargeManagement from './pages/ServiceChargeManagement';
 import RTMManagementPage from './pages/RTMManagementPage';
@@ -338,6 +339,7 @@ const AuthenticatedApp = () => {
 
         {/* Marketing / Collateral (sidebar-wrapped so nav is present) */}
         <Route path="/sales-brochure" element={<SalesBrochure />} />
+        <Route path="/product-brochure" element={<ProductOnePageBrochure />} />
         <Route path="/sales-one-pager" element={<SalesOnePageSummary />} />
         <Route path="/brochure" element={<ProductBrochure />} />
         <Route path="/tour" element={<PlatformTour />} />
