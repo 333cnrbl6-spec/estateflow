@@ -46,6 +46,7 @@ Include all UK housing law obligations, statutory requirements, and relevant leg
 
     try {
       const doc = await base44.integrations.Core.InvokeLLM({
+        model: "claude_sonnet_4_6",
         prompt,
         response_json_schema: {
           type: 'object',
