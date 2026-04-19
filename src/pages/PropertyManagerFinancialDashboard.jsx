@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TrendingUp, AlertTriangle, Hammer, PoundSterling } from 'lucide-react';
+import { TrendingUp, AlertTriangle, Hammer, PoundSterling, Zap } from 'lucide-react';
 import RentCollectionTrendsChart from '@/components/property-manager/RentCollectionTrendsChart';
 import OutstandingDebtCard from '@/components/property-manager/OutstandingDebtCard';
 import MaintenanceCostByProperty from '@/components/property-manager/MaintenanceCostByProperty';
 import ProjectedAnnualIncome from '@/components/property-manager/ProjectedAnnualIncome';
+import PredictiveMaintenanceInsights from '@/components/property-manager/PredictiveMaintenanceInsights';
 import { base44 } from '@/api/base44Client';
 
 export default function PropertyManagerFinancialDashboard() {
@@ -124,17 +125,46 @@ export default function PropertyManagerFinancialDashboard() {
       </div>
 
       {/* Main Charts and Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <RentCollectionTrendsChart />
-          <MaintenanceCostByProperty />
-        </div>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview" className="gap-2">
+            <TrendingUp className="w-4 h-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="predictive" className="gap-2">
+            <Zap className="w-4 h-4" />
+            Predictive Insights
+          </TabsTrigger>
+        </TabsList>
 
-        <div className="space-y-6">
-          <ProjectedAnnualIncome />
-          <OutstandingDebtCard />
-        </div>
-      </div>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <RentCollectionTrendsChart />
+              <MaintenanceCostByProperty />
+            </div>
+
+            <div className="space-y-6">
+              <ProjectedAnnualIncome />
+              <OutstandingDebtCard />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="predictive">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-600" />
+                Predictive Maintenance Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PredictiveMaintenanceInsights />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

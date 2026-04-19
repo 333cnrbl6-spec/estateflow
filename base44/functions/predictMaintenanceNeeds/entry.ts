@@ -3,244 +3,155 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
+    const { propertyId } = await req.json().catch(() => ({}));
 
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
+    // Fetch all necessary data
+    const [properties, maintenanceOrders, documents, units] = await Promise.all([
+      base44.asServiceRole.entities.Property.list(),
+      base44.asServiceRole.entities.MaintenanceOrder.list(),
+      base44.asServiceRole.entities.Document.list(),
+      base44.asServiceRole.entities.Unit.list()
+    ]);
+
+    const predictions = [];
+    const targetProperties = propertyId 
+      ? properties.filter(p => p.id === propertyId)
+      : properties;
 
     const today = new Date();
-    const results = {
-      forecastsCreated: 0,
-      forecastsUpdated: 0,
-      propertiesAnalyzed: 0,
-      totalCostSavingsPotential: 0,
-      errors: []
-    };
 
-    // Fetch all properties
-    const properties = await base44.asServiceRole.entities.Property.list('-updated_date', 500);
+    for (const property of targetProperties) {
+      let riskScore = 0;
+      const riskFactors = [];
 
-    for (const property of properties) {
-      try {
-        // Fetch maintenance history
-        const maintenanceRecords = await base44.asServiceRole.entities.MaintenanceOrder.filter(
-          { property_id: property.id },
-          '-created_date',
-          200
-        );
-
-        if (maintenanceRecords.length === 0) {
-          continue;
-        }
-
-        results.propertiesAnalyzed++;
-
-        // Analyze historical data
-        const analysis = analyzeMaintenanceHistory(maintenanceRecords, property);
-
-        // Use LLM to generate predictions
-        const predictions = await base44.integrations.Core.InvokeLLM({
-          prompt: `You are a property maintenance expert. Analyze this property maintenance data and predict future maintenance needs:
-
-Property: ${property.address_line_1}, ${property.postcode}
-Property Type: ${property.property_type || 'residential'}
-Age (years): ${property.year_built ? new Date().getFullYear() - parseInt(property.year_built) : 'unknown'}
-
-Historical Maintenance Analysis:
-${JSON.stringify(analysis, null, 2)}
-
-Based on this data:
-1. Identify the top 3 most critical maintenance components that will likely need attention soon
-2. For each, predict when failure might occur (in days)
-3. Estimate repair costs and potential emergency costs
-4. Suggest preventive maintenance schedules
-5. Calculate cost savings from proactive maintenance
-
-Respond in JSON format with array of predictions, each containing:
-{
-  "component_type": "hvac|roofing|plumbing|electrical|water_heater|etc",
-  "component_description": "specific component description",
-  "days_until_failure": number,
-  "confidence_score": 0-100,
-  "risk_level": "low|medium|high|critical",
-  "average_repair_cost": number,
-  "estimated_emergency_cost": number,
-  "recommendation": "specific action to take",
-  "suggested_date": "YYYY-MM-DD",
-  "pattern_detected": "description of maintenance pattern"
-}`,
-          response_json_schema: {
-            type: 'object',
-            properties: {
-              predictions: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    component_type: { type: 'string' },
-                    component_description: { type: 'string' },
-                    days_until_failure: { type: 'number' },
-                    confidence_score: { type: 'number' },
-                    risk_level: { type: 'string' },
-                    average_repair_cost: { type: 'number' },
-                    estimated_emergency_cost: { type: 'number' },
-                    recommendation: { type: 'string' },
-                    suggested_date: { type: 'string' },
-                    pattern_detected: { type: 'string' }
-                  }
-                }
-              }
-            }
+      // 1. Check expiring documents (high risk if expiring soon)
+      const propertyDocs = documents?.filter(d => d.property_id === property.id) || [];
+      propertyDocs.forEach(doc => {
+        if (doc.expiry_date) {
+          const expiry = new Date(doc.expiry_date);
+          const daysUntilExpiry = Math.floor((expiry - today) / (1000 * 60 * 60 * 24));
+          
+          if (daysUntilExpiry < 30 && daysUntilExpiry >= 0) {
+            riskScore += 15;
+            riskFactors.push(`${doc.document_type} expires in ${daysUntilExpiry} days`);
+          } else if (daysUntilExpiry < 0) {
+            riskScore += 25;
+            riskFactors.push(`${doc.document_type} EXPIRED - immediate action needed`);
           }
+        }
+      });
+
+      // 2. Analyze maintenance frequency patterns
+      const propertyMaintenance = maintenanceOrders?.filter(m => m.property_id === property.id) || [];
+      
+      if (propertyMaintenance.length > 0) {
+        // Count maintenance by issue type in last 12 months
+        const last12Months = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
+        const recentMaintenance = propertyMaintenance.filter(m => {
+          const orderDate = new Date(m.created_date || m.scheduled_date);
+          return orderDate > last12Months;
         });
 
-        // Store forecasts
-        for (const pred of predictions.predictions || []) {
-          const suggestedDate = new Date(pred.suggested_date);
-          const daysUntil = Math.ceil((suggestedDate - today) / (1000 * 60 * 60 * 24));
-
-          // Check if forecast already exists for this component
-          const existingForecasts = await base44.asServiceRole.entities.MaintenanceForecast.filter(
-            {
-              property_id: property.id,
-              component_type: pred.component_type
-            },
-            '-forecast_date',
-            1
-          );
-
-          const forecastData = {
-            property_id: property.id,
-            component_type: pred.component_type,
-            component_description: pred.component_description,
-            forecast_date: today.toISOString(),
-            predicted_failure_date: pred.suggested_date,
-            days_until_failure: daysUntil,
-            confidence_score: pred.confidence_score,
-            risk_level: pred.risk_level,
-            historical_frequency: analysis.componentFrequency[pred.component_type] || {},
-            cost_analysis: {
-              average_cost_per_repair: pred.average_repair_cost,
-              estimated_repair_cost: pred.average_repair_cost,
-              potential_emergency_cost: pred.estimated_emergency_cost,
-              emergency_multiplier: pred.estimated_emergency_cost / pred.average_repair_cost
-            },
-            maintenance_recommendations: [
-              {
-                recommendation_id: 'rec_1',
-                recommendation: pred.recommendation,
-                priority: pred.risk_level === 'critical' ? 'urgent' : 
-                         pred.risk_level === 'high' ? 'high' :
-                         pred.risk_level === 'medium' ? 'medium' : 'low',
-                suggested_date: pred.suggested_date,
-                estimated_cost: pred.average_repair_cost,
-                cost_savings_vs_emergency: pred.estimated_emergency_cost - pred.average_repair_cost,
-                actions_required: [
-                  'Schedule inspection',
-                  'Get contractor quotes',
-                  'Plan maintenance window'
-                ]
-              }
-            ],
-            supporting_data: {
-              analysis_basis: `${maintenanceRecords.length} historical records analyzed`,
-              pattern_detected: pred.pattern_detected,
-              comparison_to_benchmark: 'Property maintenance pattern requires attention'
-            },
-            status: 'pending'
-          };
-
-          if (existingForecasts.length > 0) {
-            await base44.asServiceRole.entities.MaintenanceForecast.update(
-              existingForecasts[0].id,
-              forecastData
-            );
-            results.forecastsUpdated++;
-          } else {
-            await base44.asServiceRole.entities.MaintenanceForecast.create(forecastData);
-            results.forecastsCreated++;
-          }
-
-          results.totalCostSavingsPotential += (pred.estimated_emergency_cost - pred.average_repair_cost);
+        // Calculate average maintenance frequency
+        const avgMonthlyMaintenance = recentMaintenance.length / 12;
+        if (avgMonthlyMaintenance > 2) {
+          riskScore += 20;
+          riskFactors.push(`High maintenance frequency (${recentMaintenance.length} jobs in 12 months)`);
+        } else if (avgMonthlyMaintenance > 1) {
+          riskScore += 10;
+          riskFactors.push(`Moderate maintenance frequency (${recentMaintenance.length} jobs in 12 months)`);
         }
 
-      } catch (err) {
-        results.errors.push({
-          property_id: property.id,
-          property_name: property.address_line_1,
-          error: err.message
+        // Check for recurring issues
+        const issueTypes = {};
+        propertyMaintenance.forEach(m => {
+          const type = m.issue_type || 'unknown';
+          issueTypes[type] = (issueTypes[type] || 0) + 1;
+        });
+
+        Object.entries(issueTypes).forEach(([type, count]) => {
+          if (count >= 3) {
+            riskScore += 15;
+            riskFactors.push(`Recurring issue: ${type} (${count} incidents)`);
+          }
         });
       }
+
+      // 3. Property age factor (older properties need more maintenance)
+      if (property.year_built) {
+        const propertyAge = new Date().getFullYear() - property.year_built;
+        if (propertyAge > 50) {
+          riskScore += 20;
+          riskFactors.push(`Property age: ${propertyAge} years (older properties need more maintenance)`);
+        } else if (propertyAge > 30) {
+          riskScore += 10;
+          riskFactors.push(`Property age: ${propertyAge} years`);
+        }
+      }
+
+      // 4. Total maintenance cost trend (if costs are increasing, more issues expected)
+      if (propertyMaintenance.length >= 2) {
+        const sortedByDate = propertyMaintenance.sort((a, b) => 
+          new Date(a.scheduled_date || a.created_date) - new Date(b.scheduled_date || b.created_date)
+        );
+
+        const recentHalf = sortedByDate.slice(Math.floor(sortedByDate.length / 2));
+        const olderHalf = sortedByDate.slice(0, Math.floor(sortedByDate.length / 2));
+
+        const recentCost = recentHalf.reduce((sum, m) => sum + (m.total_cost || 0), 0);
+        const olderCost = olderHalf.reduce((sum, m) => sum + (m.total_cost || 0), 0);
+
+        if (olderCost > 0) {
+          const costTrend = recentCost / olderCost;
+          if (costTrend > 1.3) {
+            riskScore += 15;
+            riskFactors.push(`Maintenance costs trending up (${(costTrend * 100 - 100).toFixed(0)}% increase)`);
+          }
+        }
+      }
+
+      // Cap score at 100
+      riskScore = Math.min(riskScore, 100);
+
+      // Determine risk level
+      let riskLevel = 'low';
+      if (riskScore >= 70) {
+        riskLevel = 'critical';
+      } else if (riskScore >= 50) {
+        riskLevel = 'high';
+      } else if (riskScore >= 30) {
+        riskLevel = 'medium';
+      }
+
+      predictions.push({
+        propertyId: property.id,
+        propertyName: property.name,
+        riskScore,
+        riskLevel,
+        riskFactors,
+        maintenanceCount: propertyMaintenance.length,
+        expiredDocuments: propertyDocs.filter(d => d.expiry_date && new Date(d.expiry_date) < today).length,
+        expiringDocuments: propertyDocs.filter(d => {
+          const expiry = new Date(d.expiry_date || '2099-12-31');
+          const daysUntilExpiry = Math.floor((expiry - today) / (1000 * 60 * 60 * 24));
+          return daysUntilExpiry < 30 && daysUntilExpiry >= 0;
+        }).length
+      });
     }
+
+    // Sort by risk score
+    predictions.sort((a, b) => b.riskScore - a.riskScore);
 
     return Response.json({
       success: true,
-      timestamp: new Date().toISOString(),
-      summary: results
+      predictions,
+      generated: new Date().toISOString()
     });
-
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Prediction error:', error);
+    return Response.json({
+      success: false,
+      error: error.message
+    }, { status: 500 });
   }
 });
-
-function analyzeMaintenanceHistory(records, property) {
-  const componentFrequency = {};
-  const componentCosts = {};
-  const componentDates = {};
-
-  for (const record of records) {
-    const category = record.category || 'other';
-    
-    if (!componentFrequency[category]) {
-      componentFrequency[category] = {
-        count: 0,
-        dates: [],
-        costs: []
-      };
-    }
-
-    componentFrequency[category].count++;
-    if (record.created_date) {
-      componentFrequency[category].dates.push(new Date(record.created_date));
-    }
-    if (record.estimated_cost || record.actual_cost) {
-      componentFrequency[category].costs.push(record.actual_cost || record.estimated_cost || 0);
-    }
-  }
-
-  // Calculate intervals and averages
-  for (const [component, data] of Object.entries(componentFrequency)) {
-    const costs = data.costs;
-    const dates = data.dates.sort((a, b) => a - b);
-
-    let avgInterval = null;
-    if (dates.length > 1) {
-      const intervals = [];
-      for (let i = 1; i < dates.length; i++) {
-        intervals.push((dates[i] - dates[i-1]) / (1000 * 60 * 60 * 24));
-      }
-      avgInterval = Math.round(intervals.reduce((a, b) => a + b, 0) / intervals.length);
-    }
-
-    const avgCost = costs.length > 0 ? costs.reduce((a, b) => a + b, 0) / costs.length : 0;
-
-    componentFrequency[component] = {
-      past_12_months: data.count,
-      average_interval_days: avgInterval,
-      last_maintenance_date: dates.length > 0 ? dates[dates.length - 1].toISOString().split('T')[0] : null,
-      average_cost_per_repair: Math.round(avgCost)
-    };
-  }
-
-  return {
-    total_records: records.length,
-    date_range: {
-      oldest: Math.min(...records.map(r => new Date(r.created_date).getTime())) ? new Date(Math.min(...records.map(r => new Date(r.created_date).getTime()))).toISOString().split('T')[0] : null,
-      newest: records.length > 0 ? new Date(records[0].created_date).toISOString().split('T')[0] : null
-    },
-    componentFrequency: componentFrequency,
-    total_maintenance_cost: Object.values(componentFrequency).reduce((sum, comp) => sum + (comp.average_cost_per_repair * comp.past_12_months), 0)
-  };
-}
