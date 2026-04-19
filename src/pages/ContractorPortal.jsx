@@ -1,146 +1,166 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Lock, Loader2, AlertTriangle } from 'lucide-react';
-import CertificationManager from '@/components/contractor/CertificationManager';
-import AssignedJobsList from '@/components/contractor/AssignedJobsList';
-import InvoiceSubmissionForm from '@/components/contractor/InvoiceSubmissionForm';
+import { base44 } from '@/api/base44Client';
+import ContractorTaskList from '@/components/contractor/ContractorTaskList';
+import InvoiceUploadForm from '@/components/contractor/InvoiceUploadForm';
+import TaskStatusUpdater from '@/components/contractor/TaskStatusUpdater';
+import { Button } from '@/components/ui/button';
+import { LogOut, User } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function ContractorPortal() {
-  const [contractorId, setContractorId] = useState(null);
-  const [authError, setAuthError] = useState(false);
+  const [contractor, setContractor] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('token');
-    if (token) {
-      try {
-        // Decode token (format: contractorId:timestamp)
-        const decoded = atob(token).split(':')[0];
-        setContractorId(decoded);
-      } catch {
-        setAuthError(true);
-      }
-    }
+    loadContractorData();
   }, []);
 
-  const { data: contractor, isLoading, isError } = useQuery({
-    queryKey: ['contractor-portal', contractorId],
-    queryFn: () => base44.entities.Contact.get(contractorId),
-    enabled: !!contractorId,
-  });
+  const loadContractorData = async () => {
+    try {
+      const user = await base44.auth.me();
+      if (!user) {
+        toast.error('Please log in to access contractor portal');
+        await base44.auth.redirectToLogin('/contractor');
+        return;
+      }
 
-  if (!contractorId) {
+      // Get contractor contact info
+      const contractors = await base44.entities.Contact.filter({
+        email: user.email,
+        contact_type: 'contractor'
+      });
+
+      if (contractors?.length > 0) {
+        setContractor({ ...contractors[0], email: user.email });
+      } else {
+        setContractor({ email: user.email, full_name: user.full_name });
+      }
+    } catch (err) {
+      console.error('Error loading contractor data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await base44.auth.logout('/');
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-10 pb-10 text-center space-y-3">
-            <Lock className="w-10 h-10 text-muted-foreground mx-auto" />
-            <h2 className="text-xl font-semibold">Contractor Portal</h2>
-            <p className="text-sm text-muted-foreground">
-              Access this portal via the secure link sent by your property manager.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-muted-foreground">Loading contractor portal...</p>
+        </div>
       </div>
     );
   }
 
-  if (authError || isError) {
+  if (!contractor) {
     return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-10 pb-10 text-center space-y-3">
-            <AlertTriangle className="w-10 h-10 text-destructive mx-auto" />
-            <h2 className="text-xl font-semibold">Access Denied</h2>
-            <p className="text-sm text-muted-foreground">
-              Your access token is invalid or has expired. Please contact your account manager.
-            </p>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Card className="w-96">
+          <CardContent className="pt-6 text-center">
+            <p className="text-muted-foreground mb-4">Unable to load contractor account</p>
+            <Button onClick={handleLogout}>Go Back</Button>
           </CardContent>
         </Card>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card border-b sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between">
+      <div className="border-b bg-card sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <p className="font-serif font-bold text-lg">Contractor Portal</p>
-            <p className="text-xs text-muted-foreground">
-              Manage certifications, jobs, and invoices
-            </p>
+            <h1 className="text-2xl font-bold">Contractor Portal</h1>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+              <User className="w-4 h-4" />
+              <span>{contractor.full_name || contractor.email}</span>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm font-medium">{contractor?.company_name || contractor?.full_name}</p>
-            <Badge variant="outline" className="mt-1">Active</Badge>
-          </div>
+          <Button variant="outline" onClick={handleLogout} className="gap-2">
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Status', value: contractor?.status || 'Active', icon: '✓' },
-            { label: 'Phone', value: contractor?.phone || '—', icon: '📞' },
-            { label: 'Email', value: contractor?.email || '—', icon: '✉️' },
-            { label: 'Member Since', value: contractor?.created_date ? new Date(contractor.created_date).getFullYear() : '—', icon: '📅' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-card border rounded-xl p-4">
-              <div className="text-2xl mb-1">{stat.icon}</div>
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
-              <p className="font-semibold text-sm mt-1 truncate">{stat.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            <CertificationManager contactId={contractorId} />
-            <AssignedJobsList contactId={contractorId} />
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-6">
-            <InvoiceSubmissionForm
-              contactId={contractorId}
-              contactName={contractor?.full_name || contractor?.company_name}
-            />
-
-            {/* Help Card */}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Task List - Left Column */}
+          <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">How This Works</CardTitle>
+                <CardTitle>Your Assigned Tasks</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <div>
-                  <p className="font-medium text-foreground mb-1">📋 Certifications</p>
-                  <p>Upload and maintain your professional certifications. Keep them current to stay eligible for work.</p>
-                </div>
-                <div>
-                  <p className="font-medium text-foreground mb-1">🔧 Assigned Jobs</p>
-                  <p>View jobs assigned to you, check deadlines, and update status as you progress through work.</p>
-                </div>
-                <div>
-                  <p className="font-medium text-foreground mb-1">💷 Invoices</p>
-                  <p>Submit invoices linked to completed jobs. Your invoices are reviewed before payment processing.</p>
-                </div>
+              <CardContent>
+                <ContractorTaskList
+                  contractorId={contractor.id}
+                  onTaskSelect={setSelectedTask}
+                />
               </CardContent>
             </Card>
+          </div>
+
+          {/* Right Column - Task Details */}
+          <div className="space-y-6">
+            {selectedTask ? (
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Task Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Title</p>
+                      <p className="font-semibold">{selectedTask.title || selectedTask.issue_type}</p>
+                    </div>
+                    {selectedTask.description && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Description</p>
+                        <p className="text-sm">{selectedTask.description}</p>
+                      </div>
+                    )}
+                    {selectedTask.scheduled_date && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Scheduled Date</p>
+                        <p className="text-sm font-medium">{new Date(selectedTask.scheduled_date).toLocaleDateString('en-GB')}</p>
+                      </div>
+                    )}
+                    {selectedTask.estimated_cost && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Budget</p>
+                        <p className="text-sm font-medium">£{(selectedTask.estimated_cost / 100).toFixed(2)}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <TaskStatusUpdater
+                  task={selectedTask}
+                  onStatusChange={() => setRefreshTrigger(prev => prev + 1)}
+                />
+
+                <InvoiceUploadForm
+                  taskId={selectedTask.id}
+                  onSuccess={() => setRefreshTrigger(prev => prev + 1)}
+                />
+              </>
+            ) : (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <p className="text-muted-foreground">Select a task to view details and upload invoices</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

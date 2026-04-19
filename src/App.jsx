@@ -349,8 +349,8 @@ const AuthenticatedApp = () => {
       </Route>
 
       {/* ── Standalone portals — no sidebar ─────────────────────────────── */}
-      {/* /contractor — dedicated contractor dashboard (token-auth'd) */}
-      <Route path="/contractor" element={<ContractorDashboard />} />
+      {/* /contractor — dedicated contractor portal with task management */}
+      <Route path="/contractor" element={<ContractorPortal />} />
       {/* /contractor-view — mobile portal for contractors */}
       <Route path="/contractor-view" element={<ContractorPortal />} />
       {/* /contractor-mobile — mobile-optimized contractor portal */}
