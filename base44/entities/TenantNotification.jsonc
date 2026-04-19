@@ -3,46 +3,74 @@
   "type": "object",
   "properties": {
     "tenant_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Reference to Tenant entity"
     },
-    "notification_type": {
+    "type": {
       "type": "string",
       "enum": [
-        "rent_due",
-        "maintenance_update",
-        "document",
-        "notice",
-        "general"
-      ]
+        "rent_payment_due",
+        "rent_payment_overdue",
+        "inspection_scheduled",
+        "document_expiring",
+        "tenancy_renewal"
+      ],
+      "description": "Type of notification"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "description": "Notification title"
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Notification message body"
     },
-    "is_read": {
+    "related_entity_id": {
+      "type": "string",
+      "description": "ID of related entity (inspection, document, etc.)"
+    },
+    "related_entity_type": {
+      "type": "string",
+      "description": "Type of related entity"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the action is due"
+    },
+    "read": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Whether tenant has read notification"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When tenant marked as read"
+    },
+    "email_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether email notification was sent"
+    },
+    "email_sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When email was sent"
     },
     "action_url": {
-      "type": "string"
-    },
-    "sent_date": {
       "type": "string",
-      "format": "date"
+      "description": "URL to take action (e.g., pay rent, view inspection)"
     },
-    "read_date": {
+    "created_at": {
       "type": "string",
-      "format": "date"
-    },
-    "notes": {
-      "type": "string"
+      "format": "date-time",
+      "description": "When notification was created"
     }
   },
   "required": [
     "tenant_id",
-    "notification_type",
+    "type",
     "title",
     "message"
   ]
