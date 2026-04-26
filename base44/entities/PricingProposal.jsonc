@@ -1,0 +1,158 @@
+{
+  "name": "PricingProposal",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Proposal title (e.g., 'Q2 2026 Unified Pricing')"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "discussion",
+        "voting",
+        "approved",
+        "rejected",
+        "implemented"
+      ],
+      "default": "draft"
+    },
+    "proposed_by": {
+      "type": "string",
+      "description": "Email of proposer"
+    },
+    "description": {
+      "type": "string",
+      "description": "Proposal rationale and strategy notes"
+    },
+    "pricing_structure": {
+      "type": "object",
+      "description": "Core pricing tiers",
+      "properties": {
+        "starter": {
+          "type": "object",
+          "properties": {
+            "monthly_price": {
+              "type": "number"
+            },
+            "annual_price": {
+              "type": "number"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "professional": {
+          "type": "object",
+          "properties": {
+            "monthly_price": {
+              "type": "number"
+            },
+            "annual_price": {
+              "type": "number"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "enterprise": {
+          "type": "object",
+          "properties": {
+            "monthly_price": {
+              "type": "number"
+            },
+            "annual_price": {
+              "type": "number"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "addon_pricing": {
+      "type": "object",
+      "description": "Add-on services (out-of-hours, etc)",
+      "properties": {
+        "out_of_hours_monthly": {
+          "type": "number"
+        },
+        "out_of_hours_setup": {
+          "type": "number"
+        }
+      }
+    },
+    "votes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "voter_email": {
+            "type": "string"
+          },
+          "vote": {
+            "type": "string",
+            "enum": [
+              "for",
+              "against",
+              "abstain"
+            ]
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "voted_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "vote_result": {
+      "type": "object",
+      "properties": {
+        "for": {
+          "type": "number"
+        },
+        "against": {
+          "type": "number"
+        },
+        "abstain": {
+          "type": "number"
+        },
+        "total_eligible": {
+          "type": "number"
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "implemented_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "proposed_by",
+    "pricing_structure",
+    "addon_pricing"
+  ]
+}

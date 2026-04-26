@@ -9,6 +9,8 @@ import { Building2, Users, CheckCircle2, Clock, AlertCircle } from 'lucide-react
 import { format } from 'date-fns';
 import StatusBadge from '@/components/shared/StatusBadge';
 import ScheduleMeetingDialog from '@/components/boardroom/ScheduleMeetingDialog';
+import PricingVotingPanel from '@/components/boardroom/PricingVotingPanel';
+import { DollarSign } from 'lucide-react';
 
 export default function Boardroom() {
   const [selectedMeeting, setSelectedMeeting] = useState(null);
@@ -21,7 +23,15 @@ export default function Boardroom() {
     staleTime: 2 * 60 * 1000
   });
 
+  // Fetch pricing proposals
+  const proposalsQuery = useQuery({
+    queryKey: ['pricing-proposals'],
+    queryFn: () => base44.entities.PricingProposal.list('-created_date', 20),
+    staleTime: 2 * 60 * 1000
+  });
+
   const { data: meetings = [], isLoading } = meetingsQuery;
+  const { data: proposals = [] } = proposalsQuery;
 
   // Get selected meeting details
   const currentMeeting = selectedMeeting || meetings[0];
@@ -150,9 +160,9 @@ export default function Boardroom() {
               </CardContent>
             </Card>
 
-            {/* Tabs: Perspectives & Decisions */}
+            {/* Tabs: Perspectives & Decisions & Pricing */}
             <Tabs defaultValue="perspectives" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="perspectives" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Agent Perspectives
@@ -160,6 +170,10 @@ export default function Boardroom() {
                 <TabsTrigger value="decisions" className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
                   Decisions
+                </TabsTrigger>
+                <TabsTrigger value="pricing" className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  Pricing Votes
                 </TabsTrigger>
               </TabsList>
 
@@ -256,6 +270,27 @@ export default function Boardroom() {
                           )}
                         </CardContent>
                       </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Pricing Proposals */}
+              <TabsContent value="pricing" className="space-y-4 mt-6">
+                {proposals.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center text-muted-foreground">
+                      No pricing proposals yet
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {proposals.map(proposal => (
+                      <PricingVotingPanel 
+                        key={proposal.id} 
+                        proposal={proposal}
+                        onVoted={() => proposalsQuery.refetch()}
+                      />
                     ))}
                   </div>
                 )}
