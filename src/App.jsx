@@ -75,6 +75,7 @@ import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import TenantMaintenancePortal from './pages/TenantMaintenancePortal';
 import VendorManagement from './pages/VendorManagement';
 import VendorSelfService from './pages/VendorSelfService';
+import VendorSimplifiedPortal from './pages/VendorSimplifiedPortal';
 import ContractorUploadPortal from './pages/ContractorUploadPortal';
 import BillingManagement from './pages/BillingManagement';
 import OperationalMetricsDashboard from './pages/OperationalMetricsDashboard';
@@ -378,6 +379,8 @@ const AuthenticatedApp = () => {
       <Route path="/tenant-maintenance" element={<TenantMaintenancePortal />} />
       {/* /vendor-management — vendor/contractor management and payment tracking */}
       <Route path="/vendor-management" element={<VendorManagement />} />
+      {/* /contractor-simplified — simplified contractor job portal */}
+      <Route path="/contractor-simplified" element={<VendorSimplifiedPortal />} />
       {/* /documentation — documentation viewer */}
       <Route path="/documentation" element={<DocumentationViewer />} />
 
