@@ -17,6 +17,9 @@ import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
 import PortfolioKPIs from '@/components/dashboard/PortfolioKPIs';
 import SmartAlerts from '@/components/dashboard/SmartAlerts';
+import SmartAlertsEngine from '@/components/alerts/SmartAlertsEngine';
+import OnboardingCompletionCheck from '@/components/onboarding/OnboardingCompletionCheck';
+import PortfolioAnalyticsDashboard from '@/components/dashboard/PortfolioAnalyticsDashboard';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
@@ -153,6 +156,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <OnboardingCompletionCheck />
       {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
       
       <div className="px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
@@ -208,9 +212,12 @@ export default function Dashboard() {
           <>
             {/* ESTABLISHED SUBSCRIBER - Progressive disclosure */}
             
-            {/* Smart Alerts */}
+            {/* Smart Alerts Engine */}
             <div className="mb-8">
-              <SmartAlerts tenants={tenants} maintenance={maintenance} certificates={certificates} transactions={transactions} />
+              <Card className="p-6 border-slate-200">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Active Alerts</h3>
+                <SmartAlertsEngine />
+              </Card>
             </div>
 
             {/* Setup Progress (if incomplete) */}
@@ -331,10 +338,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Portfolio Analytics */}
+            {/* Portfolio Analytics Dashboard */}
             <div className="mb-8">
               <h2 className="text-xl font-bold text-slate-900 mb-4">Portfolio Analytics</h2>
-              <PortfolioKPIs properties={properties} units={units} tenants={tenants} transactions={transactions} maintenance={maintenance} />
+              <PortfolioAnalyticsDashboard />
             </div>
 
             {/* Market Intelligence */}
