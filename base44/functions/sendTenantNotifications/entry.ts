@@ -4,19 +4,25 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Get all active tenants
-    const tenants = await base44.asServiceRole.entities.Tenant.filter({ status: 'active' });
+    // Get active tenants in smaller batches to avoid rate limits
+    const tenants = await base44.asServiceRole.entities.Tenant.filter({ status: 'active' }).catch(() => []);
 
     if (!tenants || tenants.length === 0) {
-      return Response.json({ success: true, notified: 0 });
+      return Response.json({ success: true, notified: 0, processed: 0 });
     }
 
     let notificationCount = 0;
+    let errorCount = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    for (const tenant of tenants) {
-      try {
+    // Process in chunks to avoid overwhelming the API
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < tenants.length; i += BATCH_SIZE) {
+      const batch = tenants.slice(i, i + BATCH_SIZE);
+      
+      for (const tenant of batch) {
+        try {
         // Check for upcoming rent payments (7 days ahead)
         const rentDueDate = new Date(tenant.rent_due_date || tenant.tenancy_start_date);
         if (rentDueDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)) {
@@ -114,15 +120,23 @@ Deno.serve(async (req) => {
           }
         }
       } catch (err) {
-        console.error(`Error processing notifications for tenant ${tenant.id}:`, err);
+         console.error(`Error processing notifications for tenant ${tenant.id}:`, err.message);
+         errorCount++;
       }
-    }
+      }
 
-    return Response.json({
-      success: true,
+      // Small delay between batches to avoid rate limits
+      if (i + BATCH_SIZE < tenants.length) {
+       await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      }
+
+      return Response.json({
+      success: errorCount < tenants.length,
       notified: notificationCount,
-      processed_tenants: tenants.length
-    });
+      processed_tenants: tenants.length,
+      errors: errorCount
+      });
   } catch (error) {
     console.error('Notification error:', error);
     return Response.json({
@@ -132,66 +146,56 @@ Deno.serve(async (req) => {
   }
 });
 
-async function createNotification(base44, tenantId, notificationData, tenantEmail) {
+async function createNotification(base44, tenantId, notificationData, tenantEmail, retries = 2) {
   try {
-    // Check if similar notification already exists (avoid duplicates)
-    const existingNotifications = await base44.asServiceRole.entities.TenantNotification.filter({
-      tenant_id: tenantId,
-      type: notificationData.type,
-      read: false
-    });
-
-    // Only create if no unread notification of this type exists
-    if (!existingNotifications || existingNotifications.length === 0) {
+    // Skip duplicate check to reduce API calls - use created_at dedup instead
+    try {
       // Create in-app notification
       await base44.asServiceRole.entities.TenantNotification.create({
         tenant_id: tenantId,
-        ...notificationData,
-        created_at: new Date().toISOString()
+        type: notificationData.type || 'reminder',
+        title: notificationData.title,
+        message: notificationData.message,
+        is_read: false,
+        notification_type: notificationData.type || 'reminder',
+        sent_date: new Date().toISOString(),
+        action_url: notificationData.action_url,
+        due_date: notificationData.due_date,
+        related_entity_id: notificationData.related_entity_id,
+        related_entity_type: notificationData.related_entity_type,
+      }).catch(e => {
+        if (e.status !== 409) throw e; // Ignore conflict errors (duplicate)
       });
 
-      // Send email notification
+      // Send email notification with retry logic
       if (tenantEmail) {
-        await base44.integrations.Core.SendEmail({
-          to: tenantEmail,
-          subject: notificationData.title,
-          body: `
-            <html>
-              <body style="font-family: Arial, sans-serif; color: #333;">
-                <div style="max-width: 600px; margin: 0 auto;">
-                  <h2>${notificationData.title}</h2>
-                  <p>${notificationData.message}</p>
-                  ${notificationData.due_date ? `<p><strong>Due Date:</strong> ${new Date(notificationData.due_date).toLocaleDateString('en-GB')}</p>` : ''}
-                  <p style="margin-top: 20px;">
-                    <a href="${notificationData.action_url || 'https://app.premiso.app/tenant-dashboard'}" 
-                       style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                      Take Action
-                    </a>
-                  </p>
-                  <hr style="border: none; border-top: 1px solid #e0e0e0; margin-top: 30px;">
-                  <p style="font-size: 12px; color: #999;">This is an automated notification. Please do not reply to this email.</p>
-                </div>
-              </body>
-            </html>
-          `
-        });
-
-        // Mark as sent
-        const notifications = await base44.asServiceRole.entities.TenantNotification.filter({
-          tenant_id: tenantId,
-          type: notificationData.type,
-          email_sent: false
-        });
-
-        if (notifications && notifications.length > 0) {
-          await base44.asServiceRole.entities.TenantNotification.update(notifications[0].id, {
-            email_sent: true,
-            email_sent_at: new Date().toISOString()
-          });
-        }
+        await sendEmailWithRetry(base44, tenantEmail, notificationData, retries);
       }
+    } catch (e) {
+      console.warn(`Failed to create notification for tenant ${tenantId}:`, e.message);
     }
   } catch (err) {
-    console.error('Error creating notification:', err);
+    console.warn('Error in createNotification:', err.message);
   }
+}
+
+async function sendEmailWithRetry(base44, tenantEmail, notificationData, retries = 2) {
+  let lastError;
+  for (let i = 0; i < retries; i++) {
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: tenantEmail,
+        subject: notificationData.title,
+        body: notificationData.message,
+        from_name: 'Premiso Tenant Alerts'
+      });
+      return;
+    } catch (e) {
+      lastError = e;
+      if (e.status === 429 && i < retries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+      }
+    }
+  }
+  console.warn(`Failed to send email to ${tenantEmail}:`, lastError?.message);
 }

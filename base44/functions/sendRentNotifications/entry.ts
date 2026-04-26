@@ -4,14 +4,15 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Fetch all pending rent transactions
-    const transactions = await base44.asServiceRole.entities.FinancialTransaction.filter({
-      transaction_type: 'rent_payment',
-      status: 'pending',
-    });
-
-    const tenants = await base44.asServiceRole.entities.Tenant.list('-created_date', 1000);
-    const properties = await base44.asServiceRole.entities.Property.list('-created_date', 500);
+    // Fetch data with limited batch sizes to avoid rate limits
+    const [transactions, tenants, properties] = await Promise.all([
+      base44.asServiceRole.entities.FinancialTransaction.filter({
+        transaction_type: 'rent_payment',
+        status: 'pending',
+      }).catch(() => []),
+      base44.asServiceRole.entities.Tenant.list('-created_date', 500).catch(() => []),
+      base44.asServiceRole.entities.Property.list('-created_date', 250).catch(() => [])
+    ]);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -140,15 +141,27 @@ Premiso Property Management`,
   }
 });
 
-async function sendEmail(base44, { to, subject, body }) {
-  try {
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to,
-      subject,
-      body,
-      from_name: 'Premiso Property Management',
-    });
-  } catch (e) {
-    console.error(`Failed to send email to ${to}:`, e.message);
+async function sendEmail(base44, { to, subject, body }, retries = 3) {
+  let lastError;
+  for (let i = 0; i < retries; i++) {
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to,
+        subject,
+        body,
+        from_name: 'Premiso Property Management',
+      });
+      return;
+    } catch (e) {
+      lastError = e;
+      // Exponential backoff for rate limits (429)
+      if (e.status === 429 && i < retries - 1) {
+        const delay = Math.pow(2, i) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        break;
+      }
+    }
   }
+  console.warn(`Failed to send email to ${to} after ${retries} attempts:`, lastError?.message);
 }

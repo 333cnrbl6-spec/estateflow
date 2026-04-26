@@ -18,47 +18,51 @@ Deno.serve(async (req) => {
     const notifications = [];
 
     for (const task of tasks) {
-      // Fetch property and related contacts
-      const property = await base44.entities.Property.filter({ id: task.property_id });
-      if (property.length === 0) continue;
+      try {
+        // Fetch property and related contacts
+        const [property, contacts, contractors] = await Promise.all([
+          base44.entities.Property.filter({ id: task.property_id }).catch(() => []),
+          base44.entities.Contact.filter({
+            related_company_id: task.property_id,
+            contact_type: { $in: ['landlord', 'director'] }
+          }).catch(() => []),
+          base44.entities.Contact.filter({
+            contact_type: 'contractor'
+          }).catch(() => [])
+        ]);
 
-      const prop = property[0];
+        if (property.length === 0) continue;
+        const prop = property[0];
 
-      // Find landlord/owner
-      const company = await base44.entities.Company.filter({ id: prop.owning_company });
-      const contacts = await base44.entities.Contact.filter({
-        related_company_id: prop.owning_company,
-        contact_type: { $in: ['landlord', 'director'] }
-      });
-
-      // Find contractors for this certificate type
-      const contractors = await base44.entities.Contact.filter({
-        contact_type: 'contractor',
-        related_company_id: prop.owning_company
-      });
-
-      // Send notifications based on urgency
-      if (task.priority === 'overdue') {
-        // Send urgent email to landlord and contractors
-        for (const contact of [...contacts, ...contractors]) {
-          if (contact.email) {
-            notifications.push(await sendUrgentNotification(contact, task, prop));
+        // Send notifications based on urgency
+        if (task.priority === 'overdue') {
+          for (const contact of [...contacts, ...contractors].filter(c => c?.email)) {
+            try {
+              await sendUrgentNotification(contact, task, prop);
+              notifications.push({ contact: contact.email, type: 'urgent', status: 'sent' });
+            } catch (e) {
+              console.warn(`Failed to send urgent notification to ${contact.email}:`, e.message);
+            }
+          }
+        } else if (task.priority === 'warning' && task.days_until_expiry <= 14) {
+          for (const contact of contacts.filter(c => c?.email)) {
+            try {
+              await sendReminderEmail(contact, task, prop);
+              notifications.push({ contact: contact.email, type: 'reminder', status: 'sent' });
+            } catch (e) {
+              console.warn(`Failed to send reminder to ${contact.email}:`, e.message);
+            }
           }
         }
-      } else if (task.priority === 'warning' && task.days_until_expiry <= 14) {
-        // Send reminder email
-        for (const contact of contacts) {
-          if (contact.email) {
-            notifications.push(await sendReminderEmail(contact, task, prop));
-          }
-        }
+
+        // Update task status
+        await base44.entities.ComplianceTask.update(task.id, {
+          status: task.priority === 'overdue' ? 'escalated' : 'reminder_sent',
+          last_reminder_sent: new Date().toISOString()
+        }).catch(e => console.warn(`Failed to update task ${task.id}:`, e.message));
+      } catch (taskErr) {
+        console.error(`Error processing task ${task.id}:`, taskErr.message);
       }
-
-      // Update task status
-      await base44.entities.ComplianceTask.update(task.id, {
-        status: task.priority === 'overdue' ? 'escalated' : 'reminder_sent',
-        last_reminder_sent: new Date().toISOString()
-      });
     }
 
     return Response.json({

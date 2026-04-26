@@ -109,30 +109,21 @@ Deno.serve(async (req) => {
 
         // Create maintenance order task if not already exists
         if (!existingTaskKeys.has(dedupKey)) {
-          const renewalYears = CERT_RENEWAL_YEARS[certType];
-          const order = await base44.asServiceRole.entities.MaintenanceOrder.create({
-            title: `${gapType === 'missing' ? 'Obtain' : gapType === 'expired' ? 'Renew (EXPIRED)' : 'Renew'}: ${label}`,
-            description: `${detail}\n\nAction required: ${gapType === 'missing' ? `Arrange inspection and obtain a ${label}.` : `Arrange renewal. Certificate is valid for ${renewalYears} year(s).`}`,
-            property_id: property.id,
-            category: certType === 'gas_safety_cert' ? 'general' : certType === 'eicr' ? 'electrical' : certType === 'fire_safety_cert' ? 'fire_safety' : 'general',
-            priority: gapType === 'expired' ? 'urgent' : CERT_PRIORITY[certType],
-            status: 'reported',
-            notes: `${dedupKey}|auto-generated`,
-          });
-          tasksCreated.push(order);
-
-          // Create notification
-          const emoji = gapType === 'missing' ? '📋' : gapType === 'expired' ? '🚨' : '⚠️';
-          const notifType = (gapType === 'expired' || certType === 'gas_safety_cert') ? 'urgent' : 'reminder';
-          const notif = await base44.asServiceRole.entities.TenantNotification.create({
-            title: `${emoji} ${gapType === 'missing' ? 'Missing' : gapType === 'expired' ? 'EXPIRED' : 'Expiring'}: ${label} — ${property.name}`,
-            message: `${detail} A maintenance task has been automatically created. Please arrange this promptly to remain legally compliant.`,
-            notification_type: notifType,
-            is_read: false,
-            sent_date: new Date().toISOString(),
-            notes: `gap:${dedupKey}`,
-          });
-          notificationsCreated.push(notif);
+          try {
+            const renewalYears = CERT_RENEWAL_YEARS[certType];
+            const order = await base44.asServiceRole.entities.MaintenanceOrder.create({
+              title: `${gapType === 'missing' ? 'Obtain' : gapType === 'expired' ? 'Renew (EXPIRED)' : 'Renew'}: ${label}`,
+              description: `${detail}\n\nAction required: ${gapType === 'missing' ? `Arrange inspection and obtain a ${label}.` : `Arrange renewal. Certificate is valid for ${renewalYears} year(s).`}`,
+              property_id: property.id,
+              category: certType === 'gas_safety_cert' ? 'general' : certType === 'eicr' ? 'electrical' : certType === 'fire_safety_cert' ? 'fire_safety' : 'general',
+              priority: gapType === 'expired' ? 'urgent' : CERT_PRIORITY[certType],
+              status: 'reported',
+              notes: `${dedupKey}|auto-generated`,
+            });
+            tasksCreated.push(order);
+          } catch (taskErr) {
+            console.error(`Failed to create maintenance order for ${property.id}/${certType}:`, taskErr.message);
+          }
         }
       }
     }
