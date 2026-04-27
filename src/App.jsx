@@ -174,6 +174,7 @@ import ComplianceDashboard from './pages/ComplianceDashboard';
 import InvestmentOpportunityScoring from './pages/InvestmentOpportunityScoring';
 import PortfolioRiskAnalyzer from './pages/PortfolioRiskAnalyzer';
 import PremisoCoreHub from './pages/PremisoCoreHub';
+import MarketingAssets from './pages/MarketingAssets';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -356,6 +357,7 @@ const AuthenticatedApp = () => {
         <Route path="/tour" element={<PlatformTour />} />
         <Route path="/comparison" element={<ProductComparison />} />
         <Route path="/marketing" element={<MarketingCollateral />} />
+        <Route path="/marketing-assets" element={<MarketingAssets />} />
         <Route path="/developer-marketing" element={<DeveloperMarketing />} />
         <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
         <Route path="/hmo-dashboard" element={<HMODashboard />} />
