@@ -87,6 +87,7 @@ export const navigationZones = [
     description: 'Certificates, risk analytics, fire safety, legal framework',
     routes: [
       { path: '/compliance-hub', label: 'Compliance Hub', icon: '🛡️' },
+      { path: '/compliance-dashboard', label: '⚡ Compliance Dashboard', icon: '🚨' },
       { path: '/compliance', label: 'Compliance', icon: '📋' },
       { path: '/certificates', label: 'Certificates', icon: '📜' },
       { path: '/certificate-management', label: 'Certificate Management', icon: '✓' },

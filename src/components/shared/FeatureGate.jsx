@@ -1,44 +1,39 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { useStripeTier } from '@/hooks/useStripeTier';
+import UpgradeModal from '@/components/billing/UpgradeModal';
+
+const FEATURE_CONFIG = {
+  ai_draft: { requiredTier: 'professional', label: 'AI Document Drafting', roi: 'One AI-drafted tenancy agreement saves 2 hours of solicitor time' },
+  pdf_export: { requiredTier: 'professional', label: 'PDF Export', roi: 'Professional PDF reports with your branding' },
+  advanced_analytics: { requiredTier: 'professional', label: 'Advanced Analytics', roi: 'Portfolio-level insights to maximise returns' },
+  unlimited_properties: { requiredTier: 'professional', label: 'Unlimited Properties', roi: 'Scale your portfolio without limits' },
+  api_access: { requiredTier: 'enterprise', label: 'API Access', roi: 'Integrate Premiso data with your own systems' },
+  white_label: { requiredTier: 'enterprise', label: 'White-Label Reports', roi: 'Deliver branded reports to your clients' },
+};
 
 export default function FeatureGate({ feature, children }) {
   const { tier } = useStripeTier();
-  
-  // Feature requirements
-  const requirements = {
-    ai_draft: ['professional', 'enterprise'],
-    pdf_export: ['professional', 'enterprise'],
-    advanced_analytics: ['professional', 'enterprise'],
-  };
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
-  const requiredTier = requirements[feature];
-  const hasAccess = requiredTier?.includes(tier);
+  const config = FEATURE_CONFIG[feature] || { requiredTier: 'professional', label: feature, roi: '' };
+  const requiredTiers = config.requiredTier === 'enterprise' ? ['enterprise'] : ['professional', 'enterprise'];
+  const hasAccess = requiredTiers.includes(tier);
 
   if (!hasAccess) {
-    const tierDisplay = tier === 'free' ? 'Starter' : tier.charAt(0).toUpperCase() + tier.slice(1);
-    const upcomingTier = feature === 'ai_draft' || feature === 'pdf_export' ? 'Professional' : 'Enterprise';
-
     return (
-      <Card className="border-2 border-dashed border-amber-200 bg-amber-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Lock className="w-5 h-5 text-amber-600" />
-            {feature.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} — {upcomingTier} Feature
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-amber-900">
-            This feature is only available on {upcomingTier} and above plans.
-          </p>
-          <p className="text-xs text-amber-800">
-            Current plan: <strong>{tierDisplay}</strong>
-          </p>
-          <Button className="w-full">Upgrade to {upcomingTier}</Button>
-        </CardContent>
-      </Card>
+      <>
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors" onClick={() => setShowUpgrade(true)}>
+          <Lock className="w-4 h-4 text-amber-600 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-amber-900">{config.label} — {config.requiredTier.charAt(0).toUpperCase() + config.requiredTier.slice(1)} Plan</p>
+            <p className="text-xs text-amber-700">{config.roi}</p>
+          </div>
+          <Button size="sm" className="flex-shrink-0">Upgrade</Button>
+        </div>
+        <UpgradeModal open={showUpgrade} onClose={() => setShowUpgrade(false)} requiredTier={config.requiredTier} featureName={config.label} />
+      </>
     );
   }
 

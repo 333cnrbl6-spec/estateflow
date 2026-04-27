@@ -21,7 +21,7 @@ import SmartAlertsEngine from '@/components/alerts/SmartAlertsEngine';
 import OnboardingCompletionCheck from '@/components/onboarding/OnboardingCompletionCheck';
 import PortfolioAnalyticsDashboard from '@/components/dashboard/PortfolioAnalyticsDashboard';
 import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 import { useQueryError } from '@/hooks/useQueryError';
 import { Card } from '@/components/ui/card';
@@ -33,6 +33,19 @@ const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(
 export default function Dashboard() {
   const [showTutorial, setShowTutorial] = useState(false);
   const { demoCompanyId, propertyIds, loading: demoLoading } = useDemoFilter();
+  const navigate = useNavigate();
+
+  // Auto-redirect new users to onboarding wizard
+  const { data: currentUser } = useQuery({
+    queryKey: ['current-user-onboarding'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 60 * 1000,
+  });
+  useEffect(() => {
+    if (currentUser && currentUser.onboarding_complete === false) {
+      navigate('/onboarding-wizard');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     // Show tutorial if this is first login and tutorial hasn't been completed

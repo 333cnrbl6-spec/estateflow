@@ -5,6 +5,7 @@ import ZoneBasedSidebar from './ZoneBasedSidebar';
 import HelperBot from '@/components/HelperBot';
 import RBMBrandedHeader from '@/components/RBMBrandedHeader';
 import AudioToggle from '@/components/shared/AudioToggle';
+import TopBar from './TopBar';
 
 /**
  * Light theme layout wrapper applied to all authenticated pages.
@@ -23,9 +24,10 @@ export default function LightThemeLayout() {
       {/* Main content area */}
       <div className="ml-[260px] w-full flex flex-col">
         <RBMBrandedHeader />
+        <TopBar />
         
         {/* Audio toggle */}
-        <div className="fixed top-4 right-6 z-[1000]">
+        <div className="fixed top-4 right-20 z-[1000]">
           <AudioToggle />
         </div>
 

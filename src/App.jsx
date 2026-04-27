@@ -170,6 +170,7 @@ import SettingsBranding from './pages/SettingsBranding';
 import RoleManagement from './pages/RoleManagement';
 import OnboardingWizard from './pages/OnboardingWizard';
 import CommercialMarketAnalysis from './pages/CommercialMarketAnalysis';
+import ComplianceDashboard from './pages/ComplianceDashboard';
 import InvestmentOpportunityScoring from './pages/InvestmentOpportunityScoring';
 import PortfolioRiskAnalyzer from './pages/PortfolioRiskAnalyzer';
 import PremisoCoreHub from './pages/PremisoCoreHub';
@@ -324,6 +325,7 @@ const AuthenticatedApp = () => {
         <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
         <Route path="/role-management" element={<RoleManagement />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
+        <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
         <Route path="/investment-opportunity-scoring" element={<InvestmentOpportunityScoring />} />
         <Route path="/portfolio-risk-analyzer" element={<PortfolioRiskAnalyzer />} />

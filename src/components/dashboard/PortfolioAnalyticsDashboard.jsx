@@ -68,7 +68,7 @@ export default function PortfolioAnalyticsDashboard() {
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Portfolio Value</CardTitle>
@@ -109,6 +109,19 @@ export default function PortfolioAnalyticsDashboard() {
               {openMaintenance > 0 && <AlertCircle className="w-5 h-5 text-amber-500" />}
             </div>
             <p className="text-xs text-muted-foreground mt-1">Maintenance requests</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Expiring (90d)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold flex items-center gap-2">
+              {expiringTenancies}
+              {expiringTenancies > 0 && <AlertCircle className="w-5 h-5 text-amber-500" />}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Tenancies expiring</p>
           </CardContent>
         </Card>
       </div>

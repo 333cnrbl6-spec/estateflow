@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Clock, Home, FileText, AlertTriangle } from 'lucide-react';
+import { AlertCircle, Clock, Home, FileText, AlertTriangle, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export default function SmartAlertsEngine() {
   const [alerts, setAlerts] = useState([]);
+  const [dismissed, setDismissed] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('premiso_engine_dismissed') || '[]'); } catch { return []; }
+  });
+
+  const handleDismiss = (id) => {
+    const next = [...dismissed, id];
+    setDismissed(next);
+    localStorage.setItem('premiso_engine_dismissed', JSON.stringify(next));
+  };
 
   const { data: tenants = [] } = useQuery({
     queryKey: ['tenants-alerts'],
@@ -99,12 +109,14 @@ export default function SmartAlertsEngine() {
     setAlerts(newAlerts);
   }, [tenants, certificates, maintenance, transactions]);
 
+  const visible = alerts.filter(a => !dismissed.includes(a.id));
+
   return (
     <div className="space-y-2">
-      {alerts.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">No active alerts</p>
+      {visible.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-4">✓ No active alerts</p>
       ) : (
-        alerts.map(alert => {
+        visible.map(alert => {
           const Icon = alert.icon;
           const bgColor = alert.severity === 'critical' ? 'bg-red-50' : alert.severity === 'warning' ? 'bg-amber-50' : 'bg-blue-50';
           const borderColor = alert.severity === 'critical' ? 'border-red-200' : alert.severity === 'warning' ? 'border-amber-200' : 'border-blue-200';
@@ -116,6 +128,14 @@ export default function SmartAlertsEngine() {
               <div className="flex-1">
                 <p className={`text-sm font-semibold ${textColor}`}>{alert.title}</p>
                 <p className={`text-xs ${textColor} opacity-75`}>{alert.description}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button asChild size="sm" variant="ghost" className="h-7 text-xs">
+                  <Link to="/compliance-dashboard">Action</Link>
+                </Button>
+                <button onClick={() => handleDismiss(alert.id)} className="text-slate-400 hover:text-slate-600">
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
           );
