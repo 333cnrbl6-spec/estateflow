@@ -11,7 +11,8 @@ import CompaniesHouseAlertWidget from '@/components/compliance/CompaniesHouseAle
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
-import DashboardTutorial from '@/components/onboarding/DashboardTutorial';
+import { useFounderTour } from '@/components/onboarding/useFounderTour';
+import '@/components/onboarding/FounderTourStyles.css';
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
@@ -31,8 +32,8 @@ import { Badge } from '@/components/ui/badge';
 const COLORS = ['hsl(222,47%,15%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 export default function Dashboard() {
-  const [showTutorial, setShowTutorial] = useState(false);
   const { demoCompanyId, propertyIds, loading: demoLoading } = useDemoFilter();
+  useFounderTour({ enabled: true });
   const navigate = useNavigate();
 
   // Auto-redirect new users to onboarding wizard
@@ -46,16 +47,6 @@ export default function Dashboard() {
       navigate('/onboarding-wizard');
     }
   }, [currentUser, navigate]);
-
-  useEffect(() => {
-    // Show tutorial if this is first login and tutorial hasn't been completed
-    const isFirstLogin = localStorage.getItem('premiso_first_login') === 'true';
-    const tutorialCompleted = localStorage.getItem('premiso_tutorial_completed') === 'true';
-    if (isFirstLogin && !tutorialCompleted) {
-      setShowTutorial(true);
-      localStorage.removeItem('premiso_first_login');
-    }
-  }, []);
 
   const companiesQuery = useQuery({
     queryKey: ['companies', demoCompanyId],
@@ -170,7 +161,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <OnboardingCompletionCheck />
-      {showTutorial && <DashboardTutorial onComplete={() => setShowTutorial(false)} />}
       
       <div className="px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
         

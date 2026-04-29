@@ -1,7 +1,9 @@
 import React from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import AlertsBell from '@/components/alerts/AlertsBell';
-import { Building2 } from 'lucide-react';
+import { Building2, MapPin } from 'lucide-react';
+import { clearTourHistory } from '@/components/onboarding/useFounderTour';
+import '@/components/onboarding/FounderTourStyles.css';
 
 export default function TopBar() {
   const { user } = useAuth();
@@ -14,6 +16,17 @@ export default function TopBar() {
       </div>
       <div className="flex items-center gap-3">
         {user && <span className="text-xs text-slate-500 hidden md:block">{user.email}</span>}
+        <button
+          onClick={() => {
+            clearTourHistory();
+            window.location.href = '/dashboard';
+          }}
+          title="Take the platform tour"
+          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-primary border border-slate-200 hover:border-primary/40 rounded-md px-2.5 py-1 transition-colors"
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          <span className="hidden md:inline">Take the tour</span>
+        </button>
         <div className="text-slate-600">
           <AlertsBell />
         </div>
