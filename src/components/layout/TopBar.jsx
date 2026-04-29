@@ -3,7 +3,7 @@ import { useAuth } from '@/lib/AuthContext';
 import AlertsBell from '@/components/alerts/AlertsBell';
 import { Building2, MapPin } from 'lucide-react';
 import { clearTourHistory } from '@/components/onboarding/useFounderTour';
-import '@/components/onboarding/FounderTourStyles.css';
+
 
 export default function TopBar() {
   const { user } = useAuth();

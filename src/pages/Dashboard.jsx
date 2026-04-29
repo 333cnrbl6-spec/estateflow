@@ -12,7 +12,7 @@ import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import { useFounderTour } from '@/components/onboarding/useFounderTour';
-import '@/components/onboarding/FounderTourStyles.css';
+
 import DataQualityWidget from '@/components/dashboard/DataQualityWidget';
 import PropertyMapView from '@/components/dashboard/PropertyMapView';
 import ComplianceReportGenerator from '@/components/reporting/ComplianceReportGenerator';
