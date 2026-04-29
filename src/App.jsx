@@ -175,6 +175,7 @@ import InvestmentOpportunityScoring from './pages/InvestmentOpportunityScoring';
 import PortfolioRiskAnalyzer from './pages/PortfolioRiskAnalyzer';
 import PremisoCoreHub from './pages/PremisoCoreHub';
 import MarketingAssets from './pages/MarketingAssets';
+import TenancyDocuments from './pages/TenancyDocuments';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -358,6 +359,7 @@ const AuthenticatedApp = () => {
         <Route path="/comparison" element={<ProductComparison />} />
         <Route path="/marketing" element={<MarketingCollateral />} />
         <Route path="/marketing-assets" element={<MarketingAssets />} />
+        <Route path="/tenancy-documents" element={<TenancyDocuments />} />
         <Route path="/developer-marketing" element={<DeveloperMarketing />} />
         <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
         <Route path="/hmo-dashboard" element={<HMODashboard />} />

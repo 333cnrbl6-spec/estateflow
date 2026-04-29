@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Check, Home, Building2, Users } from 'lucide-react';
 import PageHeader from '@/components/shared/PageHeader';
 import { PRICING_TIERS, getAllTiers } from '@/lib/pricingTiersConfig';
+import StripeConnectPanel from '@/components/settings/StripeConnectPanel';
 
 const ICON_MAP = {
   Home: <Home className="w-6 h-6" />,
@@ -27,10 +28,11 @@ export default function Settings() {
         />
 
         <Tabs defaultValue="pricing" className="mt-8">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pricing">Service Tiers</TabsTrigger>
             <TabsTrigger value="comparison">Comparison</TabsTrigger>
-            <TabsTrigger value="general">General Settings</TabsTrigger>
+            <TabsTrigger value="payments">Payments</TabsTrigger>
+            <TabsTrigger value="general">General</TabsTrigger>
           </TabsList>
 
           {/* Service Tiers Tab */}
@@ -164,6 +166,11 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Payments Tab */}
+          <TabsContent value="payments" className="mt-6">
+            <StripeConnectPanel />
           </TabsContent>
 
           {/* General Settings Tab */}
