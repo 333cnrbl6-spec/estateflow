@@ -172,97 +172,113 @@ export default function DeveloperDocuments() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
-          <BookOpen className="w-8 h-8 text-primary" />
-          Developer & Investor Documents
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Comprehensive guides, product documentation, audit reports, and investor materials.
-        </p>
-      </div>
+    <>
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          .print-content { display: block !important; }
+          body { font-size: 11pt; }
+          h1 { font-size: 18pt; }
+          h2 { font-size: 14pt; }
+          h3 { font-size: 12pt; }
+        }
+      `}</style>
 
-      {/* Quick Links */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardContent className="pt-6">
-            <h3 className="font-bold text-purple-900 mb-2">🚀 For Investors</h3>
-            <p className="text-sm text-purple-800 mb-4">Start with the Investor Pitch Deck for a complete overview.</p>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => window.open(documents[0].file, '_blank')}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              View & Print Pitch Deck
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardContent className="pt-6">
-            <h3 className="font-bold text-blue-900 mb-2">📚 For Product Teams</h3>
-            <p className="text-sm text-blue-800 mb-4">Read the Product Manual for feature details and use cases.</p>
-            <Button
-              size="sm"
-              onClick={() => downloadAsHTML('product-manual')}
-              disabled={!loadedDocs['product-manual']}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {loadedDocs['product-manual'] ? 'Download Manual' : 'Loading...'}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* PDF Export Tips */}
-      <Card className="bg-slate-50 border-slate-200">
-        <CardHeader>
-          <CardTitle className="text-base">💡 Downloading & Printing</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-slate-700">
-          <p>
-            <strong>Product Manual:</strong> Click "Download Manual" → Saves as HTML → Open in browser → Cmd+P / Ctrl+P → Save as PDF
+      <div className="space-y-6">
+        <div className="no-print">
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
+            <BookOpen className="w-8 h-8 text-primary" />
+            Developer & Investor Documents
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Comprehensive guides, product documentation, audit reports, and investor materials.
           </p>
-          <p>
-            <strong>Investor Pitch:</strong> Click "View & Print" → Browser print dialog → Save as PDF
-          </p>
-          <p>
-            <strong>Note:</strong> Product Manual auto-loads on page load and includes all expanded content ready to print.
-          </p>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Expanded Document Sections */}
-      {Object.entries(loadedDocs).map(([docId, content]) => {
-        const doc = documents.find(d => d.id === docId);
-        return (
-          <Card key={docId} className="print:page-break-before">
-            <CardHeader className="flex items-center justify-between flex-row">
-              <div>
-                <CardTitle>{doc.title} - Full Content</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">All sections loaded and ready to download</p>
-              </div>
+        {/* Quick Links */}
+        <div className="grid md:grid-cols-2 gap-4 no-print">
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <CardContent className="pt-6">
+              <h3 className="font-bold text-purple-900 mb-2">🚀 For Investors</h3>
+              <p className="text-sm text-purple-800 mb-4">Start with the Investor Pitch Deck for a complete overview.</p>
               <Button
                 size="sm"
-                onClick={() => downloadAsHTML(docId)}
+                variant="outline"
+                onClick={() => window.open(documents[0].file, '_blank')}
                 className="gap-2"
               >
                 <Download className="w-4 h-4" />
-                Download PDF
+                View & Print Pitch Deck
               </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none dark:prose-invert">
-                <ReactMarkdown>{content}</ReactMarkdown>
-              </div>
             </CardContent>
           </Card>
-        );
-      })}
+
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <CardContent className="pt-6">
+              <h3 className="font-bold text-blue-900 mb-2">📚 For Product Teams</h3>
+              <p className="text-sm text-blue-800 mb-4">Read the Product Manual for feature details and use cases.</p>
+              <Button
+                size="sm"
+                onClick={() => downloadAsHTML('product-manual')}
+                disabled={!loadedDocs['product-manual']}
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                {loadedDocs['product-manual'] ? 'Download Manual' : 'Loading...'}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* PDF Export Tips */}
+        <Card className="bg-slate-50 border-slate-200 no-print">
+          <CardHeader>
+            <CardTitle className="text-base">💡 Downloading & Printing</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-slate-700">
+            <p>
+              <strong>Tip:</strong> Use Ctrl+P / Cmd+P to print this page — all document content below is fully expanded and print-ready.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Expanded Document Sections — always visible, fully static for print */}
+        {documents.filter(d => d.autoLoad).map((doc) => {
+          const content = loadedDocs[doc.id];
+          return (
+            <div key={doc.id} style={{ pageBreakBefore: 'always' }}>
+              <Card>
+                <CardHeader className="flex items-center justify-between flex-row">
+                  <div>
+                    <CardTitle>{doc.title} - Full Content</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {content ? 'All sections loaded and ready to download' : 'Loading...'}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => downloadAsHTML(doc.id)}
+                    disabled={!content}
+                    className="gap-2 no-print"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download PDF
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {content ? (
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown>{content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">Loading document content...</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })}
       </div>
-      );
-      }
+    </>
+  );
+}
