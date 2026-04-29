@@ -37,34 +37,58 @@ function CopyBlock({ title, text }) {
   );
 }
 
-const PITCH_EMAIL = `Subject: A personal invitation — be part of something we're building for agents like you
+const PITCH_EMAIL = `Subject: A platform built for how RBM and Regency Estates actually works
 
 Hi [Name],
 
-I wanted to reach out to you directly because we think RBM Block Management / Regency Estates is exactly the kind of agency we've built Premiso for.
+I'll be straight with you — most property management platforms were built for one type of agency. Goodlord is for lettings. Qube is for block management. Reapit is for sales. None of them were built for an agency that does all three, the way RBM Block Management and Regency Estates does.
 
-Premiso is a property management platform I've been building to solve the exact problems I know agencies like yours deal with every day — compliance tracking, block management, sales, lettings, maintenance, financials, and contractor coordination — all in one place, without the price tag of the big enterprise systems.
+That's exactly why I'm reaching out.
 
-Right now, we're looking for a small number of founder partner agencies to join us before we go to market. We want real agents, real properties, real workflows. Not test data.
+Premiso is a property management platform I've built from the ground up to handle sales, lettings, and block management under one roof — with compliance, maintenance, financials, and contractor coordination built in, not bolted on.
 
-Here's what that looks like for you:
+Here's what I think that specifically means for you:
 
-✅ Free access — full platform, no subscription fee, for as long as you remain a founder partner
-✅ Sales, lettings, and block management modules — all included
-✅ Your feedback shapes the product — you tell us what's missing, we build it
-✅ Priority support — direct line to our team, not a ticketing queue
-✅ Founder Partner status — recognised on the platform and in our go-to-market
+ONE PLATFORM, THREE BUSINESS LINES
+A property entered once is shared across your sales pipeline, lettings workflow, and block management — no re-keying, no data silos. When a Regency Estates instruction becomes an RBM block, Premiso already knows the property.
 
-What we ask in return is simple:
-→ Use the platform genuinely for day-to-day work (not just a log-in once)
-→ Give us honest feedback each month (15 minutes, no more)
-→ Let us reference you as a founding partner (anonymised if preferred)
+BLOCK MANAGEMENT COMPLIANCE AT DEPTH — not an afterthought
+→ Service charge management with leaseholder portals and automated apportionments
+→ RTM (Right-to-Manage) tracking — almost no competitor touches this
+→ Building Safety Register — post-Grenfell compliance built in
+→ Companies House sync — flags overdue filings, director changes, strike-off notices automatically
+→ Conflict of Interest detection — automatically flags where the same person controls both the freehold and the managing agent. That's a live legal risk for block managers and most platforms don't even know it exists.
 
-This is not a beta test. The platform works. We just want to grow it with people who know the industry inside out — and RBM / Regency Estates fits that perfectly.
+CORPORATE OWNERSHIP INTELLIGENCE
+RBM deals with leaseholders who are often SPVs, nominees, or corporate investors. Premiso maps person → company → property ownership chains and flags beneficial ownership risks, nominee director structures, and offshore freeholders without a UK PSC — before your auditor or a regulator does.
 
-I'd love to have a quick 20-minute call to show you around the platform and answer any questions.
+OUT-OF-HOURS EMERGENCY MANAGEMENT — built in
+Emergency contractor dispatch, call routing, case ticketing, and a full audit trail for insurance claims. No standard platform does this.
 
-Are you free this week or next?
+SEPARATE TENANT AND LEASEHOLDER PORTALS — because they're legally different
+Premiso has a self-service portal for AST tenants (Regency Estates) and a separate leaseholder portal for service charge statements, building documents, and RTM updates (RBM). Most platforms confuse the two.
+
+CONTRACTOR COMPLIANCE END-TO-END
+Insurance expiry tracking, proof of work uploads, invoices tied to maintenance orders, SLA monitoring. One place to manage every contractor across every part of your business.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+I'm looking for a small number of founder partner agencies to work with before we go to market. I want real agencies, real properties, real workflows — not test data.
+
+Here's what that means for you:
+✅ Full platform access — completely free, for as long as you remain a partner
+✅ All modules included — sales, lettings, block management, compliance, maintenance, portals
+✅ Your feedback directly shapes the product — you tell us what's missing, we build it
+✅ Direct support line — same-day response, no ticketing queue
+
+What I ask in return:
+→ Use it genuinely for day-to-day work (even just a portion of your portfolio to start)
+→ 15 minutes of honest feedback per month
+→ Permission to reference RBM / Regency Estates as a founding partner (anonymised if preferred)
+
+This is not a beta test. The platform works. I just want to build it with people who know the industry inside out — and you're exactly that.
+
+Can I come in for 30 minutes and show you around? No commitment — just take a look and tell me if it makes sense for how you work.
 
 Best,
 [Your name]
@@ -74,19 +98,22 @@ Premiso
 const VERBAL_PITCH = `------- FOR IN-PERSON / PHONE USE -------
 
 Opening:
-"We're building a property management platform specifically for UK agents — sales, lettings, block management, compliance — everything in one place. We're looking for a handful of agencies to use it for free in exchange for feedback. I thought of you because you tick every box."
+"Most property platforms are built for one type of agency — lettings only, or block only, or sales only. You run all three. That's exactly why I thought of you. Premiso is the only platform I know of that handles all three properly, in one place."
 
-The hook:
-"Right now, you probably use separate tools for block management, compliance, maintenance, financials — maybe a spreadsheet or two. Premiso pulls all of that into one dashboard. Gas certs, EICRs, service charges, contractor management, rent collection — it's all there."
+The hook (RBM-specific):
+"For your block management side — you've got service charges, leaseholder portals, RTM tracking, building safety compliance, Companies House monitoring. For Regency Estates — sales pipeline, viewings, offers, lettings, tenant portals, rent collection. All of it in one dashboard. A property entered once flows through every part of your business."
+
+The differentiator:
+"The thing that's genuinely different is the compliance depth on the block side. Premiso automatically detects when the same person controls both a freehold and a managing agent — that's a conflict of interest that most block managers carry as a live legal risk and don't even have a system to catch. We flag it automatically."
 
 The offer:
-"We're not charging you anything. Full platform access, free. We just need you to actually use it and tell us what's working and what isn't. That's it."
+"We're not charging anything. Full platform, free access, for as long as you remain a partner. We just need you to use it for real and give us 15 minutes of honest feedback once a month. That's the whole deal."
 
 Handling hesitation:
-"I know agents are busy. This isn't about adding work — it's about removing it. We'll onboard you, set everything up with you, and be on hand if anything's not working. Think of us as part of your team."
+"I know you're not looking to add more tools. This is about replacing the ones you already have — the spreadsheets, the separate systems for block and lettings and sales that don't talk to each other. We'll onboard you, set everything up together, and be on hand same day if anything needs fixing."
 
 Close:
-"Can I come in for 30 minutes and show you around the platform? You don't need to commit to anything — just take a look and tell me if it makes sense for how you work."`;
+"Let me come in for 30 minutes and walk you through it. You don't commit to anything — just see whether it makes sense for how RBM and Regency Estates actually works."`;
 
 const OFFER_EXPLANATION = `PREMISO FOUNDER PARTNER PROGRAMME
 What We're Offering & What We're Asking For
