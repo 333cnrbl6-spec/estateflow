@@ -176,6 +176,7 @@ import PortfolioRiskAnalyzer from './pages/PortfolioRiskAnalyzer';
 import PremisoCoreHub from './pages/PremisoCoreHub';
 import MarketingAssets from './pages/MarketingAssets';
 import TenancyDocuments from './pages/TenancyDocuments';
+import FounderPartnerOutreach from './pages/FounderPartnerOutreach';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -360,6 +361,7 @@ const AuthenticatedApp = () => {
         <Route path="/marketing" element={<MarketingCollateral />} />
         <Route path="/marketing-assets" element={<MarketingAssets />} />
         <Route path="/tenancy-documents" element={<TenancyDocuments />} />
+        <Route path="/founder-partner-outreach" element={<FounderPartnerOutreach />} />
         <Route path="/developer-marketing" element={<DeveloperMarketing />} />
         <Route path="/block-management-pitch" element={<BlockManagementPitch />} />
         <Route path="/hmo-dashboard" element={<HMODashboard />} />
