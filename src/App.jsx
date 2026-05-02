@@ -180,6 +180,9 @@ import FounderPartnerOutreach from './pages/FounderPartnerOutreach';
 import BillingPage from './pages/BillingPage';
 import TeamPage from './pages/TeamPage';
 import SecurityPage from './pages/SecurityPage';
+import APIDocumentation from './pages/APIDocumentation';
+import KnowledgeBase from './pages/KnowledgeBase';
+import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -333,6 +336,8 @@ const AuthenticatedApp = () => {
         <Route path="/team" element={<TeamPage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/custom-reports" element={<CustomizableFinancialReports />} />
+        <Route path="/api-docs" element={<APIDocumentation />} />
+        <Route path="/help" element={<KnowledgeBase />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
@@ -435,6 +440,7 @@ function App() {
                   </Router>
                   <Toaster />
                   <ErrorToastContainer />
+                  <AICopilot />
                 </RBMBrandingProvider>
               </RoleProvider>
             </QueryClientProvider>

@@ -1,0 +1,170 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Premiso Property Management API",
+    "version": "1.0.0",
+    "description": "RESTful API for property management, tenant management, financial tracking, and compliance"
+  },
+  "servers": [
+    {
+      "url": "https://api.premiso.io/v1",
+      "description": "Production API"
+    }
+  ],
+  "paths": {
+    "/entities/{entityName}": {
+      "get": {
+        "summary": "List entities",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"},
+            "examples": ["Property", "Tenant", "MaintenanceOrder"]
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {"type": "integer", "default": 50}
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {"type": "integer", "default": 0}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of entities",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array"}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create entity",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {}}
+        },
+        "responses": {
+          "201": {
+            "description": "Entity created"
+          }
+        }
+      }
+    },
+    "/entities/{entityName}/{id}": {
+      "get": {
+        "summary": "Get entity by ID",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {"description": "Entity details"}
+        }
+      },
+      "patch": {
+        "summary": "Update entity",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {}}
+        },
+        "responses": {
+          "200": {"description": "Entity updated"}
+        }
+      },
+      "delete": {
+        "summary": "Delete entity",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Entity deleted"}
+        }
+      }
+    },
+    "/functions/{functionName}": {
+      "post": {
+        "summary": "Invoke backend function",
+        "parameters": [
+          {
+            "name": "functionName",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"},
+            "examples": ["generateCustomReport", "inviteTeamMember", "setup2FA"]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {}}
+        },
+        "responses": {
+          "200": {"description": "Function executed"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
