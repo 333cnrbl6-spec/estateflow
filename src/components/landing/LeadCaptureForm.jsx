@@ -19,18 +19,33 @@ export default function LeadCaptureForm({ demoType, onSubmitted }) {
       setError('Name and email are required');
       return;
     }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
     setSubmitting(true);
     setError(null);
     try {
       await base44.functions.invoke('captureMarketingLead', {
-        name, email, phone, company,
+        name: name.trim(), 
+        email: email.trim(), 
+        phone: phone.trim(), 
+        company: company.trim(),
         portfolio_size: portfolioSize,
         current_software: currentSoftware,
         demo_type: demoType || 'none',
+        consent_given: true,
+        consent_timestamp: new Date().toISOString(),
+        marketing_consent: false,
       });
       onSubmitted?.();
     } catch (err) {
-      setError('Something went wrong. Please try again or email us directly.');
+      console.error('Lead submission error:', err);
+      setError(err?.response?.data?.error || 'Something went wrong. Please try again or email us directly.');
     } finally {
       setSubmitting(false);
     }

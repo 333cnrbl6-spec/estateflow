@@ -24,12 +24,24 @@ export default function SmartAlertsEngine() {
 
   const { data: certificates = [] } = useQuery({
     queryKey: ['certificates-alerts'],
-    queryFn: () => base44.entities.SafetyCertificate?.list?.() || Promise.resolve([]),
+    queryFn: async () => {
+      try {
+        return (await base44.entities.GasSafetyCertificate?.list?.('-updated_date', 50)) || [];
+      } catch {
+        return [];
+      }
+    },
   });
 
   const { data: maintenance = [] } = useQuery({
     queryKey: ['maintenance-alerts'],
-    queryFn: () => base44.entities.MaintenanceRequest?.list?.() || Promise.resolve([]),
+    queryFn: async () => {
+      try {
+        return (await base44.entities.MaintenanceOrder?.list?.('-updated_date', 30)) || [];
+      } catch {
+        return [];
+      }
+    },
   });
 
   const { data: transactions = [] } = useQuery({
@@ -43,18 +55,22 @@ export default function SmartAlertsEngine() {
 
     // Rent Overdue
     transactions
-      .filter(t => t.status === 'pending')
+      .filter(t => t.status === 'pending' && t.due_date)
       .forEach(t => {
-        const daysOverdue = Math.floor((today - new Date(t.due_date)) / (1000 * 60 * 60 * 24));
-        if (daysOverdue > 0) {
-          newAlerts.push({
-            id: `rent-${t.id}`,
-            type: 'rent_overdue',
-            title: 'Rent Overdue',
-            description: `Payment overdue by ${daysOverdue} days`,
-            severity: daysOverdue > 7 ? 'critical' : 'warning',
-            icon: AlertTriangle,
-          });
+        try {
+          const daysOverdue = Math.floor((today - new Date(t.due_date)) / (1000 * 60 * 60 * 24));
+          if (daysOverdue > 0) {
+            newAlerts.push({
+              id: `rent-${t.id}`,
+              type: 'rent_overdue',
+              title: 'Rent Overdue',
+              description: `Payment overdue by ${daysOverdue} days`,
+              severity: daysOverdue > 7 ? 'critical' : 'warning',
+              icon: AlertTriangle,
+            });
+          }
+        } catch (e) {
+          console.warn('Error calculating rent overdue:', e);
         }
       });
 
@@ -62,16 +78,20 @@ export default function SmartAlertsEngine() {
     tenants
       .filter(t => t.tenancy_end_date)
       .forEach(t => {
-        const daysLeft = Math.floor((new Date(t.tenancy_end_date) - today) / (1000 * 60 * 60 * 24));
-        if (daysLeft > 0 && daysLeft <= 90) {
-          newAlerts.push({
-            id: `tenancy-${t.id}`,
-            type: 'tenancy_expiring',
-            title: `Tenancy Expiring: ${t.full_name}`,
-            description: `${daysLeft} days remaining`,
-            severity: daysLeft <= 30 ? 'critical' : 'warning',
-            icon: Clock,
-          });
+        try {
+          const daysLeft = Math.floor((new Date(t.tenancy_end_date) - today) / (1000 * 60 * 60 * 24));
+          if (daysLeft > 0 && daysLeft <= 90) {
+            newAlerts.push({
+              id: `tenancy-${t.id}`,
+              type: 'tenancy_expiring',
+              title: `Tenancy Expiring: ${t.full_name || 'Unknown'}`,
+              description: `${daysLeft} days remaining`,
+              severity: daysLeft <= 30 ? 'critical' : 'warning',
+              icon: Clock,
+            });
+          }
+        } catch (e) {
+          console.warn('Error calculating tenancy expiry:', e);
         }
       });
 
@@ -79,16 +99,20 @@ export default function SmartAlertsEngine() {
     certificates
       .filter(c => c.expiry_date)
       .forEach(c => {
-        const daysLeft = Math.floor((new Date(c.expiry_date) - today) / (1000 * 60 * 60 * 24));
-        if (daysLeft > 0 && daysLeft <= 30) {
-          newAlerts.push({
-            id: `cert-${c.id}`,
-            type: 'cert_expiring',
-            title: `Certificate Expiring: ${c.certificate_type}`,
-            description: `${daysLeft} days remaining`,
-            severity: daysLeft <= 7 ? 'critical' : 'warning',
-            icon: FileText,
-          });
+        try {
+          const daysLeft = Math.floor((new Date(c.expiry_date) - today) / (1000 * 60 * 60 * 24));
+          if (daysLeft > 0 && daysLeft <= 30) {
+            newAlerts.push({
+              id: `cert-${c.id}`,
+              type: 'cert_expiring',
+              title: `Certificate Expiring: ${c.certificate_type || 'Safety Certificate'}`,
+              description: `${daysLeft} days remaining`,
+              severity: daysLeft <= 7 ? 'critical' : 'warning',
+              icon: FileText,
+            });
+          }
+        } catch (e) {
+          console.warn('Error calculating certificate expiry:', e);
         }
       });
 

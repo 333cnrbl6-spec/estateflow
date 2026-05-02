@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -11,18 +11,21 @@ export default function OnboardingCompletionCheck() {
   const [showDialog, setShowDialog] = React.useState(false);
 
   const { data: user } = useQuery({
-    queryKey: ['user'],
+    queryKey: ['current-user-onboarding'],
     queryFn: () => base44.auth.me(),
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-onboarding'],
-    queryFn: () => base44.entities.Property.list(),
+    queryFn: () => base44.entities.Property.list('-updated_date', 1),
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: tenants = [] } = useQuery({
     queryKey: ['tenants-onboarding'],
-    queryFn: () => base44.entities.Tenant.list(),
+    queryFn: () => base44.entities.Tenant.list('-updated_date', 1),
+    staleTime: 5 * 60 * 1000,
   });
 
   const needsOnboarding = !user?.onboarding_complete && properties.length === 0;

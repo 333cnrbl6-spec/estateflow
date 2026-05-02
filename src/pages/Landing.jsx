@@ -57,9 +57,13 @@ export default function Landing() {
         <div className="min-h-screen bg-primary flex items-center justify-center px-6">
           <div className="text-center text-white">
             <div className="text-6xl mb-4">✓</div>
-            <h3 className="text-2xl font-bold mb-2">We'll be in touch!</h3>
-            <p className="text-primary-foreground/80 mb-8">Check your inbox — a confirmation is on its way.</p>
-            <Link to="/dashboard" className="inline-block bg-white text-primary px-6 py-3 rounded-lg font-semibold">Log in to Premiso →</Link>
+            <h3 className="text-2xl font-bold mb-2">Thank you!</h3>
+            <p className="text-primary-foreground/80 mb-3">We've received your details.</p>
+            <p className="text-sm text-primary-foreground/70 mb-8">Check your inbox for confirmation. Our team will be in touch within 1 business day.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button onClick={() => { setLeadSubmitted(false); setShowLeadForm(false); setSlideIndex(0); }} className="bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 transition">Back to home</button>
+              <Link to="/dashboard" className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/40 hover:bg-white/30 transition">Login →</Link>
+            </div>
           </div>
         </div>
       ) : showLeadForm ? (

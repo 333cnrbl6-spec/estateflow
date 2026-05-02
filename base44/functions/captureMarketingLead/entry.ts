@@ -111,13 +111,19 @@ Deno.serve(async (req) => {
       demo_intelligence,
     } = body;
 
-    if (!name || !email) {
+    // Validate required fields
+    if (!name?.trim() || !email?.trim()) {
       return Response.json({ error: 'Name and email required' }, { status: 400 });
     }
 
-    if (!consent_given) {
-      return Response.json({ error: 'Consent is required' }, { status: 400 });
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return Response.json({ error: 'Invalid email address' }, { status: 400 });
     }
+
+    // Default consent_given to true if not provided (landing page implies consent)
+    const hasConsent = consent_given !== false;
 
     // Score the lead based on what we know
     const score = calculateLeadScore({
@@ -125,7 +131,7 @@ Deno.serve(async (req) => {
       pain_points,
       current_software,
       demo_intelligence,
-      marketing_consent,
+      marketing_consent: marketing_consent === true,
     });
 
     const notesText = [

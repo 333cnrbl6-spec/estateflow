@@ -118,42 +118,58 @@ export default function Dashboard() {
     enabled: !demoLoading,
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
-      const [gas, eicr, epc] = await Promise.all([
-        base44.entities.GasSafetyCertificate?.list?.('-updated_date', 30) || Promise.resolve([]),
-        base44.entities.EICRCertificate?.list?.('-updated_date', 30) || Promise.resolve([]),
-        base44.entities.EnergyPerformanceCertificate?.list?.('-updated_date', 30) || Promise.resolve([])
-      ]);
-      return [...(gas || []), ...(eicr || []), ...(epc || [])];
+      try {
+        const [gas, eicr, epc] = await Promise.all([
+          base44.entities.GasSafetyCertificate?.list?.('-updated_date', 30).catch(() => []) || Promise.resolve([]),
+          base44.entities.EICRCertificate?.list?.('-updated_date', 30).catch(() => []) || Promise.resolve([]),
+          base44.entities.EnergyPerformanceCertificate?.list?.('-updated_date', 30).catch(() => []) || Promise.resolve([])
+        ]);
+        return [...(gas || []), ...(eicr || []), ...(epc || [])];
+      } catch (e) {
+        console.warn('Error fetching certificates:', e);
+        return [];
+      }
     }
   });
   useQueryError(certificatesQuery, 'certificates');
   const { data: certificates = [] } = certificatesQuery;
 
-  const totalIncome = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
-  const totalExpenses = transactions.filter(t => t.direction === 'expense' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
-  const overdueCount = transactions.filter(t => t.status === 'overdue').length;
-  const occupiedUnits = units.filter(u => u.status === 'occupied').length;
-  const occupancyRate = units.length > 0 ? Math.round((occupiedUnits / units.length) * 100) : 0;
-  const activeMaintenance = maintenance.filter(m => !['completed', 'cancelled'].includes(m.status)).length;
+  const totalIncome = (transactions || []).filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
+  const totalExpenses = (transactions || []).filter(t => t.direction === 'expense' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
+  const overdueCount = (transactions || []).filter(t => t.status === 'overdue').length;
+  const occupiedUnits = (units || []).filter(u => u.status === 'occupied').length;
+  const occupancyRate = (units?.length || 0) > 0 ? Math.round((occupiedUnits / units.length) * 100) : 0;
+  const activeMaintenance = (maintenance || []).filter(m => !['completed', 'cancelled'].includes(m.status)).length;
 
-  const regionData = useMemo(() => properties.reduce((acc, p) => {
-    const region = p.region || 'other';
+  const regionData = useMemo(() => (properties || []).reduce((acc, p) => {
+    const region = p?.region || 'other';
     const existing = acc.find(r => r.name === region);
     if (existing) existing.value++;
     else acc.push({ name: region, value: 1 });
     return acc;
   }, []), [properties]);
 
-  const companyCategories = useMemo(() => companies.reduce((acc, c) => {
-    const cat = c.category || 'other';
-    const label = cat.replace(/_/g, ' ');
+  const companyCategories = useMemo(() => (companies || []).reduce((acc, c) => {
+    const cat = c?.category || 'other';
+    const label = String(cat).replace(/_/g, ' ');
     const existing = acc.find(r => r.name === label);
     if (existing) existing.count++;
     else acc.push({ name: label, count: 1 });
     return acc;
   }, []), [companies]);
 
-  const recentMaintenance = useMemo(() => [...maintenance].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5), [maintenance]);
+  const recentMaintenance = useMemo(() => {
+    try {
+      return [...(maintenance || [])].sort((a, b) => {
+        const dateA = a?.created_date ? new Date(a.created_date) : new Date(0);
+        const dateB = b?.created_date ? new Date(b.created_date) : new Date(0);
+        return dateB - dateA;
+      }).slice(0, 5);
+    } catch (e) {
+      console.warn('Error sorting maintenance:', e);
+      return [];
+    }
+  }, [maintenance]);
 
   // Determine if new subscriber (0 properties = setup mode)
   const isNewSubscriber = properties.length === 0;
