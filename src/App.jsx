@@ -193,6 +193,7 @@ import MobileAppScaffold from './pages/MobileAppScaffold';
 import LaunchDashboard from './pages/LaunchDashboard';
 import BetaUserManagement from './pages/BetaUserManagement';
 import PreLaunchSecurityChecklist from './pages/PreLaunchSecurityChecklist';
+import PreLaunchValidation from './pages/PreLaunchValidation';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -360,6 +361,7 @@ const AuthenticatedApp = () => {
         <Route path="/launch" element={<LaunchDashboard />} />
         <Route path="/beta-users" element={<BetaUserManagement />} />
         <Route path="/security-checklist" element={<PreLaunchSecurityChecklist />} />
+        <Route path="/pre-launch-validation" element={<PreLaunchValidation />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
