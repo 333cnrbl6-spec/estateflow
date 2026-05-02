@@ -300,29 +300,28 @@ export default function SalesBrochure() {
           <div className="cover-main">
             <div className="cover-eyebrow">Partner Sales Brochure · 2026</div>
             <h1 className="cover-h1">
-              The Complete Platform for<br />
-              <span>Modern Property</span><br />
-              Management
+              The <span>Market-Leading</span> Platform for<br />
+              Property Management
             </h1>
             <p className="cover-desc">
-              Powerful, compliant, and beautifully designed — Premiso unifies the complete spectrum of residential property management: lettings, block management, HMOs, compliance, finance, and a standalone 24/7 out-of-hours call service. One platform. Every workflow.
+              AI-powered compliance intelligence, no-code workflow automation, real-time collaboration, and integration marketplace. Premiso unifies lettings, block management, HMOs, out-of-hours, finance, and sales in one unified platform. Launch, scale, and stay compliant — all in one place.
             </p>
             <div className="cover-stats">
               <div>
-                <div className="cover-stat-num">Lettings + Sales</div>
-                <div className="cover-stat-label">Dual Modules</div>
+                <div className="cover-stat-num">4 Phases</div>
+                <div className="cover-stat-label">Complete Roadmap</div>
               </div>
               <div>
-                <div className="cover-stat-num">Real Listings</div>
-                <div className="cover-stat-label">From Agent Websites</div>
+                <div className="cover-stat-num">AI Compliance</div>
+                <div className="cover-stat-label">Predictive Risk Scoring</div>
               </div>
               <div>
-                <div className="cover-stat-num">24/7</div>
-                <div className="cover-stat-label">Out-of-Hours</div>
+                <div className="cover-stat-num">No-Code</div>
+                <div className="cover-stat-label">Workflow Builder</div>
               </div>
               <div>
-                <div className="cover-stat-num">100%</div>
-                <div className="cover-stat-label">UK Compliant</div>
+                <div className="cover-stat-num">Real-Time</div>
+                <div className="cover-stat-label">Collaboration Suite</div>
               </div>
             </div>
           </div>
@@ -345,10 +344,10 @@ export default function SalesBrochure() {
           </div>
 
           <div className="section-eyebrow">The Market Problem</div>
-          <h2 className="section-h2">Property Management Has Never<br />Been More Complex</h2>
-          <p className="section-desc">
-            Whether you manage ASTs, HMOs, leasehold blocks, or a mixed residential portfolio, 2026 brings unprecedented regulatory pressure. The Renters' Rights Bill, Building Safety Act 2023, Leasehold & Freehold Reform Act 2024, and 24/7 tenant expectations mean the manual, spreadsheet-based approach is no longer an option — for lettings agents or block managers alike.
-          </p>
+           <h2 className="section-h2">Compliance, Automation & Collaboration:<br />The New Standard</h2>
+           <p className="section-desc">
+             2026's regulatory landscape demands more than compliance tracking — it demands <strong>predictive intelligence, automated workflows, and team collaboration at scale</strong>. Properties managed via spreadsheet, separate CRMs, and manual callbacks are losing market share to integrated platforms. Renters' Rights, Building Safety Act 2023, Leasehold Reform Act 2024, and 24/7 tenant expectations mean outdated systems can no longer compete.
+           </p>
 
           <div className="feature-grid avoid-break">
             <div className="feature-card">
@@ -409,10 +408,10 @@ export default function SalesBrochure() {
           </div>
 
           <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #dbeafe)', borderRadius: 12, padding: '28px 32px', marginTop: 8 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 2 }}>The Premiso Solution</div>
-            <p style={{ fontSize: 15, color: '#1e3a5f', lineHeight: 1.8, margin: 0 }}>
-              Premiso replaces the chaos with a single, unified platform covering the full spectrum of residential property management — lettings, HMOs, leasehold blocks, and RTM companies. From automatic certificate expiry alerts and tenancy lifecycle management, to a structured 24/7 out-of-hours call service that can be used standalone or fully integrated with your portfolio.
-            </p>
+           <div style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 2 }}>The Premiso Solution</div>
+           <p style={{ fontSize: 15, color: '#1e3a5f', lineHeight: 1.8, margin: 0 }}>
+             <strong>Phase 1-4 Complete Platform:</strong> Compliance Intelligence (predictive risk scoring), Workflow Automation (no-code builder), Integration Marketplace (Slack, Zapier, Stripe), and Real-Time Collaboration. All connected to one data layer — lettings, block management, HMOs, RTM, sales, finance, and 24/7 out-of-hours. Launch ready. Market-leading.
+           </p>
           </div>
         </div>
 

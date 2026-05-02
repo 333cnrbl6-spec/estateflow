@@ -1,72 +1,203 @@
-/**
- * Email templates for marketing lead capture and sales notifications
- */
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-export function buildSalesTeamEmail(lead, score) {
-  const { name, email, phone, company, company_number, portfolio_size, property_types, pain_points, current_software, demo_intelligence } = lead;
-  
-  const groupSummary = demo_intelligence?.all_companies?.length > 1
-    ? `Group: ${demo_intelligence.all_companies.map(c => c.company_name).join(', ')}`
-    : '';
+// Updated email templates for Phase 1-4 launch positioning
+const templates = {
+  WELCOME_EMAIL: {
+    subject: 'Welcome to Premiso — AI-Powered Property Management Platform',
+    body: `Hello {userName},
 
-  const getTierLabel = (s) => s >= 75 ? 'HOT' : s >= 55 ? 'WARM' : 'COLD';
-  const getTierEmoji = (s) => s >= 75 ? '🔥' : s >= 55 ? '⚡' : '❄';
+Welcome to Premiso — the market-leading platform for modern property management.
 
-  return `
-A new prospect has completed the personalised demo flow on the Premiso landing page.
+You now have access to:
 
-── CONTACT ────────────────────────────────
-Name:          ${name}
-Email:         ${email}
-Phone:         ${phone || 'Not provided'}
-Company:       ${company || 'Not provided'}
-CH Number:     ${company_number || 'Not provided'}
-${groupSummary ? `Group:         ${groupSummary}` : ''}
+✅ **Compliance Intelligence** — Predictive risk scoring & automatic certificate expiry alerts
+✅ **Workflow Automation** — No-code builder to automate your entire operation
+✅ **Integration Marketplace** — Connect Slack, Zapier, Stripe & 100+ third-party services
+✅ **Real-Time Collaboration** — Live teamwork, activity streams & instant communication
 
-── PORTFOLIO ──────────────────────────────
-Portfolio Size:   ${portfolio_size || 'Not provided'}
-Property Types:   ${property_types || 'Not provided'}
-Pain Points:      ${pain_points || 'None selected'}
-Current Software: ${current_software || 'Not specified'}
+**Getting Started:**
+1. Complete your profile: https://premiso.io/onboarding
+2. Watch the dashboard walkthrough (5 min)
+3. Set up your first property (10 min)
+4. Book a personalized onboarding call: https://premiso.io/book-demo
 
-── INTELLIGENCE ───────────────────────────
-Officers/Directors: ${demo_intelligence?.officers?.map(o => `${o.name} (${o.role})`).join(', ') || 'None'}
-Group Companies:    ${demo_intelligence?.all_companies?.length || 0} company/ies
-Associated:         ${demo_intelligence?.associated_companies?.length || 0}
-Files Uploaded:     ${demo_intelligence?.files_uploaded?.length || 0} file(s)
-${demo_intelligence?.files_uploaded?.map(f => `  - ${f.name}: ${f.url}`).join('\n') || ''}
+We've included a full knowledge base, video guides, and AI Copilot to answer questions 24/7.
 
-── CONSENT ────────────────────────────────
-Terms Accepted:   ${lead.consent_given ? 'YES' : 'NO'} at ${lead.consent_timestamp || 'unknown'}
-Marketing Opt-in: ${lead.marketing_consent ? 'YES' : 'NO'}
+Questions? Email support@premiso.io or call +44 1204 695919.
 
-── LEAD SCORE ─────────────────────────────
-Score: ${score}/100  |  Tier: ${getTierEmoji(score)} ${getTierLabel(score)}
+Welcome aboard!
+The Premiso Team`
+  },
 
-Lead ID: ${lead.leadId}
+  COMPLIANCE_ALERT: {
+    subject: '⚠️ Compliance Alert: {property} — {certificate} expiring in {days} days',
+    body: `Hi {userName},
 
-Log in to Premiso CRM to follow up → https://app.premiso.co.uk/crm
-  `.trim();
-}
+Your Compliance Intelligence system has identified an upcoming deadline:
 
-export function buildProspectConfirmationEmail(name, company, marketing_consent) {
-  return `
-Hi ${name},
+📍 Property: {property}
+🔍 Certificate: {certificate}
+📅 Expiry Date: {expiryDate}
+⏰ Days Remaining: {days}
 
-Your personalised Premiso demo environment has been prepared${company ? ` for ${company}` : ''}.
+**Recommended Action:**
+1. Contact your {certificateType} assessor today
+2. Schedule the inspection
+3. Upload the certificate once renewed
 
-You have 48-hour access to explore the platform. A member of our team will be in touch shortly to walk you through the features most relevant to your business.
+**Pro Tip:** Use Workflow Automation to auto-send renewal reminders 60 days before expiry. Set it up in Settings > Automation > Compliance.
 
-Important: This demo is for evaluation purposes only. All content, data and intellectual property within the Premiso platform remains the exclusive property of Premiso Ltd. Unauthorised use or reproduction is prohibited.
+View Property: https://premiso.io/properties/{propertyId}
 
-To convert to a full subscription and retain your data, visit: https://app.premiso.co.uk
+The Premiso Compliance Team`
+  },
 
-Best regards,
-The Premiso Team
+  WORKFLOW_NOTIFICATION: {
+    subject: '🚀 Workflow Triggered: {workflowName}',
+    body: `Hi {userName},
 
-—
-Premiso Ltd | hello@premiso.co.uk
-This email was sent because you requested a demo at premiso.co.uk.
-${marketing_consent ? 'You have opted in to receive product updates and industry news from Premiso.' : 'You have not opted in to marketing emails. Only transactional emails will be sent.'}
-  `.trim();
-}
+Your automated workflow "{workflowName}" has been triggered:
+
+📋 Trigger: {triggerEvent}
+🔗 Linked To: {entityName} ({entityId})
+⏱️ Triggered At: {timestamp}
+✅ Status: {workflowStatus}
+
+**Next Steps:**
+{nextSteps}
+
+View Workflow: https://premiso.io/workflows/{workflowId}
+
+Powered by Premiso Workflow Automation`
+  },
+
+  INTEGRATION_ALERT: {
+    subject: '🔗 Integration Synced: {integrationName}',
+    body: `Hi {userName},
+
+Your {integrationName} integration has successfully synced.
+
+📊 Records Synced: {recordCount}
+⏰ Last Sync: {lastSyncTime}
+✅ Status: Healthy
+
+Connected Integrations:
+• Slack — Receive compliance alerts in your team channel
+• Zapier — Automate 100+ tasks
+• Stripe — Collect rent payments automatically
+• Xero/QuickBooks — Auto-sync financials
+• Google Sheets — Export reports in real-time
+
+Manage Integrations: https://premiso.io/integrations-marketplace
+
+The Premiso Team`
+  },
+
+  COLLABORATION_MENTION: {
+    subject: '@{mentionedBy} mentioned you in {entityName}',
+    body: `Hi {mentionedBy} mentioned you in a discussion about {entityName}.
+
+📌 Location: https://premiso.io/{entityType}/{entityId}
+💬 Message: "{mentionText}"
+👤 Team Member: {mentionedBy}
+
+**Real-Time Collaboration Features:**
+✓ Activity streams with @ mentions
+✓ Live document editing
+✓ Instant team notifications
+✓ Threaded conversations
+
+Reply directly in the platform or via email.
+
+View Conversation: https://premiso.io/{entityType}/{entityId}/activity
+
+The Premiso Team`
+  },
+
+  LAUNCH_ANNOUNCEMENT: {
+    subject: '🚀 Premiso Phase 1-4 Launch: What\'s New',
+    body: `Hi {userName},
+
+We're thrilled to announce the complete Phase 1-4 launch of Premiso — the market-leading property management platform.
+
+**What's New:**
+
+🧠 **Compliance Intelligence**
+— Predictive risk scoring & automatic expiry alerts
+— Building Safety Register & RTM management
+— Audit-ready compliance dashboard
+
+🤖 **Workflow Automation**
+— No-code workflow builder (no coding required!)
+— Auto-trigger actions on schedule or event
+— 50+ pre-built workflow templates
+
+🔗 **Integration Marketplace**
+— Slack, Zapier, Stripe, Xero, QBO & 100+ apps
+— Webhook support for custom integrations
+— Real-time data sync across all systems
+
+👥 **Real-Time Collaboration**
+— Live document editing & activity streams
+— @ mentions & instant notifications
+— Team workspaces & role-based access
+
+**Get Started Today:**
+Book a personalized demo: https://premiso.io/book-demo
+Watch Phase 1-4 overview video: https://premiso.io/video/phase-4-launch
+
+We're here to support your launch. Questions? Email support@premiso.io
+
+The Premiso Team`
+  },
+
+  SALES_DEMO_INVITE: {
+    subject: 'Demo: See Premiso Handle Your Specific Portfolio',
+    body: `Hi {prospectName},
+
+Thank you for your interest in Premiso.
+
+We'd love to show you a personalized demo tailored to your property type — whether you manage ASTs, HMOs, leasehold blocks, or a mixed portfolio.
+
+**What You'll See:**
+✅ Compliance Intelligence in action (your properties, your deadlines)
+✅ Workflow Automation (time-saving automations you can build today)
+✅ Integration Marketplace (Slack, Zapier, financial sync)
+✅ Real-Time Collaboration (your team working together)
+✅ ROI calculation (exactly how much you'll save)
+
+**Book Your Demo:**
+👉 https://premiso.io/book-demo
+
+We'll use your live data (or sample data if you prefer) to show real results.
+
+The Premiso Sales Team
+01204 695919 | sales@rbm-nw.co.uk`
+  }
+};
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const { templateName, data } = await req.json();
+
+    if (!templates[templateName]) {
+      return Response.json({ error: 'Template not found' }, { status: 404 });
+    }
+
+    const template = templates[templateName];
+    let subject = template.subject;
+    let body = template.body;
+
+    // Replace placeholders
+    Object.entries(data || {}).forEach(([key, value]) => {
+      const placeholder = new RegExp(`\\{${key}\\}`, 'g');
+      subject = subject.replace(placeholder, value);
+      body = body.replace(placeholder, value);
+    });
+
+    return Response.json({ subject, body, templateName });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});

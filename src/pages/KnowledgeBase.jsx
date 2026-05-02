@@ -10,48 +10,49 @@ export default function KnowledgeBase() {
   const articles = {
     'Getting Started': [
       { title: 'Create Your First Property', duration: '5 min' },
-      { title: 'Add Tenants', duration: '3 min' },
-      { title: 'Set Up Rent Collection', duration: '8 min' },
-      { title: 'Configure Compliance Tracking', duration: '10 min' }
+      { title: 'Add Tenants & Manage Relationships', duration: '6 min' },
+      { title: 'Set Up Rent Collection & Payments', duration: '8 min' },
+      { title: 'Enable Compliance Intelligence Alerts', duration: '7 min' }
     ],
-    'Property Management': [
-      { title: 'Managing Multiple Properties', duration: '6 min' },
-      { title: 'Unit Management & Allocation', duration: '7 min' },
-      { title: 'Property Maintenance Requests', duration: '5 min' },
-      { title: 'Lease Management & Renewals', duration: '8 min' }
+    'Compliance & Intelligence': [
+      { title: 'Using Predictive Compliance Scoring', duration: '8 min' },
+      { title: 'Certificate Tracking & Auto-Alerts', duration: '6 min' },
+      { title: 'Compliance Risk Assessment Dashboard', duration: '7 min' },
+      { title: 'Building Safety Register Management', duration: '9 min' }
     ],
-    'Tenant Management': [
-      { title: 'Tenant Onboarding Process', duration: '4 min' },
-      { title: 'Rent Collection & Payments', duration: '6 min' },
-      { title: 'Tenant Portal Access', duration: '3 min' },
-      { title: 'Handling Maintenance Requests', duration: '5 min' }
+    'Workflow Automation': [
+      { title: 'Building Your First Workflow', duration: '10 min' },
+      { title: 'Automating Certificate Renewals', duration: '7 min' },
+      { title: 'Setting Up Maintenance Workflows', duration: '8 min' },
+      { title: 'No-Code Workflow Builder Guide', duration: '12 min' }
     ],
-    'Compliance & Legal': [
-      { title: 'Certificate Tracking & Alerts', duration: '7 min' },
-      { title: 'Safety Compliance Checklist', duration: '10 min' },
-      { title: 'GDPR & Data Protection', duration: '8 min' },
-      { title: 'Regulatory Requirements by Region', duration: '12 min' }
+    'Integrations & APIs': [
+      { title: 'Connecting to Slack & Zapier', duration: '5 min' },
+      { title: 'Using the Integration Marketplace', duration: '6 min' },
+      { title: 'Custom API Integration Setup', duration: '9 min' },
+      { title: 'Webhook Configuration', duration: '7 min' }
+    ],
+    'Real-Time Collaboration': [
+      { title: 'Inviting Team Members & Roles', duration: '4 min' },
+      { title: 'Live Document Collaboration', duration: '6 min' },
+      { title: 'Activity Streams & Mentions', duration: '5 min' },
+      { title: 'Tenant Portal & Communication', duration: '7 min' }
     ],
     'Financial & Reporting': [
-      { title: 'Creating Custom Reports', duration: '6 min' },
-      { title: 'Financial Dashboard Overview', duration: '5 min' },
-      { title: 'Exporting Data to Excel/PDF', duration: '3 min' },
-      { title: 'Benchmarking Your Portfolio', duration: '7 min' }
-    ],
-    'Team & Settings': [
-      { title: 'Inviting Team Members', duration: '4 min' },
-      { title: 'Role-Based Access Control', duration: '6 min' },
-      { title: 'Setting Up 2FA', duration: '5 min' },
-      { title: 'Managing API Keys', duration: '4 min' }
+      { title: 'Creating Custom Financial Reports', duration: '7 min' },
+      { title: 'Real-Time Financial Dashboard', duration: '6 min' },
+      { title: 'Exporting to Excel/PDF', duration: '4 min' },
+      { title: 'Multi-Property Benchmarking', duration: '8 min' }
     ]
   };
 
   const videoGuides = [
-    { title: 'Dashboard Overview', duration: '8:32' },
-    { title: 'Property Quick Start', duration: '12:15' },
-    { title: 'Maintenance Workflow', duration: '10:45' },
-    { title: 'Creating Custom Reports', duration: '7:20' },
-    { title: 'Team Collaboration Setup', duration: '9:10' }
+    { title: 'Dashboard Overview & Compliance Intelligence', duration: '10:42' },
+    { title: 'Workflow Automation: Build & Deploy', duration: '15:20' },
+    { title: 'Integration Marketplace: Slack, Zapier & More', duration: '12:15' },
+    { title: 'Real-Time Collaboration Features', duration: '9:50' },
+    { title: 'Custom Reports & Analytics', duration: '8:30' },
+    { title: 'AI Copilot: Automate Your Operations', duration: '11:15' }
   ];
 
   return (
