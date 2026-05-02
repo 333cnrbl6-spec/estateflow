@@ -1,0 +1,53 @@
+{
+  "name": "SecurityAuditLog",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "login",
+        "logout",
+        "login_failed",
+        "2fa_enabled",
+        "2fa_disabled",
+        "password_changed",
+        "ip_whitelist_added",
+        "ip_whitelist_removed",
+        "permission_changed",
+        "data_exported",
+        "unauthorized_access"
+      ],
+      "description": "Type of security event"
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure"
+      ],
+      "default": "success"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional context"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "event_type",
+    "timestamp"
+  ]
+}

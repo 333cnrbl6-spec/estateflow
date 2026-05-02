@@ -1,0 +1,53 @@
+{
+  "name": "GDPRRequest",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User requesting access/deletion"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "access",
+        "deletion",
+        "portability"
+      ],
+      "description": "Type of GDPR request"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "denied"
+      ],
+      "default": "pending"
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "30-day deadline"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_file_url": {
+      "type": "string",
+      "description": "URL to exported data (for access/portability)"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "request_type"
+  ]
+}

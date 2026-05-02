@@ -179,6 +179,7 @@ import TenancyDocuments from './pages/TenancyDocuments';
 import FounderPartnerOutreach from './pages/FounderPartnerOutreach';
 import BillingPage from './pages/BillingPage';
 import TeamPage from './pages/TeamPage';
+import SecurityPage from './pages/SecurityPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -330,6 +331,7 @@ const AuthenticatedApp = () => {
         <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
         <Route path="/role-management" element={<RoleManagement />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/security" element={<SecurityPage />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />

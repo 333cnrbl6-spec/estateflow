@@ -1,0 +1,55 @@
+{
+  "name": "TwoFactorAuth",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User ID"
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "totp",
+        "sms",
+        "email"
+      ],
+      "default": "totp",
+      "description": "2FA method"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "secret": {
+      "type": "string",
+      "description": "Encrypted TOTP secret"
+    },
+    "phone_number": {
+      "type": "string",
+      "description": "For SMS 2FA"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "backup_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "One-time backup codes"
+    },
+    "last_used": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "setup_completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "method"
+  ]
+}

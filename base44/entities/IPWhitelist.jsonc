@@ -1,0 +1,38 @@
+{
+  "name": "IPWhitelist",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User ID"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address to whitelist (e.g., 192.168.1.0/24)"
+    },
+    "description": {
+      "type": "string",
+      "description": "e.g., 'Office network', 'Home broadband'"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active"
+    },
+    "last_used": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "added_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "ip_address"
+  ]
+}
