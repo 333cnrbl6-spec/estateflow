@@ -1,0 +1,100 @@
+{
+  "name": "CustomReport",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Report name"
+    },
+    "description": {
+      "type": "string"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "financial",
+        "maintenance",
+        "occupancy",
+        "compliance",
+        "portfolio"
+      ],
+      "description": "Report category"
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "date_range_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "date_range_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Selected columns for report"
+    },
+    "sort_by": {
+      "type": "string"
+    },
+    "is_scheduled": {
+      "type": "boolean",
+      "default": false
+    },
+    "schedule_frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "description": "Auto-generate frequency"
+    },
+    "recipients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Email recipients for scheduled reports"
+    },
+    "created_by": {
+      "type": "string"
+    },
+    "last_generated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "export_formats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "['excel', 'pdf']"
+    }
+  },
+  "required": [
+    "name",
+    "report_type"
+  ]
+}

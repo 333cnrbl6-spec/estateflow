@@ -332,6 +332,7 @@ const AuthenticatedApp = () => {
         <Route path="/role-management" element={<RoleManagement />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/security" element={<SecurityPage />} />
+        <Route path="/custom-reports" element={<CustomizableFinancialReports />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
