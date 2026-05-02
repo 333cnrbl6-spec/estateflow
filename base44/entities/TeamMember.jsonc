@@ -1,0 +1,80 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "description": "Team member email"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "manager",
+        "viewer",
+        "accountant",
+        "maintenance_coordinator"
+      ],
+      "default": "viewer",
+      "description": "Role-based access control"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "invited",
+        "active",
+        "suspended"
+      ],
+      "default": "invited"
+    },
+    "invited_by": {
+      "type": "string",
+      "description": "Email of user who invited"
+    },
+    "invited_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "accepted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "can_manage_properties": {
+          "type": "boolean"
+        },
+        "can_manage_tenants": {
+          "type": "boolean"
+        },
+        "can_view_financials": {
+          "type": "boolean"
+        },
+        "can_manage_maintenance": {
+          "type": "boolean"
+        },
+        "can_manage_team": {
+          "type": "boolean"
+        },
+        "can_export_reports": {
+          "type": "boolean"
+        }
+      }
+    },
+    "last_login": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "email",
+    "role"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "name": "RolePermission",
+  "type": "object",
+  "properties": {
+    "role_name": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "manager",
+        "viewer",
+        "accountant",
+        "maintenance_coordinator"
+      ],
+      "description": "Role identifier"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "create",
+            "read",
+            "update",
+            "delete"
+          ],
+          "description": "Property management permissions"
+        },
+        "tenants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "create",
+            "read",
+            "update",
+            "delete"
+          ]
+        },
+        "financials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "read",
+            "export"
+          ]
+        },
+        "maintenance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "create",
+            "read",
+            "update",
+            "assign"
+          ]
+        },
+        "team": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "invite",
+            "manage",
+            "remove"
+          ]
+        },
+        "reports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "enum": [
+            "read",
+            "export",
+            "custom"
+          ]
+        }
+      }
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "role_name",
+    "permissions"
+  ]
+}
