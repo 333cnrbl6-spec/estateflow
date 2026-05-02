@@ -182,6 +182,8 @@ import TeamPage from './pages/TeamPage';
 import SecurityPage from './pages/SecurityPage';
 import APIDocumentation from './pages/APIDocumentation';
 import KnowledgeBase from './pages/KnowledgeBase';
+import ComplianceIntelligence from './pages/ComplianceIntelligence';
+import WorkflowAutomationBuilder from './pages/WorkflowAutomationBuilder';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -338,6 +340,8 @@ const AuthenticatedApp = () => {
         <Route path="/custom-reports" element={<CustomizableFinancialReports />} />
         <Route path="/api-docs" element={<APIDocumentation />} />
         <Route path="/help" element={<KnowledgeBase />} />
+        <Route path="/compliance-intelligence" element={<ComplianceIntelligence />} />
+        <Route path="/workflow-builder" element={<WorkflowAutomationBuilder />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
