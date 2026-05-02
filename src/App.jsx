@@ -187,6 +187,9 @@ import WorkflowAutomationBuilder from './pages/WorkflowAutomationBuilder';
 import IntegrationMarketplace from './pages/IntegrationMarketplace';
 import BulkOperations from './pages/BulkOperations';
 import AdvancedSearch from './pages/AdvancedSearch';
+import RealtimeCollaboration from './pages/RealtimeCollaboration';
+import WhiteLabelSettings from './pages/WhiteLabelSettings';
+import MobileAppScaffold from './pages/MobileAppScaffold';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -348,6 +351,9 @@ const AuthenticatedApp = () => {
         <Route path="/integrations-marketplace" element={<IntegrationMarketplace />} />
         <Route path="/bulk-operations" element={<BulkOperations />} />
         <Route path="/search" element={<AdvancedSearch />} />
+        <Route path="/collaboration" element={<RealtimeCollaboration />} />
+        <Route path="/white-label" element={<WhiteLabelSettings />} />
+        <Route path="/mobile-app" element={<MobileAppScaffold />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
