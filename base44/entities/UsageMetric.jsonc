@@ -1,0 +1,46 @@
+{
+  "name": "UsageMetric",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User/subscriber ID"
+    },
+    "metric_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of usage"
+    },
+    "properties_count": {
+      "type": "number",
+      "default": 0
+    },
+    "tenants_count": {
+      "type": "number",
+      "default": 0
+    },
+    "maintenance_orders": {
+      "type": "number",
+      "default": 0
+    },
+    "api_calls": {
+      "type": "number",
+      "default": 0
+    },
+    "days_inactive": {
+      "type": "number",
+      "default": 0,
+      "description": "Days since last activity"
+    },
+    "churn_risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "0=healthy, 100=likely to churn"
+    }
+  },
+  "required": [
+    "user_id",
+    "metric_date"
+  ]
+}

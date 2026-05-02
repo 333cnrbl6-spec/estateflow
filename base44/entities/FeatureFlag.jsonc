@@ -1,0 +1,60 @@
+{
+  "name": "FeatureFlag",
+  "type": "object",
+  "properties": {
+    "flag_name": {
+      "type": "string",
+      "description": "Internal feature flag ID (e.g., 'bulk-import-beta')"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable name"
+    },
+    "description": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is this feature live?"
+    },
+    "rollout_percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0,
+      "description": "% of users who see this feature"
+    },
+    "allowed_tiers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tiers that can access (e.g., ['professional', 'enterprise'])"
+    },
+    "allowed_users": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific user emails for beta access"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "alpha",
+        "beta",
+        "live",
+        "deprecated"
+      ],
+      "default": "alpha"
+    },
+    "launched_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "flag_name"
+  ]
+}
