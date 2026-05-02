@@ -22,6 +22,54 @@
     "current_demo_company_id": {
       "type": "string",
       "description": "ID of the currently active demo company \u2014 used to scope all pages to a single agent demo"
+    },
+    "trial_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the 14-day trial began"
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the 14-day trial expires"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "trial",
+        "active",
+        "past_due",
+        "cancelled",
+        "paused"
+      ],
+      "default": "trial",
+      "description": "Current subscription status"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID for billing"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "professional",
+        "enterprise"
+      ],
+      "description": "Current pricing tier"
+    },
+    "properties_limit": {
+      "type": "number",
+      "description": "Max properties allowed per tier (0 = unlimited)"
+    },
+    "properties_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Current property count"
     }
   },
   "required": []
