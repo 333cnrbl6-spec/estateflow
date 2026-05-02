@@ -195,6 +195,11 @@ import BetaUserManagement from './pages/BetaUserManagement';
 import PreLaunchSecurityChecklist from './pages/PreLaunchSecurityChecklist';
 import PreLaunchValidation from './pages/PreLaunchValidation';
 import GoLiveApproval from './pages/GoLiveApproval';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import LaunchDayRunbook from './pages/LaunchDayRunbook';
+import SLATerms from './pages/SLATerms';
+import DataProcessingAgreement from './pages/DataProcessingAgreement';
+import PreLaunchSecurityAudit from './pages/PreLaunchSecurityAudit';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -364,6 +369,11 @@ const AuthenticatedApp = () => {
         <Route path="/security-checklist" element={<PreLaunchSecurityChecklist />} />
         <Route path="/pre-launch-validation" element={<PreLaunchValidation />} />
         <Route path="/go-live" element={<GoLiveApproval />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/launch-runbook" element={<LaunchDayRunbook />} />
+        <Route path="/sla-terms" element={<SLATerms />} />
+        <Route path="/dpa" element={<DataProcessingAgreement />} />
+        <Route path="/security-audit" element={<PreLaunchSecurityAudit />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
