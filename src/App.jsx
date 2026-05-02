@@ -177,6 +177,7 @@ import PremisoCoreHub from './pages/PremisoCoreHub';
 import MarketingAssets from './pages/MarketingAssets';
 import TenancyDocuments from './pages/TenancyDocuments';
 import FounderPartnerOutreach from './pages/FounderPartnerOutreach';
+import BillingPage from './pages/BillingPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -332,7 +333,7 @@ const AuthenticatedApp = () => {
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
         <Route path="/investment-opportunity-scoring" element={<InvestmentOpportunityScoring />} />
         <Route path="/portfolio-risk-analyzer" element={<PortfolioRiskAnalyzer />} />
-        <Route path="/billing" element={<Billing />} />
+        <Route path="/billing" element={<BillingPage />} />
         <Route path="/billing-legacy" element={<BillingManagement />} />
         <Route path="/errors" element={<ErrorMonitoring />} />
         <Route path="/operational-metrics" element={<OperationalMetricsDashboard />} />
