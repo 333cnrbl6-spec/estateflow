@@ -184,6 +184,9 @@ import APIDocumentation from './pages/APIDocumentation';
 import KnowledgeBase from './pages/KnowledgeBase';
 import ComplianceIntelligence from './pages/ComplianceIntelligence';
 import WorkflowAutomationBuilder from './pages/WorkflowAutomationBuilder';
+import IntegrationMarketplace from './pages/IntegrationMarketplace';
+import BulkOperations from './pages/BulkOperations';
+import AdvancedSearch from './pages/AdvancedSearch';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -342,6 +345,9 @@ const AuthenticatedApp = () => {
         <Route path="/help" element={<KnowledgeBase />} />
         <Route path="/compliance-intelligence" element={<ComplianceIntelligence />} />
         <Route path="/workflow-builder" element={<WorkflowAutomationBuilder />} />
+        <Route path="/integrations-marketplace" element={<IntegrationMarketplace />} />
+        <Route path="/bulk-operations" element={<BulkOperations />} />
+        <Route path="/search" element={<AdvancedSearch />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
