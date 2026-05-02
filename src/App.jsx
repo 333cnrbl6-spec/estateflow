@@ -190,6 +190,9 @@ import AdvancedSearch from './pages/AdvancedSearch';
 import RealtimeCollaboration from './pages/RealtimeCollaboration';
 import WhiteLabelSettings from './pages/WhiteLabelSettings';
 import MobileAppScaffold from './pages/MobileAppScaffold';
+import LaunchDashboard from './pages/LaunchDashboard';
+import BetaUserManagement from './pages/BetaUserManagement';
+import PreLaunchSecurityChecklist from './pages/PreLaunchSecurityChecklist';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -354,6 +357,9 @@ const AuthenticatedApp = () => {
         <Route path="/collaboration" element={<RealtimeCollaboration />} />
         <Route path="/white-label" element={<WhiteLabelSettings />} />
         <Route path="/mobile-app" element={<MobileAppScaffold />} />
+        <Route path="/launch" element={<LaunchDashboard />} />
+        <Route path="/beta-users" element={<BetaUserManagement />} />
+        <Route path="/security-checklist" element={<PreLaunchSecurityChecklist />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
