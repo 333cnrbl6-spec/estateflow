@@ -194,6 +194,7 @@ import LaunchDashboard from './pages/LaunchDashboard';
 import BetaUserManagement from './pages/BetaUserManagement';
 import PreLaunchSecurityChecklist from './pages/PreLaunchSecurityChecklist';
 import PreLaunchValidation from './pages/PreLaunchValidation';
+import GoLiveApproval from './pages/GoLiveApproval';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -362,6 +363,7 @@ const AuthenticatedApp = () => {
         <Route path="/beta-users" element={<BetaUserManagement />} />
         <Route path="/security-checklist" element={<PreLaunchSecurityChecklist />} />
         <Route path="/pre-launch-validation" element={<PreLaunchValidation />} />
+        <Route path="/go-live" element={<GoLiveApproval />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
