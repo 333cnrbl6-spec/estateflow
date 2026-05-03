@@ -4,76 +4,69 @@
   "properties": {
     "property_id": {
       "type": "string",
-      "description": "Reference to Property entity"
+      "description": "Reference to Property"
     },
     "unit_id": {
       "type": "string",
-      "description": "Reference to Unit entity"
+      "description": "Reference to Unit"
     },
     "tenant_id": {
       "type": "string",
-      "description": "Reference to Tenant who reported the issue"
+      "description": "Reference to Tenant who submitted request"
     },
     "title": {
       "type": "string",
-      "description": "Maintenance issue title"
+      "description": "Brief description of issue (e.g., 'Leaky tap in bathroom')"
     },
     "description": {
       "type": "string",
-      "description": "Detailed description of the issue"
+      "description": "Detailed description of the problem"
     },
     "category": {
       "type": "string",
       "enum": [
         "plumbing",
         "electrical",
-        "structural",
-        "roofing",
         "heating",
-        "decorating",
-        "cleaning",
-        "fire_safety",
-        "general",
+        "appliance",
+        "structural",
+        "decoration",
         "other"
       ],
-      "description": "Category of maintenance"
+      "description": "Type of maintenance needed"
     },
     "priority": {
       "type": "string",
       "enum": [
         "low",
-        "standard",
-        "urgent",
+        "medium",
+        "high",
         "emergency"
       ],
-      "default": "standard",
-      "description": "Priority level"
+      "default": "medium",
+      "description": "Urgency level"
     },
     "status": {
       "type": "string",
       "enum": [
-        "reported",
+        "pending",
         "assigned",
         "in_progress",
-        "completed",
-        "cancelled"
+        "resolved",
+        "closed"
       ],
-      "default": "reported",
-      "description": "Current status of the request"
+      "default": "pending",
+      "description": "Current lifecycle stage"
     },
     "assigned_contractor_id": {
       "type": "string",
-      "description": "Reference to Contact (contractor)"
+      "description": "Reference to Vendor assigned"
     },
     "assigned_contractor_name": {
       "type": "string",
-      "description": "Name of assigned contractor"
+      "description": "Cached contractor name for quick display"
     },
-    "assigned_contractor_email": {
-      "type": "string",
-      "description": "Email of assigned contractor"
-    },
-    "assigned_date": {
+    "assigned_at": {
       "type": "string",
       "format": "date-time",
       "description": "When contractor was assigned"
@@ -81,42 +74,38 @@
     "scheduled_date": {
       "type": "string",
       "format": "date",
-      "description": "Scheduled date for contractor visit"
+      "description": "Scheduled completion date"
     },
-    "estimated_cost": {
-      "type": "number",
-      "description": "Estimated cost in GBP"
-    },
-    "actual_cost": {
-      "type": "number",
-      "description": "Actual cost incurred"
-    },
-    "completion_date": {
+    "completed_date": {
       "type": "string",
       "format": "date-time",
-      "description": "When the work was completed"
+      "description": "When work was completed"
     },
-    "completion_notes": {
+    "notes": {
       "type": "string",
-      "description": "Notes on work completed"
+      "description": "Manager/contractor notes"
     },
-    "photos": {
+    "photo_urls": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "URLs to uploaded photos"
+      "description": "Photos of the issue"
     },
-    "internal_notes": {
+    "contact_phone": {
       "type": "string",
-      "description": "Internal notes not visible to tenant"
+      "description": "Tenant contact number"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Tenant email for notifications"
     }
   },
   "required": [
     "property_id",
+    "unit_id",
+    "tenant_id",
     "title",
-    "description",
-    "category",
-    "status"
+    "category"
   ]
 }

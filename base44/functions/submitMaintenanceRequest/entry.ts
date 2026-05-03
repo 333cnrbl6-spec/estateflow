@@ -1,14 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { z } from 'npm:zod@3.24.2';
-
-const MaintenanceRequestSchema = z.object({
-  tenant_id: z.string().min(1, 'Tenant ID required'),
-  property_id: z.string().min(1, 'Property ID required'),
-  title: z.string().min(1, 'Title required').max(255),
-  description: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
-  attachment_urls: z.array(z.string().url()).optional().default([]),
-});
 
 Deno.serve(async (req) => {
   try {
@@ -19,77 +9,95 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return Response.json({ error: 'Invalid JSON' }, { status: 400 });
-    }
-
-    // Validate input
-    const validation = MaintenanceRequestSchema.safeParse(body);
-    if (!validation.success) {
-      const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
-      return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
-    }
-
-    const { tenant_id, property_id, title, description, priority, attachment_urls } = validation.data;
-
-    // Verify tenant exists
-    const tenant = await base44.asServiceRole.entities.Tenant.get(tenant_id);
-    if (!tenant) {
-      return Response.json({ error: 'Tenant not found' }, { status: 404 });
-    }
-
-    // Create maintenance request
-    const maintenanceRequest = await base44.asServiceRole.entities.MaintenanceRequest.create({
+    const {
+      property_id,
+      unit_id,
+      tenant_id,
       title,
       description,
+      category,
+      priority,
+      contact_email,
+      contact_phone
+    } = await req.json();
+
+    // Create maintenance request
+    const maintenanceRequest = await base44.entities.MaintenanceRequest.create({
       property_id,
-      unit_id: tenant.unit_id,
+      unit_id,
       tenant_id,
-      priority: priority || 'medium',
+      title,
+      description,
+      category,
+      priority,
       status: 'pending',
-      created_by: user.email,
-      attachment_urls: attachment_urls || [],
-      notes: `Submitted by tenant ${tenant.full_name} (${tenant.email})`
+      contact_email,
+      contact_phone
     });
 
-    console.log(`[Maintenance] Created request ${maintenanceRequest.id} from tenant ${tenant_id}`);
+    // Get property & manager details for notification
+    const property = await base44.entities.Property.list({ id: property_id });
+    const managerEmail = property[0]?.manager_email || 'manager@premiso.io';
 
-    // Send notification to property managers
-    const propertyUsers = await base44.asServiceRole.entities.User.list();
-    const propertyManagers = propertyUsers.filter(u => 
-      (u.role === 'admin' || u.role === 'property_manager') && u.email !== user.email
-    );
+    // Send notification to manager
+    await base44.integrations.Core.SendEmail({
+      to: managerEmail,
+      subject: `🔧 New ${priority === 'emergency' ? 'URGENT ' : ''}Maintenance Request: ${title}`,
+      body: `
+A new maintenance request has been submitted:
 
-    for (const pm of propertyManagers) {
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: pm.email,
-        subject: `New Maintenance Request: ${title}`,
-        body: `
-          <h2>New Maintenance Request</h2>
-          <p><strong>Property:</strong> ${tenant.property_id}</p>
-          <p><strong>Unit:</strong> ${tenant.unit_id}</p>
-          <p><strong>Tenant:</strong> ${tenant.full_name} (${tenant.email})</p>
-          <p><strong>Issue:</strong> ${title}</p>
-          <p><strong>Priority:</strong> ${priority}</p>
-          <p><strong>Description:</strong></p>
-          <p>${description}</p>
-          ${attachment_urls && attachment_urls.length > 0 ? `
-            <p><strong>Attachments:</strong> ${attachment_urls.length} file(s) attached</p>
-          ` : ''}
-          <p>Please review and assign a contractor as soon as possible.</p>
-        `
-      });
-    }
+Property: ${property[0]?.name || property_id}
+Unit: ${unit_id}
+Priority: ${priority.toUpperCase()}
+Category: ${category}
 
-    return Response.json({
-      success: true,
-      maintenanceRequestId: maintenanceRequest.id
+Issue: ${title}
+Details: ${description}
+
+Tenant Contact: ${contact_email} | ${contact_phone}
+
+Action Required: Log in to assign a contractor and schedule the work.
+Status: Pending Assignment
+      `.trim()
     });
+
+    // Send confirmation to tenant
+    await base44.integrations.Core.SendEmail({
+      to: contact_email,
+      subject: '✓ Maintenance Request Received',
+      body: `
+Hi,
+
+Your maintenance request has been received and assigned ID: ${maintenanceRequest.id}
+
+What you reported: ${title}
+Priority: ${priority}
+
+A property manager will review your request and contact you within 24 hours to schedule the work.
+
+In the meantime, here's what you can do:
+- Ensure access to the affected area
+- Document the issue with photos if possible
+- Keep this confirmation for reference
+
+Questions? Contact your property manager directly.
+
+Best regards,
+Premiso Management
+      `.trim()
+    });
+
+    await base44.functions.invoke('auditLog', {
+      event_type: 'maintenance_request_submitted',
+      details: {
+        request_id: maintenanceRequest.id,
+        property_id,
+        priority
+      }
+    });
+
+    return Response.json({ request_id: maintenanceRequest.id, status: 'pending' });
   } catch (error) {
-    console.error('[Maintenance] Error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
