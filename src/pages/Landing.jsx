@@ -1,154 +1,215 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import HeroSection from '@/components/landing/HeroSection';
-import FeaturesSection from '@/components/landing/FeaturesSection';
-import PricingSection from '@/components/landing/PricingSection';
-import LeadCaptureForm from '@/components/landing/LeadCaptureForm';
-import DemoChooser from '@/components/landing/DemoChooser';
-import SlideshowDemo from '@/components/landing/SlideshowDemo';
-import PersonalisedDemoWizard from '@/components/landing/PersonalisedDemoWizard';
 import LandingNav from '@/components/landing/LandingNav';
 import FooterSection from '@/components/landing/FooterSection';
-import DemoSessionBanner from '@/components/landing/DemoSessionBanner';
-import WhoIsItFor from '@/components/landing/WhoIsItFor';
-
-// Core value proposition: Compliance protection scaled for everyone
-const CORE_MESSAGE = "Enterprise-grade compliance protection built-in for every portfolio size. From solo landlords to property groups—everyone gets the same legal safeguards.";
+import { ChevronRight, Building2, FileCheck, Users, Zap, BarChart3, Lock, Clock, TrendingUp } from 'lucide-react';
 
 export default function Landing() {
-  const [slideIndex, setSlideIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [demoMode, setDemoMode] = useState(null);
-  const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadSubmitted, setLeadSubmitted] = useState(false);
-  const [demoSession, setDemoSession] = useState(null);
+  const navigate = useNavigate();
 
-  const existingToken = (() => {
-    try {
-      const t = JSON.parse(localStorage.getItem('premiso_demo_token') || 'null');
-      return t && t.expiresAt > Date.now() ? t : null;
-    } catch { return null; }
-  })();
-
-  // Slide definitions with dwell time (ms)
-  const SLIDES = React.useMemo(() => [
-    { id: 'hero', duration: 8000, component: <HeroSection onStartDemo={() => setSlideIndex(1)} onGetStarted={() => { setSlideIndex(3); setIsAutoPlaying(false); }} /> },
-    { id: 'features', duration: 10000, component: <FeaturesSection /> },
-    { id: 'who-is-it-for', duration: 8000, component: <WhoIsItFor onGetStarted={() => { setSlideIndex(4); setIsAutoPlaying(false); }} /> },
-    { id: 'demo', duration: 6000, component: <DemoChooser onChoose={(choice) => { setDemoMode(choice); if (choice !== 'scenario') setIsAutoPlaying(false); }} chosen={demoMode} /> },
-    { id: 'pricing', duration: 10000, component: <PricingSection onChoosePlan={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} /> },
-    { id: 'cta', duration: 8000, component: (
-      demoSession ? (
-        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
-          <div className="text-center text-white max-w-2xl">
-            <div className="text-6xl mb-6">🎉</div>
-            <h3 className="text-3xl font-bold mb-3">Your demo is live, {demoSession.name?.split(' ')[0]}!</h3>
-            <p className="text-primary-foreground/80 mb-3">We've built a personalised Premiso environment for <strong>{demoSession.company}</strong>.</p>
-            <p className="text-sm text-primary-foreground/60 mb-8">A confirmation has been sent to <strong>{demoSession.email}</strong>. Our team will be in touch within 1 working day.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link to="/dashboard" className="bg-white text-primary px-8 py-3 rounded-xl font-bold text-lg hover:bg-slate-100 transition">Explore the Platform →</Link>
-              <button onClick={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} className="border-2 border-white/40 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition text-lg">Start Free Trial</button>
-            </div>
-          </div>
-        </div>
-      ) : leadSubmitted ? (
-        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
-          <div className="text-center text-white">
-            <div className="text-6xl mb-4">✓</div>
-            <h3 className="text-2xl font-bold mb-2">Thank you!</h3>
-            <p className="text-primary-foreground/80 mb-3">We've received your details.</p>
-            <p className="text-sm text-primary-foreground/70 mb-8">Check your inbox for confirmation. Our team will be in touch within 1 business day.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={() => { setLeadSubmitted(false); setShowLeadForm(false); setSlideIndex(0); }} className="bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 transition">Back to home</button>
-              <Link to="/dashboard" className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/40 hover:bg-white/30 transition">Login →</Link>
-            </div>
-          </div>
-        </div>
-      ) : showLeadForm ? (
-        <div className="min-h-screen bg-primary flex items-center justify-center px-6 py-10">
-          <div className="w-full max-w-2xl">
-            <LeadCaptureForm demoType={demoMode} onSubmitted={() => { setLeadSubmitted(true); setSlideIndex(SLIDES.length - 1); }} />
-          </div>
-        </div>
-      ) : (
-        <div className="min-h-screen bg-primary flex items-center justify-center px-6">
-          <div className="text-center text-white max-w-2xl">
-            <h2 className="text-4xl font-bold mb-4">Ready to transform your property management?</h2>
-            <p className="text-xl text-primary-foreground/80 mb-8">Join landlords, letting agents, freeholders and block managers already using Premiso</p>
-            <button onClick={() => { setShowLeadForm(true); setIsAutoPlaying(false); }} className="bg-white text-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-100 transition">Get Early Access</button>
-          </div>
-        </div>
-      )
-    ) },
-  ], [demoSession, leadSubmitted, showLeadForm, demoMode]);
-
-  const currentSlide = SLIDES[slideIndex];
-
-  // Autoplay effect
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    const timer = setTimeout(() => {
-      setSlideIndex((i) => (i + 1) % SLIDES.length);
-    }, currentSlide.duration);
-    return () => clearTimeout(timer);
-  }, [slideIndex, isAutoPlaying, currentSlide.duration]);
-
-  const nextSlide = () => {
-    setSlideIndex((i) => (i + 1) % SLIDES.length);
-    setIsAutoPlaying(false);
+  const navigateToDemo = (path) => {
+    navigate(path);
   };
 
-  const prevSlide = () => {
-    setSlideIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length);
-    setIsAutoPlaying(false);
-  };
+  // Platform modules with demo paths
+  const modules = [
+    {
+      icon: <Building2 className="w-6 h-6" />,
+      title: 'Property Management',
+      desc: 'Lettings, HMOs, blocks & sales—unified dashboard',
+      demoPath: '/properties',
+      color: 'bg-blue-50 border-blue-200'
+    },
+    {
+      icon: <FileCheck className="w-6 h-6" />,
+      title: 'Compliance',
+      desc: 'Auto-tracked certificates, legal safeguards, audits',
+      demoPath: '/compliance-hub',
+      color: 'bg-green-50 border-green-200'
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: 'Financial Control',
+      desc: 'Rent ledger, accounting sync, reporting',
+      demoPath: '/financials',
+      color: 'bg-purple-50 border-purple-200'
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: 'Tenant Portals',
+      desc: 'Self-service, maintenance tracking, payments',
+      demoPath: '/tenant-portal',
+      color: 'bg-amber-50 border-amber-200'
+    },
+    {
+      icon: <Zap className="w-6 h-6" />,
+      title: 'Maintenance',
+      desc: 'Contractor dispatch, scheduling, mobile access',
+      demoPath: '/maintenance-board',
+      color: 'bg-red-50 border-red-200'
+    },
+    {
+      icon: <Lock className="w-6 h-6" />,
+      title: 'Out-of-Hours',
+      desc: '24/7 emergency call service add-on',
+      demoPath: '/out-of-hours-pipeline',
+      color: 'bg-slate-50 border-slate-200'
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-white font-sans overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans">
       <LandingNav onLogin={() => window.location.href = '/dashboard'} />
 
-      {/* Carousel container */}
-      <div className="relative w-full min-h-[calc(100vh-64px)] bg-white overflow-hidden">
-        {/* Slide fade transition */}
-        <div className={`transition-opacity duration-1000 w-full ${slideIndex === SLIDES.findIndex(s => s.id === currentSlide.id) ? 'opacity-100' : 'opacity-0'}`}>
-          {currentSlide.component}
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+            The Complete UK Property <span className="text-primary">Management Platform</span>
+          </h1>
+          <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Enterprise-grade compliance built-in for every portfolio size. From solo landlords to property groups—manage lettings, blocks, sales, and operations in one unified system.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigateToDemo('/dashboard')}
+              className="bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition flex items-center justify-center gap-2"
+            >
+              Explore Demo <ChevronRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => navigateToDemo('/properties')}
+              className="border-2 border-primary text-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary/5 transition"
+            >
+              Quick Tour
+            </button>
+          </div>
         </div>
 
-        {/* Navigation controls (kiosk-friendly) */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6 flex justify-between items-center">
-          <button onClick={prevSlide} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          {[
+            { label: '18+ Modules', value: 'Full Platform' },
+            { label: '100% Compliant', value: 'UK Law Ready' },
+            { label: '24/7 Support', value: 'Optional Add-On' },
+            { label: '<2 Weeks', value: 'Go-Live Time' }
+          ].map((stat, i) => (
+            <div key={i} className="bg-white p-6 rounded-lg border border-slate-200 text-center">
+              <div className="text-2xl font-bold text-primary mb-1">{stat.label}</div>
+              <div className="text-sm text-slate-600">{stat.value}</div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          {/* Indicator dots */}
-          <div className="flex gap-2">
-            {SLIDES.map((_, i) => (
-              <button key={i} onClick={() => { setSlideIndex(i); setIsAutoPlaying(false); }} 
-                className={`h-2.5 rounded-full transition ${i === slideIndex ? 'bg-white w-8' : 'bg-white/40 w-2.5'}`} />
+      {/* Core Modules */}
+      <section className="py-20 px-6 bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-4 text-slate-900">Everything You Need</h2>
+          <p className="text-center text-slate-600 mb-16 max-w-2xl mx-auto">Click any module to explore the live demo</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modules.map((mod, i) => (
+              <button
+                key={i}
+                onClick={() => navigateToDemo(mod.demoPath)}
+                className={`p-6 rounded-xl border-2 transition-all hover:shadow-lg hover:scale-105 text-left ${mod.color}`}
+              >
+                <div className="text-primary mb-4">{mod.icon}</div>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">{mod.title}</h3>
+                <p className="text-sm text-slate-600 mb-4">{mod.desc}</p>
+                <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                  Try Demo <ChevronRight className="w-4 h-4" />
+                </div>
+              </button>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Play/Pause */}
-          <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
-            {isAutoPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-          </button>
+      {/* Key Benefits */}
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16 text-slate-900">Why Choose Premiso</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+            {[
+              {
+                icon: <TrendingUp className="w-8 h-8" />,
+                title: 'Reduce Inbound Queries',
+                desc: 'Self-service tenant & landlord portals cut support burden by up to 70%'
+              },
+              {
+                icon: <FileCheck className="w-8 h-8" />,
+                title: 'Never Miss Compliance',
+                desc: 'Auto-tracked certificates, gas safety, EICRs, fire assessments with live alerts'
+              },
+              {
+                icon: <Lock className="w-8 h-8" />,
+                title: 'Legal Protection',
+                desc: 'Built-in safeguards for S21/S8 notices, deposit protection, right to rent'
+              },
+              {
+                icon: <Clock className="w-8 h-8" />,
+                title: 'Get Live in <2 Weeks',
+                desc: 'Quick onboarding with data import, Companies House integration, automated setup'
+              },
+            ].map((benefit, i) => (
+              <div key={i} className="flex gap-6">
+                <div className="text-primary flex-shrink-0">{benefit.icon}</div>
+                <div>
+                  <h3 className="font-bold text-lg text-slate-900 mb-2">{benefit.title}</h3>
+                  <p className="text-slate-600">{benefit.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <button onClick={nextSlide} className="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition backdrop-blur-sm">
-            <ChevronRight className="w-6 h-6" />
+      {/* Pricing */}
+      <section className="py-20 px-6 bg-gradient-to-r from-primary/5 to-primary/10 border-y border-slate-200">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16 text-slate-900">Simple Pricing</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: 'Starter', price: '£149', units: 'Up to 50 units', cta: 'Get Started' },
+              { name: 'Professional', price: '£349', units: 'Up to 200 units', cta: 'Most Popular', highlight: true },
+              { name: 'Enterprise', price: 'Custom', units: 'Unlimited', cta: 'Contact Sales' },
+            ].map((tier, i) => (
+              <div key={i} className={`p-8 rounded-xl border-2 transition-all ${tier.highlight ? 'bg-white border-primary shadow-lg scale-105' : 'bg-white border-slate-200 hover:border-primary/30'}`}>
+                {tier.highlight && <div className="bg-primary text-white px-3 py-1 rounded-full text-sm font-bold w-fit mb-4">Most Popular</div>}
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">{tier.name}</h3>
+                <div className="text-4xl font-bold text-primary mb-1">{tier.price}<span className="text-lg text-slate-600">/month</span></div>
+                <p className="text-slate-600 mb-6">{tier.units}</p>
+                <button onClick={() => navigateToDemo('/dashboard')} className={`w-full py-3 rounded-lg font-bold transition ${tier.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'border-2 border-primary text-primary hover:bg-primary/5'}`}>
+                  {tier.cta}
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          <p className="text-center text-slate-600 mt-8 text-sm">Optional add-ons: Out-of-Hours Service (£95–£295/mo), Custom Integrations, White Label</p>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-6 text-slate-900">Ready to Transform Property Management?</h2>
+          <p className="text-xl text-slate-600 mb-8">Join landlords, letting agents, freeholders, and block managers already using Premiso</p>
+          <button
+            onClick={() => navigateToDemo('/dashboard')}
+            className="bg-primary text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition inline-flex items-center gap-2"
+          >
+            Start Your Free Demo <ChevronRight className="w-5 h-5" />
           </button>
         </div>
-
-        {/* Slide counter */}
-        <div className="fixed top-20 right-6 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
-          {slideIndex + 1} / {SLIDES.length}
-        </div>
-      </div>
+      </section>
 
       <FooterSection />
-
-      <DemoSessionBanner session={existingToken} onExpired={() => localStorage.removeItem('premiso_demo_token')} />
     </div>
   );
 }
