@@ -205,6 +205,8 @@ import PropertyValuationDashboard from './pages/PropertyValuationDashboard';
 import RentalPriceOptimization from './pages/RentalPriceOptimization';
 import FeatureSummary from './pages/FeatureSummary';
 import PortfolioTrendsDashboard from './pages/PortfolioTrendsDashboard';
+import LaunchReadinessDashboard from '@/components/LaunchReadinessDashboard';
+import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -384,6 +386,7 @@ const AuthenticatedApp = () => {
         <Route path="/rental-optimizer" element={<RentalPriceOptimization />} />
         <Route path="/features" element={<FeatureSummary />} />
         <Route path="/portfolio-trends" element={<PortfolioTrendsDashboard />} />
+        <Route path="/launch-readiness" element={<LaunchReadinessDashboard />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
@@ -471,7 +474,8 @@ function App() {
             <QueryClientProvider client={queryClientInstance}>
               <RoleProvider>
                 <RBMBrandingProvider>
-                  <Router>
+                  <ErrorBoundaryWrapper>
+                    <Router>
                     <Routes>
                       {/* Fully public — no auth check at all */}
                       <Route path="/" element={<Landing />} />
@@ -483,10 +487,11 @@ function App() {
                       {/* All other routes go through auth */}
                       <Route path="/*" element={<AuthenticatedApp />} />
                     </Routes>
-                  </Router>
-                  <Toaster />
-                  <ErrorToastContainer />
-                  <AICopilot />
+                    </Router>
+                    <Toaster />
+                    <ErrorToastContainer />
+                    <AICopilot />
+                  </ErrorBoundaryWrapper>
                 </RBMBrandingProvider>
               </RoleProvider>
             </QueryClientProvider>
