@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Send, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, Send, CheckCircle2, Upload, X } from 'lucide-react';
 import ProcessingFeedback from '@/components/ui/ProcessingFeedback';
 import { toast } from 'sonner';
 
@@ -14,9 +14,11 @@ export default function TenantRequestForm({ propertyId, unitId, tenantId, tenant
     description: '',
     category: 'other',
     priority: 'medium',
-    photos: []
+    photo_urls: []
   });
   const [submitted, setSubmitted] = useState(false);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const fileInputRef = useRef(null);
 
   const submitMutation = useMutation({
     mutationFn: async (data) => {
@@ -42,6 +44,34 @@ export default function TenantRequestForm({ propertyId, unitId, tenantId, tenant
       toast.error('Failed to submit request: ' + error.message);
     }
   });
+
+  const handlePhotoUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setUploadingPhotos(true);
+    try {
+      for (const file of files) {
+        const response = await base44.integrations.Core.UploadFile({ file });
+        setFormData(prev => ({
+          ...prev,
+          photo_urls: [...prev.photo_urls, response.file_url]
+        }));
+      }
+      toast.success(`${files.length} photo(s) uploaded`);
+    } catch (error) {
+      toast.error('Failed to upload photo: ' + error.message);
+    } finally {
+      setUploadingPhotos(false);
+    }
+  };
+
+  const handleRemovePhoto = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      photo_urls: prev.photo_urls.filter((_, i) => i !== index)
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -167,6 +197,55 @@ export default function TenantRequestForm({ propertyId, unitId, tenantId, tenant
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Photo Upload */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Attach photos (optional)
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhotos}
+              className="w-full gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              {uploadingPhotos ? 'Uploading...' : 'Upload Photos'}
+            </Button>
+
+            {formData.photo_urls.length > 0 && (
+              <div className="mt-3 space-y-2">
+                <p className="text-sm text-muted-foreground">{formData.photo_urls.length} photo(s) attached</p>
+                <div className="flex flex-wrap gap-2">
+                  {formData.photo_urls.map((url, idx) => (
+                    <div key={idx} className="relative">
+                      <img
+                        src={url}
+                        alt={`Photo ${idx + 1}`}
+                        className="w-16 h-16 rounded-lg object-cover border border-slate-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(idx)}
+                        className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Submit */}
