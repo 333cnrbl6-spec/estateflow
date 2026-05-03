@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Loader2, FileText, CheckCircle, Mail } from 'lucide-react';
+import ProcessingFeedback from '@/components/ui/ProcessingFeedback';
 
 export default function DocumentAutomationEngine() {
   const [loading, setLoading] = useState(false);
@@ -132,6 +133,18 @@ export default function DocumentAutomationEngine() {
                 </div>
               </div>
 
+              {generateLeaseMutation.isPending && (
+                <ProcessingFeedback
+                  label="Generating lease agreement…"
+                  detail="Creating personalized AST agreement based on tenant & property details"
+                  tips={[
+                    'Lease includes all relevant clauses and terms.',
+                    'Typically completes within 30 seconds.',
+                    'Tenant will receive a copy via email automatically.'
+                  ]}
+                  className="mb-4"
+                />
+              )}
               <div className="space-y-3">
                 {tenants.length === 0 ? (
                   <div className="p-4 bg-slate-50 text-center rounded text-muted-foreground">
@@ -176,6 +189,18 @@ export default function DocumentAutomationEngine() {
                 </div>
               </div>
 
+              {generateReportMutation.isPending && (
+                <ProcessingFeedback
+                  label="Generating inspection report…"
+                  detail="Converting checklist findings into professional PDF format"
+                  tips={[
+                    'Report includes photos, room-by-room assessments, and recommendations.',
+                    'AI summarizes findings and flags any damage or maintenance needs.',
+                    'PDF is automatically saved to the property file.'
+                  ]}
+                  className="mb-4"
+                />
+              )}
               <div className="space-y-3">
                 {inspections.length === 0 ? (
                   <div className="p-4 bg-slate-50 text-center rounded text-muted-foreground">
@@ -220,6 +245,18 @@ export default function DocumentAutomationEngine() {
                 </div>
               </div>
 
+              {generateReceiptMutation.isPending && (
+                <ProcessingFeedback
+                  label="Generating rent receipt…"
+                  detail="Creating PDF receipt and preparing for email delivery"
+                  tips={[
+                    'Receipt shows payment date, amount, property, and unit details.',
+                    'Tenant will receive email within 1 minute of generation.',
+                    'Receipt is archived for tax & audit purposes (7 years).'
+                  ]}
+                  className="mb-4"
+                />
+              )}
               <div className="space-y-3">
                 {transactions.length === 0 ? (
                   <div className="p-4 bg-slate-50 text-center rounded text-muted-foreground">

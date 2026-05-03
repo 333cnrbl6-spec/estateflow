@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Cloud, Upload, Zap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import ProcessingFeedback from '@/components/ui/ProcessingFeedback';
 
 export default function DataDiscoveryHub() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -131,19 +132,31 @@ export default function DataDiscoveryHub() {
             <p className="text-sm text-muted-foreground">CSV, Excel, PDF, JSON supported</p>
           </div>
 
+          {loading && (
+             <ProcessingFeedback
+               label="Uploading files…"
+               detail={`Uploading ${uploadedFiles.length} file(s) to cloud storage`}
+               tips={[
+                 'Files are scanned for sensitive data (PII, financial info).',
+                 'Larger files may take longer depending on file size & type.',
+                 'You can analyze multiple files at once (CSV, Excel, PDF).'
+               ]}
+               className="mb-4"
+             />
+           )}
           {uploadedFiles.length > 0 && (
-            <div className="space-y-2">
-              <p className="font-medium text-sm text-slate-600">{uploadedFiles.length} file(s) uploaded:</p>
-              <div className="space-y-1">
-                {uploadedFiles.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between text-sm bg-slate-50 p-2 rounded">
-                    <span className="text-slate-700">{file.name}</span>
-                    <span className="text-muted-foreground text-xs">{(file.size / 1024).toFixed(1)} KB</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+             <div className="space-y-2">
+               <p className="font-medium text-sm text-slate-600">{uploadedFiles.length} file(s) uploaded:</p>
+               <div className="space-y-1">
+                 {uploadedFiles.map((file, idx) => (
+                   <div key={idx} className="flex items-center justify-between text-sm bg-slate-50 p-2 rounded">
+                     <span className="text-slate-700">{file.name}</span>
+                     <span className="text-muted-foreground text-xs">{(file.size / 1024).toFixed(1)} KB</span>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           )}
 
           <div className="flex gap-3">
             <select
@@ -158,23 +171,37 @@ export default function DataDiscoveryHub() {
               <option value="certificate">Certificates only</option>
             </select>
 
+            {loading && uploadedFiles.length > 0 && (
+               <ProcessingFeedback
+                 label="Analyzing files…"
+                 detail="AI is scanning files to detect property, tenant, financial, and compliance data"
+                 tips={[
+                   'Detection uses ML to identify data types & suggest entity mappings.',
+                   'You can choose to import detected categories selectively.',
+                   'Data quality checks flag duplicates & missing required fields.'
+                 ]}
+                 step={1}
+                 totalSteps={3}
+                 className="mb-4"
+               />
+             )}
             <Button
-              onClick={() => analyzeFiles(uploadedFiles.map(f => f.url))}
-              disabled={uploadedFiles.length === 0 || loading}
-              className="gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <Zap className="w-4 h-4" />
-                  Analyze Files
-                </>
-              )}
-            </Button>
+               onClick={() => analyzeFiles(uploadedFiles.map(f => f.url))}
+               disabled={uploadedFiles.length === 0 || loading}
+               className="gap-2"
+             >
+               {loading && uploadedFiles.length > 0 ? (
+                 <>
+                   <Loader2 className="w-4 h-4 animate-spin" />
+                   Analyzing...
+                 </>
+               ) : (
+                 <>
+                   <Zap className="w-4 h-4" />
+                   Analyze Files
+                 </>
+               )}
+             </Button>
           </div>
         </CardContent>
       </Card>

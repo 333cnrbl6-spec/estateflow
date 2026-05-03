@@ -18,6 +18,7 @@ import {
   Play
 } from 'lucide-react';
 import { toast } from "sonner";
+import ProcessingFeedback from '@/components/ui/ProcessingFeedback';
 
 export default function BulkImportTester() {
   const [selectedTier, setSelectedTier] = useState('small');
@@ -193,6 +194,18 @@ export default function BulkImportTester() {
                 ))}
               </div>
 
+              {generateTestDataMutation.isPending && (
+                <ProcessingFeedback
+                  label={`Generating ${selectedTier} test data…`}
+                  detail="Creating realistic sample records for import testing"
+                  tips={[
+                    'Test data includes properties, units, tenants, and financial records.',
+                    'Each tier includes realistic relationships and duplicate scenarios.',
+                    'Generated files are ready to download and import immediately.'
+                  ]}
+                  className="mb-4"
+                />
+              )}
               <Button 
                 onClick={handleGenerateTestData}
                 disabled={generateTestDataMutation.isPending}
