@@ -390,7 +390,7 @@ const AuthenticatedApp = () => {
         <Route path="/features" element={<FeatureSummary />} />
         <Route path="/portfolio-trends" element={<PortfolioTrendsDashboard />} />
         <Route path="/launch-readiness" element={<LaunchReadinessDashboard />} />
-        <Route path="/subscription" element={<SubscriberFacingDashboard />} />
+        <Route path="/subscription" element={<SubscriberView />} />
         <Route path="/developer-portal" element={<DeveloperAccessPortal />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
@@ -478,7 +478,7 @@ function App() {
           <ThemeWrapper>
             <QueryClientProvider client={queryClientInstance}>
               <RoleProvider>
-                <PermissionProvider>
+                <PermissionProvider>  {/* Data isolation & permission enforcement */}
                   <RBMBrandingProvider>
                     <ErrorBoundaryWrapper>
                       <Router>

@@ -5,9 +5,9 @@ import { Lock } from 'lucide-react';
 
 export default function PermissionGate({ 
   children, 
-  requiredRole = null, // 'admin', 'developer'
-  requiredTier = null, // 'starter', 'professional', 'enterprise'
-  requiredModule = null, // module name
+  requiredRole = null,
+  requiredTier = null,
+  requiredModule = null,
   fallback = null
 }) {
   const permissions = usePermissions();
@@ -16,18 +16,15 @@ export default function PermissionGate({
     return <div className="flex items-center justify-center p-8">Loading access...</div>;
   }
 
-  // Check role
   if (requiredRole && permissions.role !== requiredRole && permissions.role !== 'developer') {
     return fallback || <LockedFeature reason={`Requires ${requiredRole} access`} />;
   }
 
-  // Check tier
   const tierHierarchy = { 'starter': 0, 'professional': 1, 'enterprise': 2 };
   if (requiredTier && tierHierarchy[permissions.tier] < tierHierarchy[requiredTier]) {
     return fallback || <LockedFeature reason={`Requires ${requiredTier} subscription`} />;
   }
 
-  // Check module
   if (requiredModule && !permissions.modules.includes(requiredModule)) {
     return fallback || <LockedFeature reason={`Module not available in your plan`} />;
   }

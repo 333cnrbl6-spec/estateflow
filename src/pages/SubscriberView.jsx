@@ -1,190 +1,99 @@
-import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { usePermissions } from '@/lib/PermissionContext';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, Users, Wrench, DollarSign, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, Lock } from 'lucide-react';
 
 export default function SubscriberView() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const { tier, modules, email } = usePermissions();
+  const [data, setData] = useState(null);
 
-  // Fetch core data
-  const { data: properties = [] } = useQuery({
-    queryKey: ['properties'],
-    queryFn: () => base44.entities.Property.list(),
-  });
+  useEffect(() => {
+    loadUserData();
+  }, []);
 
-  const { data: tenants = [] } = useQuery({
-    queryKey: ['tenants'],
-    queryFn: () => base44.entities.Tenant.list(),
-  });
+  const loadUserData = async () => {
+    // BACKEND REQUIREMENT:
+    // This function MUST only return data for the authenticated user
+    // NEVER expose other users' data via this endpoint
+    try {
+      // const response = await base44.functions.invoke('loadCurrentUserSubscription', {});
+      // setData(response.data);
+      setData({
+        tier,
+        email,
+        properties: 5, // LOAD FROM BACKEND - user's count only
+        users: 2,      // LOAD FROM BACKEND - their team count only
+      });
+    } catch (err) {
+      console.error('Failed to load subscription:', err);
+    }
+  };
 
-  const { data: maintenanceRequests = [] } = useQuery({
-    queryKey: ['maintenanceRequests'],
-    queryFn: () => base44.entities.MaintenanceRequest.list(),
-  });
-
-  const { data: financialTransactions = [] } = useQuery({
-    queryKey: ['financialTransactions'],
-    queryFn: () => base44.entities.FinancialTransaction.list(),
-  });
-
-  const occupiedUnits = properties.reduce((sum, p) => sum + (p.occupied_units || 0), 0);
-  const totalUnits = properties.reduce((sum, p) => sum + (p.total_units || 0), 0);
-  const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
-  const pendingMaintenance = maintenanceRequests.filter(m => m.status !== 'completed').length;
-
-  const subscriberZones = [
-    {
-      label: 'Core Operations',
-      icon: Home,
-      routes: [
-        { label: 'Properties', path: '/properties' },
-        { label: 'Units', path: '/units' },
-        { label: 'Contacts', path: '/contacts' },
-      ],
-    },
-    {
-      label: 'Tenant Management',
-      icon: Users,
-      routes: [
-        { label: 'Tenants', path: '/tenants' },
-        { label: 'Screening', path: '/tenant-screening' },
-        { label: 'Portal', path: '/tenant-portal' },
-      ],
-    },
-    {
-      label: 'Maintenance & Operations',
-      icon: Wrench,
-      routes: [
-        { label: 'Maintenance Board', path: '/maintenance-board' },
-        { label: 'Scheduling', path: '/maintenance-scheduling' },
-        { label: 'Forecasting', path: '/maintenance-forecasting' },
-      ],
-    },
-    {
-      label: 'Finance & Accounting',
-      icon: DollarSign,
-      routes: [
-        { label: 'Financials', path: '/financials' },
-        { label: 'Rent Ledger', path: '/rent-ledger' },
-        { label: 'Reports', path: '/financial-reporting' },
-      ],
-    },
-  ];
+  const allModules = {
+    'dashboard': 'Dashboard',
+    'properties': 'Property Management',
+    'tenants': 'Tenant Management',
+    'reporting': 'Advanced Reporting',
+    'compliance': 'Compliance',
+    'api': 'API Access',
+    'integrations': 'Integrations'
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Premiso Subscriber View</h1>
-            <p className="text-sm text-muted-foreground">Core operations dashboard</p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.open(window.location.href, '_blank')}
-          >
-            Open in New Tab
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Properties</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{properties.length}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Occupancy</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{occupancyRate}%</p>
-              <p className="text-xs text-muted-foreground mt-1">{occupiedUnits}/{totalUnits} units</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Tenants</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{tenants.length}</p>
-            </CardContent>
-          </Card>
-
-          <Card className={pendingMaintenance > 0 ? 'border-amber-200 bg-amber-50' : ''}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                {pendingMaintenance > 0 && <AlertTriangle className="w-4 h-4 text-amber-600" />}
-                Pending Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className={`text-3xl font-bold ${pendingMaintenance > 0 ? 'text-amber-600' : ''}`}>
-                {pendingMaintenance}
-              </p>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Your Subscription</h1>
+          <p className="text-slate-600 mt-2">Account: {email}</p>
         </div>
 
-        {/* Zones */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {subscriberZones.map((zone, i) => {
-            const IconComp = zone.icon;
-            return (
-              <Card key={i}>
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-3">
-                    <IconComp className="w-5 h-5" />
-                    <CardTitle className="text-base">{zone.label}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {zone.routes.map((route, j) => (
-                    <Link key={j} to={route.path}>
-                      <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground">
-                        {route.label}
-                      </Button>
-                    </Link>
-                  ))}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Recent Activity */}
-        <Card>
+        <Card className="border-2 border-primary">
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl capitalize">{tier} Plan</CardTitle>
+              <Badge>Active</Badge>
+            </div>
           </CardHeader>
-          <CardContent>
-            {financialTransactions.slice(0, 5).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No recent transactions</p>
-            ) : (
-              <div className="space-y-2">
-                {financialTransactions.slice(0, 5).map((tx) => (
-                  <div key={tx.id} className="flex justify-between items-center border-b pb-2 last:border-0">
-                    <p className="text-sm font-medium">{tx.description}</p>
-                    <Badge variant="outline">£{(tx.amount / 100).toFixed(2)}</Badge>
+          <CardContent className="space-y-4">
+            {data && (
+              <>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <p className="text-sm text-blue-600 font-semibold">Properties</p>
+                    <p className="text-2xl font-bold text-blue-900">{data.properties}</p>
                   </div>
-                ))}
-              </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <p className="text-sm text-green-600 font-semibold">Team Members</p>
+                    <p className="text-2xl font-bold text-green-900">{data.users}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Your Modules</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {Object.entries(allModules).map(([key, label]) => (
+                      <div 
+                        key={key}
+                        className={`flex items-center gap-3 p-3 rounded-lg border ${
+                          modules.includes(key) 
+                            ? 'bg-green-50 border-green-200' 
+                            : 'bg-gray-50 border-gray-200'
+                        }`}
+                      >
+                        {modules.includes(key) ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <Lock className="w-5 h-5 text-gray-400" />
+                        )}
+                        <span className={modules.includes(key) ? 'text-slate-900' : 'text-slate-500'}>
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

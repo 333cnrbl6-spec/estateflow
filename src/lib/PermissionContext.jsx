@@ -5,8 +5,8 @@ export const PermissionContext = createContext();
 
 export function PermissionProvider({ children }) {
   const [permissions, setPermissions] = useState({
-    role: 'user', // 'admin', 'developer', 'user'
-    tier: 'starter', // 'starter', 'professional', 'enterprise'
+    role: 'user',
+    tier: 'starter',
     modules: [],
     canAccessSales: false,
     canAccessMarketing: false,
@@ -16,7 +16,8 @@ export function PermissionProvider({ children }) {
     loading: true
   });
 
-  const DEVELOPER_EMAIL = '333cnrbl6@gmail.com';
+  // CONFIGURE THIS FOR YOUR APP
+  const DEVELOPER_EMAIL = '333cnrbl6@gmail.com'; // Change to your developer email
 
   useEffect(() => {
     loadPermissions();
@@ -32,18 +33,14 @@ export function PermissionProvider({ children }) {
 
       const isDeveloper = user.email === DEVELOPER_EMAIL;
       const roleFromUser = user.role || 'user';
-
-      // Determine actual role
       const actualRole = isDeveloper ? 'developer' : roleFromUser;
-
-      // Tier from user subscription (stored on user entity)
       const tier = user.subscription_tier || 'starter';
 
-      // Base modules by tier
+      // CUSTOMIZE MODULES BY TIER FOR YOUR APP
       const baseModules = {
-        'starter': ['properties', 'units', 'tenants', 'maintenance', 'financials'],
-        'professional': ['properties', 'units', 'tenants', 'maintenance', 'financials', 'compliance', 'reporting', 'crm'],
-        'enterprise': ['properties', 'units', 'tenants', 'maintenance', 'financials', 'compliance', 'reporting', 'crm', 'workflows', 'integrations']
+        'starter': ['dashboard', 'properties', 'tenants'],
+        'professional': ['dashboard', 'properties', 'tenants', 'reporting', 'compliance'],
+        'enterprise': ['dashboard', 'properties', 'tenants', 'reporting', 'compliance', 'api', 'integrations']
       };
 
       const modules = baseModules[tier] || baseModules.starter;
