@@ -36,15 +36,23 @@ export default function Dashboard() {
   useFounderTour({ enabled: true });
   const navigate = useNavigate();
 
-  // Auto-redirect new users to onboarding wizard
+  // Auto-redirect developer to developer portal, new users to onboarding
   const { data: currentUser } = useQuery({
     queryKey: ['current-user-onboarding'],
     queryFn: () => base44.auth.me(),
     staleTime: 60 * 1000,
   });
   useEffect(() => {
-    if (currentUser && currentUser.onboarding_complete === false) {
-      navigate('/onboarding-wizard');
+    if (currentUser) {
+      // Developer auto-redirect to portal
+      if (currentUser.email === '333cnrbl6@gmail.com') {
+        navigate('/developer-portal');
+        return;
+      }
+      // New user to onboarding
+      if (currentUser.onboarding_complete === false) {
+        navigate('/onboarding-wizard');
+      }
     }
   }, [currentUser, navigate]);
 
