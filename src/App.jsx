@@ -207,6 +207,9 @@ import FeatureSummary from './pages/FeatureSummary';
 import PortfolioTrendsDashboard from './pages/PortfolioTrendsDashboard';
 import LaunchReadinessDashboard from '@/components/LaunchReadinessDashboard';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
+import SubscriberFacingDashboard from './pages/SubscriberFacingDashboard';
+import DeveloperAccessPortal from './pages/DeveloperAccessPortal';
+import { PermissionProvider } from '@/lib/PermissionContext';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -387,6 +390,8 @@ const AuthenticatedApp = () => {
         <Route path="/features" element={<FeatureSummary />} />
         <Route path="/portfolio-trends" element={<PortfolioTrendsDashboard />} />
         <Route path="/launch-readiness" element={<LaunchReadinessDashboard />} />
+        <Route path="/subscription" element={<SubscriberFacingDashboard />} />
+        <Route path="/developer-portal" element={<DeveloperAccessPortal />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
@@ -473,9 +478,10 @@ function App() {
           <ThemeWrapper>
             <QueryClientProvider client={queryClientInstance}>
               <RoleProvider>
-                <RBMBrandingProvider>
-                  <ErrorBoundaryWrapper>
-                    <Router>
+                <PermissionProvider>
+                  <RBMBrandingProvider>
+                    <ErrorBoundaryWrapper>
+                      <Router>
                     <Routes>
                       {/* Fully public — no auth check at all */}
                       <Route path="/" element={<Landing />} />
@@ -487,12 +493,13 @@ function App() {
                       {/* All other routes go through auth */}
                       <Route path="/*" element={<AuthenticatedApp />} />
                     </Routes>
-                    </Router>
-                    <Toaster />
-                    <ErrorToastContainer />
-                    <AICopilot />
-                  </ErrorBoundaryWrapper>
-                </RBMBrandingProvider>
+                      </Router>
+                      <Toaster />
+                      <ErrorToastContainer />
+                      <AICopilot />
+                    </ErrorBoundaryWrapper>
+                  </RBMBrandingProvider>
+                </PermissionProvider>
               </RoleProvider>
             </QueryClientProvider>
           </ThemeWrapper>

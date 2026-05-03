@@ -186,9 +186,8 @@ export default function SalesOnePageSummary() {
             <div className="top-tagline">Property Management Platform</div>
           </div>
           <div className="top-right">
-            <div>RBM (North West) Limited</div>
-            <div>01204 695919 · info@rbm-nw.co.uk</div>
-            <div style={{ color: '#38bdf8', fontWeight: 600 }}>Authorised Sales Partner</div>
+            <div>For Sales Partners & Distributors</div>
+            <div style={{ color: '#38bdf8', fontWeight: 600, marginTop: 4 }}>Contact sales@premiso.io</div>
           </div>
         </div>
 
@@ -323,19 +322,15 @@ export default function SalesOnePageSummary() {
 
         {/* CTA BAR */}
         <div className="cta-bar">
-          <div className="cta-left">Book a Free Demo<br /><span>See Premiso with your own portfolio</span></div>
+          <div className="cta-left">Ready to Streamline Property Management?<br /><span>Get started today with Premiso</span></div>
           <div className="cta-contacts">
             <div className="cta-contact">
-              <div className="cta-contact-label">Call</div>
-              <div className="cta-contact-value">01204 695919</div>
-            </div>
-            <div className="cta-contact">
               <div className="cta-contact-label">Email</div>
-              <div className="cta-contact-value">info@rbm-nw.co.uk</div>
+              <div className="cta-contact-value">sales@premiso.io</div>
             </div>
             <div className="cta-contact">
-              <div className="cta-contact-label">Company</div>
-              <div className="cta-contact-value">No. 16608812</div>
+              <div className="cta-contact-label">Website</div>
+              <div className="cta-contact-value">premiso.io</div>
             </div>
           </div>
         </div>
