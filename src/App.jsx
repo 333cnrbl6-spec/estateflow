@@ -203,6 +203,7 @@ import PreLaunchSecurityAudit from './pages/PreLaunchSecurityAudit';
 import TenantDashboardSecure from './pages/TenantDashboardSecure';
 import PropertyValuationDashboard from './pages/PropertyValuationDashboard';
 import RentalPriceOptimization from './pages/RentalPriceOptimization';
+import FeatureSummary from './pages/FeatureSummary';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -380,6 +381,7 @@ const AuthenticatedApp = () => {
         <Route path="/tenant-dashboard" element={<TenantDashboardSecure />} />
         <Route path="/property-valuation" element={<PropertyValuationDashboard />} />
         <Route path="/rental-optimizer" element={<RentalPriceOptimization />} />
+        <Route path="/features" element={<FeatureSummary />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />

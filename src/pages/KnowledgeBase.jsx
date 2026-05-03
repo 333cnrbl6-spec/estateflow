@@ -20,12 +20,24 @@ export default function KnowledgeBase() {
       { title: 'Compliance Risk Assessment Dashboard', duration: '7 min' },
       { title: 'Building Safety Register Management', duration: '9 min' }
     ],
+    'Maintenance & Tenant Portal': [
+       { title: 'Tenant Maintenance Request Workflow', duration: '6 min' },
+       { title: 'Manager Contractor Assignment Guide', duration: '7 min' },
+       { title: 'Maintenance Lifecycle & Notifications', duration: '8 min' },
+       { title: 'Photo Upload & Documentation', duration: '5 min' }
+     ],
+    'Property Valuation & Pricing': [
+       { title: 'AI Property Valuation Engine', duration: '8 min' },
+       { title: 'Rental Price Optimization Tool', duration: '7 min' },
+       { title: 'Market Comparable Analysis', duration: '9 min' },
+       { title: 'Interpreting Valuation Reports', duration: '6 min' }
+     ],
     'Workflow Automation': [
-      { title: 'Building Your First Workflow', duration: '10 min' },
-      { title: 'Automating Certificate Renewals', duration: '7 min' },
-      { title: 'Setting Up Maintenance Workflows', duration: '8 min' },
-      { title: 'No-Code Workflow Builder Guide', duration: '12 min' }
-    ],
+       { title: 'Building Your First Workflow', duration: '10 min' },
+       { title: 'Automating Certificate Renewals', duration: '7 min' },
+       { title: 'Setting Up Maintenance Workflows', duration: '8 min' },
+       { title: 'No-Code Workflow Builder Guide', duration: '12 min' }
+     ],
     'Integrations & APIs': [
       { title: 'Connecting to Slack & Zapier', duration: '5 min' },
       { title: 'Using the Integration Marketplace', duration: '6 min' },
@@ -48,9 +60,11 @@ export default function KnowledgeBase() {
 
   const videoGuides = [
     { title: 'Dashboard Overview & Compliance Intelligence', duration: '10:42' },
+    { title: 'Tenant Portal: Maintenance Requests & Documents', duration: '8:15' },
+    { title: 'AI Property Valuation Engine Demo', duration: '12:30' },
+    { title: 'Rental Price Optimizer & Market Analysis', duration: '9:45' },
+    { title: 'Maintenance Workflow: From Request to Completion', duration: '11:20' },
     { title: 'Workflow Automation: Build & Deploy', duration: '15:20' },
-    { title: 'Integration Marketplace: Slack, Zapier & More', duration: '12:15' },
-    { title: 'Real-Time Collaboration Features', duration: '9:50' },
     { title: 'Custom Reports & Analytics', duration: '8:30' },
     { title: 'AI Copilot: Automate Your Operations', duration: '11:15' }
   ];
@@ -132,11 +146,11 @@ export default function KnowledgeBase() {
           {/* FAQ Tab */}
           <TabsContent value="faq" className="space-y-3">
             {[
-              { q: 'How do I export my data?', a: 'Go to Settings → Data Export and choose your format (Excel, CSV, or PDF).' },
-              { q: 'Can I invite contractors?', a: 'Yes, use Team Management to invite contractors with specific role permissions.' },
-              { q: 'How are my data protected?', a: 'All data is encrypted at rest and in transit. 2FA and IP whitelisting available.' },
-              { q: 'What is the API rate limit?', a: '1,000 requests/hour per token with 100 req/min burst limit.' },
-              { q: 'How do I delete my account?', a: 'Go to Settings → Security → GDPR to request account deletion (30-day grace period).' }
+              { q: 'How do tenants submit maintenance requests?', a: 'Tenants log into their dashboard, navigate to Maintenance tab, fill out form with photos, select priority/category. Managers get instant email alert.' },
+              { q: 'How does the rental price optimizer work?', a: 'Analyze Market uses land registry comparable analysis + market trends + AI analysis to recommend optimal rental pricing. Updated monthly.' },
+              { q: 'Can tenants view safety certificates?', a: 'Yes! Tenants can see gas safety, electrical (EICR), and fire safety certificates with expiry alerts in their Documents section.' },
+              { q: 'What happens when maintenance is requested?', a: 'Request created → Manager notified → Contractor assigned → Tenant gets tracking link → Completion email sent to both.' },
+              { q: 'How is property valuation calculated?', a: 'AI analysis combines comparable property data, rental trends, market demand, regional growth, and your property specifics for accurate estimates.' }
             ].map((item, i) => (
               <Card key={i}>
                 <CardHeader>

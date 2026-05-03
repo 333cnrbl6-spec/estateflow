@@ -58,7 +58,7 @@ export default function APIDocumentation() {
     }
   ];
 
-  const entities = ['Property', 'Tenant', 'MaintenanceOrder', 'FinancialTransaction', 'TeamMember', 'CustomReport', 'ComplianceRiskScore', 'WorkflowExecution', 'IntegrationConnection', 'ActivityStream', 'TwoFactorAuth', 'GDPRRequest'];
+  const entities = ['Property', 'Tenant', 'MaintenanceRequest', 'MaintenanceOrder', 'FinancialTransaction', 'TeamMember', 'CustomReport', 'ComplianceRiskScore', 'WorkflowExecution', 'IntegrationConnection', 'PropertyValuation', 'RentalRecommendation', 'SafetyCertificate', 'Document', 'ActivityStream', 'TwoFactorAuth', 'GDPRRequest'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 px-6">
@@ -68,7 +68,7 @@ export default function APIDocumentation() {
             <Code className="w-8 h-8" />
             API Documentation
           </h1>
-          <p className="text-lg text-slate-600">Build integrations with Premiso — RESTful API, Webhooks & Workflow Automations</p>
+          <p className="text-lg text-slate-600">Build integrations with Premiso — RESTful API, Webhooks, Maintenance Engine, Property Valuation, and Rental Optimization</p>
         </div>
 
         {/* Authentication */}

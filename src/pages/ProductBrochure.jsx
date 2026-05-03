@@ -53,28 +53,28 @@ export default function ProductBrochure() {
       data: '38 Companies | 18 Compliance Checks | Full Audit Trail (Powell & Co)',
     },
     {
-      title: 'Tenant Portal',
+      title: 'Secure Tenant Portal',
       icon: Users,
-      description: 'White-label tenant experience with secure access to documents and rent history.',
+      description: 'Comprehensive tenant dashboard with lease details, maintenance requests, payments, and safety certificates.',
       benefits: [
-        'Secure token-based access',
-        'Payment history visibility',
-        'Document downloads',
-        'Maintenance request tracking',
+        'View active lease with expiration alerts and rent details',
+        'Submit maintenance requests with photo uploads and progress tracking',
+        'Payment history, upcoming invoices, and receipt downloads',
+        'Access property safety certificates (gas, electrical, fire safety)',
       ],
-      data: '60+ Active Tenants | Multi-Region Coverage (Powell & Co)',
+      data: '60+ Active Tenants | Real-time Certificate Status | Full Lifecycle Visibility (Powell & Co)',
     },
     {
-      title: 'Operations Hub',
+      title: 'Operations & Maintenance',
       icon: Wrench,
-      description: 'Unified maintenance and workflow automation for operational excellence.',
+      description: 'Tenant-triggered maintenance requests with AI assignment and full lifecycle tracking.',
       benefits: [
-        'Priority-based maintenance tracking',
-        'Automated workflow triggers',
-        'CRM interaction logging',
-        'Contractor management',
+        'Tenant portal maintenance request form with photo uploads',
+        'Automated manager alerts with contractor assignment',
+        'Tenant/contractor notifications at each lifecycle stage (Pending→Assigned→In Progress→Resolved→Closed)',
+        'Integrated maintenance order creation with email confirmations',
       ],
-      data: '40+ Maintenance Orders | Multiple Contractors | Full Tracking (Powell & Co)',
+      data: '40+ Maintenance Orders | Real-time Contractor Assignment | Photo Documentation (Powell & Co)',
     },
     {
       title: 'API Integration Network',
@@ -258,54 +258,54 @@ export default function ProductBrochure() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Users className="w-8 h-8 text-primary" />
-                <CardTitle className="text-2xl">Tenant Portal & Self-Service</CardTitle>
+                <CardTitle className="text-2xl">Secure Tenant Dashboard & Self-Service</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-foreground">
-                White-label tenant experience with secure token-based access to rent information, documents, and maintenance requests.
+                Complete tenant portal with lease visibility, maintenance request submission with photo uploads, payment history, and access to property safety certificates.
               </p>
               <div className="space-y-3">
                 <div className="border border-border rounded-lg p-4">
-                  <h4 className="font-semibold mb-3">Tenant Portal Features</h4>
+                  <h4 className="font-semibold mb-3">Tenant Dashboard Features</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="font-medium text-sm mb-2">Rent & Payments</p>
+                      <p className="font-medium text-sm mb-2">Lease & Property</p>
                       <ul className="text-sm space-y-1 text-muted-foreground">
-                        <li>• Payment history (12-month view)</li>
-                        <li>• Outstanding balances</li>
-                        <li>• Payment due dates</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm mb-2">Documents</p>
-                      <ul className="text-sm space-y-1 text-muted-foreground">
-                        <li>• Tenancy agreements</li>
-                        <li>• Safety certificates</li>
-                        <li>• Inspection reports</li>
+                        <li>• Active lease details & expiration alerts</li>
+                        <li>• Monthly rent and deposit information</li>
+                        <li>• Lease terms visibility</li>
                       </ul>
                     </div>
                     <div>
                       <p className="font-medium text-sm mb-2">Maintenance</p>
                       <ul className="text-sm space-y-1 text-muted-foreground">
-                        <li>• Submit requests</li>
-                        <li>• Track progress</li>
-                        <li>• View completion status</li>
+                        <li>• Submit requests with photo uploads</li>
+                        <li>• Real-time progress tracking</li>
+                        <li>• Contractor assignment notifications</li>
                       </ul>
                     </div>
                     <div>
-                      <p className="font-medium text-sm mb-2">Notifications</p>
+                      <p className="font-medium text-sm mb-2">Payments & Invoices</p>
                       <ul className="text-sm space-y-1 text-muted-foreground">
-                        <li>• In-app messages</li>
-                        <li>• Important updates</li>
-                        <li>• Rent reminders</li>
+                        <li>• 12-month payment history</li>
+                        <li>• Upcoming invoice view</li>
+                        <li>• Receipt downloads</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm mb-2">Safety & Documents</p>
+                      <ul className="text-sm space-y-1 text-muted-foreground">
+                        <li>• Gas safety certificates with expiry alerts</li>
+                        <li>• Electrical (EICR) & fire safety docs</li>
+                        <li>• Legal notice center & FAQ</li>
                       </ul>
                     </div>
                   </div>
                 </div>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm">
-                    <strong>Tenant Engagement:</strong> 2,400 active accounts | 87% monthly login rate | 94% document download completion
+                    <strong>Tenant Engagement:</strong> 2,400 active accounts | 87% monthly login rate | 94% document download completion | Maintenance request avg response time: 4 hours
                   </p>
                 </div>
               </div>
