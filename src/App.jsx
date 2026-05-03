@@ -201,6 +201,7 @@ import SLATerms from './pages/SLATerms';
 import DataProcessingAgreement from './pages/DataProcessingAgreement';
 import PreLaunchSecurityAudit from './pages/PreLaunchSecurityAudit';
 import TenantDashboardSecure from './pages/TenantDashboardSecure';
+import PropertyValuationDashboard from './pages/PropertyValuationDashboard';
 import AICopilot from '@/components/copilot/AICopilot';
 
 const AuthenticatedApp = () => {
@@ -376,6 +377,7 @@ const AuthenticatedApp = () => {
         <Route path="/dpa" element={<DataProcessingAgreement />} />
         <Route path="/security-audit" element={<PreLaunchSecurityAudit />} />
         <Route path="/tenant-dashboard" element={<TenantDashboardSecure />} />
+        <Route path="/property-valuation" element={<PropertyValuationDashboard />} />
         <Route path="/premiso-hub" element={<PremisoCoreHub />} />
         <Route path="/compliance-dashboard" element={<ComplianceDashboard />} />
         <Route path="/commercial-market-analysis" element={<CommercialMarketAnalysis />} />
