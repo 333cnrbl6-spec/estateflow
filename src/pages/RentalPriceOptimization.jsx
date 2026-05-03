@@ -27,9 +27,19 @@ export default function RentalPriceOptimization() {
   });
 
   // Fetch rental recommendations
-  const { data: rentalRecommendations = [] } = useQuery({
+  const { data: rentalRecommendations = [], isLoading: isLoadingRecommendations, error: recommendError } = useQuery({
     queryKey: ['rental-recommendations'],
-    queryFn: () => base44.entities.RentalRecommendation?.list?.('-updated_date', 100) || Promise.resolve([])
+    queryFn: async () => {
+      try {
+        if (!base44.entities.RentalRecommendation) return [];
+        return await base44.entities.RentalRecommendation.list('-updated_date', 100);
+      } catch (err) {
+        console.error('Failed to fetch rental recommendations:', err);
+        return [];
+      }
+    },
+    retry: 2,
+    staleTime: 5 * 60 * 1000
   });
 
   // Analyze rental market and generate recommendations
@@ -52,13 +62,22 @@ export default function RentalPriceOptimization() {
   const propertyUnits = units.filter(u => u.property_id === selectedPropertyId);
   const propertyRecommendation = rentalRecommendations.find(r => r.property_id === selectedPropertyId);
 
-  // Calculate portfolio stats
-  const totalIncome = propertyUnits.reduce((sum, u) => sum + (u.monthly_rent || 0), 0);
-  const recommendedIncome = rentalRecommendations.reduce((sum, r) => {
-    const propUnits = units.filter(u => u.property_id === r.property_id);
-    return sum + (propUnits.reduce((s, u) => s + (r.recommended_rent || 0), 0));
-  }, 0);
-  const potentialGain = recommendedIncome - totalIncome;
+  // Calculate portfolio stats (validate all numbers are safe)
+  const totalIncome = Math.max(0, propertyUnits.reduce((sum, u) => {
+    const rent = Number(u?.monthly_rent) || 0;
+    return sum + (isNaN(rent) || rent < 0 ? 0 : rent);
+  }, 0));
+  
+  const recommendedIncome = Math.max(0, rentalRecommendations.reduce((sum, r) => {
+    if (!r?.property_id) return sum;
+    const propUnits = units.filter(u => u?.property_id === r.property_id);
+    return sum + (propUnits.reduce((s, u) => {
+      const rent = Number(r?.recommended_rent) || 0;
+      return s + (isNaN(rent) || rent < 0 ? 0 : rent);
+    }, 0));
+  }, 0));
+  
+  const potentialGain = Math.max(0, recommendedIncome - totalIncome);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
@@ -221,10 +240,13 @@ export default function RentalPriceOptimization() {
               properties.map(property => {
                 const recommendation = rentalRecommendations.find(r => r.property_id === property.id);
                 const propUnits = units.filter(u => u.property_id === property.id);
-                const currentRent = propUnits.reduce((sum, u) => sum + (u.monthly_rent || 0), 0);
-                const recommendedRent = recommendation?.recommended_rent || 0;
-                const difference = recommendedRent - currentRent;
-                const percentChange = currentRent > 0 ? ((difference / currentRent) * 100).toFixed(1) : 0;
+                const currentRent = Math.max(0, propUnits.reduce((sum, u) => {
+                  const rent = Number(u?.monthly_rent) || 0;
+                  return sum + (isNaN(rent) || rent < 0 ? 0 : rent);
+                }, 0));
+                const recommendedRent = Math.max(0, Number(recommendation?.recommended_rent) || 0);
+                const difference = Math.max(-currentRent, recommendedRent - currentRent); // Cap loss at 100%
+                const percentChange = currentRent > 0 ? Math.min(100, Math.max(-100, ((difference / currentRent) * 100))).toFixed(1) : 0;
 
                 return (
                   <Card

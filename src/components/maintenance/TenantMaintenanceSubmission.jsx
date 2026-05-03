@@ -39,81 +39,131 @@ export default function TenantMaintenanceSubmission({ tenantId, propertyId, onSu
 
   const handlePhotoUpload = async (e) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     const maxPhotos = 5;
-    if (photos.length + files.length > maxPhotos) {
-      toast.error(`Maximum ${maxPhotos} photos allowed`);
+    const maxFileSize = 5 * 1024 * 1024; // 5MB per file
+    
+    // Validate files
+    const validFiles = Array.from(files).filter(file => {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} is not a valid image`);
+        return false;
+      }
+      if (file.size > maxFileSize) {
+        toast.error(`${file.name} exceeds 5MB limit`);
+        return false;
+      }
+      return true;
+    });
+
+    if (photos.length + validFiles.length > maxPhotos) {
+      toast.error(`Maximum ${maxPhotos} photos allowed. Current: ${photos.length}`);
       return;
     }
 
     setLoading(true);
     try {
-      for (let i = 0; i < files.length; i++) {
+      for (const file of validFiles) {
         const { file_url } = await base44.integrations.Core.UploadFile({
-          file: files[i]
+          file: file
         });
+        if (!file_url) {
+          throw new Error('Upload returned no URL');
+        }
         setPhotos(prev => [...prev, {
           url: file_url,
-          name: files[i].name
+          name: file.name
         }]);
       }
-      toast.success(`${files.length} photo(s) uploaded`);
+      toast.success(`${validFiles.length} photo(s) uploaded successfully`);
     } catch (err) {
-      toast.error('Photo upload failed: ' + err.message);
+      toast.error('Photo upload failed: ' + (err?.message || 'Unknown error'));
+      // Remove any partially uploaded photos
+      setPhotos(prev => prev.slice(0, prev.length - validFiles.length));
     } finally {
       setLoading(false);
     }
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.description || !formData.category) {
-      toast.error('Please fill in all required fields');
+    // Validate required fields with trimming
+    const title = formData.title?.trim() || '';
+    const description = formData.description?.trim() || '';
+    const category = formData.category?.trim() || '';
+
+    if (!title || !description || !category) {
+      toast.error('Please fill in all required fields (Title, Description, Category)');
+      return;
+    }
+
+    if (title.length < 3) {
+      toast.error('Title must be at least 3 characters');
+      return;
+    }
+
+    if (description.length < 10) {
+      toast.error('Description must be at least 10 characters');
       return;
     }
 
     setLoading(true);
     try {
-      const photoUrls = photos.map(p => p.url);
+      const photoUrls = photos.map(p => p?.url).filter(Boolean);
 
+      // Create maintenance request
       const request = await base44.entities.MaintenanceRequest.create({
         tenant_id: tenantId,
         property_id: propertyId,
-        title: formData.title,
-        description: formData.description,
-        category: formData.category,
-        urgency: formData.urgency,
+        title: title,
+        description: description,
+        category: category,
+        priority: formData.urgency, // Map urgency to priority field
         status: 'pending',
         photo_urls: photoUrls,
-        submitted_date: new Date().toISOString()
+        submitted_date: new Date().toISOString(),
+        contact_email: 'tenant@example.com', // Should come from auth context
+        contact_phone: '' // Optional
       });
 
+      if (!request?.id) {
+        throw new Error('Failed to create request - no ID returned');
+      }
+
       // Send notification to property manager
-      await base44.integrations.Core.SendEmail({
-        to: 'manager@premiso.app',
-        subject: `New Maintenance Request - ${formData.title}`,
-        body: `
-          <html>
-            <body style="font-family: Arial, sans-serif;">
-              <h2>New Maintenance Request</h2>
-              <p><strong>Property:</strong> ${propertyId}</p>
-              <p><strong>Category:</strong> ${formData.category}</p>
-              <p><strong>Urgency:</strong> ${formData.urgency}</p>
-              <p><strong>Description:</strong></p>
-              <p>${formData.description}</p>
-              <p><strong>Photos Attached:</strong> ${photoUrls.length}</p>
-              <p>Log in to your dashboard to review and assign this request.</p>
-            </body>
-          </html>
-        `
-      });
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: 'manager@premiso.app',
+          subject: `New Maintenance Request - ${title}`,
+          body: `
+            <html>
+              <body style="font-family: Arial, sans-serif;">
+                <h2>New Maintenance Request</h2>
+                <p><strong>Request ID:</strong> ${request.id}</p>
+                <p><strong>Property:</strong> ${propertyId}</p>
+                <p><strong>Category:</strong> ${category}</p>
+                <p><strong>Priority:</strong> ${formData.urgency}</p>
+                <p><strong>Title:</strong> ${title}</p>
+                <p><strong>Description:</strong></p>
+                <p>${description}</p>
+                <p><strong>Photos Attached:</strong> ${photoUrls.length}</p>
+                <p>Log in to your dashboard to review and assign this request.</p>
+              </body>
+            </html>
+          `
+        });
+      } catch (emailErr) {
+        console.warn('Email notification failed (request created):', emailErr);
+        // Don't fail the whole submission if email fails
+      }
 
       toast.success('Maintenance request submitted successfully');
       setFormData({ title: '', description: '', category: '', urgency: 'medium' });
       setPhotos([]);
       onSuccess?.();
     } catch (err) {
-      toast.error('Error submitting request: ' + err.message);
+      console.error('Submit error:', err);
+      toast.error('Error submitting request: ' + (err?.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }

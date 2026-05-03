@@ -28,9 +28,19 @@ export default function PropertyValuationDashboard() {
   });
 
   // Fetch valuations
-  const { data: valuations = [] } = useQuery({
+  const { data: valuations = [], isLoading: isLoadingValuations, error: valuationError } = useQuery({
     queryKey: ['property-valuations'],
-    queryFn: () => base44.entities.PropertyValuation?.list?.('-updated_date', 100) || Promise.resolve([])
+    queryFn: async () => {
+      try {
+        if (!base44.entities.PropertyValuation) return [];
+        return await base44.entities.PropertyValuation.list('-updated_date', 100);
+      } catch (err) {
+        console.error('Failed to fetch valuations:', err);
+        return [];
+      }
+    },
+    retry: 2,
+    staleTime: 5 * 60 * 1000
   });
 
   // Analyze and generate valuation
@@ -53,12 +63,18 @@ export default function PropertyValuationDashboard() {
   const propertyUnits = units.filter(u => u.property_id === selectedPropertyId);
   const propertyValuation = valuations.find(v => v.property_id === selectedPropertyId);
 
-  // Calculate stats
+  // Calculate stats (validate market_demand_score is 0-100)
   const hasValuations = valuations.length > 0;
   const avgValuation = hasValuations
-    ? Math.round(valuations.reduce((sum, v) => sum + (v.estimated_value || 0), 0) / valuations.length)
+    ? Math.max(0, Math.round(valuations.reduce((sum, v) => {
+        const val = Number(v?.estimated_value) || 0;
+        return sum + (isNaN(val) || val < 0 ? 0 : val);
+      }, 0) / valuations.length))
     : 0;
-  const recentValuations = valuations.slice(0, 5);
+  const recentValuations = valuations.slice(0, 5).map(v => ({
+    ...v,
+    market_demand_score: Math.max(0, Math.min(100, Number(v?.market_demand_score) || 0))
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
@@ -322,14 +338,20 @@ export default function PropertyValuationDashboard() {
                       <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
                         <p className="text-sm text-blue-700">Total Portfolio Value</p>
                         <p className="text-2xl font-bold text-blue-900 mt-1">
-                          £{valuations.reduce((sum, v) => sum + (v.estimated_value || 0), 0).toLocaleString() / 100}
+                          £{(Math.max(0, valuations.reduce((sum, v) => {
+                            const val = Number(v?.estimated_value) || 0;
+                            return sum + (isNaN(val) || val < 0 ? 0 : val);
+                          }, 0)) / 100).toLocaleString()}
                         </p>
                       </div>
 
                       <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
                         <p className="text-sm text-green-700">Average Yield</p>
                         <p className="text-2xl font-bold text-green-900 mt-1">
-                          {(valuations.reduce((sum, v) => sum + (v.estimated_yield || 0), 0) / valuations.length).toFixed(2)}%
+                          {valuations.length > 0 ? (valuations.reduce((sum, v) => {
+                            const y = Number(v?.estimated_yield) || 0;
+                            return sum + (isNaN(y) || y < 0 ? 0 : Math.min(100, y));
+                          }, 0) / valuations.length).toFixed(2) : '0.00'}%
                         </p>
                       </div>
                     </div>
