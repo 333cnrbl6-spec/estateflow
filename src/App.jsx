@@ -73,6 +73,7 @@ import OutOfHoursServicePipeline from './pages/OutOfHoursServicePipeline';
 import OutOfHoursReporting from './pages/OutOfHoursReporting';
 import ContractorMobilePortal from './pages/ContractorMobilePortal';
 import TenantMaintenancePortal from './pages/TenantMaintenancePortal';
+import ContractorJobQueue from './pages/ContractorJobQueue';
 import VendorManagement from './pages/VendorManagement';
 import VendorSelfService from './pages/VendorSelfService';
 import VendorSimplifiedPortal from './pages/VendorSimplifiedPortal';
@@ -434,6 +435,8 @@ const AuthenticatedApp = () => {
       <Route path="/contractor-view" element={<ContractorPortal />} />
       {/* /contractor-mobile — mobile-optimized contractor portal */}
       <Route path="/contractor-mobile" element={<ContractorPortalMobile />} />
+      {/* /contractor-job-queue — dedicated job queue with scheduling & invoicing */}
+      <Route path="/contractor-job-queue" element={<ContractorJobQueue />} />
       {/* /inspection-generator — inspection report generator */}
       <Route path="/inspection-generator" element={<PropertyInspectionGenerator />} />
       <Route path="/property-inspections" element={<PropertyInspections />} />
