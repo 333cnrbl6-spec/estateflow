@@ -33,11 +33,13 @@ const getStatusColor = (cert) => {
 };
 
 const getDaysUntilExpiry = (expiryDate) => {
+  if (!expiryDate) return null;
   const days = differenceInDays(parseISO(expiryDate), new Date());
   return days;
 };
 
 const calculateStatus = (expiryDate, alertDays = 30) => {
+  if (!expiryDate) return 'valid';
   const daysLeft = getDaysUntilExpiry(expiryDate);
   if (daysLeft < 0) return 'expired';
   if (daysLeft <= alertDays) return 'expiring_soon';
@@ -253,9 +255,9 @@ export default function CertificateCompliance() {
                     <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                       {cert.certificate_number && <span>Cert: {cert.certificate_number}</span>}
                       {cert.issue_date && <span>Issued: {format(parseISO(cert.issue_date), 'dd MMM yyyy')}</span>}
-                      <span className="flex items-center gap-1">
+                      {cert.expiry_date && <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" /> Expires: {format(parseISO(cert.expiry_date), 'dd MMM yyyy')}
-                      </span>
+                      </span>}
                       {cert.issuing_body && <span>By: {cert.issuing_body}</span>}
                     </div>
                   </div>
