@@ -142,9 +142,11 @@ export default function MessagesAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-            <MessageSquare className="w-7 h-7" /> Message Center
+            <MessageSquare className="w-7 h-7" /> Communications Log
           </h1>
-          <p className="text-muted-foreground mt-1">Manage tenant communications and support requests</p>
+          <p className="text-muted-foreground mt-1">
+            Maintain a clear, chronological record of all interactions related to your properties, tenants, contractors, and team members.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
