@@ -13,6 +13,8 @@ import StatCard from '@/components/shared/StatCard';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { format } from 'date-fns';
 import MonthlyStatement from '@/components/financials/MonthlyStatement';
 import ServiceChargeReport from '@/components/financials/ServiceChargeReport';
@@ -36,10 +38,11 @@ export default function Financials() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
   const queryClient = useQueryClient();
   const { propertyIds } = useDemoFilter();
 
-  const { data: transactions = [] } = useQuery({
+  const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['transactions', propertyIds],
     queryFn: async () => {
       const all = await base44.entities.FinancialTransaction.list('-created_date');
@@ -69,7 +72,7 @@ export default function Financials() {
   });
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.FinancialTransaction.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['transactions'] }); setConfirmId(null); },
   });
 
   const totalIncome = transactions.filter(t => t.direction === 'income' && t.status === 'paid').reduce((s, t) => s + (t.amount || 0), 0);
@@ -104,9 +107,9 @@ export default function Financials() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatCard title="Total Income" value={`£${totalIncome.toLocaleString()}`} icon={PoundSterling} />
-        <StatCard title="Total Expenses" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} />
-        <StatCard title="Overdue Amount" value={`£${totalOverdue.toLocaleString()}`} icon={PoundSterling} />
+        <StatCard title="Total Income" value={`£${totalIncome.toLocaleString()}`} icon={PoundSterling} colorIndex={2} subtitle="paid transactions" />
+        <StatCard title="Total Expenses" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} colorIndex={5} subtitle="paid transactions" />
+        <StatCard title="Overdue Amount" value={`£${totalOverdue.toLocaleString()}`} icon={PoundSterling} colorIndex={3} subtitle="requires attention" />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -134,7 +137,9 @@ export default function Financials() {
         </Select>
       </div>
 
-      {filtered.length > 0 ? (
+      {isLoading ? (
+        <LoadingSpinner fullPage label="Loading transactions…" />
+      ) : filtered.length > 0 ? (
         <div className="bg-card rounded-xl border border-border overflow-hidden">
           <Table>
             <TableHeader>
@@ -162,7 +167,7 @@ export default function Financials() {
                       <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="w-4 h-4" /></Button></DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => { setEditing(t); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5 mr-2" /> Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => deleteMutation.mutate(t.id)}><Trash2 className="w-3.5 h-3.5 mr-2" /> Delete</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => setConfirmId(t.id)}><Trash2 className="w-3.5 h-3.5 mr-2" /> Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -180,6 +185,15 @@ export default function Financials() {
         title={editing ? 'Edit Transaction' : 'Add Transaction'}
         fields={TRANSACTION_FIELDS} initialData={editing}
         onSave={handleSave} saving={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!confirmId}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+        title="Delete Transaction?"
+        description="This will permanently remove this financial record. This cannot be undone."
+        onConfirm={() => deleteMutation.mutate(confirmId)}
+        loading={deleteMutation.isPending}
       />
     </div>
   );

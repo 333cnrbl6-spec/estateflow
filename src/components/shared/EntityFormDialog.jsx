@@ -7,14 +7,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertCircle } from 'lucide-react';
 
-function FieldInput({ field, value, onChange, options }) {
+function FieldInput({ field, value, onChange }) {
   const { name, type, enumValues, format } = field;
-  
+
   if (enumValues && enumValues.length > 0) {
     return (
       <Select value={value || ''} onValueChange={onChange}>
-        <SelectTrigger><SelectValue placeholder={`Select ${name}`} /></SelectTrigger>
+        <SelectTrigger>
+          <SelectValue placeholder={`Select ${(field.label || name).toLowerCase()}`} />
+        </SelectTrigger>
         <SelectContent>
           {enumValues.map(v => (
             <SelectItem key={v} value={v}>{v.replace(/_/g, ' ')}</SelectItem>
@@ -25,19 +28,42 @@ function FieldInput({ field, value, onChange, options }) {
   }
 
   if (type === 'boolean') {
-    return <Switch checked={!!value} onCheckedChange={onChange} />;
+    return (
+      <div className="flex items-center gap-2 h-9">
+        <Switch checked={!!value} onCheckedChange={onChange} />
+        <span className="text-sm text-muted-foreground">{value ? 'Yes' : 'No'}</span>
+      </div>
+    );
   }
 
   if (type === 'number') {
-    return <Input type="number" step="any" value={value ?? ''} onChange={e => onChange(e.target.value ? Number(e.target.value) : '')} />;
+    return (
+      <Input
+        type="number"
+        step="any"
+        value={value ?? ''}
+        onChange={e => onChange(e.target.value ? Number(e.target.value) : '')}
+      />
+    );
   }
 
   if (format === 'date') {
     return <Input type="date" value={value || ''} onChange={e => onChange(e.target.value)} />;
   }
 
-  if (name === 'notes' || name === 'description') {
-    return <Textarea value={value || ''} onChange={e => onChange(e.target.value)} rows={3} />;
+  // Email auto-detection
+  if (type === 'email' || name === 'email' || format === 'email') {
+    return <Input type="email" value={value || ''} onChange={e => onChange(e.target.value)} placeholder="email@example.com" />;
+  }
+
+  // Phone auto-detection
+  if (type === 'phone' || name === 'phone' || name?.includes('phone') || name?.includes('mobile')) {
+    return <Input type="tel" value={value || ''} onChange={e => onChange(e.target.value)} placeholder="+44 7000 000000" />;
+  }
+
+  // Long text fields
+  if (name === 'notes' || name === 'description' || name === 'details' || type === 'textarea') {
+    return <Textarea value={value || ''} onChange={e => onChange(e.target.value)} rows={3} className="resize-none" />;
   }
 
   return <Input value={value || ''} onChange={e => onChange(e.target.value)} />;
@@ -48,7 +74,7 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setFormData(initialData || {});
+    setFormData(initialData ? { ...initialData } : {});
     setErrors({});
   }, [initialData, open]);
 
@@ -56,14 +82,18 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
     const newErrors = {};
     (fields || []).forEach(field => {
       const value = formData[field.name];
-      if (field.required && (value === undefined || value === null || value === '')) {
-        newErrors[field.name] = `${field.label || field.name} is required`;
+      const isEmpty = value === undefined || value === null || value === '';
+
+      if (field.required && isEmpty) {
+        newErrors[field.name] = `${field.label || field.name.replace(/_/g, ' ')} is required`;
       }
-      if (field.type === 'number' && value !== undefined && value !== '' && isNaN(Number(value))) {
-        newErrors[field.name] = `${field.label || field.name} must be a valid number`;
+      if (!isEmpty && field.type === 'number' && isNaN(Number(value))) {
+        newErrors[field.name] = `${field.label || field.name.replace(/_/g, ' ')} must be a valid number`;
       }
-      if (field.format === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        newErrors[field.name] = `${field.label || field.name} must be a valid email`;
+      // Email validation for email fields
+      const isEmailField = field.type === 'email' || field.name === 'email' || field.format === 'email';
+      if (!isEmpty && isEmailField && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors[field.name] = 'Enter a valid email address';
       }
     });
     setErrors(newErrors);
@@ -72,22 +102,31 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
 
   const handleSave = () => {
     if (!validate()) return;
-    // Strip empty strings for optional fields, keep required ones
     const cleaned = {};
     Object.entries(formData).forEach(([k, v]) => {
-      if (v !== '' && v !== undefined) cleaned[k] = v;
+      if (v !== '' && v !== undefined && v !== null) cleaned[k] = v;
     });
     onSave(cleaned);
   };
 
+  const errorCount = Object.keys(errors).length;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[85vh]">
+      <DialogContent className="max-w-lg max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="font-serif">{title}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[60vh] pr-4">
-          <div className="space-y-4 py-2">
+
+        {errorCount > 0 && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{errorCount} field{errorCount > 1 ? 's' : ''} need{errorCount === 1 ? 's' : ''} attention</span>
+          </div>
+        )}
+
+        <ScrollArea className="max-h-[60vh] pr-3">
+          <div className="space-y-4 py-1">
             {(fields || []).map(field => (
               <div key={field.name} className="space-y-1.5">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -99,20 +138,24 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
                   value={formData[field.name]}
                   onChange={(val) => {
                     setFormData(prev => ({ ...prev, [field.name]: val }));
-                    if (errors[field.name]) setErrors(prev => ({ ...prev, [field.name]: undefined }));
+                    if (errors[field.name]) setErrors(prev => { const n = { ...prev }; delete n[field.name]; return n; });
                   }}
                 />
                 {errors[field.name] && (
-                  <p className="text-xs text-destructive">{errors[field.name]}</p>
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors[field.name]}
+                  </p>
                 )}
               </div>
             ))}
           </div>
         </ScrollArea>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save'}
+
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
+          <Button onClick={handleSave} disabled={saving} className="min-w-[80px]">
+            {saving ? 'Saving…' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

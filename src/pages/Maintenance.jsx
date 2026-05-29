@@ -11,17 +11,19 @@ import SampleDataBanner from '@/components/shared/SampleDataBanner';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import EntityFormDialog from '@/components/shared/EntityFormDialog';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { format } from 'date-fns';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 
 const MAINTENANCE_FIELDS = [
-  { name: 'title', type: 'string' },
+  { name: 'title', type: 'string', required: true },
   { name: 'description', type: 'string' },
   { name: 'priority', type: 'string', enumValues: ['emergency', 'urgent', 'standard', 'low'] },
   { name: 'status', type: 'string', enumValues: ['reported', 'assessed', 'quoted', 'approved', 'in_progress', 'completed', 'cancelled'] },
   { name: 'category', type: 'string', enumValues: ['plumbing', 'electrical', 'structural', 'roofing', 'decorating', 'landscaping', 'cleaning', 'fire_safety', 'lift', 'security', 'general', 'other'] },
   { name: 'contractor_name', type: 'string' },
-  { name: 'contractor_phone', type: 'string' },
+  { name: 'contractor_phone', type: 'phone' },
   { name: 'estimated_cost', type: 'number', label: 'Estimated Cost (£)' },
   { name: 'actual_cost', type: 'number', label: 'Actual Cost (£)' },
   { name: 'scheduled_date', type: 'string', format: 'date' },
@@ -29,16 +31,25 @@ const MAINTENANCE_FIELDS = [
   { name: 'notes', type: 'string' },
 ];
 
+// Priority border accent colours (left border)
+const PRIORITY_BORDER = {
+  emergency: 'border-l-4 border-l-destructive',
+  urgent: 'border-l-4 border-l-warning',
+  standard: 'border-l-4 border-l-primary/40',
+  low: 'border-l-4 border-l-border',
+};
+
 export default function Maintenance() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
   const queryClient = useQueryClient();
   const { propertyIds } = useDemoFilter();
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isLoading } = useQuery({
     queryKey: ['maintenance', propertyIds],
     queryFn: async () => {
       const all = await base44.entities.MaintenanceOrder.list('-created_date');
@@ -57,7 +68,7 @@ export default function Maintenance() {
   });
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.MaintenanceOrder.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['maintenance'] }),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['maintenance'] }); setConfirmId(null); },
   });
 
   const filtered = orders.filter(o => {
@@ -73,10 +84,11 @@ export default function Maintenance() {
   };
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto">
-      <PageHeader 
-        title="Maintenance Overview" 
-        subtitle="Track, manage, and prioritise maintenance tasks across your portfolio. This page helps you maintain compliance, respond to issues promptly, and keep properties in good condition.">
+    <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
+      <PageHeader
+        title="Maintenance"
+        subtitle={`${orders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active orders`}
+      >
         <Button onClick={() => { setEditing(null); setDialogOpen(true); }} size="sm">
           <Plus className="w-4 h-4 mr-1.5" /> New Order
         </Button>
@@ -87,56 +99,88 @@ export default function Maintenance() {
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search orders..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder="Search orders…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            {['reported', 'assessed', 'quoted', 'approved', 'in_progress', 'completed', 'cancelled'].map(s => <SelectItem key={s} value={s} className="capitalize">{s.replace(/_/g, ' ')}</SelectItem>)}
+            {['reported', 'assessed', 'quoted', 'approved', 'in_progress', 'completed', 'cancelled'].map(s => (
+              <SelectItem key={s} value={s} className="capitalize">{s.replace(/_/g, ' ')}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={filterPriority} onValueChange={setFilterPriority}>
           <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Priority</SelectItem>
-            {['emergency', 'urgent', 'standard', 'low'].map(p => <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>)}
+            {['emergency', 'urgent', 'standard', 'low'].map(p => (
+              <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
-      {filtered.length > 0 ? (
+      {isLoading ? (
+        <LoadingSpinner fullPage label="Loading maintenance orders…" />
+      ) : filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(order => (
-            <div key={order.id} className="bg-card rounded-xl border border-dashed border-amber-200/70 p-5 hover:shadow-md transition-shadow group opacity-80 hover:opacity-100">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-sm font-semibold text-foreground">{order.title}</h3>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100"><MoreHorizontal className="w-4 h-4" /></Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => { setEditing(order); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5 mr-2" /> Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive" onClick={() => deleteMutation.mutate(order.id)}><Trash2 className="w-3.5 h-3.5 mr-2" /> Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              {order.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{order.description}</p>}
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                <StatusBadge status={order.priority} />
-                <StatusBadge status={order.status} />
-                {order.category && <span className="text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground capitalize">{order.category.replace(/_/g, ' ')}</span>}
-              </div>
-              <div className="text-xs text-muted-foreground space-y-0.5">
-                {order.contractor_name && <p>Contractor: {order.contractor_name}</p>}
-                {order.estimated_cost && <p>Est: £{order.estimated_cost.toLocaleString()}</p>}
-                {order.scheduled_date && <p>Scheduled: {format(new Date(order.scheduled_date), 'dd MMM yyyy')}</p>}
+            <div
+              key={order.id}
+              className={`bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-all group ${PRIORITY_BORDER[order.priority] || ''}`}
+            >
+              <div className="p-5">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-foreground flex-1 mr-2 truncate">{order.title}</h3>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 flex-shrink-0">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => { setEditing(order); setDialogOpen(true); }}>
+                        <Pencil className="w-3.5 h-3.5 mr-2" /> Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive" onClick={() => setConfirmId(order.id)}>
+                        <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {order.description && (
+                  <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{order.description}</p>
+                )}
+
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  <StatusBadge status={order.priority} />
+                  <StatusBadge status={order.status} />
+                  {order.category && (
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground capitalize">
+                      {order.category.replace(/_/g, ' ')}
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-xs text-muted-foreground space-y-0.5 pt-2 border-t border-border">
+                  {order.contractor_name && <p>Contractor: <span className="text-foreground">{order.contractor_name}</span></p>}
+                  {order.estimated_cost > 0 && <p>Est: <span className="text-foreground font-medium">£{order.estimated_cost.toLocaleString()}</span></p>}
+                  {order.scheduled_date && <p>Scheduled: {format(new Date(order.scheduled_date), 'dd MMM yyyy')}</p>}
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <EmptyState icon={Wrench} title="No maintenance orders" description="Create a new work order" actionLabel="New Order" onAction={() => { setEditing(null); setDialogOpen(true); }} />
+        <EmptyState
+          icon={Wrench}
+          title="No maintenance orders"
+          description={search || filterStatus !== 'all' || filterPriority !== 'all' ? 'Try adjusting the filters' : 'Create your first maintenance work order'}
+          actionLabel="New Order"
+          onAction={() => { setEditing(null); setDialogOpen(true); }}
+        />
       )}
 
       <EntityFormDialog
@@ -144,6 +188,15 @@ export default function Maintenance() {
         title={editing ? 'Edit Maintenance Order' : 'New Maintenance Order'}
         fields={MAINTENANCE_FIELDS} initialData={editing}
         onSave={handleSave} saving={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!confirmId}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+        title="Delete Maintenance Order?"
+        description="This will permanently remove the order record. This cannot be undone."
+        onConfirm={() => deleteMutation.mutate(confirmId)}
+        loading={deleteMutation.isPending}
       />
     </div>
   );
