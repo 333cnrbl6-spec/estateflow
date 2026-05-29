@@ -19,7 +19,8 @@ export const navigationZones = [
     icon: Layout,
     description: 'Get started: Import data, discover files, integrate Companies House',
     routes: [
-      { path: '/setup', label: 'Setup Checklist', icon: '✓' },
+      { path: '/guided-setup', label: 'Guided Setup', icon: '🚀' },
+      { path: '/setup', label: 'Integrations & Setup', icon: '✓' },
       { path: '/data-discovery', label: 'Data Discovery Hub', icon: '🔍' },
       { path: '/intelligent-onboarding', label: 'Smart Onboarding', icon: '✨' },
       { path: '/bulk-import-tester', label: 'Bulk Import Tester', icon: '📤' },
@@ -173,6 +174,9 @@ export const navigationZones = [
     routes: [
       { path: '/role-management', label: 'Role Management', icon: '👥' },
       { path: '/settings', label: 'Settings', icon: '⚙️' },
+      { path: '/help-support', label: 'Help and Support', icon: '❓' },
+      { path: '/beta-feedback', label: 'BETA Feedback', icon: '💬' },
+      { path: '/terms', label: 'Terms and Conditions', icon: '📜' },
       { path: '/integrations', label: 'Integrations', icon: '🔗' },
       { path: '/api-integrations', label: 'API Integrations', icon: '⚡' },
       { path: '/document-templates', label: 'Document Templates', icon: '📄' },

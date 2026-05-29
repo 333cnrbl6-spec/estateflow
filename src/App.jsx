@@ -212,6 +212,7 @@ import DeveloperAccessPortal from './pages/DeveloperAccessPortal';
 import BetaFeedback from './pages/BetaFeedback';
 import TermsAndConditions from './pages/TermsAndConditions';
 import HelpAndSupport from './pages/HelpAndSupport';
+import GuidedSetup from './pages/GuidedSetup';
 import { PermissionProvider } from '@/lib/PermissionContext';
 import AICopilot from '@/components/copilot/AICopilot';
 
@@ -370,6 +371,7 @@ const AuthenticatedApp = () => {
         <Route path="/api-docs" element={<APIDocumentation />} />
         <Route path="/help" element={<KnowledgeBase />} />
         <Route path="/help-support" element={<HelpAndSupport />} />
+        <Route path="/guided-setup" element={<GuidedSetup />} />
         <Route path="/beta-feedback" element={<BetaFeedback />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/compliance-intelligence" element={<ComplianceIntelligence />} />

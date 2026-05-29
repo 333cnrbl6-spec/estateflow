@@ -33,7 +33,7 @@ const INTEGRATION_GROUPS = [
       {
         id: "googledrive",
         name: "Google Drive",
-        description: "Import spreadsheets, documents and reports from Google Drive into Powell & Co.",
+        description: "Import spreadsheets, documents and reports from Google Drive into Premiso.",
         icon: "gdrive",
         status: "not_connected",
         category: "storage",
@@ -240,7 +240,7 @@ export default function Setup() {
     <div className="p-6 max-w-7xl mx-auto">
       <PageHeader
         title="Setup & Integrations"
-        subtitle="Connect your tools to automate data import and keep Powell & Co in sync"
+        subtitle="Connect your tools to automate data import and keep Premiso in sync"
       />
 
       {/* Progress Banner */}
