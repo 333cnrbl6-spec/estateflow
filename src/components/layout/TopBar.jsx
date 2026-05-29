@@ -12,7 +12,7 @@ export default function TopBar() {
     <div className="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-6 flex-shrink-0 z-40">
       <div className="flex items-center gap-2 text-sm text-slate-600">
         <Building2 className="w-4 h-4 text-primary" />
-        <span className="font-medium text-primary">Premiso</span>
+        <span className="font-medium" style={{ color: '#0A1E3F', fontFamily: 'Poppins, Inter, sans-serif' }}>Premiso</span>
       </div>
       <div className="flex items-center gap-3">
         {user && <span className="text-xs text-slate-500 hidden md:block">{user.email}</span>}

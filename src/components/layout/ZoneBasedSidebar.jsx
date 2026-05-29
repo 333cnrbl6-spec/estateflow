@@ -32,9 +32,14 @@ export default function ZoneBasedSidebar() {
   return (
     <div className="w-full h-full flex flex-col bg-sidebar text-sidebar-foreground">
       {/* Logo Section */}
-      <div className="px-4 py-4 border-b border-sidebar-border">
-        <h2 className="font-bold text-lg text-sidebar-primary">Premiso</h2>
-        <p className="text-xs text-sidebar-accent text-opacity-70">Property Management</p>
+      <div className="px-4 py-5 border-b border-sidebar-border flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #007BFF, #0A1E3F)' }}>
+          <span className="text-white font-bold text-xs">P</span>
+        </div>
+        <div>
+          <h2 className="font-bold text-base leading-none" style={{ color: '#fff', fontFamily: 'Poppins, Inter, sans-serif' }}>Premiso</h2>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>Property Management</p>
+        </div>
       </div>
 
       {/* Navigation Zones */}
@@ -94,8 +99,8 @@ export default function ZoneBasedSidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-sidebar-border text-xs text-sidebar-accent text-opacity-70">
-        <p>v2.0 • Property Platform</p>
+      <div className="px-4 py-3 border-t border-sidebar-border text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p>Premiso BETA · SynergyFlow Group</p>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ export default function LightThemeLayout() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex">
+    <div className="min-h-screen flex" style={{ background: '#f4f7fb' }}>
       {/* Fixed sidebar */}
       <div className="fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar text-sidebar-foreground overflow-y-auto z-50">
         <ZoneBasedSidebar />

@@ -4,6 +4,8 @@ export default function TermsAcceptModal() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Clear any legacy keys from previous brand migrations
+    localStorage.removeItem('datawinder_terms_accepted');
     const accepted = localStorage.getItem('premiso_terms_accepted');
     if (!accepted) setOpen(true);
   }, []);

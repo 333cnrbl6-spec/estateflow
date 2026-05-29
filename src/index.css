@@ -102,7 +102,7 @@
 }
 
 .shepherd-has-title .shepherd-content .shepherd-header {
-  background: hsl(221, 55%, 20%);
+  background: #0A1E3F;
   border-radius: 12px 12px 0 0;
   padding: 16px 20px 12px;
 }
@@ -144,8 +144,8 @@
   border: none;
 }
 
-.shepherd-button-primary { background: hsl(221,65%,28%); color: #fff; }
-.shepherd-button-primary:hover { background: hsl(221,65%,23%); }
+.shepherd-button-primary { background: #007BFF; color: #fff; }
+.shepherd-button-primary:hover { background: #0062cc; }
 
 .shepherd-button-secondary {
   background: transparent;
@@ -156,5 +156,5 @@
 
 .shepherd-arrow:before { background: white; }
 .shepherd-element[data-popper-placement^='bottom'] .shepherd-arrow:before {
-  background: hsl(221,55%,20%);
+  background: #0A1E3F;
 }
