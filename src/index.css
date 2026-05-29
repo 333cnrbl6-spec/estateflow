@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 @import 'shepherd.js/dist/css/shepherd.css';
 
 @tailwind base;
@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', sans-serif;
-    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+    --font-serif: 'Poppins', 'Inter', sans-serif;
 
     --background: 220 20% 97%;
     --foreground: 220 15% 10%;
@@ -16,33 +16,33 @@
     --card-foreground: 220 15% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 10%;
-    --primary: 221 65% 28%;
+    --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 15% 93%;
     --secondary-foreground: 220 15% 15%;
     --muted: 220 15% 94%;
     --muted-foreground: 220 10% 46%;
-    --accent: 221 65% 28%;
+    --accent: 211 100% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 15% 88%;
     --input: 220 15% 88%;
-    --ring: 221 65% 28%;
-    --chart-1: 221 65% 28%;
+    --ring: 211 100% 50%;
+    --chart-1: 211 100% 50%;
     --chart-2: 43 74% 49%;
     --chart-3: 173 58% 39%;
     --chart-4: 12 76% 61%;
     --chart-5: 197 37% 24%;
     --radius: 0.625rem;
-    --sidebar-background: 221 55% 20%;
+    --sidebar-background: 217 72% 15%;
     --sidebar-foreground: 210 40% 95%;
-    --sidebar-primary: 43 74% 55%;
-    --sidebar-primary-foreground: 221 55% 15%;
-    --sidebar-accent: 221 45% 28%;
+    --sidebar-primary: 27 100% 50%;
+    --sidebar-primary-foreground: 217 72% 15%;
+    --sidebar-accent: 211 100% 35%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 221 45% 27%;
-    --sidebar-ring: 43 74% 55%;
+    --sidebar-border: 211 60% 25%;
+    --sidebar-ring: 27 100% 50%;
   }
 
   .dark {

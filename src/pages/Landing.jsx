@@ -1,166 +1,133 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import LandingNav from '@/components/landing/LandingNav';
 import FooterSection from '@/components/landing/FooterSection';
-import { ChevronRight, Building2, FileCheck, Users, Zap, BarChart3, Lock, Clock, TrendingUp } from 'lucide-react';
+import TermsAcceptModal from '@/components/landing/TermsAcceptModal';
+import { ChevronRight, Microscope, Map, BarChart3, Globe, Database, Cpu, FlaskConical, BookOpen } from 'lucide-react';
+
+const BRAND = {
+  navy: '#0A1E3F',
+  blue: '#007BFF',
+  orange: '#FF7A00',
+  white: '#FFFFFF',
+};
+
+const modules = [
+  {
+    icon: <Microscope className="w-6 h-6" />,
+    title: 'Species Distribution Modelling',
+    desc: 'Run MAXENT and ensemble SDMs directly in the browser — no local setup required.',
+    color: '#007BFF',
+  },
+  {
+    icon: <Map className="w-6 h-6" />,
+    title: 'Geospatial Analysis',
+    desc: 'Powered by ESRI ArcGIS — map habitat ranges, protected areas, and biodiversity hotspots.',
+    color: '#FF7A00',
+  },
+  {
+    icon: <Globe className="w-6 h-6" />,
+    title: 'GBIF & iNaturalist Integration',
+    desc: 'Pull occurrence records from global biodiversity databases in real time.',
+    color: '#007BFF',
+  },
+  {
+    icon: <BarChart3 className="w-6 h-6" />,
+    title: 'Statistical Reporting',
+    desc: 'R-powered statistical pipelines with publication-ready charts and exports.',
+    color: '#FF7A00',
+  },
+  {
+    icon: <Database className="w-6 h-6" />,
+    title: 'IUCN Red List & WorldClim',
+    desc: 'Integrate threat status data and climate variables into every analysis.',
+    color: '#007BFF',
+  },
+  {
+    icon: <Cpu className="w-6 h-6" />,
+    title: 'AI Research Assistant',
+    desc: 'DataWinder AI helps design studies, interpret outputs, and write methods sections.',
+    color: '#FF7A00',
+  },
+];
 
 export default function Landing() {
   const navigate = useNavigate();
 
-  const navigateToDemo = (path) => {
-    navigate(path);
-  };
-
-  // Platform modules with demo paths
-  const modules = [
-    {
-      icon: <Building2 className="w-6 h-6" />,
-      title: 'Property Management',
-      desc: 'Lettings, HMOs, blocks & sales—unified dashboard',
-      demoPath: '/properties',
-      color: 'bg-blue-50 border-blue-200'
-    },
-    {
-      icon: <FileCheck className="w-6 h-6" />,
-      title: 'Compliance',
-      desc: 'Auto-tracked certificates, legal safeguards, audits',
-      demoPath: '/compliance-hub',
-      color: 'bg-green-50 border-green-200'
-    },
-    {
-      icon: <BarChart3 className="w-6 h-6" />,
-      title: 'Financial Control',
-      desc: 'Rent ledger, accounting sync, reporting',
-      demoPath: '/financials',
-      color: 'bg-purple-50 border-purple-200'
-    },
-    {
-      icon: <Users className="w-6 h-6" />,
-      title: 'Tenant Portals',
-      desc: 'Self-service, maintenance tracking, payments',
-      demoPath: '/tenant-portal',
-      color: 'bg-amber-50 border-amber-200'
-    },
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: 'Maintenance',
-      desc: 'Contractor dispatch, scheduling, mobile access',
-      demoPath: '/maintenance-board',
-      color: 'bg-red-50 border-red-200'
-    },
-    {
-      icon: <Lock className="w-6 h-6" />,
-      title: 'Out-of-Hours',
-      desc: '24/7 emergency call service add-on',
-      demoPath: '/out-of-hours-pipeline',
-      color: 'bg-slate-50 border-slate-200'
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans">
-      <LandingNav onLogin={() => window.location.href = '/dashboard'} />
+    <div className="min-h-screen" style={{ fontFamily: 'Poppins, Inter, Segoe UI, sans-serif', background: '#f8faff' }}>
+      <TermsAcceptModal />
+      <LandingNav />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-            The Complete UK Property <span className="text-primary">Management Platform</span>
+      {/* Hero */}
+      <section style={{ background: `linear-gradient(135deg, ${BRAND.navy} 0%, #0d2952 60%, #0a3060 100%)` }} className="pt-32 pb-24 px-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6" style={{ background: 'rgba(0,123,255,0.2)', color: '#60a5fa', border: '1px solid rgba(0,123,255,0.3)' }}>
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            BETA — Closed Trial for Invited Researchers
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            Accelerating Insights.<br />
+            <span style={{ color: BRAND.orange }}>Driving Innovation.</span>
           </h1>
-          <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Enterprise-grade compliance built-in for every portfolio size. From solo landlords to property groups—manage lettings, blocks, sales, and operations in one unified system.
+          <p className="text-xl mb-3 max-w-3xl mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            DataWinder is a scientific research platform unifying species distribution modelling, geospatial analysis, and biodiversity data — all in one browser-based environment.
+          </p>
+          <p className="text-sm mb-10" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            Powered by SynergyFlow Group · Built for the Primate Society of Great Britain &amp; Bangor University
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigateToDemo('/dashboard')}
-              className="bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition flex items-center justify-center gap-2"
+              onClick={() => navigate('/dashboard')}
+              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition hover:opacity-90 flex items-center justify-center gap-2"
+              style={{ background: BRAND.blue }}
             >
-              Explore Demo <ChevronRight className="w-5 h-5" />
+              Enter DataWinder <ChevronRight className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigateToDemo('/properties')}
-              className="border-2 border-primary text-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary/5 transition"
+              onClick={() => navigate('/dashboard')}
+              className="px-8 py-4 rounded-xl font-bold text-lg transition hover:opacity-90"
+              style={{ border: `2px solid ${BRAND.orange}`, color: BRAND.orange, background: 'transparent' }}
             >
-              Quick Tour
+              Explore Features
             </button>
           </div>
         </div>
+      </section>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          {[
-            { label: '18+ Modules', value: 'Full Platform' },
-            { label: '100% Compliant', value: 'UK Law Ready' },
-            { label: '24/7 Support', value: 'Optional Add-On' },
-            { label: '<2 Weeks', value: 'Go-Live Time' }
-          ].map((stat, i) => (
-            <div key={i} className="bg-white p-6 rounded-lg border border-slate-200 text-center">
-              <div className="text-2xl font-bold text-primary mb-1">{stat.label}</div>
-              <div className="text-sm text-slate-600">{stat.value}</div>
-            </div>
-          ))}
+      {/* Beta Info Banner */}
+      <section className="py-10 px-6" style={{ background: '#fff', borderBottom: '1px solid #e8eef8' }}>
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-lg font-semibold mb-3" style={{ color: BRAND.navy }}>Welcome to DataWinder BETA</h2>
+          <p className="text-sm leading-relaxed" style={{ color: '#4a5568' }}>
+            This release is part of a closed trial for invited researchers and collaborators, including members of the <strong>Primate Society of Great Britain</strong> and <strong>Bangor University</strong>. You now have full access to all professional features for <strong>14 days</strong>. After the trial, verified undergraduate and postgraduate researchers will retain full access for the duration of their research projects.
+          </p>
+          <p className="text-sm mt-3" style={{ color: '#4a5568' }}>
+            A <strong>Feedback Bot</strong> and <strong>Helper Bot</strong> are available to assist with setup and troubleshooting. Please share your insights — your feedback shapes the next generation of SynergySoft tools.
+          </p>
         </div>
       </section>
 
-      {/* Core Modules */}
-      <section className="py-20 px-6 bg-white border-y border-slate-200">
+      {/* Modules */}
+      <section id="features" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-4 text-slate-900">Everything You Need</h2>
-          <p className="text-center text-slate-600 mb-16 max-w-2xl mx-auto">Click any module to explore the live demo</p>
-          
+          <h2 className="text-4xl font-bold text-center mb-4" style={{ color: BRAND.navy }}>Research Toolkit</h2>
+          <p className="text-center mb-14 text-sm" style={{ color: '#6b7280' }}>Every tool a field or computational biologist needs — integrated and ready to use</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((mod, i) => (
-              <button
+              <div
                 key={i}
-                onClick={() => navigateToDemo(mod.demoPath)}
-                className={`p-6 rounded-xl border-2 transition-all hover:shadow-lg hover:scale-105 text-left ${mod.color}`}
+                onClick={() => navigate('/dashboard')}
+                className="p-6 rounded-xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 text-left bg-white"
+                style={{ border: `2px solid #e8eef8` }}
               >
-                <div className="text-primary mb-4">{mod.icon}</div>
-                <h3 className="font-bold text-lg text-slate-900 mb-2">{mod.title}</h3>
-                <p className="text-sm text-slate-600 mb-4">{mod.desc}</p>
-                <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-                  Try Demo <ChevronRight className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 text-white" style={{ background: mod.color }}>
+                  {mod.icon}
                 </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Benefits */}
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 text-slate-900">Why Choose Premiso</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-            {[
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: 'Reduce Inbound Queries',
-                desc: 'Self-service tenant & landlord portals cut support burden by up to 70%'
-              },
-              {
-                icon: <FileCheck className="w-8 h-8" />,
-                title: 'Never Miss Compliance',
-                desc: 'Auto-tracked certificates, gas safety, EICRs, fire assessments with live alerts'
-              },
-              {
-                icon: <Lock className="w-8 h-8" />,
-                title: 'Legal Protection',
-                desc: 'Built-in safeguards for S21/S8 notices, deposit protection, right to rent'
-              },
-              {
-                icon: <Clock className="w-8 h-8" />,
-                title: 'Get Live in <2 Weeks',
-                desc: 'Quick onboarding with data import, Companies House integration, automated setup'
-              },
-            ].map((benefit, i) => (
-              <div key={i} className="flex gap-6">
-                <div className="text-primary flex-shrink-0">{benefit.icon}</div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-2">{benefit.title}</h3>
-                  <p className="text-slate-600">{benefit.desc}</p>
+                <h3 className="font-bold text-base mb-2" style={{ color: BRAND.navy }}>{mod.title}</h3>
+                <p className="text-sm" style={{ color: '#6b7280' }}>{mod.desc}</p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-semibold" style={{ color: mod.color }}>
+                  Explore <ChevronRight className="w-4 h-4" />
                 </div>
               </div>
             ))}
@@ -168,43 +135,53 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-20 px-6 bg-gradient-to-r from-primary/5 to-primary/10 border-y border-slate-200">
+      {/* Stats */}
+      <section style={{ background: BRAND.navy }} className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 text-slate-900">Simple Pricing</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { name: 'Starter', price: '£149', units: 'Up to 50 units', cta: 'Get Started' },
-              { name: 'Professional', price: '£349', units: 'Up to 200 units', cta: 'Most Popular', highlight: true },
-              { name: 'Enterprise', price: 'Custom', units: 'Unlimited', cta: 'Contact Sales' },
-            ].map((tier, i) => (
-              <div key={i} className={`p-8 rounded-xl border-2 transition-all ${tier.highlight ? 'bg-white border-primary shadow-lg scale-105' : 'bg-white border-slate-200 hover:border-primary/30'}`}>
-                {tier.highlight && <div className="bg-primary text-white px-3 py-1 rounded-full text-sm font-bold w-fit mb-4">Most Popular</div>}
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">{tier.name}</h3>
-                <div className="text-4xl font-bold text-primary mb-1">{tier.price}<span className="text-lg text-slate-600">/month</span></div>
-                <p className="text-slate-600 mb-6">{tier.units}</p>
-                <button onClick={() => navigateToDemo('/dashboard')} className={`w-full py-3 rounded-lg font-bold transition ${tier.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'border-2 border-primary text-primary hover:bg-primary/5'}`}>
-                  {tier.cta}
-                </button>
+              { label: '9+ Partners', desc: 'Data providers' },
+              { label: '14-Day Trial', desc: 'Full feature access' },
+              { label: 'BETA', desc: 'Closed research trial' },
+              { label: 'WCAG AA', desc: 'Accessibility compliant' },
+            ].map((s, i) => (
+              <div key={i} className="p-6 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <div className="text-2xl font-bold mb-1" style={{ color: BRAND.orange }}>{s.label}</div>
+                <div className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>{s.desc}</div>
               </div>
             ))}
           </div>
-          
-          <p className="text-center text-slate-600 mt-8 text-sm">Optional add-ons: Out-of-Hours Service (£95–£295/mo), Custom Integrations, White Label</p>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="py-20 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <FlaskConical className="w-12 h-12 mx-auto mb-6" style={{ color: BRAND.blue }} />
+          <h2 className="text-4xl font-bold mb-6" style={{ color: BRAND.navy }}>Built for Researchers, by Researchers</h2>
+          <p className="text-base leading-relaxed mb-6" style={{ color: '#4a5568' }}>
+            DataWinder was conceived within the SynergyFlow Group ecosystem to eliminate the fragmentation of scientific workflows. Instead of juggling R scripts, ArcGIS licenses, GBIF API keys, and iNaturalist exports separately — DataWinder brings them together into a single, collaborative, browser-native research environment.
+          </p>
+          <p className="text-sm" style={{ color: '#9ca3af' }}>
+            Part of the SynergySoft research tools suite · Powered by SynergyFlow Group
+          </p>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6" style={{ background: `linear-gradient(135deg, ${BRAND.navy}, #0d2952)` }}>
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6 text-slate-900">Ready to Transform Property Management?</h2>
-          <p className="text-xl text-slate-600 mb-8">Join landlords, letting agents, freeholders, and block managers already using Premiso</p>
+          <BookOpen className="w-12 h-12 mx-auto mb-6" style={{ color: BRAND.orange }} />
+          <h2 className="text-4xl font-bold text-white mb-4">Ready to Begin Your Research?</h2>
+          <p className="text-lg mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            Log in with your invited credentials to access the full DataWinder platform.
+          </p>
           <button
-            onClick={() => navigateToDemo('/dashboard')}
-            className="bg-primary text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition inline-flex items-center gap-2"
+            onClick={() => navigate('/dashboard')}
+            className="px-10 py-4 rounded-xl font-bold text-lg text-white transition hover:opacity-90 inline-flex items-center gap-2"
+            style={{ background: BRAND.orange }}
           >
-            Start Your Free Demo <ChevronRight className="w-5 h-5" />
+            Enter DataWinder <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </section>
