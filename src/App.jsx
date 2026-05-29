@@ -209,6 +209,9 @@ import LaunchReadinessDashboard from '@/components/LaunchReadinessDashboard';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import SubscriberFacingDashboard from './pages/SubscriberFacingDashboard';
 import DeveloperAccessPortal from './pages/DeveloperAccessPortal';
+import BetaFeedback from './pages/BetaFeedback';
+import TermsAndConditions from './pages/TermsAndConditions';
+import HelpAndSupport from './pages/HelpAndSupport';
 import { PermissionProvider } from '@/lib/PermissionContext';
 import AICopilot from '@/components/copilot/AICopilot';
 
@@ -366,6 +369,9 @@ const AuthenticatedApp = () => {
         <Route path="/custom-reports" element={<CustomizableFinancialReports />} />
         <Route path="/api-docs" element={<APIDocumentation />} />
         <Route path="/help" element={<KnowledgeBase />} />
+        <Route path="/help-support" element={<HelpAndSupport />} />
+        <Route path="/beta-feedback" element={<BetaFeedback />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/compliance-intelligence" element={<ComplianceIntelligence />} />
         <Route path="/workflow-builder" element={<WorkflowAutomationBuilder />} />
         <Route path="/integrations-marketplace" element={<IntegrationMarketplace />} />
