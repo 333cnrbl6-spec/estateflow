@@ -1,42 +1,65 @@
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-const statusStyles = {
-  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  dissolved: 'bg-slate-100 text-slate-600 border-slate-200',
-  dormant: 'bg-amber-50 text-amber-700 border-amber-200',
-  occupied: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  vacant: 'bg-red-50 text-red-600 border-red-200',
-  under_renovation: 'bg-amber-50 text-amber-700 border-amber-200',
-  paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  overdue: 'bg-red-50 text-red-600 border-red-200',
-  cancelled: 'bg-slate-100 text-slate-600 border-slate-200',
-  partial: 'bg-blue-50 text-blue-600 border-blue-200',
-  reported: 'bg-blue-50 text-blue-600 border-blue-200',
-  assessed: 'bg-indigo-50 text-indigo-600 border-indigo-200',
-  quoted: 'bg-purple-50 text-purple-600 border-purple-200',
-  approved: 'bg-cyan-50 text-cyan-600 border-cyan-200',
-  in_progress: 'bg-amber-50 text-amber-700 border-amber-200',
-  completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  emergency: 'bg-red-50 text-red-600 border-red-200',
-  urgent: 'bg-orange-50 text-orange-600 border-orange-200',
-  standard: 'bg-blue-50 text-blue-600 border-blue-200',
-  low: 'bg-slate-100 text-slate-600 border-slate-200',
-  in_arrears: 'bg-red-50 text-red-600 border-red-200',
-  notice_given: 'bg-amber-50 text-amber-700 border-amber-200',
-  former: 'bg-slate-100 text-slate-600 border-slate-200',
-  income: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  expense: 'bg-red-50 text-red-600 border-red-200',
+const STATUS_STYLES = {
+  // Generic states
+  active:      'bg-success/10 text-success border-success/20',
+  inactive:    'bg-muted text-muted-foreground border-border',
+  pending:     'bg-warning/10 text-warning border-warning/20',
+  suspended:   'bg-destructive/10 text-destructive border-destructive/20',
+  archived:    'bg-muted text-muted-foreground border-border',
+
+  // Compliance / certificates
+  valid:       'bg-success/10 text-success border-success/20',
+  expiring:    'bg-warning/10 text-warning border-warning/20',
+  expired:     'bg-destructive/10 text-destructive border-destructive/20',
+  critical:    'bg-destructive/10 text-destructive border-destructive/20',
+  warning:     'bg-warning/10 text-warning border-warning/20',
+  upcoming:    'bg-primary/10 text-primary border-primary/20',
+  compliant:   'bg-success/10 text-success border-success/20',
+  overdue:     'bg-destructive/10 text-destructive border-destructive/20',
+
+  // Maintenance
+  open:        'bg-primary/10 text-primary border-primary/20',
+  in_progress: 'bg-warning/10 text-warning border-warning/20',
+  resolved:    'bg-success/10 text-success border-success/20',
+  closed:      'bg-muted text-muted-foreground border-border',
+  assigned:    'bg-primary/10 text-primary border-primary/20',
+  emergency:   'bg-destructive/10 text-destructive border-destructive/20',
+  high:        'bg-destructive/10 text-destructive border-destructive/20',
+  medium:      'bg-warning/10 text-warning border-warning/20',
+  low:         'bg-success/10 text-success border-success/20',
+
+  // Tenancy
+  draft:       'bg-muted text-muted-foreground border-border',
+  live:        'bg-success/10 text-success border-success/20',
+  ended:       'bg-muted text-muted-foreground border-border',
+  notice:      'bg-warning/10 text-warning border-warning/20',
+
+  // Finance
+  paid:        'bg-success/10 text-success border-success/20',
+  unpaid:      'bg-destructive/10 text-destructive border-destructive/20',
+  partial:     'bg-warning/10 text-warning border-warning/20',
+
+  // Fallback
+  default:     'bg-secondary text-secondary-foreground border-border',
 };
 
-export default function StatusBadge({ status }) {
+export default function StatusBadge({ status, label, className = '' }) {
   if (!status) return null;
-  const label = status.replace(/_/g, ' ');
+  const key = (status || '').toLowerCase().replace(/\s+/g, '_');
+  const style = STATUS_STYLES[key] || STATUS_STYLES.default;
+  const display = label || status.replace(/_/g, ' ');
+
   return (
-    <Badge variant="outline" className={cn('capitalize text-[11px] font-medium', statusStyles[status] || 'bg-muted text-muted-foreground')}>
-      {label}
-    </Badge>
+    <span
+      className={cn(
+        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize',
+        style,
+        className
+      )}
+    >
+      {display}
+    </span>
   );
 }

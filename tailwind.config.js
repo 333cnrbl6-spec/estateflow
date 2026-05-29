@@ -6,7 +6,11 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			sans: ['var(--font-sans)'],
-  			serif: ['var(--font-serif)']
+  			serif: ['var(--font-serif)'],
+  			display: ['var(--font-display)'],
+  			inter: ['Inter', 'sans-serif'],
+  			playfair: ['"Playfair Display"', 'Georgia', 'serif'],
+  			poppins: ['Poppins', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -43,6 +47,14 @@ module.exports = {
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			success: {
+  				DEFAULT: 'hsl(var(--success))',
+  				foreground: 'hsl(var(--success-foreground))'
+  			},
+  			warning: {
+  				DEFAULT: 'hsl(var(--warning))',
+  				foreground: 'hsl(var(--warning-foreground))'
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
