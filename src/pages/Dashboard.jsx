@@ -23,6 +23,7 @@ import OnboardingCompletionCheck from '@/components/onboarding/OnboardingComplet
 import PortfolioAnalyticsDashboard from '@/components/dashboard/PortfolioAnalyticsDashboard';
 import { format } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useDemoFilter } from '@/hooks/useDemoFilter';
 import { useQueryError } from '@/hooks/useQueryError';
 import { Card } from '@/components/ui/card';
@@ -183,18 +184,12 @@ export default function Dashboard() {
   const isNewSubscriber = properties.length === 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-background">
       <OnboardingCompletionCheck />
       
       <div className="px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
         
-        {/* Dashboard Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome to your Premiso dashboard</h1>
-          <p className="text-lg text-slate-600">
-            This is your central hub for tenancy activity, maintenance tasks, communication logs, and portfolio performance. Use this space to monitor key updates, track outstanding actions, and navigate quickly to the tools you need.
-          </p>
-        </div>
+        <DashboardHeader user={currentUser} propertiesCount={properties.length} />
 
         {/* CRITICAL ALERTS ONLY (first exposure) */}
         {(
@@ -210,11 +205,11 @@ export default function Dashboard() {
         {/* NEW SUBSCRIBER SETUP FLOW */}
         {isNewSubscriber ? (
           <div className="space-y-6 mb-12">
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
+            <Card className="border-2 border-primary/20 bg-primary/5 p-8">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Let's get you started</h2>
-                  <p className="text-slate-600">Set up your first property to unlock your dashboard</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Let's get you started</h2>
+                  <p className="text-muted-foreground">Set up your first property to unlock your dashboard</p>
                 </div>
                 <Button asChild className="w-fit h-11 px-6 text-base">
                   <Link to="/properties/add">Add Your First Property</Link>
@@ -231,8 +226,8 @@ export default function Dashboard() {
               ].map((step, i) => (
                 <Card key={i} className="p-6 border-slate-200 hover:border-slate-300 hover:shadow-md transition-all">
                   <div className="text-3xl mb-3">{step.icon}</div>
-                  <h3 className="font-semibold text-slate-900 mb-1">{step.title}</h3>
-                  <p className="text-sm text-slate-600">{step.desc}</p>
+                  <h3 className="font-semibold text-foreground mb-1">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground">{step.desc}</p>
                 </Card>
               ))}
             </div>
@@ -243,8 +238,8 @@ export default function Dashboard() {
             
             {/* Smart Alerts Engine */}
             <div className="mb-8">
-              <Card className="p-6 border-slate-200">
-                <h3 className="text-lg font-bold text-slate-900 mb-4">Active Alerts</h3>
+              <Card className="p-6">
+                <h3 className="text-lg font-bold text-foreground mb-4">Active Alerts</h3>
                 <SmartAlertsEngine />
               </Card>
             </div>
@@ -261,7 +256,7 @@ export default function Dashboard() {
 
             {/* Primary KPIs */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">At a glance</h2>
+              <h2 className="text-xl font-bold text-foreground mb-4">At a glance</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard title="Properties" value={properties.length} icon={Home} subtitle={`${units.length} units`} colorIndex={1} />
                 <StatCard title="Occupancy" value={`${occupancyRate}%`} icon={DoorOpen} subtitle={`${occupiedUnits}/${units.length} occupied`} colorIndex={2} />
@@ -272,7 +267,7 @@ export default function Dashboard() {
 
             {/* Financial Summary */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Financial overview</h2>
+              <h2 className="text-xl font-bold text-foreground mb-4">Financial overview</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <StatCard title="Income (Paid)" value={`£${totalIncome.toLocaleString()}`} icon={TrendingUp} subtitle="this period" colorIndex={2} />
                 <StatCard title="Expenses" value={`£${totalExpenses.toLocaleString()}`} icon={PoundSterling} subtitle="this period" colorIndex={4} />
@@ -284,9 +279,9 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               {/* Recent Maintenance */}
               <div className="lg:col-span-2">
-                <Card className="p-6 border-slate-200">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-slate-900">Recent activity</h3>
+                    <h3 className="text-lg font-bold text-foreground">Recent activity</h3>
                     <Link to="/maintenance" className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
                       View all <ChevronRight className="w-4 h-4" />
                     </Link>
@@ -296,8 +291,8 @@ export default function Dashboard() {
                       {recentMaintenance.slice(0, 4).map(m => (
                         <div key={m.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0 hover:bg-slate-50 px-2 -mx-2 rounded transition-colors">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900">{m.title}</p>
-                            <p className="text-xs text-slate-500 mt-0.5">{m.category?.replace(/_/g, ' ')}{m.created_date ? ` · ${format(new Date(m.created_date), 'dd MMM')}` : ''}</p>
+                            <p className="text-sm font-medium text-foreground">{m.title}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{m.category?.replace(/_/g, ' ')}{m.created_date ? ` · ${format(new Date(m.created_date), 'dd MMM')}` : ''}</p>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <StatusBadge status={m.priority} />
@@ -320,8 +315,8 @@ export default function Dashboard() {
 
             {/* Analytics (collapsed by default for new users) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <Card className="p-6 border-slate-200">
-                <h3 className="text-lg font-bold text-slate-900 mb-6">Properties by region</h3>
+              <Card className="p-6">
+                <h3 className="text-lg font-bold text-foreground mb-6">Properties by region</h3>
                 {regionData.length > 0 ? (
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
@@ -336,8 +331,8 @@ export default function Dashboard() {
                 )}
               </Card>
 
-              <Card className="p-6 border-slate-200">
-                <h3 className="text-lg font-bold text-slate-900 mb-6">Companies by category</h3>
+              <Card className="p-6">
+                <h3 className="text-lg font-bold text-foreground mb-6">Companies by category</h3>
                 {companyCategories.length > 0 ? (
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={companyCategories}>
@@ -356,7 +351,7 @@ export default function Dashboard() {
 
             {/* Advanced widgets (collapsible insights) */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Insights & Intelligence</h2>
+              <h2 className="text-xl font-bold text-foreground mb-4">Insights & Intelligence</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <PropertyMapView properties={properties} units={units} maintenance={maintenance} />
                 <ComplianceReportGenerator 
@@ -369,7 +364,7 @@ export default function Dashboard() {
 
             {/* Portfolio Analytics Dashboard */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Portfolio Analytics</h2>
+              <h2 className="text-xl font-bold text-foreground mb-4">Portfolio Analytics</h2>
               <PortfolioAnalyticsDashboard />
             </div>
 

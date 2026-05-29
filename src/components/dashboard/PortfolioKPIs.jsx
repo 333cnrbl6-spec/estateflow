@@ -6,14 +6,14 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const COLORS = ['hsl(221,65%,28%)', 'hsl(43,74%,49%)', 'hsl(173,58%,39%)', 'hsl(12,76%,61%)', 'hsl(197,37%,24%)'];
 
 const KPICard = ({ icon: IconComp, title, value, subtitle, color = 'text-primary' }) => (
-  <Card className="p-5 border-slate-200">
+  <Card className="p-5">
     <div className="flex items-start justify-between">
-      <div>
-        <p className="text-sm text-muted-foreground font-medium">{title}</p>
-        <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
-        {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</p>
+        <p className={`text-2xl font-bold mt-1 tabular-nums font-display ${color}`}>{value}</p>
+        {subtitle && <p className="text-xs text-muted-foreground mt-1 truncate">{subtitle}</p>}
       </div>
-      <div className="p-2 bg-muted rounded-lg">
+      <div className="p-2 bg-muted rounded-lg ml-3 shrink-0">
         <IconComp className="w-5 h-5 text-muted-foreground" />
       </div>
     </div>
@@ -107,18 +107,18 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPICard icon={TrendingUp} title="Rent Collection Rate" value={`${kpis.collectionRate}%`} subtitle="of total due collected" color={kpis.collectionRate > 80 ? 'text-green-600' : 'text-destructive'} />
-        <KPICard icon={Home} title="Vacant Properties" value={kpis.vacant} subtitle="units currently empty" color={kpis.vacant > 0 ? 'text-amber-600' : 'text-green-600'} />
+        <KPICard icon={TrendingUp} title="Rent Collection Rate" value={`${kpis.collectionRate}%`} subtitle="of total due collected" color={kpis.collectionRate > 80 ? 'text-success' : 'text-destructive'} />
+        <KPICard icon={Home} title="Vacant Units" value={kpis.vacant} subtitle="currently empty" color={kpis.vacant > 0 ? 'text-warning' : 'text-success'} />
         <KPICard icon={Wrench} title="Open Maintenance" value={kpis.openMaintenance} subtitle="active requests" color={kpis.openMaintenance > 5 ? 'text-destructive' : 'text-primary'} />
-        <KPICard icon={Users} title="Expiring Tenancies" value={kpis.expiringTenancies} subtitle="within 90 days" color={kpis.expiringTenancies > 0 ? 'text-amber-600' : 'text-green-600'} />
+        <KPICard icon={Users} title="Expiring Tenancies" value={kpis.expiringTenancies} subtitle="within 90 days" color={kpis.expiringTenancies > 0 ? 'text-warning' : 'text-success'} />
         <KPICard icon={AlertTriangle} title="Income Collected" value={`£${kpis.rentCollected.toLocaleString()}`} subtitle="total paid this period" />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly rent collection */}
-        <Card className="p-6 border-slate-200">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Monthly Rent Collection</h3>
+        <Card className="p-6">
+          <h3 className="text-base font-semibold text-foreground mb-4">Monthly Rent Collection</h3>
           {monthlyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={monthlyData}>
@@ -136,8 +136,8 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
         </Card>
 
         {/* Occupancy trend */}
-        <Card className="p-6 border-slate-200">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Occupancy Rate Trend</h3>
+        <Card className="p-6">
+          <h3 className="text-base font-semibold text-foreground mb-4">Occupancy Rate Trend</h3>
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={occupancyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
@@ -150,8 +150,8 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
         </Card>
 
         {/* Maintenance by type */}
-        <Card className="p-6 border-slate-200">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Maintenance by Type</h3>
+        <Card className="p-6">
+          <h3 className="text-base font-semibold text-foreground mb-4">Maintenance by Type</h3>
           {maintenanceByType.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
@@ -167,8 +167,8 @@ export default function PortfolioKPIs({ properties, units, tenants, transactions
         </Card>
 
         {/* Yield by property */}
-        <Card className="p-6 border-slate-200">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Yield by Property (%)</h3>
+        <Card className="p-6">
+          <h3 className="text-base font-semibold text-foreground mb-4">Yield by Property (%)</h3>
           {yieldData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={yieldData} layout="vertical">
