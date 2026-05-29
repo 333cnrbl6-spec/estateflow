@@ -1,22 +1,33 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Lock, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TIER_META } from '@/lib/tierConfig';
 
-export default function FeatureLocked({ feature, tier = 'Professional' }) {
+/**
+ * FeatureLocked — full-page / full-section upgrade prompt.
+ * For inline locked UI use <FeatureGate inline> instead.
+ */
+export default function FeatureLocked({ feature, tier = 'professional' }) {
+  const meta = TIER_META[tier] || TIER_META.professional;
+
   return (
-    <Card className="border-yellow-200 bg-yellow-50 p-8">
-      <div className="flex flex-col items-center text-center gap-4">
-        <Lock className="w-12 h-12 text-yellow-600" />
-        <div>
-          <h3 className="font-bold text-slate-900 mb-2">{feature} is a {tier} feature</h3>
-          <p className="text-sm text-slate-600 mb-4">Upgrade your plan to unlock this capability.</p>
+    <div className={`rounded-xl border p-12 text-center ${meta.bgColour} ${meta.borderColour}`}>
+      <div className="flex flex-col items-center gap-4 max-w-sm mx-auto">
+        <div className={`w-14 h-14 rounded-full flex items-center justify-center bg-white border-2 ${meta.borderColour}`}>
+          <Lock className={`w-6 h-6 ${meta.colour}`} />
         </div>
-        <Button asChild>
-          <Link to="/billing">Upgrade Plan</Link>
+        <div>
+          <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${meta.colour}`}>{meta.name} Plan Required</p>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{feature}</h3>
+          <p className="text-sm text-muted-foreground">
+            Upgrade to <strong>{meta.name}</strong> (£{meta.price}/mo) to unlock this feature.
+          </p>
+        </div>
+        <Button asChild size="lg">
+          <Link to="/billing">Upgrade to {meta.name} <ArrowUpRight className="w-4 h-4 ml-1.5" /></Link>
         </Button>
       </div>
-    </Card>
+    </div>
   );
 }

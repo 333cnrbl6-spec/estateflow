@@ -1,23 +1,20 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { base44 } from '@/api/base44Client';
+import {
+  hasTierAccess,
+  canAccessFeature,
+  hasCapability,
+  getTierLimits,
+  TIER_META,
+} from '@/lib/tierConfig';
 
 export const PermissionContext = createContext();
 
-export function PermissionProvider({ children }) {
-  const [permissions, setPermissions] = useState({
-    role: 'user',
-    tier: 'starter',
-    modules: [],
-    canAccessSales: false,
-    canAccessMarketing: false,
-    canAccessAdmin: false,
-    canManageTeam: false,
-    canAccessReporting: false,
-    loading: true
-  });
+// Developer / internal email — always gets full access regardless of tier.
+const DEVELOPER_EMAILS = ['333cnrbl6@gmail.com'];
 
-  // CONFIGURE THIS FOR YOUR APP
-  const DEVELOPER_EMAIL = '333cnrbl6@gmail.com'; // Change to your developer email
+export function PermissionProvider({ children }) {
+  const [permissions, setPermissions] = useState({ loading: true });
 
   useEffect(() => {
     loadPermissions();
@@ -27,39 +24,62 @@ export function PermissionProvider({ children }) {
     try {
       const user = await base44.auth.me();
       if (!user) {
-        setPermissions(prev => ({ ...prev, loading: false }));
+        setPermissions({ loading: false, authenticated: false });
         return;
       }
 
-      const isDeveloper = user.email === DEVELOPER_EMAIL;
-      const roleFromUser = user.role || 'user';
-      const actualRole = isDeveloper ? 'developer' : roleFromUser;
+      const isDeveloper = DEVELOPER_EMAILS.includes(user.email);
+      const platformRole = user.role || 'user'; // 'admin' | 'user'
+      const isAdmin = platformRole === 'admin' || isDeveloper;
       const tier = user.subscription_tier || 'starter';
-
-      // CUSTOMIZE MODULES BY TIER FOR YOUR APP
-      const baseModules = {
-        'starter': ['dashboard', 'properties', 'tenants'],
-        'professional': ['dashboard', 'properties', 'tenants', 'reporting', 'compliance'],
-        'enterprise': ['dashboard', 'properties', 'tenants', 'reporting', 'compliance', 'api', 'integrations']
-      };
-
-      const modules = baseModules[tier] || baseModules.starter;
+      const tierMeta = TIER_META[tier] || TIER_META.starter;
+      const limits = getTierLimits(tier);
 
       setPermissions({
-        role: actualRole,
-        tier,
-        modules,
-        canAccessSales: isDeveloper || actualRole === 'admin',
-        canAccessMarketing: isDeveloper || actualRole === 'admin',
-        canAccessAdmin: isDeveloper || actualRole === 'admin',
-        canManageTeam: actualRole === 'admin' || actualRole === 'developer',
-        canAccessReporting: tier === 'professional' || tier === 'enterprise' || actualRole === 'admin',
+        loading: false,
+        authenticated: true,
+        userId: user.id,
         email: user.email,
-        loading: false
+        fullName: user.full_name,
+        platformRole,      // 'admin' | 'user'
+        isDeveloper,
+        isAdmin,
+
+        // Subscription
+        tier,              // 'starter' | 'professional' | 'enterprise'
+        tierName: tierMeta.name,
+        subscriptionStatus: user.subscription_status || 'trial',
+        isSubscribed: user.is_subscribed || false,
+        isTrial: (user.subscription_status || 'trial') === 'trial',
+
+        // Limits
+        limits,
+        propertiesUsed: user.properties_used || 0,
+
+        // Capability helpers (true/false)
+        canAccessSales:       isAdmin || tier !== 'starter',  // Professional+ can see sales module
+        canAccessMarketing:   isAdmin,
+        canAccessAdmin:       isAdmin,
+        canManageTeam:        isAdmin || hasTierAccess(tier, 'enterprise'),
+        canAccessReporting:   isAdmin || hasTierAccess(tier, 'professional'),
+        canAccessBlockMgmt:   isAdmin || hasTierAccess(tier, 'professional'),
+        canAccessAccounting:  isAdmin || hasTierAccess(tier, 'professional'),
+        canAccessOutOfHours:  isAdmin || hasTierAccess(tier, 'enterprise'),
+        canAccessAPI:         isAdmin || hasTierAccess(tier, 'enterprise'),
+        canAccessWhiteLabel:  isAdmin || hasTierAccess(tier, 'enterprise'),
+        canAccessCompliance:  isAdmin || hasTierAccess(tier, 'professional'),
+        canUsePredictiveMaint:isAdmin || hasTierAccess(tier, 'professional'),
+        canUseAIDraft:        isAdmin || hasTierAccess(tier, 'professional'),
+        canExportPDF:         isAdmin || hasTierAccess(tier, 'professional'),
+
+        // Raw check helpers
+        hasTierAccess:   (required) => isAdmin || hasTierAccess(tier, required),
+        canAccessFeature:(featureKey) => isAdmin || canAccessFeature(tier, featureKey, platformRole),
+        hasCapability:   (cap) => isAdmin || hasCapability(tier, cap, platformRole),
       });
     } catch (err) {
       console.error('Failed to load permissions:', err);
-      setPermissions(prev => ({ ...prev, loading: false }));
+      setPermissions({ loading: false, authenticated: false });
     }
   };
 
@@ -71,7 +91,7 @@ export function PermissionProvider({ children }) {
 }
 
 export function usePermissions() {
-  const ctx = React.useContext(PermissionContext);
+  const ctx = useContext(PermissionContext);
   if (!ctx) throw new Error('usePermissions must be used within PermissionProvider');
   return ctx;
 }

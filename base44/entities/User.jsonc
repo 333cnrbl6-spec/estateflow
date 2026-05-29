@@ -12,16 +12,16 @@
     },
     "business_name": {
       "type": "string",
-      "description": "User's business name for subscription"
+      "description": "User's business or agency name"
     },
     "is_subscribed": {
       "type": "boolean",
       "default": false,
-      "description": "Whether the user has an active subscription"
+      "description": "Whether the user has an active paid subscription"
     },
     "current_demo_company_id": {
       "type": "string",
-      "description": "ID of the currently active demo company \u2014 used to scope all pages to a single agent demo"
+      "description": "ID of the currently active demo company \u2014 scopes all pages to a single agent demo"
     },
     "trial_started_at": {
       "type": "string",
@@ -43,7 +43,17 @@
         "paused"
       ],
       "default": "trial",
-      "description": "Current subscription status"
+      "description": "Current subscription lifecycle status"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "professional",
+        "enterprise"
+      ],
+      "default": "starter",
+      "description": "Pricing tier: starter (\u00a3199/mo, up to 75 units), professional (\u00a3449/mo, up to 400 units), enterprise (\u00a3999/mo, unlimited)"
     },
     "stripe_customer_id": {
       "type": "string",
@@ -53,23 +63,33 @@
       "type": "string",
       "description": "Stripe subscription ID"
     },
-    "subscription_tier": {
-      "type": "string",
-      "enum": [
-        "starter",
-        "professional",
-        "enterprise"
-      ],
-      "description": "Current pricing tier"
-    },
     "properties_limit": {
       "type": "number",
-      "description": "Max properties allowed per tier (0 = unlimited)"
+      "description": "Max properties allowed for this user's tier (0 = unlimited)"
     },
     "properties_used": {
       "type": "number",
       "default": 0,
-      "description": "Current property count"
+      "description": "Current property count \u2014 updated on property create/delete"
+    },
+    "units_limit": {
+      "type": "number",
+      "description": "Max units allowed for this user's tier (0 = unlimited)"
+    },
+    "units_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Current unit count"
+    },
+    "is_founder": {
+      "type": "boolean",
+      "default": false,
+      "description": "Founder subscriber \u2014 entitled to 40% lifetime discount"
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has completed initial onboarding wizard"
     }
   },
   "required": []
