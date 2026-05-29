@@ -55,9 +55,11 @@ export default function PortfolioTrendsDashboard() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2 flex items-center gap-2">
             <TrendingUp className="w-8 h-8" />
-            Portfolio Trends & Analytics
+            Portfolio Summary
           </h1>
-          <p className="text-lg text-slate-600">Portfolio-wide performance metrics and cost optimization insights</p>
+          <p className="text-lg text-slate-600">
+            This page provides a high‑level overview of your managed properties, tenancy performance, maintenance activity, and operational workload. It is designed to support strategic decision‑making and long‑term planning.
+          </p>
         </div>
 
         {/* Summary Cards */}

@@ -74,7 +74,9 @@ export default function Maintenance() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
-      <PageHeader title="Maintenance" subtitle="Track and manage all work orders">
+      <PageHeader 
+        title="Maintenance Overview" 
+        subtitle="Track, manage, and prioritise maintenance tasks across your portfolio. This page helps you maintain compliance, respond to issues promptly, and keep properties in good condition.">
         <Button onClick={() => { setEditing(null); setDialogOpen(true); }} size="sm">
           <Plus className="w-4 h-4 mr-1.5" /> New Order
         </Button>

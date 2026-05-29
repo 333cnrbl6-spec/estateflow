@@ -46,7 +46,7 @@ export default function Landing() {
             <span style={{ color: BRAND.orange }}>Built for Clarity.</span>
           </h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            Premiso brings together tenancy workflows, maintenance tracking, compliance monitoring, and portfolio oversight into a single, easy-to-use platform for agents, landlords, and operational teams.
+            Premiso is a modern property‑management platform designed for agents, landlords, and operational teams who need clarity, compliance, and efficiency. It brings together tenancy workflows, maintenance tracking, communication logs, and portfolio oversight into a single, easy‑to‑use system. Premiso is built to support real‑world operations with a clean interface, reliable performance, and a professional, trustworthy design.
           </p>
           <p className="text-sm mb-10" style={{ color: 'rgba(255,255,255,0.4)' }}>Powered by SynergyFlow Group</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

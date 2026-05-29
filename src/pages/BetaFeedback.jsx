@@ -37,8 +37,8 @@ export default function BetaFeedback() {
     <div className="min-h-screen p-6" style={{ background: '#f8faff', fontFamily: 'Poppins, Inter, sans-serif' }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: BRAND.navy }}>BETA Feedback</h1>
-          <p className="text-sm text-slate-600">Your feedback shapes the next generation of Premiso. Please be as specific as possible.</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: BRAND.navy }}>Premiso BETA Feedback</h1>
+          <p className="text-sm text-slate-600">Thank you for participating in the Premiso BETA programme. Your insights help shape the next generation of SynergyFlow Group tools.</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-8" style={{ border: '1px solid #e8eef8' }}>
@@ -59,9 +59,9 @@ export default function BetaFeedback() {
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-semibold mb-3" style={{ color: BRAND.navy }}>Category</label>
+              <label className="block text-sm font-semibold mb-3" style={{ color: BRAND.navy }}>What would you like to share?</label>
               <div className="flex flex-wrap gap-2">
-                {categories.map(c => (
+                {['Usability feedback', 'Workflow issues', 'Feature requests', 'Performance concerns', 'Suggestions for improvement'].map(c => (
                   <button key={c} type="button" onClick={() => setCategory(c)}
                     className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
                     style={category === c

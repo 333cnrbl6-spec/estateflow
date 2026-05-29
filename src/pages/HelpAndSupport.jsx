@@ -35,8 +35,8 @@ export default function HelpAndSupport() {
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white" style={{ background: BRAND.blue }}>
             <LifeBuoy className="w-7 h-7" />
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: BRAND.navy }}>Help & Support</h1>
-          <p className="text-sm text-slate-600">Find guides, answers, and contact support for Premiso</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: BRAND.navy }}>Help and Support</h1>
+          <p className="text-sm text-slate-600">If you need assistance, this page provides access to guidance, troubleshooting, and support resources.</p>
         </div>
 
         {/* Search */}

@@ -188,10 +188,12 @@ export default function Dashboard() {
       
       <div className="px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
         
-        {/* Clean Hero Header */}
+        {/* Dashboard Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome back</h1>
-          <p className="text-lg text-slate-600">{companies[0]?.name || 'Your portfolio'}</p>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome to your Premiso dashboard</h1>
+          <p className="text-lg text-slate-600">
+            This is your central hub for tenancy activity, maintenance tasks, communication logs, and portfolio performance. Use this space to monitor key updates, track outstanding actions, and navigate quickly to the tools you need.
+          </p>
         </div>
 
         {/* CRITICAL ALERTS ONLY (first exposure) */}

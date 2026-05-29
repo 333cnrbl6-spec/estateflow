@@ -46,11 +46,11 @@ export default function TermsAndConditions() {
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold" style={{ color: BRAND.navy }}>Terms & Conditions</h1>
+              <h1 className="text-3xl font-bold" style={{ color: BRAND.navy }}>Terms and Conditions</h1>
               <p className="text-xs text-slate-500">Premiso BETA · SynergyFlow Group · Last updated May 2026</p>
             </div>
           </div>
-          <p className="text-sm text-slate-600">Please read these terms carefully before using the Premiso platform.</p>
+          <p className="text-sm text-slate-600">This is a BETA environment. Availability and support are not guaranteed. SynergyFlow Group accepts no liability for data loss or service interruption. This platform does not provide legal or regulatory advice. Users are responsible for verifying all outputs and ensuring compliance with relevant laws, regulations, and professional standards. By continuing, you agree to use this platform responsibly and within the limits of your professional knowledge.</p>
         </div>
 
         <div className="space-y-4">

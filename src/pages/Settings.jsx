@@ -23,8 +23,8 @@ export default function Settings() {
     <div className="min-h-screen bg-gradient-to-b from-background to-background">
       <div className="p-8 max-w-[1400px] mx-auto">
         <PageHeader 
-          title="Settings & Pricing" 
-          subtitle="Configure your service tier and manage platform settings"
+          title="Settings" 
+          subtitle="Manage your account details, preferences, notifications, and organisation information. Use this page to configure Premiso to match your workflow."
         />
 
         <Tabs defaultValue="pricing" className="mt-8">

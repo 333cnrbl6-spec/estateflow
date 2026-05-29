@@ -100,7 +100,9 @@ export default function Pipeline() {
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto">
-      <PageHeader title="Tenancy Pipeline" subtitle="End-to-end residential tenancy management — England & Wales">
+      <PageHeader 
+        title="Tenancy Overview" 
+        subtitle="This section provides a structured view of all active, upcoming, and past tenancies. Use this page to review tenancy details, documents, key dates, compliance requirements, and communication history.">
         <Button onClick={() => { setIsCreating(true); setSelectedRecord(null); }} size="sm">
           <Plus className="w-4 h-4" /> New Application
         </Button>
