@@ -45,13 +45,39 @@ function FieldInput({ field, value, onChange, options }) {
 
 export default function EntityFormDialog({ open, onOpenChange, title, fields, initialData, onSave, saving }) {
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setFormData(initialData || {});
+    setErrors({});
   }, [initialData, open]);
 
+  const validate = () => {
+    const newErrors = {};
+    (fields || []).forEach(field => {
+      const value = formData[field.name];
+      if (field.required && (value === undefined || value === null || value === '')) {
+        newErrors[field.name] = `${field.label || field.name} is required`;
+      }
+      if (field.type === 'number' && value !== undefined && value !== '' && isNaN(Number(value))) {
+        newErrors[field.name] = `${field.label || field.name} must be a valid number`;
+      }
+      if (field.format === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors[field.name] = `${field.label || field.name} must be a valid email`;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = () => {
-    onSave(formData);
+    if (!validate()) return;
+    // Strip empty strings for optional fields, keep required ones
+    const cleaned = {};
+    Object.entries(formData).forEach(([k, v]) => {
+      if (v !== '' && v !== undefined) cleaned[k] = v;
+    });
+    onSave(cleaned);
   };
 
   return (
@@ -66,12 +92,19 @@ export default function EntityFormDialog({ open, onOpenChange, title, fields, in
               <div key={field.name} className="space-y-1.5">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {field.label || field.name.replace(/_/g, ' ')}
+                  {field.required && <span className="text-destructive ml-1">*</span>}
                 </Label>
                 <FieldInput
                   field={field}
                   value={formData[field.name]}
-                  onChange={(val) => setFormData(prev => ({ ...prev, [field.name]: val }))}
+                  onChange={(val) => {
+                    setFormData(prev => ({ ...prev, [field.name]: val }));
+                    if (errors[field.name]) setErrors(prev => ({ ...prev, [field.name]: undefined }));
+                  }}
                 />
+                {errors[field.name] && (
+                  <p className="text-xs text-destructive">{errors[field.name]}</p>
+                )}
               </div>
             ))}
           </div>

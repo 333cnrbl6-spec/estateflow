@@ -1,22 +1,8 @@
-import {
-  Settings,
-  Wrench,
-  DollarSign,
-  Shield,
-  Building2,
-  TrendingUp,
-  Phone,
-  Code2,
-  Layout,
-  Users,
-  AlertTriangle,
-} from 'lucide-react';
-
 export const navigationZones = [
   {
     id: 'onboarding',
     label: 'Onboarding & Setup',
-    icon: Layout,
+    icon: '🚀',
     description: 'Get started: Import data, discover files, integrate Companies House',
     routes: [
       { path: '/guided-setup', label: 'Guided Setup', icon: '🚀' },
@@ -29,7 +15,7 @@ export const navigationZones = [
   {
     id: 'core',
     label: 'Core Operations',
-    icon: Wrench,
+    icon: '🏠',
     description: 'Manage properties, units, tenants, and contacts',
     routes: [
       { path: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -44,7 +30,7 @@ export const navigationZones = [
   {
     id: 'operations',
     label: 'Maintenance & Operations',
-    icon: Wrench,
+    icon: '🔧',
     description: 'Maintenance requests, scheduling, forecasting, inspections',
     routes: [
       { path: '/maintenance-board', label: 'Maintenance Board', icon: '📋' },
@@ -62,7 +48,7 @@ export const navigationZones = [
   {
     id: 'finance',
     label: 'Finance & Accounting',
-    icon: DollarSign,
+    icon: '💰',
     description: 'Rent, expenses, reports, bank reconciliation, invoices',
     routes: [
       { path: '/financials', label: 'Financials Overview', icon: '💰' },
@@ -84,7 +70,7 @@ export const navigationZones = [
   {
     id: 'compliance',
     label: 'Compliance & Safety',
-    icon: Shield,
+    icon: '🛡️',
     description: 'Certificates, risk analytics, fire safety, legal framework',
     routes: [
       { path: '/compliance-hub', label: 'Compliance Hub', icon: '🛡️' },
@@ -108,7 +94,7 @@ export const navigationZones = [
   {
     id: 'block-management',
     label: 'Block Management',
-    icon: Building2,
+    icon: '🏢',
     description: 'Service charges, RTM, leaseholders, building safety',
     routes: [
       { path: '/block-management', label: 'Block Management Overview', icon: '🏢' },
@@ -123,7 +109,7 @@ export const navigationZones = [
   {
     id: 'sales',
     label: 'Sales & Lettings',
-    icon: TrendingUp,
+    icon: '📈',
     description: 'Sales dashboard, leads, viewings, lettings pipeline',
     routes: [
       { path: '/sales', label: 'Sales Dashboard', icon: '📈' },
@@ -137,7 +123,7 @@ export const navigationZones = [
   {
     id: 'tenants',
     label: 'Tenant Management',
-    icon: Users,
+    icon: '👥',
     description: 'Tenant portal, screening, payments, communications',
     routes: [
       { path: '/tenant-portal', label: 'Tenant Portal', icon: '🚪' },
@@ -153,7 +139,7 @@ export const navigationZones = [
   {
     id: 'outofhours',
     label: 'Out-of-Hours Service',
-    icon: Phone,
+    icon: '📞',
     description: 'Call center, pipeline, reporting, pricing',
     routes: [
       { path: '/out-of-hours', label: 'Call Center', icon: '☎️' },
@@ -169,7 +155,7 @@ export const navigationZones = [
   {
     id: 'admin',
     label: 'Admin & System',
-    icon: Settings,
+    icon: '⚙️',
     description: 'Settings, integrations, documentation, monitoring',
     routes: [
       { path: '/role-management', label: 'Role Management', icon: '👥' },
@@ -193,7 +179,7 @@ export const navigationZones = [
   {
     id: 'developer',
     label: 'Developer Zone',
-    icon: Code2,
+    icon: '💻',
     description: 'Developer docs, architecture, testing, demo data',
     routes: [
       { path: '/developer-documents', label: 'Developer Documentation', icon: '💻' },
