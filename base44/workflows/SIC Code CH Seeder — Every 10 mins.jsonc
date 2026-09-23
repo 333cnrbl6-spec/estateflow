@@ -1,0 +1,44 @@
+{
+  "name": "SIC Code CH Seeder \u2014 Every 10 mins",
+  "description": "Rotates through property SIC codes, fetching up to 10 new companies per run from Companies House and storing profiles + director/PSC relationships.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "interval",
+      "cron_expression": null,
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": 10,
+      "interval_unit": "minutes",
+      "interval_anchor": "2026-04-15T12:21:38.137000",
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sic_code_ch_seeder_every_10_mins",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "seedCompaniesHouseBySIC",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "seedCompaniesHouseBySIC"
+  }
+}

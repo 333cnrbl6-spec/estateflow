@@ -1,0 +1,47 @@
+{
+  "name": "Powell Network Seeder \u2014 CH API",
+  "description": "Gently fetches Powell scenario companies and their officer networks from Companies House, storing profiles and building OwnershipRelationship chains. Runs every 2 hours. Zero LLM credits.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "interval",
+      "cron_expression": null,
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": 2,
+      "interval_unit": "hours",
+      "interval_anchor": "2026-04-15T11:40:32.310000",
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "powell_network_seeder_ch_api",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "seedCompaniesHouseNetwork",
+            "args": {
+              "batch_size": 5,
+              "depth": 1
+            }
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "seedCompaniesHouseNetwork"
+  }
+}
