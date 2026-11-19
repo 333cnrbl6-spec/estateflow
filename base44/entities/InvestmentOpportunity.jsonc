@@ -1,0 +1,132 @@
+{
+  "name": "InvestmentOpportunity",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to CommercialProperty"
+    },
+    "address": {
+      "type": "string"
+    },
+    "investment_type": {
+      "type": "string",
+      "enum": [
+        "direct_acquisition",
+        "portfolio_acquisition",
+        "partnership",
+        "refinance",
+        "development"
+      ]
+    },
+    "asking_price": {
+      "type": "number",
+      "description": "In pence"
+    },
+    "annual_rental_income": {
+      "type": "number",
+      "description": "In pence"
+    },
+    "cap_rate": {
+      "type": "number",
+      "description": "Capitalization rate %"
+    },
+    "estimated_value_add": {
+      "type": "number",
+      "description": "Potential value increase in pence"
+    },
+    "time_to_execute_months": {
+      "type": "number"
+    },
+    "risk_factors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "opportunity_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "AI-generated opportunity score"
+    },
+    "roi_projection": {
+      "type": "number",
+      "description": "Projected annual ROI %"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "under_review",
+        "shortlisted",
+        "rejected",
+        "closed"
+      ]
+    },
+    "analysis_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "address",
+    "investment_type",
+    "asking_price",
+    "annual_rental_income",
+    "opportunity_score"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

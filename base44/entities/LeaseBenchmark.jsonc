@@ -1,0 +1,115 @@
+{
+  "name": "LeaseBenchmark",
+  "type": "object",
+  "properties": {
+    "region": {
+      "type": "string",
+      "enum": [
+        "london",
+        "midlands",
+        "manchester",
+        "birmingham",
+        "leeds",
+        "bristol",
+        "edinburgh"
+      ]
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "office",
+        "industrial",
+        "retail",
+        "mixed_use",
+        "logistics"
+      ]
+    },
+    "benchmark_rent_psf": {
+      "type": "number",
+      "description": "Benchmark rent per sq ft in pence"
+    },
+    "average_lease_term_years": {
+      "type": "number"
+    },
+    "typical_break_clauses": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Years at which breaks typically occur"
+    },
+    "average_yield": {
+      "type": "number",
+      "description": "Average yield percentage"
+    },
+    "tenant_improvement_costs": {
+      "type": "number",
+      "description": "Typical TI costs per sq ft in pence"
+    },
+    "market_conditions": {
+      "type": "string",
+      "enum": [
+        "strong",
+        "balanced",
+        "weak"
+      ]
+    },
+    "data_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "sample_size": {
+      "type": "number",
+      "description": "Number of comparable transactions"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "region",
+    "property_type",
+    "benchmark_rent_psf",
+    "average_lease_term_years",
+    "data_date"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": null,
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

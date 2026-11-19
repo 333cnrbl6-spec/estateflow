@@ -1,0 +1,166 @@
+{
+  "name": "CommercialProperty",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "Full property address"
+    },
+    "postcode": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "london",
+        "midlands",
+        "manchester",
+        "birmingham",
+        "leeds",
+        "bristol",
+        "edinburgh",
+        "other"
+      ]
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "office",
+        "industrial",
+        "retail",
+        "mixed_use",
+        "logistics",
+        "healthcare",
+        "education"
+      ]
+    },
+    "size_sqft": {
+      "type": "number",
+      "description": "Property size in square feet"
+    },
+    "estimated_value": {
+      "type": "number",
+      "description": "Estimated market value in pence"
+    },
+    "yield_percentage": {
+      "type": "number",
+      "description": "Current yield %"
+    },
+    "rental_income_annual": {
+      "type": "number",
+      "description": "Annual rental income in pence"
+    },
+    "occupancy_rate": {
+      "type": "number",
+      "description": "0-100 occupancy percentage"
+    },
+    "tenant_count": {
+      "type": "number"
+    },
+    "lease_expiry_dates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "market_trends": {
+      "type": "object",
+      "properties": {
+        "rent_growth_yoy": {
+          "type": "number",
+          "description": "Year-on-year rent growth %"
+        },
+        "vacancy_rate_local": {
+          "type": "number"
+        },
+        "demand_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "accessibility_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "risk_profile": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Portfolio risk classification"
+    },
+    "asset_quality": {
+      "type": "string",
+      "enum": [
+        "prime",
+        "secondary",
+        "tertiary"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "address",
+    "property_type",
+    "size_sqft",
+    "estimated_value"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

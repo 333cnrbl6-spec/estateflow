@@ -1,0 +1,140 @@
+{
+  "name": "ContractorQuote",
+  "type": "object",
+  "properties": {
+    "maintenance_request_id": {
+      "type": "string",
+      "description": "Reference to MaintenanceRequest entity"
+    },
+    "contractor_id": {
+      "type": "string",
+      "description": "Reference to Contact (contractor) entity"
+    },
+    "contractor_name": {
+      "type": "string",
+      "description": "Name of contractor who submitted quote"
+    },
+    "contractor_email": {
+      "type": "string",
+      "description": "Email of contractor"
+    },
+    "quote_amount": {
+      "type": "number",
+      "description": "Quoted price in GBP"
+    },
+    "quote_description": {
+      "type": "string",
+      "description": "Detailed description of work quoted"
+    },
+    "labor_cost": {
+      "type": "number",
+      "description": "Labor costs breakdown"
+    },
+    "materials_cost": {
+      "type": "number",
+      "description": "Materials costs breakdown"
+    },
+    "estimated_duration_hours": {
+      "type": "number",
+      "description": "Estimated time to complete work"
+    },
+    "proposed_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When contractor proposes to start"
+    },
+    "warranty_months": {
+      "type": "number",
+      "description": "Warranty period offered"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "accepted",
+        "rejected",
+        "expired"
+      ],
+      "default": "submitted",
+      "description": "Status of the quote"
+    },
+    "submitted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When quote was submitted"
+    },
+    "accepted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When quote was accepted"
+    },
+    "accepted_by": {
+      "type": "string",
+      "description": "User email who accepted the quote"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Reason for rejection if applicable"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes about the quote"
+    }
+  },
+  "required": [
+    "maintenance_request_id",
+    "contractor_id",
+    "contractor_name",
+    "quote_amount"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

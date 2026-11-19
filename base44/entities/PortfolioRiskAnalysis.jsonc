@@ -1,0 +1,148 @@
+{
+  "name": "PortfolioRiskAnalysis",
+  "type": "object",
+  "properties": {
+    "portfolio_name": {
+      "type": "string"
+    },
+    "property_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of CommercialProperty IDs"
+    },
+    "total_value": {
+      "type": "number",
+      "description": "Total portfolio value in pence"
+    },
+    "total_rental_income": {
+      "type": "number",
+      "description": "Annual rental income in pence"
+    },
+    "average_yield": {
+      "type": "number"
+    },
+    "diversification_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Geographic & sector diversification"
+    },
+    "geographic_concentration": {
+      "type": "object",
+      "properties": {
+        "london_percentage": {
+          "type": "number"
+        },
+        "regional_percentage": {
+          "type": "number"
+        }
+      }
+    },
+    "sector_breakdown": {
+      "type": "object",
+      "properties": {
+        "office_percentage": {
+          "type": "number"
+        },
+        "industrial_percentage": {
+          "type": "number"
+        },
+        "retail_percentage": {
+          "type": "number"
+        },
+        "other_percentage": {
+          "type": "number"
+        }
+      }
+    },
+    "lease_expiry_concentration": {
+      "type": "number",
+      "description": "% of leases expiring within 3 years"
+    },
+    "tenant_concentration": {
+      "type": "number",
+      "description": "% of income from top 3 tenants"
+    },
+    "risk_rating": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Overall portfolio risk"
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "analysis_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_review_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "portfolio_name",
+    "property_ids",
+    "total_value",
+    "analysis_date"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
