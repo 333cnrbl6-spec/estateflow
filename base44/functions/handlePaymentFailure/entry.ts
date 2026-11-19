@@ -1,12 +1,32 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe@14.0.0';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { event } = await req.json();
+
+    // SECURITY: this endpoint mutates subscriber billing state, so the payload must be
+    // cryptographically verified as coming from Stripe before anything is processed.
+    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+    if (!webhookSecret) {
+      console.error('[handlePaymentFailure] STRIPE_WEBHOOK_SECRET is not configured');
+      return Response.json({ error: 'Webhook secret not configured' }, { status: 503 });
+    }
+
+    const signature = req.headers.get('stripe-signature');
+    if (!signature) {
+      return Response.json({ error: 'Missing signature' }, { status: 400 });
+    }
+
+    const rawBody = await req.text();
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+
+    let event;
+    try {
+      event = await stripe.webhooks.constructEventAsync(rawBody, signature, webhookSecret);
+    } catch (err) {
+      return Response.json({ error: 'Invalid signature' }, { status: 400 });
+    }
 
     // Handle Stripe payment failure webhook
     if (event.type === 'invoice.payment_failed') {

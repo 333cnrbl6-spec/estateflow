@@ -9,6 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: meetings may be created/amended only by admins
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { action, topic, attendees, meeting_id, member, response, recommendation } = await req.json();
 
     // Create new meeting

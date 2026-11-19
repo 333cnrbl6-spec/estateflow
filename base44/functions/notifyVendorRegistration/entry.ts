@@ -3,7 +3,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { vendorId, vendorData } = await req.json();
+    const { vendorId } = await req.json();
+
+    if (!vendorId) {
+      return Response.json({ error: 'vendorId required' }, { status: 400 });
+    }
+
+    // SECURITY: the notification is built from the stored vendor record, never from the request
+    // body, so nobody can inject their own copy or links into the admins' inbox.
+    const vendorData = await base44.asServiceRole.entities.Vendor.get(vendorId).catch(() => null);
+    if (!vendorData) {
+      return Response.json({ error: 'Vendor not found' }, { status: 404 });
+    }
 
     // Get admin users
     const adminUsers = await base44.asServiceRole.entities.User.filter({

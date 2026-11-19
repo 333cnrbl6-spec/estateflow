@@ -17,11 +17,22 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { priceId, tierId, billingMode, isFounder } = body;
+    const { priceId } = body;
 
     if (!priceId) {
       return Response.json({ error: 'Missing priceId' }, { status: 400 });
     }
+
+    // SECURITY: the tier, billing mode and founder status are resolved server-side from Stripe
+    // and the user record — never taken from the request body.
+    const price = await stripe.prices.retrieve(priceId, { expand: ['product'] });
+    if (!price || price.active === false || price.type !== 'recurring') {
+      return Response.json({ error: 'Invalid subscription price' }, { status: 400 });
+    }
+
+    const tierId = price.metadata?.tier || price.product?.metadata?.tier || 'unknown';
+    const isFounder = user.is_founder === true;
+    const billingMode = price.recurring?.interval === 'year' ? 'annual' : 'monthly';
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({

@@ -25,7 +25,12 @@ Deno.serve(async (req) => {
     let recipient = recipientEmail;
     if (!recipient && property_id) {
       const prop = await base44.entities.Property.get(property_id);
-      recipient = prop?.created_by || Deno.env.get('SALES_LEAD_EMAIL');
+      // Records no longer expose the creator's email — resolve it server-side instead.
+      recipient = Deno.env.get('SALES_LEAD_EMAIL');
+      if (prop?.created_by_id) {
+        const owner = await base44.asServiceRole.entities.User.get(prop.created_by_id).catch(() => null);
+        if (owner?.email) recipient = owner.email;
+      }
     }
     if (!recipient) {
       return Response.json({ error: 'No recipient email provided' }, { status: 400 });

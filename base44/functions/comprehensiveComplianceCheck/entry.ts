@@ -4,6 +4,10 @@ import { differenceInDays, parseISO } from 'npm:date-fns@3.6.0';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     
     // Use service role for scheduled compliance checks
     console.log('Running comprehensive compliance check');

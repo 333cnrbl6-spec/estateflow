@@ -9,6 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { event, data, old_data } = await req.json();
 
     // Only process update events
@@ -16,7 +20,15 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, message: 'No action needed' });
     }
 
-    const rule = data;
+    // SECURITY: the rule is loaded from the database and never trusted from the request body,
+    // so its name/description cannot be used as phishing content in an alert email.
+    if (!data?.id) {
+      return Response.json({ error: 'Rule id required' }, { status: 400 });
+    }
+    const rule = await base44.asServiceRole.entities.ComplianceRule.get(data.id);
+    if (!rule) {
+      return Response.json({ error: 'Rule not found' }, { status: 404 });
+    }
     const oldRule = old_data;
 
     // Check if status changed to overdue
@@ -49,7 +61,7 @@ Deno.serve(async (req) => {
             rule_name: rule.rule_name,
             framework_id: rule.framework_id,
             description: `${rule.rule_name} - Status: OVERDUE. Action required immediately.`,
-            assigned_to: rule.notes || user.email, // Use notes field for assigned user or default to creator
+            assigned_to: user.email,
             priority: rule.penalties?.has_penalty ? 'critical' : 'high',
             status: 'pending',
             due_date: new Date().toISOString(),
@@ -65,7 +77,9 @@ Deno.serve(async (req) => {
     // 2. Send escalation alert if overdue
     if (isNowOverdue) {
       try {
-        const alertRecipient = rule.notes || user.email;
+        // SECURITY: alerts go to real admins only — never to an address supplied with the event
+        const admins = await base44.asServiceRole.entities.User.filter({ role: 'admin' });
+        const alertRecipients = (admins || []).map(a => a.email).filter(Boolean);
         
         // Build alert message
         const alertMessage = `
@@ -92,14 +106,16 @@ Deno.serve(async (req) => {
           This is an automated alert. Do not reply to this email.
         `;
 
-        await base44.integrations.Core.SendEmail({
-          to: alertRecipient,
-          subject: `URGENT: Compliance Rule Overdue - ${rule.rule_name}`,
-          body: alertMessage,
-          from_name: 'Compliance System',
-        });
+        await Promise.all(alertRecipients.map((recipient) =>
+          base44.integrations.Core.SendEmail({
+            to: recipient,
+            subject: `URGENT: Compliance Rule Overdue - ${rule.rule_name}`,
+            body: alertMessage,
+            from_name: 'Compliance System',
+          })
+        ));
 
-        actions.push({ type: 'alert_sent', recipient: alertRecipient });
+        actions.push({ type: 'alert_sent', recipient_count: alertRecipients.length });
       } catch (error) {
         console.error('Error sending alert email:', error.message);
       }

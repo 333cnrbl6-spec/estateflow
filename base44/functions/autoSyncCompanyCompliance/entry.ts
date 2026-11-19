@@ -92,6 +92,10 @@ function generateAlerts(chData, officers) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const body = await req.json();
     const { company_id, company_number, company_name } = body;
 

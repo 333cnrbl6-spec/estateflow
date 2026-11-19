@@ -9,6 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { tenant_id, property_id, unit_id, start_date, end_date, monthly_rent } = await req.json();
 
     // Fetch tenant and property data

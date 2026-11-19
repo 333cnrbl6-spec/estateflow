@@ -13,11 +13,11 @@ Deno.serve(async (req) => {
     const {
       transaction_id,
       payment_method_id,
-      amount,
+      amount: clientAmount,
       currency = 'gbp',
     } = await req.json();
 
-    if (!transaction_id || !payment_method_id || !amount) {
+    if (!transaction_id || !payment_method_id) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -31,7 +31,31 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'This payment has already been made' }, { status: 400 });
     }
 
-    const tenant = await base44.entities.Tenant.get(transaction.tenant_id);
+    const tenant = transaction.tenant_id ? await base44.entities.Tenant.get(transaction.tenant_id) : null;
+
+    // SECURITY: the amount payable is derived from the stored record, never from the request body.
+    // FinancialTransaction.amount is stored in pence.
+    const amount = Math.round(Number(transaction.amount || 0)) / 100;
+
+    if (!amount || amount <= 0) {
+      return Response.json({ error: 'This transaction has no outstanding amount' }, { status: 400 });
+    }
+
+    // SECURITY: only an admin or the tenant this transaction belongs to may pay it
+    const isAdmin = user.role === 'admin';
+    const ownsTransaction = isAdmin || (tenant && (
+      tenant.created_by_id === user.id ||
+      (tenant.email && user.email && tenant.email.toLowerCase() === user.email.toLowerCase())
+    ));
+
+    if (!ownsTransaction) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (clientAmount !== undefined && clientAmount !== null && Number(clientAmount) !== amount) {
+      return Response.json({ error: 'Payment amount does not match the amount due' }, { status: 400 });
+    }
+
     const property = transaction.property_id ? await base44.entities.Property.get(transaction.property_id) : null;
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));

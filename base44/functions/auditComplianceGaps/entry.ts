@@ -42,6 +42,11 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // SECURITY: portfolio-wide audit that bulk-creates maintenance orders — admins only
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const today = new Date();
     const in90Days = new Date(today.getTime() + 90 * 86400000);
 

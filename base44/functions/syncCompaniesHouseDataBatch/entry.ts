@@ -3,10 +3,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    // This is an automated task — no user context required
-    // but we'll fetch using service role
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     
     console.log('[syncCompaniesHouseDataBatch] Starting batch sync...');
 

@@ -3,7 +3,19 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { entityId, entityType, relationshipType, jurisdictions } = await req.json();
+
+    // SECURITY: only allow the entity types this onboarding flow is designed for
+    const ALLOWED_ENTITY_TYPES = ['Vendor', 'Company', 'Contact', 'Landlord', 'Supplier'];
+    if (!ALLOWED_ENTITY_TYPES.includes(entityType)) {
+      return Response.json({ error: 'Unsupported entity type' }, { status: 400 });
+    }
 
     // Fetch entity
     const entity = await base44.asServiceRole.entities[entityType]?.get?.(entityId);

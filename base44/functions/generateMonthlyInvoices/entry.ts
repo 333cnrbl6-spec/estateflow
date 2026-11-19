@@ -14,6 +14,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: invoice generation runs across all tenancies — admins only
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     let body;
     try {
       body = await req.json();

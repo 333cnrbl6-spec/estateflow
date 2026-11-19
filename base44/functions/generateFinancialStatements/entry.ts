@@ -9,6 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: statements span financial transactions across properties — admins only
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { property_id, start_date, end_date, statement_type } = await req.json();
 
     // Fetch all financial transactions

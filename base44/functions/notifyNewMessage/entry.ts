@@ -4,8 +4,11 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // Allow both authenticated users and service role (for automations)
-    const user = await base44.auth.me();
+    // SECURITY: a signed-in user is required to trigger message notifications
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
     const { message_id, recipient_type, property_id, maintenance_order_id } = await req.json();
 

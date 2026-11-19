@@ -15,6 +15,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Report not found' }, { status: 404 });
     }
 
+    // SECURITY: only the report's creator or an admin may run it
+    if (user.role !== 'admin' && report.created_by_id !== user.id) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Fetch data based on report type
     let data = [];
     

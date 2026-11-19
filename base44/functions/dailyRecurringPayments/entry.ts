@@ -4,10 +4,11 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // This is a scheduled task - verify admin access
-    const user = await base44.auth.me();
-    if (user && user.role !== 'admin') {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // SECURITY: scheduled task - admins only. This previously failed open for anonymous callers,
+    // who could trigger real Stripe charges.
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const today = new Date().toISOString().split('T')[0];

@@ -17,6 +17,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Tenant not found' }, { status: 404 });
     }
 
+    // SECURITY: only an admin or the tenant concerned may request this statement
+    const canView = user.role === 'admin' ||
+      tenant.created_by_id === user.id ||
+      (tenant.email && user.email && tenant.email.toLowerCase() === user.email.toLowerCase());
+    if (!canView) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Fetch all rent transactions
     const transactions = await base44.entities.FinancialTransaction.filter(
       { tenant_id, transaction_type: 'rent' },

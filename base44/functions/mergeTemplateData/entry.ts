@@ -12,11 +12,17 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const { templateFileUrl, entityType, entityId, mergeFields, customData } = payload;
 
-    // Fetch entity data
+    // SECURITY: restrict lookups to the entity types documents are merged from
+    const ALLOWED_ENTITY_TYPES = ['Property', 'Unit', 'Tenant', 'Vendor', 'Company', 'Contact', 'LeaseholderRights'];
+
+    // Fetch entity data (user-scoped client so the entity's row-level rules apply)
     let entityData = {};
     if (entityType && entityId) {
+      if (!ALLOWED_ENTITY_TYPES.includes(entityType)) {
+        return Response.json({ error: 'Unsupported entity type' }, { status: 400 });
+      }
       try {
-        entityData = await base44.asServiceRole.entities[entityType].get(entityId);
+        entityData = await base44.entities[entityType].get(entityId);
       } catch (err) {
         return Response.json({ error: `Failed to fetch ${entityType}: ${err.message}` }, { status: 400 });
       }

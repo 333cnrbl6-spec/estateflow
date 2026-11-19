@@ -45,6 +45,15 @@ Deno.serve(async (req) => {
     } = validation.data;
 
     const tenant = await base44.entities.Tenant.get(tenant_id);
+
+    // SECURITY: only an admin or the tenant concerned may set up a recurring charge
+    const canManage = user.role === 'admin' || (tenant && (
+      tenant.created_by_id === user.id ||
+      (tenant.email && user.email && tenant.email.toLowerCase() === user.email.toLowerCase())
+    ));
+    if (!canManage) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const property = property_id ? await base44.entities.Property.get(property_id) : null;
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));

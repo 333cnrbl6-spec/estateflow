@@ -3,6 +3,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { propertyId, month } = await req.json();
 
     if (!propertyId || !month) {
@@ -15,16 +21,22 @@ Deno.serve(async (req) => {
     monthEnd.setMonth(monthEnd.getMonth() + 1);
 
     // Get property and related data
-    const [property, tenants, transactions, maintenanceOrders] = await Promise.all([
-      base44.asServiceRole.entities.Property.get(propertyId),
-      base44.asServiceRole.entities.Tenant.filter({ property_id: propertyId }),
-      base44.asServiceRole.entities.FinancialTransaction.filter({ property_id: propertyId }),
-      base44.asServiceRole.entities.MaintenanceOrder.filter({ property_id: propertyId })
-    ]);
+    const property = await base44.asServiceRole.entities.Property.get(propertyId);
 
     if (!property) {
       return Response.json({ error: 'Property not found' }, { status: 404 });
     }
+
+    // SECURITY: only admins or the property's owner may read its financial statement
+    if (user.role !== 'admin' && property.created_by_id !== user.id) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const [tenants, transactions, maintenanceOrders] = await Promise.all([
+      base44.asServiceRole.entities.Tenant.filter({ property_id: propertyId }),
+      base44.asServiceRole.entities.FinancialTransaction.filter({ property_id: propertyId }),
+      base44.asServiceRole.entities.MaintenanceOrder.filter({ property_id: propertyId })
+    ]);
 
     // Calculate financial metrics
     const monthTransactions = transactions?.filter(t =>

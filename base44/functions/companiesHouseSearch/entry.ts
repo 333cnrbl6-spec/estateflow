@@ -68,6 +68,10 @@ async function chFetch(path, apiKey, retries = 3) {
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+  const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+  if (!user) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const body = await req.json().catch(() => ({}));
   const { action, query, company_number, officer_id } = body;
   console.log(`[companiesHouseSearch] action=${action} query=${query}`);

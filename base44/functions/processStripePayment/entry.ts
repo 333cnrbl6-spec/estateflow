@@ -12,6 +12,11 @@ Deno.serve(async (req) => {
       );
     }
 
+    // SECURITY: taking a card payment against any invoice/customer is a staff operation
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { invoiceId, stripeCustomerId } = body;
 

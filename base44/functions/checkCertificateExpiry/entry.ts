@@ -18,13 +18,12 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow scheduled (no user) or admin users
-    let callerIsAdmin = false;
-    try {
-      const user = await base44.auth.me();
-      callerIsAdmin = user?.role === 'admin';
-    } catch {
-      // scheduled call — proceed with service role
+    // SECURITY: this job writes compliance alerts across every record — admins only.
+    // Previously it failed open: an anonymous caller proceeded with full service-role access.
+    const caller = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    const callerIsAdmin = caller?.role === 'admin';
+    if (!callerIsAdmin) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const today = new Date();

@@ -21,6 +21,15 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Tenant not found' }, { status: 404 });
     }
 
+    // SECURITY: only admins or the tenant concerned may mint a portal token
+    const canMint = user.role === 'admin'
+      || tenant.created_by_id === user.id
+      || (tenant.email && user.email && tenant.email.toLowerCase() === user.email.toLowerCase());
+
+    if (!canMint) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Generate secure random token using Web Crypto API
     const randomBytes = crypto.getRandomValues(new Uint8Array(32));
     const token = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');

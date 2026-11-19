@@ -98,6 +98,23 @@ Return JSON array only, no extra text:
 
       if (match.match_status === 'matched' && match.matched_invoice_id && match.confidence >= 0.85) {
         try {
+          // SECURITY: a model suggestion is never authoritative. The match is only applied when the
+          // supplied bank transaction independently agrees with the invoice on amount and reference.
+          const invoice = pending.find(p => p.id === match.matched_invoice_id);
+          const bankAmount = Math.round(Number(bankTxn.amount || 0) * 100);
+          const referenceAgrees = Boolean(
+            invoice && bankTxn &&
+            (String(bankTxn.reference || '') || String(bankTxn.description || '')) &&
+            `${bankTxn.reference || ''} ${bankTxn.description || ''}`.toLowerCase()
+              .includes(String(invoice.reference || invoice.tenant_id || '').toLowerCase()) &&
+            String(invoice.reference || invoice.tenant_id || '').length > 0
+          );
+
+          if (!invoice || Math.abs(bankAmount - Number(invoice.amount || 0)) > 50 || !referenceAgrees) {
+            alerts.push({ ...match, bankTxn });
+            continue;
+          }
+
           // Mark invoice as paid
           await base44.asServiceRole.entities.FinancialTransaction.update(match.matched_invoice_id, {
             status: 'paid',

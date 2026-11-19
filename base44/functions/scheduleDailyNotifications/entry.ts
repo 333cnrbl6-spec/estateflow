@@ -5,6 +5,10 @@ Deno.serve(async (req) => {
     // This function is called by the scheduled automation
     // It simply invokes the main notification function
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     
     const result = await base44.asServiceRole.functions.invoke('sendTenantNotifications', {});
     

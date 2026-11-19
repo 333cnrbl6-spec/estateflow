@@ -9,6 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: committing staged rows is an import-admin operation
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const payload = await req.json();
     const { import_session_id, approved_ids } = payload;
 

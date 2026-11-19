@@ -88,7 +88,7 @@ export default function AnnouncementsPanel({ property }) {
 
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>
-                    {announcement.created_by && `From: ${announcement.created_by}`}
+                    {announcement.author_name && `From: ${announcement.author_name}`}
                   </span>
                   <span>
                     {format(new Date(announcement.created_date), 'dd MMM yyyy, HH:mm')}

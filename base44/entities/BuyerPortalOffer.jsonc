@@ -12,11 +12,39 @@
     },
     "buyer_email": {
       "type": "string",
-      "description": "Email of the buyer"
+      "description": "Email of the buyer",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "buyer_phone": {
       "type": "string",
-      "description": "Phone number of the buyer"
+      "description": "Phone number of the buyer",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "offer_amount": {
       "type": "number",
@@ -69,7 +97,21 @@
     },
     "solicitor_contact": {
       "type": "string",
-      "description": "Contact details for solicitor"
+      "description": "Contact details for solicitor",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "target_exchange_date": {
       "type": "string",
@@ -83,7 +125,21 @@
     },
     "access_token": {
       "type": "string",
-      "description": "Secure token for buyer to access their offer"
+      "description": "Secure token for buyer to access their offer",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "portal_url": {
       "type": "string",

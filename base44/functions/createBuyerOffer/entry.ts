@@ -19,6 +19,10 @@ const BuyerOfferSchema = z.object({
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
     // Parse request body
     let body;

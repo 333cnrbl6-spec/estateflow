@@ -9,6 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: assigning contractors is a staff operation
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { maintenance_request_id, contractor_email, notes } = await req.json();
 
     // Get maintenance request

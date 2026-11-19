@@ -15,6 +15,15 @@ Deno.serve(async (req) => {
     const { tenant_id, monthly_amount, tenant_email, tenant_name } = await req.json();
 
     const tenant = await base44.asServiceRole.entities.Tenant.get(tenant_id);
+
+    // SECURITY: only an admin or the tenant concerned may set up a recurring charge
+    const canManage = user.role === 'admin' || (tenant && (
+      tenant.created_by_id === user.id ||
+      (tenant.email && user.email && tenant.email.toLowerCase() === user.email.toLowerCase())
+    ));
+    if (!canManage) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     if (!tenant) {
       return Response.json({ error: 'Tenant not found' }, { status: 404 });
     }

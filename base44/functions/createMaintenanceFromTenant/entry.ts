@@ -33,6 +33,18 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Validation failed', details: errors }, { status: 400 });
     }
 
+    // SECURITY: a tenant may only raise requests against their own tenancy
+    if (user.role !== 'admin') {
+      const ownTenant = await base44.entities.Tenant.get(validation.data.tenant_id).catch(() => null);
+      const ownsTenancy = ownTenant && (
+        ownTenant.created_by_id === user.id ||
+        (ownTenant.email && user.email && ownTenant.email.toLowerCase() === user.email.toLowerCase())
+      );
+      if (!ownsTenancy) {
+        return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
+    }
+
     const {
       tenant_id,
       title,

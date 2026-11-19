@@ -16,6 +16,33 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Integration not found' }, { status: 404 });
     }
 
+    // SECURITY: block server-side requests to private, loopback, link-local or cloud-metadata addresses
+    let endpointUrl;
+    try {
+      endpointUrl = new URL(integration.api_endpoint);
+    } catch (err) {
+      return Response.json({ error: 'Invalid API endpoint' }, { status: 400 });
+    }
+
+    const host = endpointUrl.hostname.toLowerCase();
+    const blockedHost =
+      endpointUrl.protocol !== 'https:' ||
+      host === 'localhost' ||
+      host.endsWith('.localhost') ||
+      host === 'metadata.google.internal' ||
+      host === '169.254.169.254' ||
+      /^127\./.test(host) ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+      /^169\.254\./.test(host) ||
+      host === '::1' ||
+      host.startsWith('[');
+
+    if (blockedHost) {
+      return Response.json({ error: 'API endpoint must be a public HTTPS address' }, { status: 400 });
+    }
+
     // Test the API connection
     try {
       const response = await fetch(`${integration.api_endpoint}/health`, {

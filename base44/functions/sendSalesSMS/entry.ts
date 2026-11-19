@@ -9,6 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: sending SMS bills the app's Twilio account — restrict to admins
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { contact_phone, message, listing_address } = await req.json();
 
     if (!contact_phone || !message) {

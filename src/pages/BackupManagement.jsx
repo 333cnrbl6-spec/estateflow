@@ -213,7 +213,7 @@ export default function BackupManagement() {
                         <div className="text-xs text-muted-foreground space-y-1">
                           <p>{backup.total_records} records • {formatBytes(backup.backup_size_bytes)}</p>
                           <p>
-                            Created {formatDistanceToNow(new Date(backup.backup_timestamp), { addSuffix: true })} by {backup.created_by}
+                            Created {formatDistanceToNow(new Date(backup.backup_timestamp), { addSuffix: true })}
                           </p>
                           {backup.last_restored && (
                             <p className="text-green-600">Last restored {formatDistanceToNow(new Date(backup.last_restored), { addSuffix: true })}</p>

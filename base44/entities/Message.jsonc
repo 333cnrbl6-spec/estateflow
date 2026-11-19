@@ -16,7 +16,21 @@
     },
     "sender_email": {
       "type": "string",
-      "description": "Email of message sender"
+      "description": "Email of message sender",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "sender_name": {
       "type": "string",
